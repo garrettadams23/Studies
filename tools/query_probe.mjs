@@ -298,11 +298,12 @@ const READERS = [
     ["onedrive is not syncing"],
     ["teams keeps signing me out"],
     ["the user says the file is gone",
-     "kind 3 — the recovery ladder is real and spread across three m365 cards (site recycle bin, retention, backup); no single card is the defensible want. Since the third wave it scores answered, by coincidence: the Windows built-in tools topic holds all four words, `user` only inside the expansion of UDP, and relaxation widens that one match to 31 cards. One is the retention card; the rest are not about a lost file. In the eighth wave search stopped matching inside acronym expansions, and this query went back to zero, which is what a reader gets"],
+     "kind 3 — the recovery ladder is real and spread across three m365 cards (site recycle bin, retention, backup); no single card is the defensible want. Since the third wave it scores answered, by coincidence: the Windows built-in tools topic holds all four words, `user` only inside the expansion of UDP, and relaxation widens that one match to 31 cards. One is the retention card; the rest are not about a lost file. In the eighth wave search stopped matching inside acronym expansions, and this query went back to zero, which is what a reader gets. Its four words are common enough that a new topic can hold all of them by chance: the seventeenth wave's threat intelligence topic and the eighteenth's Microsoft 365 Apps topic each did, in unrelated sentences, and each time relaxation widened that one topic to 33 cards. Both times the topic's phrase was reworded and this note kept, because 33 wrong cards serve the reader worse than none"],
     // ── batch fourteen ──
     ["the printer is printing garbage", "",
      "hw/printers-mfps-technologies-drivers-print-servers-secure-rele"],
-    ["i cannot install software"],
+    ["i cannot install software",
+     "wide and inherent — `install` and `software` are ordinary words here, and since the twentieth wave 61 topics hold both, one over the line; the 61st was the Ingress topic, on software that will never be patched again. No single card answers a request this vague: it is a permissions, a policy or a broken-installer ticket, and the reader's next sentence decides which"],
     ["my password expired and i cannot change it"],
     // ── batch sixteen ──
     ["the user cannot sign in on their phone"],
@@ -313,12 +314,72 @@ const READERS = [
      "wide and inherent, and the widest noun this site has: `network` is the only word left after the stop list drops `how do i prove it is not the`, and it is in a fifth of the corpus. The answer is inside the set — `ops` *Troubleshooting Like a Pro* and `net`'s own troubleshooting cards are all in the 83. Ranking would pick between them; this matcher is a filter"],
     ["the user has two accounts", "",
      "infra/one-user-two-accounts-how-sync-matches-people-and-fixing-the"],
-    ["the software installed but does not appear"],
+    ["the software installed but does not appear", "",
+     "endpoint/app-deployment-error-codes-intune-and-mecm-side-by-side-by-w"],
     // ── batch eighteen ──
     ["the user changed their name"],
     ["everyone in one office cannot print"],
     ["the new starter is missing from teams",
      "kind 3 — `starter` at 12 is the binding word and it is the reader's noun for a joiner. `m365` covers the fault as a mechanism: group-based licensing, license assignment, and the joiner half of joiner-mover-leaver. The lag between an account existing and Teams showing it is licensing, and the card says so in the site's words"],
+    // ── twelfth wave: the owner's packaging and error-code items, added before their topics ──
+    // Opened at 0 of 8: one zero, `0x87d1041c`, and seven that found other cards. Two of those,
+    // `error 1603` and `exit code 3010`, reach cards that name the code in a list of weekly ones.
+    ["msi vs exe", "", "endpoint/msi-exe-intunewin-what-each-package-is-and-how-it-installs"],
+    ["what is an intunewin file", "", "endpoint/msi-exe-intunewin-what-each-package-is-and-how-it-installs"],
+    ["silent install switches", "", "endpoint/msi-exe-intunewin-what-each-package-is-and-how-it-installs"],
+    ["msiexec silent install", "", "endpoint/msi-exe-intunewin-what-each-package-is-and-how-it-installs"],
+    ["0x87d1041c", "", "endpoint/app-deployment-error-codes-intune-and-mecm-side-by-side-by-w"],
+    ["intune vs mecm error codes", "", "endpoint/app-deployment-error-codes-intune-and-mecm-side-by-side-by-w"],
+    ["error 1603", "", "endpoint/app-deployment-error-codes-intune-and-mecm-side-by-side-by-w"],
+    ["exit code 3010", "", "endpoint/app-deployment-error-codes-intune-and-mecm-side-by-side-by-w"],
+    // ── sixteenth wave: MS-102's identity and Purview objectives, added before their topics ──
+    // Opened at 0 of 13: nine zeros, `idfix` and `password writeback` among them, and four that
+    // found other cards. `endpoint dlp` reached ten, none of them about Purview's endpoint agent.
+    ["self service password reset", "", "m365/self-service-password-reset-password-protection-who-can-rese"],
+    ["password writeback", "", "m365/self-service-password-reset-password-protection-who-can-rese"],
+    ["banned password list", "", "m365/self-service-password-reset-password-protection-who-can-rese"],
+    ["password does not meet the complexity requirements", "", "m365/self-service-password-reset-password-protection-who-can-rese"],
+    ["administrative units", "", "m365/administrative-units-delegating-part-of-the-tenant-and-fenci"],
+    ["restricted management administrative unit", "", "m365/administrative-units-delegating-part-of-the-tenant-and-fenci"],
+    ["helpdesk admin for one office only", "", "m365/administrative-units-delegating-part-of-the-tenant-and-fenci"],
+    ["idfix", "", "infra/preparing-active-directory-for-sync-duplicate-addresses-bad-"],
+    ["upn suffix is local", "", "infra/preparing-active-directory-for-sync-duplicate-addresses-bad-"],
+    ["duplicate proxyaddresses", "", "infra/preparing-active-directory-for-sync-duplicate-addresses-bad-"],
+    ["sensitive information type regex", "", "m365/sensitive-information-types-endpoint-dlp-the-pattern-that-fi"],
+    ["endpoint dlp", "", "m365/sensitive-information-types-endpoint-dlp-the-pattern-that-fi"],
+    ["copy sensitive files to usb", "", "m365/sensitive-information-types-endpoint-dlp-the-pattern-that-fi"],
+    // ── eighteenth wave: four of MD-102's seven gaps, added before their topics ──
+    // Opened at 0 of 13: four zeros, `semi-annual` and `click-to-run` among them words the site had
+    // never written, and nine that found other cards. `app control for business` reached 34, none about it.
+    ["office deployment tool", "", "endpoint/microsoft-365-apps-deployment-the-office-deployment-tool-int"],
+    ["setup.exe /configure", "", "endpoint/microsoft-365-apps-deployment-the-office-deployment-tool-int"],
+    ["semi-annual enterprise channel", "", "endpoint/microsoft-365-apps-deployment-the-office-deployment-tool-int"],
+    ["office click-to-run", "", "endpoint/microsoft-365-apps-deployment-the-office-deployment-tool-int"],
+    ["delivery optimization", "", "endpoint/delivery-optimization-download-modes-peer-groups-where-windo"],
+    ["port 7680", "", "endpoint/delivery-optimization-download-modes-peer-groups-where-windo"],
+    ["peer to peer windows updates", "", "endpoint/delivery-optimization-download-modes-peer-groups-where-windo"],
+    ["app control for business", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],
+    ["managed installer", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],
+    ["wdac audit mode", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],
+    ["windows backup for organizations", "", "endpoint/windows-backup-for-organizations-settings-restore-on-a-new-p"],
+    ["restore settings on a new pc", "", "endpoint/windows-backup-for-organizations-settings-restore-on-a-new-p"],
+    ["restore settings during autopilot", "", "endpoint/windows-backup-for-organizations-settings-restore-on-a-new-p"],
+    // ── nineteenth wave: MD-102's last three gaps, added before their topics ──
+    // Opened at 0 of 13: seven zeros, `hotpatch` and `copilot in intune` among them words the site had
+    // never written, and six that found other cards. `policy configuration agent` reached 21, none about Intune.
+    ["hotpatch", "", "endpoint/hotpatch-security-updates-without-a-restart-and-the-quarterl"],
+    ["windows updates without restart", "", "endpoint/hotpatch-security-updates-without-a-restart-and-the-quarterl"],
+    ["hotpatch baseline month", "", "endpoint/hotpatch-security-updates-without-a-restart-and-the-quarterl"],
+    ["vbs not running", "", "endpoint/hotpatch-security-updates-without-a-restart-and-the-quarterl"],
+    ["multi admin approval", "", "endpoint/multi-admin-approval-a-second-administrator-before-a-wipe-a-"],
+    ["second admin must approve device wipe", "", "endpoint/multi-admin-approval-a-second-administrator-before-a-wipe-a-"],
+    ["approver group", "", "endpoint/multi-admin-approval-a-second-administrator-before-a-wipe-a-"],
+    ["approval request expired", "", "endpoint/multi-admin-approval-a-second-administrator-before-a-wipe-a-"],
+    ["security copilot agents in intune", "", "endpoint/security-copilot-in-intune-copilot-the-agents-and-the-three-"],
+    ["vulnerability remediation agent", "", "endpoint/security-copilot-in-intune-copilot-the-agents-and-the-three-"],
+    ["policy configuration agent", "", "endpoint/security-copilot-in-intune-copilot-the-agents-and-the-three-"],
+    ["copilot in intune", "", "endpoint/security-copilot-in-intune-copilot-the-agents-and-the-three-"],
+    ["security compute units", "", "endpoint/security-copilot-in-intune-copilot-the-agents-and-the-three-"],
   ]],
   ["a SOC analyst or defender", [
     ["phishing email reported", "", "blueteam/a-user-reported-a-phishing-email-the-first-ten-minutes"],
@@ -396,6 +457,53 @@ const READERS = [
     ["the same alert fires every night at the same time"],
     ["we have no logs from before last week"],
     ["the malware sample is password protected"],
+    // ── fifteenth wave: MS-102's Defender XDR objectives, added before their topics ──
+    // Opened at 0 of 13: five zeros and eight that found other cards. `exposure score` reached ten
+    // and `defender vulnerability management` fifteen, none of them about Microsoft's product.
+    ["advanced hunting kql", "", "m365/defender-xdr-incidents-advanced-hunting-one-queue-for-mail-d"],
+    ["defender xdr incident", "", "m365/defender-xdr-incidents-advanced-hunting-one-queue-for-mail-d"],
+    ["custom detection rule", "", "m365/defender-xdr-incidents-advanced-hunting-one-queue-for-mail-d"],
+    ["automated investigation pending approval", "", "m365/defender-xdr-incidents-advanced-hunting-one-queue-for-mail-d"],
+    ["attack simulation training", "", "m365/attack-simulation-training-phishing-simulations-training-cam"],
+    ["phishing simulation false clicks", "", "m365/attack-simulation-training-phishing-simulations-training-cam"],
+    ["third party phishing simulation", "", "m365/attack-simulation-training-phishing-simulations-training-cam"],
+    ["defender for cloud apps", "", "m365/defender-for-cloud-apps-app-connectors-cloud-discovery-why-u"],
+    ["unsanctioned app not blocked", "", "m365/defender-for-cloud-apps-app-connectors-cloud-discovery-why-u"],
+    ["cloud discovery log collector", "", "m365/defender-for-cloud-apps-app-connectors-cloud-discovery-why-u"],
+    ["defender vulnerability management", "", "endpoint/defender-vulnerability-management-exposure-score-recommendat"],
+    ["exposure score", "", "endpoint/defender-vulnerability-management-exposure-score-recommendat"],
+    ["remediation request intune", "", "endpoint/defender-vulnerability-management-exposure-score-recommendat"],
+    // ── seventeenth wave: MS-102's last three Defender objectives, added before their topics ──
+    // Opened at 0 of 13: eight zeros and five that found other cards. `alert policy email
+    // notifications` and `threat analytics report` reached fourteen each, none about Microsoft's products.
+    ["restricted entities", "", "m365/restricted-entities-outbound-spam-why-a-mailbox-stops-sendin"],
+    ["user restricted from sending email", "", "m365/restricted-entities-outbound-spam-why-a-mailbox-stops-sendin"],
+    ["550 5.1.8 bad outbound sender", "", "m365/restricted-entities-outbound-spam-why-a-mailbox-stops-sendin"],
+    ["unblock a user blocked for outbound spam", "", "m365/restricted-entities-outbound-spam-why-a-mailbox-stops-sendin"],
+    ["tenant external recipient rate limit", "", "m365/restricted-entities-outbound-spam-why-a-mailbox-stops-sendin"],
+    ["alert policy email notifications", "", "m365/alert-policies-in-defender-for-office-365-the-default-alerts"],
+    ["creation of forwarding redirect rule alert", "", "m365/alert-policies-in-defender-for-office-365-the-default-alerts"],
+    ["email sending limit exceeded", "", "m365/alert-policies-in-defender-for-office-365-the-default-alerts"],
+    ["suspicious connector activity", "", "m365/alert-policies-in-defender-for-office-365-the-default-alerts"],
+    ["defender threat intelligence", "", "m365/defender-threat-intelligence-threat-analytics-intel-explorer"],
+    ["threat analytics report", "", "m365/defender-threat-intelligence-threat-analytics-intel-explorer"],
+    ["intel explorer", "", "m365/defender-threat-intelligence-threat-analytics-intel-explorer"],
+    ["reputation score suspicious", "", "m365/defender-threat-intelligence-threat-analytics-intel-explorer"],
+    // ── twenty-first wave: DAIR, which GCIH's outline names beside PICERL, added before its topic ──
+    // Opened at 0 of 5: two zeros, `dair` a word the site had never written, and three that found other
+    // cards. The fifth asks for NIST's 2025 revision, which no topic mentioned; DAIR's third card is about it.
+    ["dair incident response", "", "ops/dair-sanss-dynamic-approach-to-incident-response-and-the-loo"],
+    ["dynamic approach to incident response", "", "ops/dair-sanss-dynamic-approach-to-incident-response-and-the-loo"],
+    ["response actions loop", "", "ops/dair-sanss-dynamic-approach-to-incident-response-and-the-loo"],
+    ["verify and triage", "", "ops/dair-sanss-dynamic-approach-to-incident-response-and-the-loo"],
+    ["nist 800-61 rev 3", "", "ops/dair-sanss-dynamic-approach-to-incident-response-and-the-loo"],
+    // ── thirty-sixth wave: ATT&CK v19's fifteen tactics, read from attack.mitre.org, added before the cards ──
+    ["defense impairment", "", "threat/mitre-attck-framework"],
+    ["stealth tactic", "", "threat/mitre-attck-framework"],
+    ["defense evasion", "", "threat/mitre-attck-framework"],
+    // ── fortieth wave: Kerberos RC4 after CVE-2026-20833, read from Microsoft, added before the fix ──
+    ["cve-2026-20833", "", "sec/active-directory-structure-objects-attacks"],
+    ["defaultdomainsupportedenctypes", "", "sec/active-directory-structure-objects-attacks"],
   ]],
   ["a learner meeting a subject", [
     ["what is a subnet mask", "", "net/ip-addresses-subnets-gently"],
@@ -407,7 +515,9 @@ const READERS = [
     ["what is idempotency", "",
      "script/scheduling-scripts-the-right-way-cron-timers-and-idempotency"],
     ["what is technical debt", "", "eng/technical-debt-recognize-pay-it-down"],
-    ["why do we use containers", "", "linux/docker-containers-package-once-run-anywhere"],
+    ["why do we use containers",
+     "wide and inherent — the wanted card is in the set, among 61. `use` and `containers` are ordinary words in every Kubernetes topic, and the twentieth wave's kubeadm and scheduling topics took the count from 59 over the line. A learner asking why gets the Docker card among the answers, with the Kubernetes topics that build on it",
+     "linux/docker-containers-package-once-run-anywhere"],
     ["why does caching break things", "", "devops/caching-strategies-from-app-to-cdn"],
     ["what is an embedding", "", "ai/embeddings-rag-giving-ai-access-to-your-own-data"],
     // ── batch eight ──
@@ -427,6 +537,14 @@ const READERS = [
     ["frago", "", "military/mdmp-the-opord-the-planning-cycle-and-the-five-paragraph-ord"],
     ["mett-tc", "", "military/mdmp-the-opord-the-planning-cycle-and-the-five-paragraph-ord"],
     ["ccir", "", "military/mdmp-the-opord-the-planning-cycle-and-the-five-paragraph-ord"],
+    // ── forty-second wave: the two thin military lookup topics, deepened from
+    // FM 6-0 (May 2022). Added before the cards, with the wants they should reach.
+    ["coordinating staff", "", "military/staff-functions-19"],
+    ["personal staff", "", "military/staff-functions-19"],
+    ["staff judge advocate", "", "military/staff-functions-19"],
+    ["running estimate", "", "military/staff-functions-19"],
+    ["chief of staff", "", "military/common-codes-decoded"],
+    ["what does the s-3 do", "", "military/common-codes-decoded"],
     // ── sixth wave: Content ideas §4 rows 32 to 34, the quotes, before their topics.
     // Each want names a topic that does not exist yet. Left out: `conway's law`
     // and `goodhart's law` already reach the eng cards that use them, and `no
@@ -753,6 +871,61 @@ const READERS = [
     ["business travel security", "", "sec/personnel-safety-security-travel-duress-emergency-management"],
     ["emergency evacuation plan", "", "sec/personnel-safety-security-travel-duress-emergency-management"],
     ["fail-safe vs fail-secure", "", "sec/personnel-safety-security-travel-duress-emergency-management"],
+    // ── twentieth wave: RASP and IAST, which SecurityX names, added before their topic ──
+    // Opened at 0 of 4, all zeros: the site had never written either term outside other words.
+    ["iast", "", "sec/iast-rasp-testing-and-defending-an-application-from-inside-i"],
+    ["rasp", "", "sec/iast-rasp-testing-and-defending-an-application-from-inside-i"],
+    ["runtime application self-protection", "", "sec/iast-rasp-testing-and-defending-an-application-from-inside-i"],
+    ["interactive application security testing", "", "sec/iast-rasp-testing-and-defending-an-application-from-inside-i"],
+    // ── thirtieth wave: CompTIA SecAI+, read from CompTIA's exam page, added before its path ──
+    // Opened at 5 of 7, the first batch written mostly to test coverage rather than to open gaps: the site had
+    // the subjects already. The two misses were words: CompTIA's own domain name, `securing ai systems`, and
+    // the field's standard term, `adversarial machine learning`, which the topics called by other names.
+    ["securing ai systems", "", "ai/ai-security-attacking-and-defending-ai-systems"],
+    ["nist ai rmf", "", "ai/ai-ethics-responsible-ai-nist-ai-rmf"],
+    ["owasp top 10 llm", "", "ai/ai-governance-frameworks"],
+    ["eu ai act", "", "ai/ai-governance-frameworks"],
+    ["adversarial machine learning", "", "ai/adversarial-ai-ai-threats-red-team"],
+    ["data poisoning attack", "", "ai/adversarial-ai-ai-threats-red-team"],
+    ["ai for threat detection", "", "ai/ai-for-defense-blue-team"],
+    // ── thirty-first wave: OWASP's 2026 lists, read from OWASP's pages, added before the cards ──
+    ["unbounded consumption", "", "ai/ai-security-attacking-and-defending-ai-systems"],
+    ["improper output handling", "", "ai/ai-security-attacking-and-defending-ai-systems"],
+    ["hidden context exposure", "", "ai/ai-security-attacking-and-defending-ai-systems"],
+    ["denial of wallet", "", "ai/ai-security-attacking-and-defending-ai-systems"],
+    ["vector and embedding weaknesses", "", "ai/ai-security-attacking-and-defending-ai-systems"],
+    ["owasp top 10 for llm 2026", "", "ai/ai-governance-frameworks"],
+    ["agent goal hijack", "", "ai/agent-safety-sandboxing-permissions-blast-radius-human-in-th"],
+    ["owasp agentic top 10", "", "ai/agent-safety-sandboxing-permissions-blast-radius-human-in-th"],
+    // ── thirty-second wave: NIST AI RMF 1.0 and its Generative AI Profile, read from NIST, added before the cards ──
+    ["valid and reliable", "", "ai/ai-ethics-responsible-ai-nist-ai-rmf"],
+    ["trustworthiness characteristics", "", "ai/ai-ethics-responsible-ai-nist-ai-rmf"],
+    ["harmful bias managed", "", "ai/ai-ethics-responsible-ai-nist-ai-rmf"],
+    ["nist ai 600-1", "", "ai/ai-ethics-responsible-ai-nist-ai-rmf"],
+    ["generative ai profile", "", "ai/ai-ethics-responsible-ai-nist-ai-rmf"],
+    ["confabulation", "", "ai/ai-ethics-responsible-ai-nist-ai-rmf"],
+    // ── thirty-third wave: OWASP Top 10:2025, read from OWASP's pages, added before the cards ──
+    ["owasp top 10 2025", "", "pentest/owasp-top-10-2025"],
+    ["what changed in owasp top 10 2025", "", "pentest/owasp-top-10-2025"],
+    ["software supply chain failures", "", "sec/owasp-top-10-the-most-critical-web-security-risks"],
+    ["security logging and alerting failures", "", "sec/owasp-top-10-the-most-critical-web-security-risks"],
+    ["mishandling of exceptional conditions", "", "sec/owasp-top-10-the-web-vulnerabilities-everyone-must-know"],
+    // ── thirty-fifth wave: the rest of SecAI+'s summary terms, read from CompTIA's exam page ──
+    ["alert correlation", "", "blueteam/correlation-sequencing-when-one-event-genuinely-is-not-enoug"],
+    ["behavior analysis", "", "blueteam/user-entity-behavior-analytics-what-baselining-can-and-canno"],
+    ["automated phishing", "", "ai/adversarial-ai-ai-threats-red-team"],
+    ["response orchestration", "", "ops/soar-security-orchestration-automation-response"],
+    ["polymorphic malware", "", "threat/malware-types-reference"],
+    ["ai lifecycle", "", "ai/ai-ethics-responsible-ai-nist-ai-rmf"],
+    // ── thirty-seventh wave: NIST IR 8547, final in October 2026, and HQC, read from NIST, added before the cards ──
+    ["nist ir 8547", "", "sec/post-quantum-cryptography-harvest-now-decrypt-later"],
+    ["post-quantum migration deadline", "", "sec/post-quantum-cryptography-harvest-now-decrypt-later"],
+    ["hqc", "", "sec/post-quantum-cryptography-harvest-now-decrypt-later"],
+    ["is aes-128 quantum safe", "", "sec/post-quantum-cryptography-harvest-now-decrypt-later"],
+    // ── forty-third wave: what each certification costs to keep, read from each body's pages ──
+    ["security+ renewal ceus", "", "eng/cert-roadmaps-choosing-a-path"],
+    ["cissp cpe requirements", "", "eng/cert-roadmaps-choosing-a-path"],
+    ["microsoft certification renewal", "", "eng/cert-roadmaps-choosing-a-path"],
   ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],
@@ -822,6 +995,34 @@ const READERS = [
     ["the process is defunct", "",
      "linux/processes-signals-running-programs-in-linux"],
     ["too many redirects"],
+    // ── twentieth wave: the CKA outline's gaps, added before their topics ──
+    // Opened at 0 of 11: seven zeros, `kubeadm`, `tolerations` and `coredns` among words the site had
+    // never written, and four that found other cards. `cpu limit throttling` reached nine.
+    ["kubeadm upgrade", "", "devops/kubeadm-cluster-lifecycle-upgrading-one-minor-at-a-time-rene"],
+    ["etcd snapshot restore", "", "devops/kubeadm-cluster-lifecycle-upgrading-one-minor-at-a-time-rene"],
+    ["kubernetes certificates expired", "", "devops/kubeadm-cluster-lifecycle-upgrading-one-minor-at-a-time-rene"],
+    ["version skew kubelet", "", "devops/kubeadm-cluster-lifecycle-upgrading-one-minor-at-a-time-rene"],
+    ["taints and tolerations", "", "devops/scheduling-autoscaling-requests-and-limits-taints-toleration"],
+    ["node affinity", "", "devops/scheduling-autoscaling-requests-and-limits-taints-toleration"],
+    ["horizontal pod autoscaler", "", "devops/scheduling-autoscaling-requests-and-limits-taints-toleration"],
+    ["cpu limit throttling", "", "devops/scheduling-autoscaling-requests-and-limits-taints-toleration"],
+    ["gateway api httproute", "", "devops/ingress-gateway-api-coredns-getting-traffic-in-and-the-contr"],
+    ["ingress nginx retired", "", "devops/ingress-gateway-api-coredns-getting-traffic-in-and-the-contr"],
+    ["coredns not resolving", "", "devops/ingress-gateway-api-coredns-getting-traffic-in-and-the-contr"],
+    // ── thirty-eighth wave: TLS certificate lifetimes and OCSP's end, read from the CA/B Forum and Let's Encrypt ──
+    ["47 day certificates", "", "sec/pki-certificate-lifecycle"],
+    ["certificate validity 200 days", "", "sec/pki-certificate-lifecycle"],
+    ["maximum ssl certificate lifetime", "", "sec/pki-certificate-lifecycle"],
+    ["ocsp turned off", "", "sec/pki-certificate-lifecycle"],
+    // ── forty-first wave: how a package repository is trusted, read from Debian and DNF's manuals ──
+    ["apt-key deprecated", "", "linux/package-management"],
+    ["signed-by keyring", "", "linux/package-management"],
+    ["gpgcheck", "", "linux/package-management"],
+    // ── forty-second wave: the pipeline's own dependencies, read from GitHub's docs and NVD ──
+    ["pin github actions to commit sha", "", "devops/software-supply-chain-security-sbom-slsa-sigstore"],
+    ["tj-actions changed-files", "", "devops/software-supply-chain-security-sbom-slsa-sigstore"],
+    ["github actions lockfile", "", "devops/software-supply-chain-security-sbom-slsa-sigstore"],
+    ["cve-2025-30066", "", "devops/software-supply-chain-security-sbom-slsa-sigstore"],
   ]],
   ["somebody handed a process nobody chose", [
     ["agile",              "", "eng/agile-the-four-trade-offs-and-what-gets-sold-as-agile"],
@@ -970,6 +1171,10 @@ const READERS = [
     ["i changed one line and fifty tests failed",
      "kind 3, and the thinnest of the five — `eng` has *Over-mocking* and *Test Doubles*, which is the cause, but the site names it from the writer's side (a test coupled to the implementation) and never from the reader's (fifty red tests after a one-line change). The nearby gap is narrower than a card: the symptom sentence is missing from a subject that is otherwise covered"],
     ["the log says success and the data is wrong"],
+    // ── forty-third wave: which layer sent the error, read from RFC 9110 and RFC 6585 ──
+    ["502 vs 504", "", "web/the-full-stack-picture-how-it-all-connects"],
+    ["gateway timeout", "", "web/the-full-stack-picture-how-it-all-connects"],
+    ["401 vs 403", "", "web/the-full-stack-picture-how-it-all-connects"],
   ]],
   ["somebody in front of the machine itself", [
     ["computer randomly restarts", "",
@@ -1035,8 +1240,13 @@ const READERS = [
     ["the certificate renewed and the site still says expired",
      "still zero after the card was fixed, and deliberately — the renewed-and-not-reloaded row went into the TLS card because its table was missing a failure and its verdict claimed the incomplete chain was the only one; 'site' and 'says' are the reader's filler, and the conjunction cannot drop them because the relaxation stage never runs on a zero",
      "sec/tls-https-how-secure-connections-work"],
-    ["nat gateway is the biggest line on the bill",
-     "kind 3 — cloud states the NAT gateway is billed hourly plus per GB per AZ; the ranking is the reader's framing"],
+    // Was kind 3, a recorded zero: `cloud` stated the NAT gateway's hourly and per-GB charges, and nothing
+    // ranked it. Answered since the twenty-fifth wave, by the cost control topic, whose Compute Optimizer
+    // card names NAT gateways among the resources it rightsizes and finds idle, beside the CUR card that finds
+    // which resource and hour the line comes from. A fair first stop, not a coincidence of unrelated cards; the
+    // per-GB reason the line is large is still in *Hybrid Connectivity*, which the query does not reach.
+    ["nat gateway is the biggest line on the bill", "",
+     "cloud/cloud-cost-control-budgets-tags-rightsizing"],
     // ── batch thirteen ──
     ["s3 access denied"],
     ["the alert fired and nothing was wrong"],
@@ -1067,6 +1277,131 @@ const READERS = [
     // flat across the step.
     ["our reserved instances expired", "",
      "cloud/commitment-discounts-reserved-savings-plans-the-forecast-the"],
+    // ── twenty-second wave: the AWS SAA-C03 outline's gaps, added before their topics ──
+    // Opened at 0 of 14: seven zeros, `eventbridge`, `kinesis` and `datasync` among words the site had
+    // never written, and seven that found other cards. `step functions express` reached 26.
+    ["sqs visibility timeout", "", "cloud/aws-application-integration-sqs-sns-eventbridge-step-functio"],
+    ["dead letter queue", "", "cloud/aws-application-integration-sqs-sns-eventbridge-step-functio"],
+    ["sqs fifo vs standard", "", "cloud/aws-application-integration-sqs-sns-eventbridge-step-functio"],
+    ["sns fanout", "", "cloud/aws-application-integration-sqs-sns-eventbridge-step-functio"],
+    ["eventbridge", "", "cloud/aws-application-integration-sqs-sns-eventbridge-step-functio"],
+    ["step functions express", "", "cloud/aws-application-integration-sqs-sns-eventbridge-step-functio"],
+    ["kinesis data streams", "", "cloud/aws-data-ingestion-analytics-kinesis-firehose-glue-athena-em"],
+    ["amazon data firehose", "", "cloud/aws-data-ingestion-analytics-kinesis-firehose-glue-athena-em"],
+    ["athena query s3", "", "cloud/aws-data-ingestion-analytics-kinesis-firehose-glue-athena-em"],
+    ["aws glue crawler", "", "cloud/aws-data-ingestion-analytics-kinesis-firehose-glue-athena-em"],
+    ["storage gateway", "", "cloud/aws-hybrid-storage-data-transfer-storage-gateway-datasync-tr"],
+    ["datasync", "", "cloud/aws-hybrid-storage-data-transfer-storage-gateway-datasync-tr"],
+    ["snowball", "", "cloud/aws-hybrid-storage-data-transfer-storage-gateway-datasync-tr"],
+    ["sftp to s3", "", "cloud/aws-hybrid-storage-data-transfer-storage-gateway-datasync-tr"],
+    // ── twenty-third wave: seven services SAA-C03 names as examples, added before their topics ──
+    // Opened at 0 of 15: twelve zeros, `valkey` and `quicksight` among words the site had never written,
+    // and three that found other cards. `aws backup vault lock` reached six, none of them about AWS Backup.
+    ["cognito user pool vs identity pool", "", "cloud/amazon-cognito-user-pools-identity-pools-the-two-questions-t"],
+    ["cognito guest access", "", "cloud/amazon-cognito-user-pools-identity-pools-the-two-questions-t"],
+    ["cognito id token vs access token", "", "cloud/amazon-cognito-user-pools-identity-pools-the-two-questions-t"],
+    ["aws shield advanced", "", "cloud/aws-shield-global-accelerator-ddos-protection-and-fixed-entr"],
+    ["shield response team", "", "cloud/aws-shield-global-accelerator-ddos-protection-and-fixed-entr"],
+    ["global accelerator vs cloudfront", "", "cloud/aws-shield-global-accelerator-ddos-protection-and-fixed-entr"],
+    ["rds proxy", "", "cloud/rds-proxy-elasticache-what-sits-between-an-application-and-i"],
+    ["lambda too many database connections", "", "cloud/rds-proxy-elasticache-what-sits-between-an-application-and-i"],
+    ["elasticache valkey", "", "cloud/rds-proxy-elasticache-what-sits-between-an-application-and-i"],
+    ["aws backup vault lock", "", "cloud/aws-backup-plans-vault-lock-the-air-gapped-copy-an-attacker-"],
+    ["logically air-gapped vault", "", "cloud/aws-backup-plans-vault-lock-the-air-gapped-copy-an-attacker-"],
+    ["aws backup cross-region copy", "", "cloud/aws-backup-plans-vault-lock-the-air-gapped-copy-an-attacker-"],
+    ["lake formation permissions", "", "cloud/lake-formation-aws-quick-governing-the-data-lake-and-showing"],
+    ["column level security data lake", "", "cloud/lake-formation-aws-quick-governing-the-data-lake-and-showing"],
+    ["quicksight", "", "cloud/lake-formation-aws-quick-governing-the-data-lake-and-showing"],
+    // ── twenty-fourth wave: the guide's remaining examples and in-scope gaps, added before their topics ──
+    // Opened at 0 of 17: eleven zeros, `rekognition`, `sagemaker` and `appflow` among words the site had never
+    // written, and six that found other cards. `aws config rules` reached 31, none of them about AWS Config.
+    ["rekognition", "", "cloud/aws-ai-services-rekognition-textract-comprehend-polly-when-t"],
+    ["amazon textract", "", "cloud/aws-ai-services-rekognition-textract-comprehend-polly-when-t"],
+    ["polly text to speech", "", "cloud/aws-ai-services-rekognition-textract-comprehend-polly-when-t"],
+    ["sagemaker", "", "cloud/aws-ai-services-rekognition-textract-comprehend-polly-when-t"],
+    ["ai services opt out", "", "cloud/aws-ai-services-rekognition-textract-comprehend-polly-when-t"],
+    ["gateway load balancer", "", "cloud/elastic-load-balancing-alb-nlb-gateway-load-balancer-and-the"],
+    ["cross-zone load balancing", "", "cloud/elastic-load-balancing-alb-nlb-gateway-load-balancer-and-the"],
+    ["classic load balancer migrate", "", "cloud/elastic-load-balancing-alb-nlb-gateway-load-balancer-and-the"],
+    ["amazon mq", "", "cloud/amazon-mq-msk-appflow-when-the-protocol-or-the-partner-is-al"],
+    ["managed kafka", "", "cloud/amazon-mq-msk-appflow-when-the-protocol-or-the-partner-is-al"],
+    ["appflow", "", "cloud/amazon-mq-msk-appflow-when-the-protocol-or-the-partner-is-al"],
+    ["application migration service", "", "cloud/aws-migration-aws-transform-mgn-dms-a-discovery-service-that"],
+    ["aws dms", "", "cloud/aws-migration-aws-transform-mgn-dms-a-discovery-service-that"],
+    ["schema conversion tool", "", "cloud/aws-migration-aws-transform-mgn-dms-a-discovery-service-that"],
+    ["aws config rules", "", "cloud/aws-config-what-every-resource-looked-like-and-whether-it-wa"],
+    ["conformance pack", "", "cloud/aws-config-what-every-resource-looked-like-and-whether-it-wa"],
+    ["auto remediation noncompliant", "", "cloud/aws-config-what-every-resource-looked-like-and-whether-it-wa"],
+    // ── twenty-fifth wave: the guide's last task-statement examples, as cards in existing topics, added before them ──
+    // Opened at 3 of 15: nine zeros, `provisioned iops` and `requester pays bucket` among them, three that found
+    // other cards, and three that already reached their topic on ordinary words without it naming the thing
+    // asked for: `cost and usage report` found the cost topic among 24 cards, and it never named the report.
+    ["provisioned iops", "", "cloud/aws-storage-s3-classes-ebs-efs"],
+    ["gp3 vs io2", "", "cloud/aws-storage-s3-classes-ebs-efs"],
+    ["st1 vs sc1", "", "cloud/aws-storage-s3-classes-ebs-efs"],
+    ["requester pays bucket", "", "cloud/aws-storage-s3-classes-ebs-efs"],
+    ["cost and usage report", "", "cloud/cloud-cost-control-budgets-tags-rightsizing"],
+    ["cur 2.0", "", "cloud/cloud-cost-control-budgets-tags-rightsizing"],
+    ["compute optimizer", "", "cloud/cloud-cost-control-budgets-tags-rightsizing"],
+    ["ec2 hibernation", "", "cloud/aws-compute-ec2-amis-auto-scaling"],
+    ["aws batch", "", "cloud/aws-serverless-containers-lambda-ecs-eks-fargate"],
+    ["aws client vpn", "", "cloud/hybrid-connectivity-vpn-interconnect-peering"],
+    ["well-architected tool", "", "cloud/well-architected-the-architecture-framework"],
+    ["documentdb mongodb", "", "cloud/purpose-built-databases-on-aws-documentdb-keyspaces-neptune-"],
+    ["keyspaces cassandra", "", "cloud/purpose-built-databases-on-aws-documentdb-keyspaces-neptune-"],
+    ["neptune graph database", "", "cloud/purpose-built-databases-on-aws-documentdb-keyspaces-neptune-"],
+    ["aurora serverless", "", "cloud/purpose-built-databases-on-aws-documentdb-keyspaces-neptune-"],
+    // ── twenty-sixth wave: task 4.4's NAT instance and per-zone gateways, a card in AWS VPC, added before it ──
+    // Opened at 2 of 3: two reached the VPC topic on ordinary words, which priced NAT gateways and never named
+    // the NAT instance, and `regional nat gateway` found one other card. AWS had added the regional kind since.
+    ["nat instance vs nat gateway", "", "cloud/aws-vpc-subnets-security-groups-nacls"],
+    ["regional nat gateway", "", "cloud/aws-vpc-subnets-security-groups-nacls"],
+    ["nat gateway in each availability zone", "", "cloud/aws-vpc-subnets-security-groups-nacls"],
+    // ── twenty-seventh wave: Google's ACE guide's gaps, added before their topics ──
+    // Opened at 0 of 12: five zeros, `eventarc` and `workforce identity federation` among words the site had
+    // never written, and seven that found other cards. `cloud run functions` reached 30, none about the product,
+    // which the site still called by its name before August 2024, Cloud Functions.
+    ["organization policy constraint", "", "cloud/google-cloud-organization-setup-organization-policies-cloud-"],
+    ["workforce identity federation", "", "cloud/google-cloud-organization-setup-organization-policies-cloud-"],
+    ["billing export to bigquery", "", "cloud/google-cloud-organization-setup-organization-policies-cloud-"],
+    ["cloud asset inventory", "", "cloud/google-cloud-organization-setup-organization-policies-cloud-"],
+    ["shared vpc host project", "", "cloud/google-cloud-network-design-shared-vpc-cloud-ngfw-policies-s"],
+    ["cloud ngfw", "", "cloud/google-cloud-network-design-shared-vpc-cloud-ngfw-policies-s"],
+    ["secure tags firewall", "", "cloud/google-cloud-network-design-shared-vpc-cloud-ngfw-policies-s"],
+    ["premium tier vs standard tier", "", "cloud/google-cloud-network-design-shared-vpc-cloud-ngfw-policies-s"],
+    ["cloud run traffic splitting", "", "cloud/cloud-run-in-operation-revisions-traffic-splitting-eventarc-"],
+    ["eventarc", "", "cloud/cloud-run-in-operation-revisions-traffic-splitting-eventarc-"],
+    ["cloud run functions", "", "cloud/cloud-run-in-operation-revisions-traffic-splitting-eventarc-"],
+    ["rollback cloud run revision", "", "cloud/cloud-run-in-operation-revisions-traffic-splitting-eventarc-"],
+    // ── twenty-eighth wave: Deployment Manager's retirement and two more ACE gaps, added before the topics ──
+    // Opened at 0 of 12: five zeros, `hyperdisk`, `alloydb` and `memorystore valkey` among words the site had never
+    // written, and seven that found other cards. The site's IaC topic called Deployment Manager "being retired";
+    // Google's page says support ended on 31 March 2026.
+    ["deployment manager end of support", "", "cloud/gcp-native-iac-infrastructure-manager-config-controller-depl"],
+    ["infrastructure manager terraform", "", "cloud/gcp-native-iac-infrastructure-manager-config-controller-depl"],
+    ["os login ssh keys", "", "cloud/compute-engine-in-operation-os-login-vm-manager-spot-vms-hyp"],
+    ["vm manager patch", "", "cloud/compute-engine-in-operation-os-login-vm-manager-spot-vms-hyp"],
+    ["spot vm preemption", "", "cloud/compute-engine-in-operation-os-login-vm-manager-spot-vms-hyp"],
+    ["hyperdisk", "", "cloud/compute-engine-in-operation-os-login-vm-manager-spot-vms-hyp"],
+    ["regional persistent disk", "", "cloud/compute-engine-in-operation-os-login-vm-manager-spot-vms-hyp"],
+    ["alloydb", "", "cloud/google-cloud-data-products-alloydb-bigtable-memorystore-pubs"],
+    ["bigtable", "", "cloud/google-cloud-data-products-alloydb-bigtable-memorystore-pubs"],
+    ["memorystore valkey", "", "cloud/google-cloud-data-products-alloydb-bigtable-memorystore-pubs"],
+    ["dataflow exactly once", "", "cloud/google-cloud-data-products-alloydb-bigtable-memorystore-pubs"],
+    ["pub/sub topic", "", "cloud/google-cloud-data-products-alloydb-bigtable-memorystore-pubs"],
+    // ── twenty-ninth wave: the ACE guide's operations and storage items, as cards in existing topics, added before them ──
+    // Opened at 1 of 10: four zeros, `netapp volumes` and `personalized service health` among them, five that found
+    // other cards, `storage transfer service` among 26, and one that reached its topic on ordinary words.
+    ["log sink to bigquery", "", "cloud/gcp-observability-cloud-monitoring-logging-trace"],
+    ["log bucket retention", "", "cloud/gcp-observability-cloud-monitoring-logging-trace"],
+    ["ops agent", "", "cloud/gcp-observability-cloud-monitoring-logging-trace"],
+    ["managed service for prometheus", "", "cloud/gcp-observability-cloud-monitoring-logging-trace"],
+    ["personalized service health", "", "cloud/gcp-observability-cloud-monitoring-logging-trace"],
+    ["active assist recommendations", "", "cloud/gcp-observability-cloud-monitoring-logging-trace"],
+    ["storage transfer service", "", "cloud/gcp-storage-cloud-storage-persistent-disk-filestore"],
+    ["netapp volumes", "", "cloud/gcp-storage-cloud-storage-persistent-disk-filestore"],
+    ["managed lustre", "", "cloud/gcp-storage-cloud-storage-persistent-disk-filestore"],
+    ["managed kafka google cloud", "", "cloud/google-cloud-data-products-alloydb-bigtable-memorystore-pubs"],
   ]],
   ["somebody looking for a job", [
     ["writing a cv", "", "career/your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r"],
@@ -1135,6 +1470,10 @@ const READERS = [
      "mind/layoffs-job-loss-the-first-week-and-the-ones-after"],
     ["the job ad wants ten years of a five year old tool",
      "kind 3 — every word is in the corpus, `job description` and `years of experience` both appear, and `career` covers reading an advert as a wish list rather than a specification. The query is a joke with a real question inside it, and the joke is what carries it: no card has a reason to contain `ten` and `five` about the same tool"],
+    // ── forty-third wave: the puzzle The Data Interview names, run on PostgreSQL 16 ──
+    ["second highest salary", "", "data/the-data-interview"],
+    ["nth highest salary", "", "data/the-data-interview"],
+    ["postgres nulls first", "", "data/the-data-interview"],
   ]],
   ["somebody answerable to an auditor", [
     ["do we need iso 27001", "", "grc/nist-csf-iso-27001-grc-frameworks-explained"],
@@ -1174,6 +1513,22 @@ const READERS = [
     ["who signed off on this exception"],
     ["the vendor will not fill in the questionnaire",
      "kind 3, checked at fault level — `grc` has the whole answer and files it under the phase where the leverage is created rather than the phase where it is missed: *bake security requirements into the contract — SLAs, breach notification, right to audit*. It also ranks the alternative evidence a refusing vendor can still be held to, with what each one is worth. `questionnaire` at 13 is the reader's word for the artefact; the site's word is the clause"],
+    // ── thirty-first wave: the EU AI Act's dates after the AI Omnibus, read from the Commission's page ──
+    ["eu ai act high risk deadline", "", "ai/ai-governance-frameworks"],
+    ["ai omnibus", "", "ai/ai-governance-frameworks"],
+    ["ai act prohibited practices", "", "ai/ai-governance-frameworks"],
+    ["general purpose ai obligations", "", "ai/ai-governance-frameworks"],
+    // ── thirty-fourth wave: NIST CSF 2.0, read from NIST's CSWP 29, added before the fixes ──
+    ["what are the nist csf functions", "", "grc/frameworks-without-the-jargon"],
+    ["csf 2.0 govern", "", "grc/nist-csf-the-common-language-of-cybersecurity"],
+    ["technology infrastructure resilience", "", "grc/nist-cybersecurity-framework-20"],
+    // ── thirty-ninth wave: the EU Cyber Resilience Act, read from the Commission's pages, added before the card ──
+    ["cyber resilience act", "", "grc/the-regulatory-landscape-dora-nis2-cyber-disclosure-rules"],
+    ["actively exploited vulnerability reporting", "", "grc/the-regulatory-landscape-dora-nis2-cyber-disclosure-rules"],
+    ["eu single reporting platform", "", "grc/the-regulatory-landscape-dora-nis2-cyber-disclosure-rules"],
+    // ── fortieth wave: the CIS Controls' version and parts, read from CIS, added before the fix ──
+    ["cis controls v8.1", "", "blueteam/cis-benchmarks-cis-cat-hardening-baselines"],
+    ["cis safeguards implementation groups", "", "blueteam/cis-benchmarks-cis-cat-hardening-baselines"],
   ]],
 ];
 

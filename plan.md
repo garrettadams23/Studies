@@ -18,6 +18,10 @@ every run — fired at 8,020, and 45 more records moved the same way. Lines cons
 28,992 before, 4,227 + 24,765 after. The number that made the first split acute was somebody
 noticing; the number that made the second one happen was a tool printing a warning.
 
+**And a third time, at 8,009,** two months later, on the commit that wrote a request into the
+file. The same warning, the same option, and 45 more records moved oldest-first: 32,774 lines
+before the move and 4,092 + 28,682 after it, which leaves 22 records here.
+
 What is left here is what a session actually reads.
 
 | Section | What it is | State |
@@ -29,7 +33,8 @@ What is left here is what a session actually reads.
 | **Knowledge integration** | Seven items of incoming study notes mapped onto the domains — the first queue in a while that arrived as a list, and three of its seven destinations moved when they were checked. Conducted: one moved again, one of the five concepts §2 called absent was written behind a hyphen, and nine of the reader's sixteen misses found the wrong sense of a word | ✅ **shipped** — see its §6 |
 | **csvistool** | An outbound link to [csvistool.com](https://csvistool.com/), Georgia Tech's data-structures visualizer, and its 41 concepts checked against the site. Half already have a card to hang a link on, 12 of 40 searches return nothing, and one cluster (minimum spanning trees and union-find) is a real gap. Conducted: 39 deep links on the cards that already teach each concept, the gap and both candidates written, and a reader that opened at 0 of 16 closed at 16 of 16 | ✅ **shipped** — see its §5 |
 | **Study notes, batch two** | Study notes on databases, SQL, regex, pandas and Java, checked against the site. The notes are in SQL Server and Java, and the site is in Postgres and Python, so most of the concepts are written and most of the words are not. UML is now asked for by both batches, twelve claims should not reach a card as written, and two regex examples were broken by the spelling sweep | ✅ **shipped** — see its §8 |
-| **Content ideas** | A request for more content to add, in the same clean look. 839 candidate phrases in 17 reader groups, each checked against the content and against the built page's search: 81 are owned by a title, 452 are mentioned in passing and 306 are absent. The largest finding was not on the list: the page is headed *Cycles, Concepts &amp; Diagrams* and 58 of 1,503 hand-written topics carry a shape. Twenty diagrams from components that already exist, about thirty-five candidate cards, exam paths that need no new content, and a look contract with one hole in it. First wave conducted: the hole fixed and gated, the exam reader at 16 of 16, the UML lines drawn, six cards and a topic. Second wave conducted: twelve cards over ten rows, the reader's second batch at 23 of 23, and three tools fixed at their own edges. Third wave conducted: a topic and ten cards over five rows, twelve connectors drawn, the reader's third batch at 16 of 16, and two census answers that were coincidences. Fourth wave conducted: seven theory cards, the theory reader at 15 of 15, and a spelling gate taught a suffix. Fifth wave conducted: three topics and eight cards in the human domains, each under its row's condition, at 17 of 17. Sixth wave conducted: three quotes topics, every line read at its source, two lines moved to Misattributed, at 10 of 10. Seventh wave conducted: the nineteen remaining pictures of §2 in fourteen domains, eight of them drawn with another component than their row named, and two numbers corrected by drawing them. Eighth wave conducted: four exam paths over topics that exist, a path as a deck, the two gaps the census carried, search that no longer reads acronym expansions, and a spelling gate that knows prefixes. Ninth wave conducted: §16's list emptied, five topics for the A+ objectives the paths skipped and a Security+ SY0-801 path read from CompTIA's own objectives. Tenth wave conducted: four more exam paths, PenTest+, CySA+, Linux+ and CISSP, each read from the exam body's own document, and six topics for the objectives they found with nothing to point at. Eleventh wave conducted: a SecurityX path read from CompTIA's own document, and the two CISSP objectives the tenth left, one of which SecurityX needed too | ✅ **shipped** — see its §9 to §19 |
+| **Content ideas** | A request for more content to add, in the same clean look. 839 candidate phrases in 17 reader groups, each checked against the content and against the built page's search: 81 are owned by a title, 452 are mentioned in passing and 306 are absent. The largest finding was not on the list: the page is headed *Cycles, Concepts &amp; Diagrams* and 58 of 1,503 hand-written topics carry a shape. Twenty diagrams from components that already exist, about thirty-five candidate cards, exam paths that need no new content, and a look contract with one hole in it. First wave conducted: the hole fixed and gated, the exam reader at 16 of 16, the UML lines drawn, six cards and a topic. Second wave conducted: twelve cards over ten rows, the reader's second batch at 23 of 23, and three tools fixed at their own edges. Third wave conducted: a topic and ten cards over five rows, twelve connectors drawn, the reader's third batch at 16 of 16, and two census answers that were coincidences. Fourth wave conducted: seven theory cards, the theory reader at 15 of 15, and a spelling gate taught a suffix. Fifth wave conducted: three topics and eight cards in the human domains, each under its row's condition, at 17 of 17. Sixth wave conducted: three quotes topics, every line read at its source, two lines moved to Misattributed, at 10 of 10. Seventh wave conducted: the nineteen remaining pictures of §2 in fourteen domains, eight of them drawn with another component than their row named, and two numbers corrected by drawing them. Eighth wave conducted: four exam paths over topics that exist, a path as a deck, the two gaps the census carried, search that no longer reads acronym expansions, and a spelling gate that knows prefixes. Ninth wave conducted: §16's list emptied, five topics for the A+ objectives the paths skipped and a Security+ SY0-801 path read from CompTIA's own objectives. Tenth wave conducted: four more exam paths, PenTest+, CySA+, Linux+ and CISSP, each read from the exam body's own document, and six topics for the objectives they found with nothing to point at. Eleventh wave conducted: a SecurityX path read from CompTIA's own document, and the two CISSP objectives the tenth left, one of which SecurityX needed too. Fourteenth wave conducted: MD-102 and MS-102 paths read from Microsoft's study guides, AZ-800 found retired and its tag corrected, and the gaps both outlines found listed as the next queue. Fifteenth wave conducted: four topics for MS-102's Defender XDR area, each read from Microsoft's own pages first, at 13 of 13. Sixteenth wave conducted: MS-102's identity and Purview gaps, four topics at 13 of 13, and IdFix found retired. Seventeenth wave conducted: MS-102's last three Defender objectives, three topics at 13 of 13, and the standalone Defender Threat Intelligence portal found retired. Eighteenth wave conducted: four of MD-102's seven gaps at 13 of 13, the Semi-Annual Enterprise Channel found merged into Monthly Enterprise and Windows Backup for Organizations found renamed. Nineteenth wave conducted: MD-102's last three gaps at 13 of 13, and three of the four Security Copilot agents in Intune found retired. Twentieth wave conducted: RASP and IAST from NIST's catalog, and a CKA path read from the Linux Foundation's outline with its three gaps, at 15 of 15, and Ingress NGINX found retired. Twenty-first wave conducted: a GCIH path read from GIAC's objectives and a topic for SANS's DAIR, at 5 of 5, and two statements about NIST SP 800-61 corrected. Twenty-second wave conducted: an AWS SAA-C03 path read from AWS's exam guide, topics for its three gaps, and two AWS services found closed to new customers. Twenty-third wave conducted: seven services the guide gives as examples and the site had never mentioned, at 15 of 15. Twenty-fourth wave conducted: the guide's remaining examples and in-scope services, at 17 of 17, and a discovery service found closed. Twenty-fifth wave conducted: cards inside the AWS topics that already owned each subject, and purpose-built databases, at 15 of 15. Twenty-sixth wave conducted: the NAT instance and AWS's regional NAT gateway, after which every service the SAA-C03 task statements name is on the site. Twenty-seventh wave conducted: a Google Cloud Associate Cloud Engineer path read from Google's exam guide, three gap topics, and Cloud Functions found renamed. Twenty-eighth wave conducted: Deployment Manager's retirement written as a retirement, and two more groups of the guide's items, at 12 of 12. Twenty-ninth wave conducted: the guide's operations and storage items, as cards in the topics that owned them, at 10 of 10. Thirtieth wave conducted: the AI+ tag found to name no CompTIA exam, replaced with SecAI+ and a 30-step path. Thirty-first wave conducted: OWASP's 2026 lists for LLM applications and for agents, and the EU AI Act's dates after the AI Omnibus. Thirty-second wave conducted: NIST AI RMF's seven characteristics and its Generative AI Profile, and a card that had put NIST's name on somebody else's list. Thirty-third wave conducted: OWASP Top 10:2025 in the three topics that teach it, with a map from 2021. Thirty-fourth wave conducted: NIST CSF 2.0's six functions wherever `grc` named five, in NIST's own colors. Thirty-fifth wave conducted: SecAI+'s words for what two `blueteam` topics already taught, and a PenTest+ badge two exams old. Thirty-sixth wave conducted: ATT&amp;CK version 19's fifteen tactics. Thirty-seventh wave conducted: NIST IR 8547's post-quantum dates, HQC, and AES-128 as NIST rates it. Thirty-eighth wave conducted: public TLS certificate lifetimes falling to 47 days, and revocation after Let's Encrypt ended OCSP. Thirty-ninth wave conducted: the EU Cyber Resilience Act, a regulation the site had never named. Fortieth wave conducted: the CIS Controls named at version 8.1, and Kerberos RC4 against Microsoft's current defaults. Forty-first wave conducted: how a package repository is trusted, in the thinnest topic on the site, and Netlify Functions at the owner's request. Forty-second wave conducted: three thin topics deepened from FM 6-0, NVD and GitHub's documentation, and the visual baseline's failure traced to a Playwright version. Forty-third wave conducted: the last three thin topics, a SQL puzzle run on PostgreSQL 16, HTTP errors read by the layer that sends them and what certifications cost to keep, and a gate taught to check a row's headline | ✅ **shipped** — see its §9 to §49 |
+| **Error codes and packaging** | Three items from the owner, added as written: an error-code lookup in the header's row of buttons, the Intune and MECM codes compared, and MSI, .intunewin and EXE explained. Each checked against the site first, with the owner's guide to MSI against EXE in MECM kept beside them as written | ✅ **shipped** — see its §5 |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
 | Session records | The recent ones. The rest are in `plan-archive.md`, oldest first — **the counts are the *Session records* row of the measured-state table**, and were a second copy here that had been wrong by five since the split | 📘 living |
 
@@ -52,23 +57,23 @@ the row needs was already running. Three are left, and all three want a stopwatc
 
 | Measure | Value | Tool |
 |---|---|---|
-| Topics | **1,585** across 30 domains | `depth_report.py` |
-| Thin (one card, under 1,800 chars) | **7**, 0% — and `--thin` prints badge, position and xref count beside each, because the ones left are short by design. Three of the eight were not: two military lookup cards and a domain preamble each had a judgement they were not making | `depth_report.py` |
-| Mean chars per concept card | **1,424**, or **1,146 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
+| Topics | **1,629** across 30 domains | `depth_report.py` |
+| Thin (one card, under 1,800 chars) | **0**, 0% — and `--thin` prints badge, position and xref count beside each, because a short topic can be short by design. Three of the eight were not: two military lookup cards and a domain preamble each had a judgement they were not making. The forty-first wave took a seventh off the list: `linux`'s *Package Management*, the thinnest topic on the site, which had a table of commands and nothing on how a repository is trusted. The forty-second wave took three more: the two military lookup topics, neither of which said that their numbers name only one of FM 6-0's three kinds of staff officer, and `devops`'s supply-chain overview, which never named the pipeline's own dependencies. The forty-third wave took the last three: `data`'s interview topic, `web`'s full-stack overview and `eng`'s certification roadmap, each given the card its table implied and never wrote. When those cards landed the row still read **3** while the tool printed 0, and `check_plan_numbers.py` passed it on the 0 of *0%*; it checks each row's headline now | `depth_report.py` |
+| Mean chars per concept card | **1,448**, or **1,161 excluding verdicts** — the second is the padding counter-metric. It has tracked the first within two across every wave this session, which is the shape to want: the two numbers moving together | `depth_report.py` |
 | Orphans | **60**, every one generated, **0 deep** | `orphan_report.py` |
-| Near-duplicate pairs | **96** (41 by overlap, 55 by containment) — 78 explained by §3, 18 read and recorded, **0 unread** | `near_duplicates.py` |
-| Reader questions answered | **513 of 537**, **0 unexplained** — thirty-two batches. The newest is the eleventh wave's, 8 queries for CISSP 1.6 and 7.15, added to *somebody revising for a CompTIA exam* before their topics. It opened at **0 of 8**, four zeros and four that found the wrong card, `cobit` among them reaching only the acronym dictionary, and closed at 8 of 8: five find their topic alone and three find it among two or three. Before it came the tenth wave's, 18 queries for six objectives four exam outlines had no topic for, added to *somebody revising for a CompTIA exam* before their topics. It opened at **0 of 18**, eleven zeros and seven that found the wrong card, `incident communication plan` among them reaching 23 topics and none of them a plan, and closed at 18 of 18: fourteen find their topic alone, and four find it among two to eight. Before it came the ninth wave's, 16 queries for the five A+ objectives the exam paths skipped, added to *somebody revising for a CompTIA exam* before their topics. It opened at **0 of 16**, ten zeros and six that found the wrong card, and closed at 16 of 16 with three `endpoint` topics and two in `hw`. Two closed in prose, each by the card saying what the reader asked in the reader's words: `windows 11 tpm requirement` once the card called them Windows 11's requirements, and `fat32 file size limit` once it named FAT32's file size limit. Before it came the sixth wave's, 10 queries for §4 rows 32 to 34, the quotes, added to *a learner meeting a subject* before their topics. It opened at **0 of 10**, all ten zeros, and closed at 10 of 10, with every line in the three topics read at its source first. Before it came the fifth wave's, 17 queries for *Content ideas* §4 rows 28 to 31 and 35, added before their cards to two readers that already ask about those subjects, *a learner meeting a subject* and *somebody looking for a job*. It opened at **0 of 17** and closed at 17 of 17: 14 zeros and 3 that found the wrong card, `active listening` among them through load balancers and nmap. One closed in prose, not a card: `depressed for weeks` needed the low-mood topic to use the reader's word. Before it came *a student on a theory course*, the second reader *Content ideas* §7.3 named: 15 queries for its fourth wave, seven rows, added before their cards. It opened at **0 of 15** and closed at 15 of 15: 8 zeros and 7 that found the wrong card, `segmentation fault` among them through network segmentation. Before it, the exam reader's third batch, 16 queries for the third wave, opened at **0 of 16** and closed at 16 of 16: 12 zeros and 4 that found the wrong card, `pivot table` among them through *pivot* and *table* in threat and grc cards. Its second, 23 queries for the second wave, opened at **0 of 23** and closed at 23 of 23: 16 zeros and 7 that found the wrong card, among them three that reached only the acronym dictionary and one an AI card that happens to contain *tone* and *probe*. Its first batch, *somebody revising for a CompTIA exam*, was added the same way for the first wave's five rows. It opened at **0 of 16** and closed at 16 of 16: 8 zeros and 8 that found the wrong card. Four of the zeros were words the site had never written, among them `scannow` and `pbq`, and `crc errors` reached a modular-arithmetic card. The wave also disturbed one old query: `the user has two accounts` sat on the wide threshold at 60 and went to 61, and it carried a verdict naming the gap underneath it until the eighth wave wrote that gap as its own topic, which the query now finds alone. The reader before it, *somebody looking up a character code or a handshape*, was added from a request for the ASCII character set with ASL added to it, before the card was written. It opened at **0 of 12** and closed at 12 of 12: five zeros, and seven that found cards but never the chart. `asl` was a zero the corpus counted fifteen times, every one inside another word: *asleep*, ASLR, Maslow, SASL. The reader before it, *a student with a data structures course*, was added from *csvistool* the same way. It opened at **0 of 16** and closed at 16 of 16, the first reader to open with nothing answered: eleven zeros, and five that find the wrong card. The one before that, *a student on a software engineering course*, was added from *Knowledge integration* the same way. It opened at 9 of 25 and closed at 25 of 25, and **nine of its first sixteen misses found cards, just not the right ones**: `logic gates` reaches pipeline gates and `multi core processor` the GDPR's data processor, the wrong-sense shape the last two queue sections found in chip subtitles and in *stack* and *queue*, counted here for the first time. Before that, *a student on a SQL Server and Java course* opened at 14 of 15 missing and closed at 15 of 15. The first two subject-shaped ones opened at a third missing; the ten symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding — batches seventeen and eighteen opened at 22 of 29 and 20 of 28 — the same two thirds twice more. Of the **23** zeros and **1** wrong-card, all are recorded verdicts. Two recorded zeros left that list by coincidence in the third wave, and their notes say so. `the user says the file is gone` matched the Windows tools topic with `user` found only inside the expansion of UDP, until the eighth wave stopped search matching inside expansions and it went back to zero, which is what a reader gets. `the usb ports on one side stopped working` matched a connector card's *wider on one side*, and relaxation added Motherboard Anatomy, which was half an answer until the eighth wave wrote the card it needed there. The 8 wide results are verdicts too, and all six of these numbers are checked against a live census by `query_probe.mjs --check-plan` — the row needs a browser, so the browser checks it. The staleness check reports a verdict that has stopped describing its row, and it has now caught two, both on a note of its own author's: the first time the note was right and the check was wrong — `\bzeros?\b` was matching *zero* inside **zero-touch** — and the second time the note was simply out of date, which is what it is for. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
-| Learning paths | **112 paths, 2,062 steps, 1,525 of 1,585 topics, 0 hand-written topics off a path** | `check_paths.py` |
-| Related links | **1,525 topics, 5,082 links, 0 one-way** — one mainland of **1,509 (98%)** and **one** island: `math`, 16 of 16, which is a decision rather than a backlog. It read *three reference-domain islands* until somebody measured how much of each island's domain was already connected — 29 of `shortcut`'s 36 and 3 of `quotes`' 6 — and `orphan_report.py` prints that figure now | `suggest_related.py --check` |
-| Page budget | **29% raw** headroom — room for ~650 more topics | `page_budget.py` |
+| Near-duplicate pairs | **97** (41 by overlap, 56 by containment) — 78 explained by §3, 19 read and recorded, **0 unread** | `near_duplicates.py` |
+| Reader questions answered | **784 of 807**, **0 unexplained** — sixty-eight batches. The newest is the forty-third wave's three: 3 queries for the second-highest-salary puzzle added to *somebody looking for a job*, 3 for which layer sent an HTTP error added to *somebody debugging their own code*, and 3 for what certifications cost to keep added to *somebody revising for a CompTIA exam*, all before the cards. They opened at **1 of 9**, four zeros and four that found other cards; `second highest salary` already reached the interview topic, whose table named the puzzle without doing it. They closed at 9 of 9, two alone and seven among two to nine, after three wording fixes that put the reader's words in the cards: each status code's name, *Gateway Timeout* among them, *CEUs* beside continuing education units, and *requirements*. Before them came the forty-second wave's two: 6 queries for the staff officers FM 6-0 describes added to *a learner meeting a subject*, and 4 for a CI pipeline's own dependencies added to *a Linux or platform engineer*, all before the cards. They opened at **0 of 10**, six zeros and four that found other cards, `what does the s-3 do` among them reaching forty on its letters, and closed at 10 of 10: five alone, and five among two to forty-one. Before them came the forty-first wave's, 3 queries for how a package repository is trusted, added to *a Linux or platform engineer* before the card. It opened at **0 of 3** and closed at 3 of 3, all alone. Before it came the fortieth wave's two: 2 queries for the CIS Controls' version and parts added to *somebody answerable to an auditor*, and 2 for Kerberos after CVE-2026-20833 added to *a SOC analyst or defender*, all before the fixes. They opened at **0 of 4**, all zeros, and closed at 4 of 4, all four alone; the two Kerberos terms closed only once they were in the row's visible text and not just its fact anchor, which search does not read. Before them came the thirty-ninth wave's, 3 queries for the EU Cyber Resilience Act, added to *somebody answerable to an auditor* before the card. It opened at **1 of 3**, and that one by coincidence: `cyber resilience act` reached the regulatory topic through *cyber*, *resilience* and *act* in three unrelated sentences, on a site that had never named the regulation. It closed at 3 of 3, the regulation's name alone. Before it came the thirty-eighth wave's, 4 queries for public TLS certificate lifetimes and the end of OCSP at Let's Encrypt, added to *a Linux or platform engineer* before the cards. It opened at **0 of 4**, all zeros, and closed at 4 of 4: two alone, and `47 day certificates` and `ocsp turned off` among five and six. Before it came the thirty-seventh wave's, 4 queries for NIST's post-quantum transition report and HQC, added to *somebody revising for a CompTIA exam* before the cards. It opened at **1 of 4**: `post-quantum migration deadline` reached the topic on ordinary words, and `nist ir 8547`, `hqc` and `is aes-128 quantum safe` were zeros, the first two words the site had never written. It closed at 4 of 4, three alone. Before it came the thirty-sixth wave's, 3 queries for ATT&CK version 19's fifteen tactics, added to *a SOC analyst or defender* before the cards. It opened at **1 of 3**: the old name, `defense evasion`, already reached the framework topic, and the two new names were zeros. It closed at 3 of 3, each among two. Before it came the thirty-fifth wave's, 6 queries for the rest of SecAI+'s summary terms, added to *somebody revising for a CompTIA exam*. It opened at **4 of 6**: four already reached a fitting topic, and two found other cards, `alert correlation` because the correlation topic never says *alert*, and `behavior analysis` because the UEBA topic says *analytics*. It closed at 6 of 6, those two alone, with one sourced sentence in each topic. Before it came the thirty-fourth wave's, 3 queries for NIST CSF 2.0, added to *somebody answerable to an auditor* before the fixes. It opened at **2 of 3**: the two about the functions were already answered, because the errors were inside cards the reader could find, and only `technology infrastructure resilience`, one of NIST's category names, was a zero. It closed at 3 of 3, that one alone. A census measures whether the reader reaches a card, not whether the card is right, and this wave was the second kind. Before it came the thirty-third wave's, 5 queries for OWASP Top 10:2025, added to *somebody revising for a CompTIA exam* before the cards. It opened at **0 of 5**, one zero, `mishandling of exceptional conditions`, and four that found other cards. It closed at 5 of 5, all five among three to six topics, after one wording fix: the first closing run found `security logging and alerting failures` in two topics but not the one it wanted, which wrote the category with an ampersand, as OWASP's introduction does, and now writes *and*, as OWASP's list does. Before it came the thirty-second wave's, 6 queries for NIST's AI RMF and its Generative AI Profile, added to *somebody revising for a CompTIA exam* before the cards. It opened at **0 of 6**, five zeros, every one a term NIST uses and the site never had, and `valid and reliable` reaching twelve cards on ordinary words. It closed at 6 of 6: three alone, two among two, and `valid and reliable` among thirteen, because a phrase found in one topic whose address holds neither word widens, and TCP's reliability comes first in page order. Before it came the thirty-first wave's two: 8 queries for OWASP's 2026 lists added to *somebody revising for a CompTIA exam*, and 4 for the EU AI Act's dates after the AI Omnibus added to *somebody answerable to an auditor*, both before the cards. They opened at **0 of 12**, ten zeros and two that found other cards by coincidence: `unbounded consumption` reached the Azure Functions card, whose cheapest plan is called Consumption and whose dearest runs unbounded, and `denial of wallet` the observability topic's card on attacker-controlled cardinality, which is one. They closed at 12 of 12, three alone and nine among two to four. Before them came the thirtieth wave's, 7 queries for CompTIA's SecAI+, added to *somebody revising for a CompTIA exam* before its path. It opened at **5 of 7**, because the site had the subjects and lacked two of the exam's words: CompTIA's name for its largest domain, `securing ai systems`, and the field's standard term, `adversarial machine learning`, each of which found other cards. It closed at 7 of 7 with a sentence in each topic using the term; one finds its topic alone and six among two to ten, `data poisoning attack` behind DNS cache poisoning in first place. Before it came the twenty-ninth wave's, 10 queries for the ACE guide's operations and storage items, answered by cards in existing GCP topics. It opened at **1 of 10**, four zeros, five that found other cards and one already reaching its topic on ordinary words, and closed at 10 of 10, five alone and five among two to eleven. Before it came the twenty-eighth wave's, 12 queries for Deployment Manager's retirement and two more of the ACE guide's gaps, added to *somebody with a cloud bill and a pager* before the topics. It opened at **0 of 12**, five zeros and seven that found other cards, and closed at 12 of 12, five alone and seven among two to ten. On the way it briefly answered an old recorded zero by accident: `terraform state locked` matched the Deployment Manager card's *new users blocked*, because search matches inside words and *blocked* holds *locked*; the census reported the note as stale, and the row now says *refused*. Before it came the twenty-seventh wave's, 12 queries for gaps Google's Associate Cloud Engineer guide shows, added to *somebody with a cloud bill and a pager* before their topics. It opened at **0 of 12**, five zeros, `eventarc` and `workforce identity federation` among words the site had never written, and seven that found other cards, `cloud run functions` reaching 30 and none of them about the product, which the site still called by its old name; it closed at 12 of 12, four alone and eight among two to fifteen. Before it came the twenty-sixth wave's, 3 queries for task 4.4's NAT instance and per-zone gateways, a card added to the AWS VPC topic. It opened at **2 of 3**: two reached the VPC topic on ordinary words, a topic that priced NAT gateways and never named the NAT instance, and `regional nat gateway` found one other card, because AWS had added the regional kind since the topic was written. It closed at 3 of 3. Before it came the twenty-fifth wave's, 15 queries for the guide's last task-statement examples and five in-scope databases, most of them answered by cards added to existing topics. It opened at **3 of 15**, the first batch to open above zero: three reached their existing topic on ordinary words without it naming the thing asked for, nine were zeros and three found other cards. It closed at 15 of 15, twelve alone and three among two to five. The wave also answered an old recorded zero: `nat gateway is the biggest line on the bill` reaches the cost control topic, whose new Compute Optimizer card names NAT gateways among what it rightsizes, beside the card on finding which resource a bill line comes from; it is recorded as answered, with a note that the per-GB reason the line is large is in another topic the query does not reach. Before it came the twenty-fourth wave's, 17 queries for the SAA-C03 guide's remaining examples and in-scope gaps, added to *somebody with a cloud bill and a pager* before their topics. It opened at **0 of 17**, eleven zeros, `rekognition`, `sagemaker` and `appflow` among words the site had never written, and six that found other cards, `aws config rules` reaching 31 and none of them about AWS Config, and closed at 17 of 17 after two wording fixes made before the first run, each giving a card AWS's own words: *AWS DMS* beside the service's full name, and *migrate* where the Classic Load Balancer card had said *migrating*, because search matches inside words and *migrate* is not inside *migrating*. Twelve find their topic alone and five among two to seven. Before it came the twenty-third wave's, 15 queries for seven services the SAA-C03 guide names as examples, added to *somebody with a cloud bill and a pager* before their topics. It opened at **0 of 15**, twelve zeros, `valkey` and `quicksight` among words the site had never written, and three that found other cards, `aws backup vault lock` reaching six and none of them about AWS Backup, and closed at 15 of 15 with no prose fix: eight find their topic alone and seven among two to six. The three Cognito queries return five cards each because search matches inside words, and `cognito` is inside *incognito*, which the browser shortcut and web cards use for private windows. Before it came the twenty-second wave's, 14 queries for the AWS SAA-C03 outline's gaps added to *somebody with a cloud bill and a pager* before their topics. It opened at **0 of 14**, seven zeros, `eventbridge`, `kinesis` and `datasync` among words the site had never written, and seven that found other cards, and closed at 14 of 14 after one prose fix: `step functions express` reached 27 cards on ordinary words until the Express verdict named the service in full, and it finds its topic alone now. Eight find their topic alone and six among two to six. Before it came the twenty-first wave's, 5 queries for DAIR and NIST's 2025 revision added to *a SOC analyst or defender* before the topic. It opened at **0 of 5**, two zeros and three that found other cards, and closed at 5 of 5 once one query's want moved to the card that actually answered it: `nist 800-61 rev 3` had been aimed at the PICERL topic, and the DAIR topic's third card is about that revision. Before it came the twentieth wave's two: 4 queries for RASP and IAST added to *somebody revising for a CompTIA exam*, which opened at **0 of 4**, all zeros, and 11 for the CKA outline's gaps added to *a Linux or platform engineer*, which opened at **0 of 11**, seven zeros and four that found other cards. Both closed in full, 15 of 15, after two prose fixes that put the reader's form of a word in a card, `expired` beside the certificates and `throttling` beside the CPU limit; ten find their topic alone. The wave also pushed two old queries over the wide line, `i cannot install software` and `why do we use containers`, each to 61 by ordinary words in the new Kubernetes topics, and both now carry verdicts; the Docker card the second wants is still among its answers. Before them came the nineteenth wave's, 13 queries for MD-102's last three gaps, added to *a service desk engineer* before their topics. It opened at **0 of 13**, seven zeros and six that found other cards, `policy configuration agent` among them reaching 21 cards and none of them about Intune, and closed at 13 of 13 after two prose fixes: `vbs not running` is the name of Autopatch's own alert, which the Hotpatch card mentioned without naming, and `approval request expired` stopped at a governance card holding all three words until the approval card used Microsoft's status name, *Expired*. Six find their topic alone and seven among two to sixteen. Before it came the eighteenth wave's, 13 queries for four of MD-102's gaps, added to *a service desk engineer* before their topics. It opened at **0 of 13**, four zeros and nine that found other cards, `app control for business` among them reaching 34 cards and none of them about App Control, and closed at 13 of 13: eight find their topic alone and five find it among two to twenty. The old zero `the user says the file is gone` was answered by coincidence a second wave running, this time by the Microsoft 365 Apps topic's *the slow lane is gone*; the phrase was reworded, and the query's note now records that its words are common enough for this to recur. Before it came the seventeenth wave's, 13 queries for MS-102's last three Defender objectives, added to *a SOC analyst or defender* before their topics. It opened at **0 of 13**, eight zeros and five that found other cards, `alert policy email notifications` among them reaching fourteen cards and none of them about alert policies, and closed at 13 of 13: seven find their topic alone and six find it among two to fifteen. The wave also gave an old zero an answer it should not have had: `the user says the file is gone` reached the threat intelligence topic, which held *users*, *says*, *files* and *gone* in four unrelated sentences, and relaxation widened that one match to 33 cards. *A portal that is gone* became *a portal that no longer exists*, and the query is back to the zero its note records. Before it came the sixteenth wave's, 13 queries for MS-102's identity and Purview objectives, added to *a service desk engineer* before their topics. It opened at **0 of 13**, nine zeros and four that found other cards, and closed at 13 of 13 after one prose fix: `helpdesk admin for one office only` lacked only *office*, which is what the card's example of a region meant. The wave also took an old query's answer away for an hour. `bitlocker recovery key` had matched one card exactly and widened to the BitLocker topic; the administrative units card's *BitLocker recovery keys* made two exact matches, so search stopped widening, and the BitLocker topic, which said *recovery key* but never Microsoft's full name for it, dropped out. It says the full name in its table now. Before it came the fifteenth wave's, 13 queries for MS-102's Defender XDR objectives, added to *a SOC analyst or defender* before their topics. It opened at **0 of 13**, five zeros and eight that found other cards, `exposure score` among them reaching ten cards and none of them about Microsoft's product, and closed at 13 of 13: five find their topic alone and eight find it among two to eighteen. Before it came the twelfth wave's, 8 queries for the owner's packaging and error-code items, added to *a service desk engineer* before their topics. It opened at **0 of 8**, one zero and seven that found other cards, and closed at 8 of 8. The same topic gave an older question its target: `the software installed but does not appear`, recorded with none, now names the error-code topic, which says it in those words. Before it came the eleventh wave's, 8 queries for CISSP 1.6 and 7.15, added to *somebody revising for a CompTIA exam* before their topics. It opened at **0 of 8**, four zeros and four that found the wrong card, `cobit` among them reaching only the acronym dictionary, and closed at 8 of 8: five find their topic alone and three find it among two or three. Before it came the tenth wave's, 18 queries for six objectives four exam outlines had no topic for, added to *somebody revising for a CompTIA exam* before their topics. It opened at **0 of 18**, eleven zeros and seven that found the wrong card, `incident communication plan` among them reaching 23 topics and none of them a plan, and closed at 18 of 18: fourteen find their topic alone, and four find it among two to eight. Before it came the ninth wave's, 16 queries for the five A+ objectives the exam paths skipped, added to *somebody revising for a CompTIA exam* before their topics. It opened at **0 of 16**, ten zeros and six that found the wrong card, and closed at 16 of 16 with three `endpoint` topics and two in `hw`. Two closed in prose, each by the card saying what the reader asked in the reader's words: `windows 11 tpm requirement` once the card called them Windows 11's requirements, and `fat32 file size limit` once it named FAT32's file size limit. Before it came the sixth wave's, 10 queries for §4 rows 32 to 34, the quotes, added to *a learner meeting a subject* before their topics. It opened at **0 of 10**, all ten zeros, and closed at 10 of 10, with every line in the three topics read at its source first. Before it came the fifth wave's, 17 queries for *Content ideas* §4 rows 28 to 31 and 35, added before their cards to two readers that already ask about those subjects, *a learner meeting a subject* and *somebody looking for a job*. It opened at **0 of 17** and closed at 17 of 17: 14 zeros and 3 that found the wrong card, `active listening` among them through load balancers and nmap. One closed in prose, not a card: `depressed for weeks` needed the low-mood topic to use the reader's word. Before it came *a student on a theory course*, the second reader *Content ideas* §7.3 named: 15 queries for its fourth wave, seven rows, added before their cards. It opened at **0 of 15** and closed at 15 of 15: 8 zeros and 7 that found the wrong card, `segmentation fault` among them through network segmentation. Before it, the exam reader's third batch, 16 queries for the third wave, opened at **0 of 16** and closed at 16 of 16: 12 zeros and 4 that found the wrong card, `pivot table` among them through *pivot* and *table* in threat and grc cards. Its second, 23 queries for the second wave, opened at **0 of 23** and closed at 23 of 23: 16 zeros and 7 that found the wrong card, among them three that reached only the acronym dictionary and one an AI card that happens to contain *tone* and *probe*. Its first batch, *somebody revising for a CompTIA exam*, was added the same way for the first wave's five rows. It opened at **0 of 16** and closed at 16 of 16: 8 zeros and 8 that found the wrong card. Four of the zeros were words the site had never written, among them `scannow` and `pbq`, and `crc errors` reached a modular-arithmetic card. The wave also disturbed one old query: `the user has two accounts` sat on the wide threshold at 60 and went to 61, and it carried a verdict naming the gap underneath it until the eighth wave wrote that gap as its own topic, which the query now finds alone. The reader before it, *somebody looking up a character code or a handshape*, was added from a request for the ASCII character set with ASL added to it, before the card was written. It opened at **0 of 12** and closed at 12 of 12: five zeros, and seven that found cards but never the chart. `asl` was a zero the corpus counted fifteen times, every one inside another word: *asleep*, ASLR, Maslow, SASL. The reader before it, *a student with a data structures course*, was added from *csvistool* the same way. It opened at **0 of 16** and closed at 16 of 16, the first reader to open with nothing answered: eleven zeros, and five that find the wrong card. The one before that, *a student on a software engineering course*, was added from *Knowledge integration* the same way. It opened at 9 of 25 and closed at 25 of 25, and **nine of its first sixteen misses found cards, just not the right ones**: `logic gates` reaches pipeline gates and `multi core processor` the GDPR's data processor, the wrong-sense shape the last two queue sections found in chip subtitles and in *stack* and *queue*, counted here for the first time. Before that, *a student on a SQL Server and Java course* opened at 14 of 15 missing and closed at 15 of 15. The first two subject-shaped ones opened at a third missing; the ten symptom-shaped ones at **two thirds**, and that gap is the census's most repeated finding — batches seventeen and eighteen opened at 22 of 29 and 20 of 28 — the same two thirds twice more. Of the **22** zeros and **1** wrong-card, all are recorded verdicts. Two recorded zeros left that list by coincidence in the third wave, and their notes say so. `the user says the file is gone` matched the Windows tools topic with `user` found only inside the expansion of UDP, until the eighth wave stopped search matching inside expansions and it went back to zero, which is what a reader gets. `the usb ports on one side stopped working` matched a connector card's *wider on one side*, and relaxation added Motherboard Anatomy, which was half an answer until the eighth wave wrote the card it needed there. The 10 wide results are verdicts too, and all six of these numbers are checked against a live census by `query_probe.mjs --check-plan` — the row needs a browser, so the browser checks it. The staleness check reports a verdict that has stopped describing its row, and it has now caught two, both on a note of its own author's: the first time the note was right and the check was wrong — `\bzeros?\b` was matching *zero* inside **zero-touch** — and the second time the note was simply out of date, which is what it is for. The wrong-card one is kept on purpose: `the intern deleted the wrong thing` asks the site to contain a word it has no reason to contain, and writing one in is the keyword stuffing the census exists to refuse | `query_probe.mjs` |
+| Learning paths | **119 paths, 2,334 steps, 1,569 of 1,629 topics, 0 hand-written topics off a path** | `check_paths.py` |
+| Related links | **1,569 topics, 5,494 links, 0 one-way** — one mainland of **1,553 (98%)** and **one** island: `math`, 16 of 16, which is a decision rather than a backlog. It read *three reference-domain islands* until somebody measured how much of each island's domain was already connected — 29 of `shortcut`'s 36 and 3 of `quotes`' 6 — and `orphan_report.py` prints that figure now | `suggest_related.py --check` |
+| Page budget | **24% raw** headroom — room for ~503 more topics | `page_budget.py` |
 | Throttled load | **~3.0 s** = 0.5 s shell + 1.0 s script.js + ~190 ms/MB — *this container only* | `measure_load.mjs` |
 | Search &amp; heap at 3x the content | **86 ms · 93 MB** at 4,602 indexed topics — search is not the constraint, load is | `measure_load.mjs --synthetic` |
-| Depth tail | **10th percentile 2,171 chars**, median 3,826 — the number a deepening wave has to move | `depth_report.py` |
-| Dated claims | **47 volatile spans and 80 fact anchors: 127 dated claims**, and **3** console candidates — all three read and recorded as false positives in `context()`'s docstring. The denominator is still not countable and that is Phase 11 §3's whole finding; the numerator always was, and spent a year in prose because nobody noticed the difference. It rose by two in the V2 pass, against §6's counter-discipline that a rising count is not automatically progress — both are limits a card **designs around**, which is the one case §5 says a span is right for, and the same pass rewrote nothing because the other ten claims were never facts about the world. It rose by eighteen with the csvistool deep links, one anchor per line of links, which is the rise csvistool §1 asked for: a route is a key in someone else's repository, and one rename there breaks it silently. It rose by one with the ASCII chart's source link, and that anchor records that this container could not fetch the page rather than claiming a check. It rose by one more with GCM's random-nonce limit in the cipher-modes card, and that anchor says the NIST figure was confirmed in search results and the PDF was not fetched. One more for Cisco's default administrative distances, said the same way, and two for the Windows repair ladder: Microsoft's DISM-before-SFC order and the two failed starts that open WinRE. And one for CompTIA's rule that a virtual PBQ cannot be skipped and returned to, which this container could not fetch from comptia.org and says so. Two more for Cisco's syslog defaults in the severity card: the trap level that ships as informational, and the two messages one interface going down produces, both confirmed in search results with the pages not fetched. Three more in the cabling and discovery cards, said the same way: the standard's preference for T568A, Cisco's rule that fixing speed and duplex turns Auto-MDI-X off, and the CDP and LLDP timers. One more for the Excel versions that have XLOOKUP, one for the A+ objective numbers behind the malware removal steps, one for the two exercise studies the header image's numbers were checked against, two in `cs` for ECC memory's code and the Mars Pathfinder mutex, and five in `military` for the transition programs, the 9-line, the date-time group and METT-TC, said the same way. The date-time group's anchor says that no source was found for it, which is what an anchor is for. Two in `mind` date the health services' two-week line and the COBRA trial, and one in `philosophy` records which translation the Epicurus quotation is from. Four in `quotes` record the pages each line was read on, fetched this time and not only searched. One more in `military` records where Boyd's line from Orient to Act was read about, and that both primary PDFs refused the fetch, and one in `blueteam` dates the Pyramid of Pain to Bianco in 2013 from a secondary overview, his post unread. One in `infra` records that an Enforced link moves to the end of processing, from Microsoft's pages as quoted in search, and one in `m365` that a rule setting the spam level to −1 cannot pass malware or high-confidence phishing, said the same way. Two in `infra`'s two-accounts topic date how sync matches a user and how long a deleted one can be restored, and three in `endpoint` date the edition differences, subscription activation, and the MBR, GPT and Windows 11 limits. Three in `hw` date the file systems' limits and support, NTFS permissions on copy and move, and Backblaze's SMART figures, which are from its 2016 data. Ten more in the tenth wave's six topics, all from search results with the pages not fetched: two in `linux` for dracut's `mkinitrd` wrapper and libvirt's open network mode, three in `threat` for ATT&CK's injection and side-loading numbers and Sysmon's events, three in `sec` for the DES search, the padding oracles and the side-channel papers, and two in `ops` for the NIS2 and Form 8-K clocks | `check_volatility.py` |
+| Depth tail | **10th percentile 2,298 chars**, median 3,893 — the number a deepening wave has to move | `depth_report.py` |
+| Dated claims | **61 volatile spans and 354 fact anchors: 415 dated claims**, and **3** console candidates — all three read and recorded as false positives in `context()`'s docstring. The denominator is still not countable and that is Phase 11 §3's whole finding; the numerator always was, and spent a year in prose because nobody noticed the difference. It rose by two in the V2 pass, against §6's counter-discipline that a rising count is not automatically progress — both are limits a card **designs around**, which is the one case §5 says a span is right for, and the same pass rewrote nothing because the other ten claims were never facts about the world. It rose by eighteen with the csvistool deep links, one anchor per line of links, which is the rise csvistool §1 asked for: a route is a key in someone else's repository, and one rename there breaks it silently. It rose by one with the ASCII chart's source link, and that anchor records that this container could not fetch the page rather than claiming a check. It rose by one more with GCM's random-nonce limit in the cipher-modes card, and that anchor says the NIST figure was confirmed in search results and the PDF was not fetched. One more for Cisco's default administrative distances, said the same way, and two for the Windows repair ladder: Microsoft's DISM-before-SFC order and the two failed starts that open WinRE. And one for CompTIA's rule that a virtual PBQ cannot be skipped and returned to, which this container could not fetch from comptia.org and says so. Two more for Cisco's syslog defaults in the severity card: the trap level that ships as informational, and the two messages one interface going down produces, both confirmed in search results with the pages not fetched. Three more in the cabling and discovery cards, said the same way: the standard's preference for T568A, Cisco's rule that fixing speed and duplex turns Auto-MDI-X off, and the CDP and LLDP timers. One more for the Excel versions that have XLOOKUP, one for the A+ objective numbers behind the malware removal steps, one for the two exercise studies the header image's numbers were checked against, two in `cs` for ECC memory's code and the Mars Pathfinder mutex, and five in `military` for the transition programs, the 9-line, the date-time group and METT-TC, said the same way. The date-time group's anchor says that no source was found for it, which is what an anchor is for. Two in `mind` date the health services' two-week line and the COBRA trial, and one in `philosophy` records which translation the Epicurus quotation is from. Four in `quotes` record the pages each line was read on, fetched this time and not only searched. One more in `military` records where Boyd's line from Orient to Act was read about, and that both primary PDFs refused the fetch, and one in `blueteam` dates the Pyramid of Pain to Bianco in 2013 from a secondary overview, his post unread. One in `infra` records that an Enforced link moves to the end of processing, from Microsoft's pages as quoted in search, and one in `m365` that a rule setting the spam level to −1 cannot pass malware or high-confidence phishing, said the same way. Two in `infra`'s two-accounts topic date how sync matches a user and how long a deleted one can be restored, and three in `endpoint` date the edition differences, subscription activation, and the MBR, GPT and Windows 11 limits. Three in `hw` date the file systems' limits and support, NTFS permissions on copy and move, and Backblaze's SMART figures, which are from its 2016 data. Ten more in the tenth wave's six topics, all from search results with the pages not fetched: two in `linux` for dracut's `mkinitrd` wrapper and libvirt's open network mode, three in `threat` for ATT&CK's injection and side-loading numbers and Sysmon's events, three in `sec` for the DES search, the padding oracles and the side-channel papers, and two in `ops` for the NIS2 and Form 8-K clocks. Eleven more in the twelfth wave's two `endpoint` topics. Eight are from Microsoft's own pages, fetched and read — the Windows Installer, Intune and Configuration Manager error references, msiexec's switches, the Win32 content prep tool and both tools' app settings — and one from Inno Setup's documentation. Two are from search results and say so: NSIS's case-sensitive switch, whose manual page refused the request, and Intune's default return codes, which Microsoft's page says exist without listing them. Twenty-one more anchors and four spans in the fifteenth wave's four Defender topics, every anchor from a Microsoft page fetched and read, with the date Microsoft last updated it. The spans mark the console paths, where the portal is and where a setting lives, because those are what Microsoft renames, and the console count asked for them: it went from three to six when the topics landed and back to three when the spans did. Thirteen more anchors and two spans in the sixteenth wave's four topics. Twelve anchors are from Microsoft pages fetched and read; the thirteenth records IdFix's retirement from its own repository, beside the 404 that Microsoft's page about it now returns. One older anchor changed too: *One User, Two Accounts* had cited the July 2026 hard-match hardening from search results, and now says the sync-errors page was read. Sixteen more anchors and three spans in the seventeenth wave's three topics, every anchor from a Microsoft page fetched and read, among them the cmdlet reference that documents `Set-ProtectionAlert`'s `NotifyUser` as reserved for Microsoft's own use. The console count went from three to six when the topics landed, all three new ones naming the Defender portal, and back to three when the spans did, the same as in the fifteenth wave. Seventeen more anchors and two spans in the eighteenth wave's four `endpoint` topics, every anchor from a Microsoft page fetched and read; two record changes a deployment guide may predate, the Semi-Annual Enterprise Channel unified into Monthly Enterprise from Version 2606 in July 2026, and Windows Backup for Organizations renamed *Windows settings backup and restore*. Ten more anchors and three spans in the nineteenth wave's three `endpoint` topics, one of them recording the retirement dates of three Security Copilot agents from the agents' own pages, which Microsoft's overview of Copilot in Intune still lists. The console count went to four when the Copilot topic named the Intune admin center, and back to three with a span. Seventeen more anchors in the twentieth wave's four topics: two in `sec` from NIST SP 800-53's own catalog, read as the OSCAL JSON NIST publishes, one recording that SecurityX names RASP and IAST, one from OWASP, and thirteen in `devops` from kubernetes.io, among them the etcd page's fix of 27 October 2026 to its restore steps and the November 2025 notice retiring Ingress NGINX. Seven more in the twenty-first wave: six in the DAIR topic, from SANS's announcement of 15 September 2026, its poster of 13 October, NIST's page for SP 800-61 Revision 3 and GIAC's GCIH page, and one beside the PICERL card's corrected account of where its six steps came from. Eighteen more in the twenty-second wave's three `cloud` topics, every one from an AWS page fetched and read, among them two closures the SAA-C03 guide predates: Snowball Edge and FSx File Gateway are no longer available to new customers, and the guide's in-scope list still names the Snow Family. Twenty-two more in the twenty-third wave's five `cloud` topics, every one from an AWS page fetched and read, among them the AWS Quick guide's own history recording QuickSight's rename on 9 October 2025. Twenty-three more in the twenty-fourth wave's five `cloud` topics, all from AWS pages fetched and read, among them Application Discovery Service's closure to new customers on 7 November 2025 and SageMaker's rename to SageMaker AI on 3 December 2024. Fourteen more in the twenty-fifth wave's eight cards in six existing `cloud` topics and one new one, all from AWS pages fetched and read, among them gp3's ceiling of 80,000 IOPS and the rule that hibernation cannot be turned on after launch. Five more in the twenty-sixth wave's NAT card, among them AWS's regional NAT gateway, which spreads across zones by itself, and the NAT AMI's end of maintenance on 31 December 2023. Thirteen more in the twenty-seventh wave's three Google Cloud topics, from Google's pages fetched and read, among them the blog post of 21 August 2024 that renamed Cloud Functions. Twelve more in the twenty-eighth wave, two of them Google's notice that Deployment Manager's support ended on 31 March 2026 and its description of Infrastructure Manager. Ten more in the twenty-ninth wave's five cards in existing GCP topics, among them the 30-day default log retention and the charge for keeping logs longer, applied since 1 April 2023. Two more in the thirtieth wave's `ai` topics: SecAI+'s domain weights from CompTIA's exam page, and the date of NIST's adversarial machine learning taxonomy, AI 100-2 E2025, from NIST's publication page, both fetched and read. Five more in the thirty-first wave's three `ai` topics, all from pages fetched and read: OWASP's 2026 list of LLM risks twice, where the governance topic names it and where the security topic's table explains it; its 2023/24 and 2025 editions, for what changed between them; its agentic list; and the Commission's AI Act page, last updated 19 October 2026, for the dates the AI Omnibus moved. Five more in the thirty-second wave's two `ai` topics, all from NIST's own pages fetched and read: the AI RMF's seven characteristics and its four functions from NIST's AI Resource Center, the framework page's dates twice, where the ethics topic and the governance topic give them, and the Generative AI Profile's twelve risks from its PDF. Six more in the thirty-third wave's three OWASP topics, all from OWASP's pages fetched and read: the 2025 list three times, once in each topic that teaches it; the introduction's account of what changed since 2021; four category pages' details; and the foundation's about page for its current name. Four more in the thirty-fourth wave's three `grc` topics, all from NIST's CSF documents fetched and read: version 2.0's six functions twice, its 22 categories, and version 1.1's categories, for the names a list carried over from 2018. Two more in the thirty-fifth wave's two `blueteam` topics, both CompTIA's SecAI+ page, for the exam's words for what those topics already taught. Two more in the thirty-sixth wave's two `threat` cards, both from MITRE's ATT&CK pages fetched and read, for version 19's split of Defense Evasion. Two more in the thirty-seventh wave's post-quantum topic, both NIST's: IR 8547 as published in October 2026, read as its PDF, and the March 2025 release that chose HQC. Two more in the thirty-eighth wave's PKI topic: the CA/Browser Forum's Baseline Requirements 2.3.1 for the lifetime schedule, read as its PDF, and Let's Encrypt's two posts on ending OCSP. One more in the thirty-ninth wave's regulatory landscape topic, from the Commission's two pages on the Cyber Resilience Act. Two more in the fortieth wave: CIS's pages for the Controls' version and parts, and Microsoft's KB5073381 with its Kerberos guidance for the end of RC4 as a domain controller's default. Three more in the forty-first wave's *Package Management*, from Debian's apt-key(8) and sources.list(5) and DNF's configuration reference. Five more in the forty-second wave: three in `military`, two from FM 6-0 read as its PDF and one recording the Joint Staff's J-7 from search results, because jcs.mil refused the fetch; and two in `devops`, from NVD's record of CVE-2025-30066 and GitHub's pages on pinning actions and on workflow lockfiles. Four more in the forty-third wave: two in `data`, PostgreSQL's documentation on how nulls sort and a record of the queries run on PostgreSQL 16 that fill the card's table; one in `web` from RFC 9110 and RFC 6585; and one in `eng` from six certification bodies' renewal pages, all fetched and read | `check_volatility.py` |
 | Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
-| Gate results | check · smoke **165** · search **59** · resilience **64** · axe 31/31 · mobile 15/15 · visual 2/2 · backup 3/3. Visual is 0/2 in the container that ran the last session, and was 0/2 there on the commit before it too: its fonts render about 10% wider | `make all` |
+| Gate results | check · smoke **167** · search **59** · resilience **64** · axe 33/33 · mobile 16/16 · visual 2/2 · backup 3/3. The error-code lookup added one check to each of smoke, mobile and axe's two themes, and the expand switch one to smoke. Visual is 0/2 in the container that ran the last session, and that is not a regression: its Playwright is 1.63.0, whose Chromium 153 draws the chip labels about 10% wider than the 1.56.0 CI pins (Chromium 141), and CI matched the same baselines 2/2 on 2026-10-11. `visual_test.mjs` names both versions now, and refuses `--update` under any Playwright but the pinned one | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **67** here, **287** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **55** here, **332** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract — and it held a claim it could not keep.** *If it passes, CI
 passes* was written when `check_gates.py` was added, because the workflow had been red on
@@ -147,7 +152,7 @@ before lint before the expensive determinism and budget checks.
 | 7 | Wrote a related-map target from memory; **slugs truncate at 60 characters** and the real id ended `…funds-i` | `suggest_related.py --check` names the missing target and the resulting one-way edge in the same run |
 | 8 | Filed a new acronym under `"c": "Military"` — the acronym domain is generated **by category**, so one entry created a whole `By Area — Military` topic and moved the site count | Check the neighbours before inventing a category. A category field in a generated taxonomy is a structural decision |
 | 9 | Probe zeros were **~60% phrasing misses**, including two cards written an hour earlier | Step 1 of the loop. Verify every zero against the real title list |
-| 10 | Two wrong acronym expansions shipped in earlier sessions and were found by **reading**, not by any check — `IR` in a compiler card's title, `SMB` in "a home-lab / SMB choice" | The breadth census now surfaces the candidates. It cannot decide them |
+| 10 | Three wrong acronym expansions shipped in earlier sessions and were found by **reading**, not by any check — `IR` in a compiler card's title, `SMB` in "a home-lab / SMB choice", and `DAG` in the Exchange Server topic's title, expanded as a directed acyclic graph | The breadth census now surfaces the candidates. It cannot decide them |
 
 **Six of ten were caught by a tool, three by reading, one by nothing.** That ratio is the
 argument for both halves: the gates are worth their maintenance, and they are not a substitute
@@ -569,7 +574,7 @@ cannot be measured, is honestly marked as having no condition at all.
 
 | Risk | Reopens when | State |
 |---|---|---|
-| **The plan outgrows its own readability** — 11,600 lines, and the useful part is the last few hundred | `check_plan_numbers.py` reports the live file past **8,000 lines** | ✅ **Closed, reopened, and closed again.** Option 3 shipped, then option 1 at 22,745 lines by somebody noticing. The condition then fired on its own at **8,020**, and option 1 ran again — 45 records moved, 8,020 → 4,227, lines conserved. **The reopen condition is the only part of this register that has ever been tested, and it worked** |
+| **The plan outgrows its own readability** — 11,600 lines, and the useful part is the last few hundred | `check_plan_numbers.py` reports the live file past **8,000 lines** | ✅ **Closed, reopened, and closed again.** Option 3 shipped, then option 1 at 22,745 lines by somebody noticing. The condition then fired on its own at **8,020**, and option 1 ran again — 45 records moved, 8,020 → 4,227, lines conserved. It fired a third time at **8,009**, and the same move took the file to 4,092. **The reopen condition is the only part of this register that has ever been tested, and it worked** |
 
 §6 of the backlog reality check said this in a milder form: *most of those 935 will never be
 built, and the useful part of this file is the last two hundred lines*. That was true at
@@ -2209,6 +2214,978 @@ site's SAST and DAST topic does not cover. The domain-header tags with no path, 
 nobody has read: CKA, OSCP, GCIH, AWS, GCP, MD-102, AZ-800, MS-102 and AI+. And the visual
 baseline, unchanged.
 
+## 20. What shipped — the fourteenth wave
+
+Recorded below as *Session — the fourteenth wave, two Microsoft paths and an exam that retired*.
+Three of §19's tags were Microsoft's, and each study guide was fetched from Microsoft Learn and
+read before anything was written.
+
+| § | Item | Where it went |
+|---|---|---|
+| 19 | MD-102 | *Microsoft MD-102 (Endpoint Administrator)*, 38 steps, skills measured as of 27 October 2026, with the twelfth wave's packaging topics under managing applications |
+| 19 | MS-102 | *Microsoft MS-102 (Microsoft 365 Administrator)*, 24 steps, skills measured as of 28 April 2026 |
+| 19 | AZ-800 | **Retired on 30 September 2026**, its study guide says, so no path. The infra header and the README advertised it, and now read *AD DS* |
+
+**The gaps the two outlines found, and the next queue.** MD-102 names seven things the site
+covers in a mention or not at all: deploying Microsoft 365 Apps with the Office Deployment Tool,
+Windows Backup for organizations, Delivery Optimization, App Control for Business, Hotpatch,
+multi-admin approval, and Security Copilot agents in Intune. MS-102's are thicker, and most sit
+in its largest area: Defender XDR incidents and advanced hunting, attack simulation training,
+Defender for Cloud Apps, Defender Vulnerability Management, self-service password reset with
+Entra Password Protection, administrative units, IdFix, and sensitive information types with
+Endpoint DLP. Each path skips them rather than point somewhere close, and each is a candidate
+with a named asker.
+
+**Also left.** The tags no outline has been read for: CKA, OSCP, GCIH, AWS, GCP and AI+. RASP
+and IAST. And the visual baseline, unchanged.
+
+## 21. What shipped — the fifteenth wave
+
+Recorded below as *Session — the fifteenth wave, MS-102's Defender XDR area and a stamper that wrote
+when asked for help*. §20 named MS-102's Defender XDR area as the thinnest coverage on the site, and
+four of its gaps were written, each from Microsoft's own pages, fetched and read before any card.
+
+| § | Item | Where it went |
+|---|---|---|
+| 20 | Defender XDR incidents and advanced hunting | `m365` *Defender XDR Incidents &amp; Advanced Hunting — One Queue for Mail, Devices, Identities &amp; Apps*: the incident as the portal's judgment, automated investigation and the Action center, the hunting tables with two queries, and custom detection rules with their lookbacks |
+| 20 | Attack simulation training | `m365` *Attack Simulation Training — Phishing Simulations, Training Campaigns &amp; the Clicks Nobody Made*: the wizard, actual against predicted compromise rate, the clicks scanners make, and the advanced delivery policy for other vendors |
+| 20 | Defender for Cloud Apps | `m365` *Defender for Cloud Apps — App Connectors, Cloud Discovery &amp; Why Unsanctioned Is Not Blocked*: the two doors, the policy types, blocking through Defender for Endpoint, and the activity log |
+| 20 | Defender Vulnerability Management | `endpoint` *Defender Vulnerability Management — Exposure Score, Recommendations &amp; Handing the Fix to Intune*: two scores that move in opposite directions, how a recommendation is ranked, the remediation request as a ticket, and exceptions that cannot be extended |
+
+**Each went onto the MS-102 path** at its objective, and onto its domain's own path: the three `m365`
+topics after *Secure Score* in *Administering Microsoft 365*, and vulnerability management after
+*Defender for Endpoint* in *Endpoint Engineering with Intune*.
+
+**Two things Microsoft's pages said that a card had to carry.** Defender for Cloud Apps file policies
+retire on 6 January 2027, six weeks after this wave, so a file policy written now needs a Purview home
+almost at once. And Secure Score for Devices currently reads configuration set by Group Policy, so on
+a fleet configured from Intune it can report correct settings as wrong.
+
+**The queue.** MS-102's other four: self-service password reset with Entra Password Protection,
+administrative units, IdFix, and sensitive information types with Endpoint DLP. Reading the outline
+again for this wave found three more inside the Defender XDR area that §20 did not list: Defender
+Threat Intelligence, alert policies in Defender for Office 365, and restricted entities. MD-102's seven
+are unchanged. And still the tags no outline has been read for, CKA, OSCP, GCIH, AWS, GCP and AI+,
+with RASP and IAST, and the visual baseline.
+
+## 22. What shipped — the sixteenth wave
+
+Recorded below as *Session — the sixteenth wave, MS-102's identity and Purview gaps, and a tool the
+outline still names*. The other four gaps of §20's MS-102 list, each from Microsoft's own pages,
+fetched and read before any card.
+
+| § | Item | Where it went |
+|---|---|---|
+| 20 | Self-service password reset with Entra Password Protection | `m365` *Self-Service Password Reset &amp; Password Protection — Who Can Reset, and Which Passwords Get Refused*: the checks before a reset, writeback as an admin reset under the domain's own policy, the five-point banned-password score, and the DC agent in audit first |
+| 20 | Administrative units | `m365` *Administrative Units — Delegating Part of the Tenant, and Fencing Off the Accounts That Matter*: scoped roles, what a group in a unit does and does not bring, and restricted management units |
+| 20 | IdFix | `infra` *Preparing Active Directory for Sync — Duplicate Addresses, Bad Characters, UPN Suffixes &amp; After IdFix*: the attribute rules, the `.local` suffix, and **IdFix retired on 30 June 2026**, which the outline still names |
+| 20 | Sensitive information types with Endpoint DLP | `m365` *Sensitive Information Types &amp; Endpoint DLP — The Pattern That Finds It, and the Device That Stops It*: patterns and confidence levels, the regex rules Purview enforces, and what a device policy can stop |
+
+**Each went onto the MS-102 path** at its objective, which now has 32 steps, and onto its domain's
+path: two after *Admin Roles* and one after *Sensitivity Labels &amp; DLP* in *Administering Microsoft
+365*, and sync preparation after *One User, Two Accounts* in *Running Windows Server &amp; Active Directory*.
+
+**A retired tool on a current outline.** The outline was read in November 2026 with skills measured as
+of 28 April 2026, and it asks for IdFix. IdFix's repository says it was deprecated, and unsupported
+from 30 June 2026, and Microsoft's page on installing it returns 404. The topic teaches the rules it
+checked and says plainly not to install it. It is the second time in three waves that an outline has been behind
+its product: the first was AZ-800, an exam that had itself retired.
+
+**The queue.** The three Defender XDR items §21 found: Defender Threat Intelligence, alert policies in
+Defender for Office 365, and restricted entities. MD-102's seven are unchanged, and so are CKA, OSCP,
+GCIH, AWS, GCP and AI+, RASP and IAST, and the visual baseline.
+
+## 23. What shipped — the seventeenth wave
+
+Recorded below as *Session — the seventeenth wave, MS-102's last Defender objectives and a portal that
+retired*. The three Defender XDR items §21 found, each from Microsoft's own pages, fetched and read
+before any card. With them every gap §20 and §21 listed for MS-102 has a topic.
+
+| § | Item | Where it went |
+|---|---|---|
+| 21 | Restricted entities, including blocked users | `m365` *Restricted Entities &amp; Outbound Spam — Why a Mailbox Stops Sending, and Unblocking It Safely*: the limits and the 5.1.8 bounce, Microsoft's order for securing the account before unblocking it, and the connector and tenant restrictions with the bounce code for each |
+| 21 | Alert policies in Defender for Office 365 | `m365` *Alert Policies in Defender for Office 365 — The Default Alerts, Who Gets Them &amp; Writing Your Own*: the three ways a policy fires and what each needs, the defaults that signal a taken-over mailbox, and the forwarding-rule alert's blind spot for rules made in Outlook itself |
+| 21 | Defender Threat Intelligence | `m365` *Defender Threat Intelligence — Threat Analytics, Intel Explorer &amp; What a Reputation Score Means*: **the standalone portal retired on 1 August 2026**, threat analytics reports tab by tab, and the reputation score's four bands |
+
+**Each went onto the MS-102 path** at its objective, which now has 35 steps, and onto *Administering
+Microsoft 365*: restricted entities after *Message Trace*, and alert policies and threat intelligence on
+either side of *Defender XDR Incidents*, the order they have on the page.
+
+**A third outline behind its product.** MS-102 asks for *Microsoft Defender Threat Intelligence*, by that
+name. Microsoft's page for it now describes *Threat intelligence* in the Defender portal, and the Intel
+explorer page says the standalone portal and its Intel Explorer were retired on 1 August 2026. AZ-800
+had retired as an exam and IdFix as a tool; this is a product renamed into a page of another.
+
+**Two things the pages said that a card had to carry.** The default *Creation of forwarding/redirect
+rule* alert watches rules made in Outlook on the web or PowerShell only, and the audit log files a rule
+made in the Outlook client under another operation, so a custom policy is the only alert on it. And the
+recipients of a default alert are changed in the portal: the cmdlet parameter that looks like it does
+that is documented as reserved for Microsoft's own use.
+
+**Also fixed.** `DAG` in *Exchange Server On-Prem*'s title was expanded as a directed acyclic graph,
+found while reading the m365 topic list for this wave. It has its Exchange meaning there now, scoped
+to `m365` in the dictionary, and keeps the graph meaning in the Airflow card that uses it that way.
+
+**The queue.** MD-102's seven: deploying Microsoft 365 Apps with the Office Deployment Tool, Windows
+Backup for organizations, Delivery Optimization, App Control for Business, Hotpatch, multi-admin
+approval, and Security Copilot agents in Intune. Then CKA, OSCP, GCIH, AWS, GCP and AI+, RASP and
+IAST, and the visual baseline.
+
+## 24. What shipped — the eighteenth wave
+
+Recorded below as *Session — the eighteenth wave, four MD-102 gaps, a renamed feature and a merged
+channel*. Four of §20's seven MD-102 gaps, each from Microsoft's own pages, fetched and read before any
+card, all in `endpoint`.
+
+| § | Item | Where it went |
+|---|---|---|
+| 20 | Microsoft 365 Apps with the Office Deployment Tool | *Microsoft 365 Apps Deployment — The Office Deployment Tool, Intune's App Type &amp; Update Channels*: the configuration file and its three modes, Intune's app type and why Autopilot wants Office wrapped as Win32, **the Semi-Annual Enterprise Channel unified into Monthly Enterprise in July 2026**, and Cloud Policy |
+| 20 | Windows Backup for organizations | *Windows Backup for Organizations — Settings Restore on a New PC, and What It Leaves Behind*: what the backup holds and what it does not, the two restore switches and which devices each reaches, and five privacy policies that silently turn backup off. **Renamed *Windows settings backup and restore***, and on by default from Windows 11 26H2 |
+| 20 | Delivery Optimization | *Delivery Optimization — Download Modes, Peer Groups &amp; Where Windows Gets Its Updates*: what it downloads, the download modes and who counts as a peer, and the four causes of zero bytes from peers |
+| 20 | App Control for Business | *App Control for Business — Managed Installers, Audit Mode &amp; the AppLocker Policy That Can Stop Sign-In*: against AppLocker, the managed installer and the AppLocker merge Microsoft warns can stop sign-in, and the built-in controls in audit first |
+
+**Each went onto the MD-102 path** at its objective, which now has 42 steps, and onto *Endpoint
+Engineering with Intune*: backup after the ESP, Office after Store and catalog apps, Delivery
+Optimization after Autopatch, and App Control after local admin rights.
+
+**A renamed feature and a merged channel.** MD-102's outline, skills measured as of 27 October 2026,
+says *Windows Backup*, and Microsoft's documentation now calls the feature *Windows settings backup and
+restore*, warning that the old name will linger on some pages and policies during the change. And the
+Semi-Annual Enterprise Channel, the slow lane Office deployment guides have long recommended for tested
+devices, became Monthly Enterprise from Version 2606 in July 2026 without any administrator changing a
+policy. Microsoft's own channel overview, last updated in May, still tabulates it with features twice a
+year, under a banner announcing the change. Neither makes the outline wrong; both can make a guide
+written before them wrong.
+
+**The queue.** MD-102's other three: Hotpatch, multi-admin approval, and Security Copilot agents in
+Intune. Then CKA, OSCP, GCIH, AWS, GCP and AI+, RASP and IAST, and the visual baseline.
+
+## 25. What shipped — the nineteenth wave
+
+Recorded below as *Session — the nineteenth wave, MD-102's last gaps and three agents that retired*.
+The last three of §20's MD-102 gaps, each from Microsoft's own pages, fetched and read before any card,
+all in `endpoint`. With them every gap §20 listed for both Microsoft outlines has a topic.
+
+| § | Item | Where it went |
+|---|---|---|
+| 20 | Hotpatch | *Hotpatch — Security Updates Without a Restart, and the Quarterly Baselines That Still Need One*: the eight-and-four calendar, the requirements a device must meet or quietly restart instead, and Microsoft's six troubleshooting steps |
+| 20 | Multi admin approval | *Multi Admin Approval — A Second Administrator Before a Wipe, a Script or a Role Change*: what an access policy holds, the request that the requestor has to complete after approval, and the approver group that fails without saying so |
+| 20 | Security Copilot agents in Intune | *Security Copilot in Intune — Copilot, the Agents, and the Three That Retired in 2026*: Copilot as Security Copilot with the asker's permissions, **three of the four agents retired in 2026**, and the one left, which ignores scope tags in preview |
+
+**Each went onto the MD-102 path** at its objective, which now has 45 steps, and onto *Endpoint
+Engineering with Intune*: Hotpatch after Autopatch, the agents after Endpoint Analytics, and approval
+after RBAC and scope tags.
+
+**An outline asking for tools that are gone.** MD-102's outline, skills measured as of 27 October 2026,
+asks candidates to investigate threats identified by Security Copilot agents in Intune, to analyze
+device performance with them, and to respond to their recommendations. Microsoft's own pages say the
+Device Offboarding Agent was removed on 1 June 2026 and the Policy Configuration and Change Review Agents
+on 31 August, which leaves the Vulnerability Remediation Agent, in preview; none of the four was about
+device performance. Microsoft's overview of Copilot in Intune, last updated in May, still lists all four.
+It is the fourth case in six waves of an outline or overview behind its product.
+
+**Also added.** `VBS` to the acronym dictionary, as Virtualization-Based Security: the Hotpatch card
+needed it, and a `redteam` card had been using it unexpanded.
+
+**The queue.** Every Microsoft gap is written. What remains is the older list: the header tags no
+outline has been read for, CKA, OSCP, GCIH, AWS, GCP and AI+, then RASP and IAST, and the visual
+baseline.
+
+## 26. What shipped — the twentieth wave
+
+Recorded below as *Session — the twentieth wave, RASP and IAST, a CKA path, and a controller that
+retired*. §19's RASP and IAST, and the first of the header tags with no outline read, CKA, whose outline
+the Linux Foundation publishes on its exam page.
+
+| § | Item | Where it went |
+|---|---|---|
+| 19 | RASP and IAST | `sec` *IAST &amp; RASP — Testing and Defending an Application From Inside It While It Runs*: both as instrumentation inside the running application, IAST's sensors and what they see, and RASP against a firewall, from NIST SP 800-53's controls SA-11(9) and SI-7(17) and OWASP's guideline |
+| 20 | A path for CKA | *Linux Foundation CKA (Certified Kubernetes Administrator)*, 15 steps, in the order of its five domains, read from the Linux Foundation's exam page for Kubernetes v1.37 |
+| — | CKA gap: cluster lifecycle | `devops` *kubeadm Cluster Lifecycle — Upgrading One Minor at a Time, Renewing Certificates &amp; Backing Up etcd*: the upgrade order and why the skew policy fixes it, the one-year certificates that upgrades renew, and etcd snapshots, with the restore step Kubernetes' page fixed on 27 October 2026 |
+| — | CKA gap: scheduling | `devops` *Scheduling &amp; Autoscaling — Requests and Limits, Taints, Tolerations, Affinity &amp; the HPA* |
+| — | CKA gap: traffic and names | `devops` *Ingress, Gateway API &amp; CoreDNS — Getting Traffic In, and the Controller That Retired*: **Ingress NGINX retired in March 2026**, the Gateway API's three roles, and DNS debugging from inside a Pod |
+
+**Every CKA competency now has a topic.** The outline's five domains map onto the site's existing
+Kubernetes topics except for the three above: nothing on the site mentioned kubeadm, tolerations, etcd
+backup, version skew, static Pods, the HorizontalPodAutoscaler or CoreDNS before this wave. The three went
+onto *Kubernetes, End to End* as well, and IAST and RASP onto *Application &amp; API Security*.
+
+**A recommendation corrected.** Two `devops` tables named nginx as an example Ingress controller. The
+community Ingress NGINX project stopped receiving fixes in March 2026, and Kubernetes recommends the
+Gateway API, so both now say so.
+
+**The queue.** OSCP, GCIH, AWS, GCP and AI+, the header tags still without a path, and the visual
+baseline. GitHub's web pages refused this container (403), so outlines published only there need
+another source.
+
+## 27. What shipped — the twenty-first wave
+
+Recorded below as *Session — the twenty-first wave, GCIH, DAIR, and a lifecycle NIST retired*. The
+second header tag with no outline read, GCIH, whose objectives GIAC publishes on its certification page.
+
+| § | Item | Where it went |
+|---|---|---|
+| 26 | A path for GCIH | *GIAC GCIH (Certified Incident Handler)*, 23 steps, its fifteen objectives in working order rather than GIAC's alphabetical one |
+| — | GCIH gap: DAIR | `ops` *DAIR — SANS's Dynamic Approach to Incident Response, and the Loop That Replaced the Line*: PICERL against DAIR's waypoints, the Response Actions Loop and its signed exit, and where it sits beside NIST's 2025 revision |
+
+**Every GCIH objective but one already had a topic.** Fourteen of the fifteen map onto topics in `blueteam`,
+`redteam`, `sec`, `cloud`, `ai`, `infra` and `ops`. The fifteenth asks for PICERL and DAIR, and nothing on
+the site had mentioned DAIR, which SANS published as a book on 15 September 2026.
+
+**Two statements corrected.** The PICERL card said NIST SP 800-61 *defines* four phases and that
+CompTIA expanded them to PICERL; NIST superseded that revision with Revision 3 in April 2025, and the six
+steps were SANS's own original process, which SANS's announcement of DAIR names as the one it replaces.
+The second incident response topic called the four-phase lifecycle *the industry standard*. Both now say
+what replaced what, with a fact anchor beside the first.
+
+**The queue.** OSCP, AWS, GCP and AI+, the header tags still without a path, and the visual baseline.
+AWS splits its exam guide across several pages and Google's guide renders by script, so both need their
+documents read page by page.
+
+
+## 28. What shipped — the twenty-second wave
+
+Recorded below as *Session — the twenty-second wave, SAA-C03, and two AWS services closed to new
+customers*. The third header tag with no outline read, AWS, whose SAA-C03 exam guide AWS publishes across
+several pages, one per domain.
+
+| § | Item | Where it went |
+|---|---|---|
+| 27 | A path for SAA-C03 | *AWS Certified Solutions Architect – Associate (SAA-C03)*, 35 steps, in the order of its four domains, ending on the Well-Architected Framework |
+| — | SAA-C03 gap: application integration | `cloud` *AWS Application Integration — SQS, SNS, EventBridge &amp; Step Functions*: standard and FIFO queues and the visibility timeout, dead-letter queues and the retention clock a standard queue does not reset, and fanout, routing and orchestration side by side |
+| — | SAA-C03 gap: data ingestion and analytics | `cloud` *AWS Data Ingestion &amp; Analytics — Kinesis, Firehose, Glue, Athena &amp; EMR*: stream consumers against queue consumers, Firehose's buffering as a latency setting, and when serverless analysis should give way to a cluster |
+| — | SAA-C03 gap: hybrid storage and transfer | `cloud` *AWS Hybrid Storage &amp; Data Transfer — Storage Gateway, DataSync, Transfer Family &amp; the Devices That Closed*: the gateway types by the protocol the old system speaks, DataSync against Transfer Family, and the arithmetic behind shipping data instead of sending it |
+
+**Every SAA-C03 task now has a topic; not every service it names does.** The guide's four domains map
+onto the site's AWS, networking, architecture and cost topics, except where it names services nothing on
+the site had mentioned: SQS, SNS, EventBridge and Step Functions under application integration; Kinesis,
+Firehose, Glue, Athena and EMR under analytics; and Storage Gateway, DataSync, Transfer Family and the Snow
+Family under storage and transfer. The path also takes in eight topics from outside `cloud`, among them
+WAF and DDoS for the first domain and columnar formats for the third, whose task 3.5 asks for *.csv to
+.parquet*. Seven services the guide names still appeared nowhere on the site when searched for by name:
+Amazon Cognito and AWS Shield in task 1.2, RDS Proxy in 2.2 and 3.3, AWS Global Accelerator in 3.4, AWS
+Lake Formation and Amazon Quick in 3.5, and AWS Backup in the in-scope list. That search was of a list of
+names, not of every example the guide gives, and this paragraph first said it was; the twenty-third wave
+checked every example and found more, which §29 records.
+
+**Two services the guide still lists are closed.** AWS's own pages say Snowball Edge and FSx File Gateway
+are no longer available to new customers; existing customers keep them. The guide's in-scope list still
+names the Snow Family. The card teaches what the exam asks, data over bandwidth against a courier, and
+names what AWS points new accounts to instead.
+
+**The queue.** The seven SAA-C03 example services above, then OSCP, GCP and AI+, the header tags still
+without a path, and the visual baseline. Google's exam guide renders by script, so its outline needs
+another source, such as the guide's PDF.
+
+## 29. What shipped — the twenty-third wave
+
+Recorded below as *Session — the twenty-third wave, seven services the exam names and a dashboard with
+three names*. §28's queue: the services SAA-C03 gives as examples that nothing on the site mentioned.
+
+| § | Item | Where it went |
+|---|---|---|
+| 28 | Cognito | `cloud` *Amazon Cognito — User Pools, Identity Pools &amp; the Two Questions They Answer*: who the user is against what they may touch in AWS, the three tokens and why decoding one is not verifying it, and guest credentials scoped as if public |
+| 28 | Shield and Global Accelerator | `cloud` *AWS Shield &amp; Global Accelerator — DDoS Protection and Fixed Entry Points at the Edge*: Standard and where the perimeter sits, Advanced protecting only what you add, and Global Accelerator against CloudFront in AWS's own words |
+| 28 | RDS Proxy | `cloud` *RDS Proxy &amp; ElastiCache — What Sits Between an Application and Its Database*: pooling and pinning, lazy loading and write-through with a TTL, and proxy, replica or cache chosen by symptom |
+| 28 | AWS Backup | `cloud` *AWS Backup — Plans, Vault Lock &amp; the Air-Gapped Copy an Attacker Cannot Delete*: plans assigned by tag, Vault Lock's two modes, and the logically air-gapped vault |
+| 28 | Lake Formation and Amazon Quick | `cloud` *Lake Formation &amp; AWS Quick — Governing the Data Lake and Showing What Is In It*: grants on catalog objects, data filters and LF-Tags, and QuickSight's rename |
+
+**The seven are covered, and the count that found them was incomplete.** The twenty-second wave searched
+the site for a list of names. This wave took every example the four domain pages give, 154 phrases, and
+searched for each service among them. Seven more task-statement examples appear nowhere on the site: Amazon
+Comprehend and Amazon Polly in task 2.2, AWS Batch in 3.2, Provisioned IOPS in 3.3, Requester Pays and the
+Cost and Usage Report in 4.1, and the Gateway Load Balancer in 4.2. The in-scope list adds Amazon MQ,
+AppFlow, Amazon MSK, Kinesis Video Streams, Application Discovery Service, Client VPN and the
+Well-Architected Tool. Systems Manager looked absent and is not: one card names its Parameter Store. Both
+AWS paths take the five, and *AWS, End to
+End* takes the twenty-second wave's three as well, which it had been missing, so it runs from 19 steps to
+27 in the same order it had: account, identity, network, compute, storage, data, security, IaC and
+observability.
+
+**A product named three ways.** AWS's own guide records Amazon QuickSight's rename on 9 October 2025, and
+its documentation now calls the product AWS Quick, with the dashboards continuing as Quick Sight; the exam
+guide says Amazon Quick. The card gives all three and says which is current. *Amazon QuickSight* joined the
+renames registry, and the gate's first run caught the card's own two mentions: *rebranded* is not one of
+the words it reads as historical, so the card says *renamed*, which is what AWS's guide calls it in the same
+entry.
+
+**A table corrected.** The AWS Databases topic listed ElastiCache as managed Redis and Memcached; AWS's page
+names three engines, Valkey first, and the table now does.
+
+**The queue.** The task-statement examples above first, then the in-scope services, then OSCP, GCP and
+AI+, the header tags still without a path, and the visual baseline. Google's exam guide renders by script,
+so its outline needs another source, such as the guide's PDF.
+
+## 30. What shipped — the twenty-fourth wave
+
+Recorded below as *Session — the twenty-fourth wave, the guide's remaining examples, and a discovery service
+that closed*. §29's queue: the task-statement examples and in-scope services that nothing on the site
+mentioned.
+
+| § | Item | Where it went |
+|---|---|---|
+| 29 | Comprehend and Polly, and the AI services beside them | `cloud` *AWS AI Services — Rekognition, Textract, Comprehend, Polly &amp; When to Train Your Own*: images and documents, the five language and speech services, the opt-out policy for stored content, and SageMaker AI for models that have to be your own |
+| 29 | Gateway Load Balancer | `cloud` *Elastic Load Balancing — ALB, NLB &amp; Gateway Load Balancer, and the Cross-Zone Default*: the three by OSI layer, AWS's cross-zone arithmetic, and inspection put in the path by a route |
+| 29 | Amazon MQ, MSK, AppFlow | `cloud` *Amazon MQ, MSK &amp; AppFlow — When the Protocol or the Partner Is Already Chosen* |
+| 29 | Application Discovery Service, Application Migration Service, DMS | `cloud` *AWS Migration — AWS Transform MGN, DMS &amp; a Discovery Service That Closed* |
+| — | AWS Config | `cloud` *AWS Config — What Every Resource Looked Like, and Whether It Was Allowed To*: in the in-scope list, and nowhere on the site, a security reference without the service that records configuration history |
+
+**Two more changes the exam guide predates.** AWS closed Application Discovery Service to new customers on
+7 November 2025 and points them to AWS Transform. Application Migration Service is documented now as AWS
+Transform MGN; its own document history does not record when the name changed, so the card gives both names
+and no date. SageMaker's rename is dated: on 3 December 2024 it became SageMaker AI, and *SageMaker* moved to
+a wider platform that contains it.
+
+**Both AWS paths take the five**: *SAA-C03* runs to 45 steps and *AWS, End to End* to 32.
+
+**The queue.** The task-statement examples still unmentioned: AWS Batch, Provisioned IOPS, Requester Pays and
+the Cost and Usage Report. Then in-scope services with no mention, among them DocumentDB, Keyspaces, Aurora
+Serverless, Compute Optimizer, Kinesis Video Streams, Client VPN and the Well-Architected Tool. Then OSCP, GCP
+and AI+, the header tags still without a path, and the visual baseline. The page budget fell to 25% raw this
+wave, room for about 545 more topics at the current average, so the in-scope list is better served by cards
+in existing topics than by a topic per service.
+
+## 31. What shipped — the twenty-fifth wave
+
+Recorded below as *Session — the twenty-fifth wave, cards inside topics that already owned the subject*.
+§30's queue, taken as §30 advised: the budget is 25% raw, so most of it went into existing topics as cards.
+
+| § | Item | Where it went |
+|---|---|---|
+| 30 | Provisioned IOPS, and the EBS volume types around it | A card in `cloud` *AWS Storage — S3 Classes, EBS &amp; EFS*, which had been a single card |
+| 30 | Requester Pays | A second card in the same topic |
+| 30 | The Cost and Usage Report | A card in `cloud` *Cloud Cost Control*, with CUR 2.0 in Data Exports |
+| 30 | Compute Optimizer | A card in the same topic |
+| — | EC2 hibernation, a task 4.2 example the name search missed, because *hibernate* already appeared for Windows | A card in `cloud` *AWS Compute — EC2, AMIs &amp; Auto Scaling* |
+| 30 | AWS Batch | A card in `cloud` *AWS Serverless &amp; Containers* |
+| 30 | Client VPN | A card in `cloud` *Hybrid Connectivity* |
+| 30 | The Well-Architected Tool | A card in `cloud` *Well-Architected &amp; the Architecture Framework*, with the Agent AWS has in preview beside it |
+| 30 | DocumentDB, Keyspaces, Aurora Serverless, and Neptune with them | `cloud` *Purpose-Built Databases on AWS — DocumentDB, Keyspaces, Neptune &amp; Aurora Serverless* |
+
+**Every service the task statements name is now on the site but one.** Counted the way the twenty-third wave
+corrected the count to be: every service among the 154 example phrases, searched for by name, 68 of them. The
+exception is the NAT instance, which task 4.4 sets against the NAT gateway, along with one shared NAT gateway
+against one per Availability Zone; the site prices NAT gateways and never mentions the alternative. Three more
+phrases matched no text but are covered under other words: *EC2 Auto Scaling*, *EC2 hibernation* and *EC2
+instance types*. In-scope services with no mention remain, among them Kinesis Video Streams, Amazon Managed Grafana and Managed Service for
+Prometheus, AWS Proton, License Manager, Amplify, Device Farm and the Anywhere editions of ECS and EKS; the
+guide lists them as services that may appear, not as things its tasks ask for.
+
+**Six older topics changed review date**, because each gained a card and was read again around it. The AWS
+Storage topic's first card still calls the archive classes *Glacier / Deep Archive*, and its FSx row names two of
+FSx's four file systems; both are short rather than wrong, and are left for a pass over that topic.
+
+**The queue.** The NAT instance against the NAT gateway, and shared against per-zone gateways, as a card in
+*AWS VPC*. Then OSCP, GCP and AI+, the header tags still without a path, and the visual baseline. The in-scope
+remainder above can wait for a reader who asks. Google's exam guide renders by script, so its outline needs
+another source, such as the guide's PDF.
+
+## 32. What shipped — the twenty-sixth wave
+
+Recorded below as *Session — the twenty-sixth wave, the NAT instance and a gateway that spans zones*. §31's
+queue, its first item.
+
+| § | Item | Where it went |
+|---|---|---|
+| 31 | The NAT instance against the NAT gateway, and one shared gateway against one per zone | A card in `cloud` *AWS VPC — Subnets, Security Groups &amp; NACLs*, with AWS's newer regional NAT gateway as the third answer |
+
+**Every service the SAA-C03 task statements name is now on the site**, by the count §31 used: the 68 services
+among the guide's 154 example phrases, each searched for by name. The last, the NAT instance, appears now in
+the card that sets it against the gateway.
+
+**A row corrected.** The VPC topic's table said a NAT gateway sits in a public subnet. That is still true of
+the zonal kind; the regional kind needs none, and the row says so.
+
+**The queue.** GCP and AI+, the header tags still without a path, then the visual baseline. OSCP stays off
+the queue. The in-scope services with no mention, listed in §31, wait for a reader who asks. Google's exam guide renders by script, so
+its outline needs another source, such as the guide's PDF.
+
+## 33. What shipped — the twenty-seventh wave
+
+Recorded below as *Session — the twenty-seventh wave, an ACE path and a product renamed two years ago*. The
+first of the header tags with a script-rendered outline, GCP, read from Google's exam guide as a PDF.
+
+| § | Item | Where it went |
+|---|---|---|
+| 32 | A path for GCP | *Google Cloud Associate Cloud Engineer*, 29 steps, in the guide's four sections |
+| — | ACE gap: organization setup | `cloud` *Google Cloud Organization Setup — Organization Policies, Cloud Identity, Workforce Federation &amp; Billing Export* |
+| — | ACE gap: network design | `cloud` *Google Cloud Network Design — Shared VPC, Cloud NGFW Policies, Secure Tags &amp; Network Tiers* |
+| — | ACE gap: Cloud Run operations | `cloud` *Cloud Run in Operation — Revisions, Traffic Splitting, Eventarc &amp; Cloud Run Functions* |
+
+**A product renamed two years ago.** Google renamed Cloud Functions *Cloud Run functions* on 21 August 2024,
+and the site used the old name in four places, as if current; the renames registry, which would have caught
+it, had no entry. Both are fixed, and the registry allows the API names Google kept, such as the Cloud
+Functions v2 API.
+
+**The guide names much more than three topics cover.** Counted the same way as the AWS guide, by searching
+every domain for each name, these ACE items still appear nowhere: OS Login, VM Manager, Hyperdisk and
+regional Persistent Disk; AlloyDB, Memorystore, Dataflow and Managed Service for Apache Kafka; NetApp Volumes,
+Managed Lustre and Storage Transfer Service; Cloud Workstations and Database Center; Managed Service for
+Prometheus, Active Assist, Cloud Hub, Personalized Service Health and log routers; and Google's AI tooling,
+Gemini Cloud Assist, the Gemini CLI, Antigravity and Application Design Center. The guide also renames Vertex
+AI's agent and notebook products into the Gemini Enterprise Agent Platform, which the site never mentioned
+under either name.
+
+**The queue.** The ACE items above, a few topics at a time and cards where a topic already owns the
+subject. The site's GCP infrastructure-as-code topic names Deployment Manager in its title, and Google's
+Deployment Manager documentation address now redirects to a page that returns 404; find Google's own
+statement of what happened to it before building on that topic. Then AI+, and the visual baseline.
+
+## 34. What shipped — the twenty-eighth wave
+
+Recorded below as *Session — the twenty-eighth wave, a retired product described as retiring*. §33's queue:
+Deployment Manager first, then two more groups of the ACE guide's items.
+
+| § | Item | Where it went |
+|---|---|---|
+| 33 | Deployment Manager | `cloud` *GCP-Native IaC*, retitled *Infrastructure Manager, Config Controller &amp; Deployment Manager's End*: the table's row corrected, Infrastructure Manager added, and a dated card on the retirement |
+| 33 | OS Login, VM Manager, Spot VMs, Hyperdisk, regional Persistent Disk | `cloud` *Compute Engine in Operation — OS Login, VM Manager, Spot VMs, Hyperdisk &amp; Regional Disks* |
+| 33 | AlloyDB, Bigtable, Memorystore, Pub/Sub, Dataflow | `cloud` *Google Cloud Data Products — AlloyDB, Bigtable, Memorystore, Pub/Sub &amp; Dataflow* |
+
+**A retired product described as retiring.** The IaC topic called Deployment Manager *legacy; being retired*,
+which was true when written. Google's notice says support ended on 31 March 2026, new users have been refused
+since 30 June 2026, and the service is turned down after 30 June 2027. The retitle moved the topic's slug, and
+`fix_topic_names.py --aliases-only` recorded the move so old links and stored progress follow it.
+
+**Both GCP paths take the two new topics**: the ACE path runs to 31 steps and *Google Cloud, End to End* to 21.
+
+**The queue.** The ACE items §33 listed that these two topics do not cover: Managed Service for Apache Kafka,
+NetApp Volumes, Managed Lustre and Storage Transfer Service; Cloud Workstations and Database Center; Managed
+Service for Prometheus, Active Assist, Cloud Hub, Personalized Service Health and log routers; and Google's AI
+tooling. Then AI+, and the visual baseline. The page budget is at 24% raw, so cards in existing topics before
+new topics.
+
+## 35. What shipped — the twenty-ninth wave
+
+Recorded below as *Session — the twenty-ninth wave, operations and storage, inside topics that owned them*.
+§34's queue, as cards, because the budget is at 24% raw.
+
+| § | Item | Where it went |
+|---|---|---|
+| 34 | Log routers and log buckets | A card in `cloud` *GCP Observability — Cloud Monitoring, Logging &amp; Trace* |
+| 34 | Managed Service for Prometheus, with the Ops Agent | A second card in the same topic |
+| 34 | Personalized Service Health and Active Assist | A third card in the same topic |
+| 34 | Storage Transfer Service, NetApp Volumes, Managed Lustre | A card in `cloud` *GCP Storage — Cloud Storage, Persistent Disk &amp; Filestore* |
+| 34 | Managed Service for Apache Kafka | A card in `cloud` *Google Cloud Data Products* |
+
+**What is left of the ACE guide's list** is Cloud Workstations, Database Center and Cloud Hub, three consoles
+more than three concepts, and Google's AI tooling: Gemini Cloud Assist, the Gemini CLI, Antigravity,
+Application Design Center and the Gemini Enterprise Agent Platform that Vertex AI's agent and notebook products
+now sit under. Those change faster than anything else in the guide, and a card about them would need a date on
+every sentence.
+
+**The queue.** AI+, the last header tag without a path, then the visual baseline. The ACE guide's AI tooling
+waits for a reader who asks, and is read from Google's pages on the day it is written.
+
+## 36. What shipped — the thirtieth wave
+
+Recorded below as *Session — the thirtieth wave, a tag for an exam that does not exist*. §35's queue: AI+.
+
+| § | Item | Where it went |
+|---|---|---|
+| 35 | AI+ | The header tag, two badges and the dictionary entry now name *CompTIA SecAI+*, because AI+ named no CompTIA exam |
+| 35 | A path for the AI tag | *CompTIA SecAI+ (CY0-001)*, 30 steps, in the order of the exam's four domains |
+| — | CompTIA's name for its largest domain | A sentence in `ai` *AI Security — Attacking and Defending AI Systems*'s first card |
+| — | The field's standard term | A sentence in `ai` *Adversarial AI &amp; AI Threats (Red Team)*'s first card, dated to NIST AI 100-2 E2025 |
+
+**A tag for an exam that does not exist.** Reading the exam's page before writing its path found no exam
+called AI+. CompTIA's certification list, read in November 2026, has SecAI+, launched on 17 February 2026,
+and several AI courses whose names end in *Essentials*, and nothing called AI+. No gate could have caught it:
+the renames registry knows products that changed names, and this was a name with no product behind it in
+CompTIA's list. Reading the issuer's page before the path caught it, as reading Google's pages for the ACE
+path caught Cloud Functions' rename.
+
+**An exam path with no gap topic.** All 30 steps existed: 24 in `ai`, two in `cs` for the
+statistics behind anomaly detection and base rates, and one each in `blueteam`, `ops`, `threat` and `grc`.
+The exam's summary names threat modeling under AI-assisted security, which is why the threat modeling topic
+is a step. What the site lacked was two of the exam's words, and each went into a topic as one sentence.
+
+**The queue.** The visual baseline, which still fails in this container on font rendering and is left
+alone. The ACE guide's AI tooling waits for a reader who asks, and OSCP stays off the queue. SecAI+'s full
+objectives come from CompTIA through a short form on the exam's page, so the path follows the summary
+printed there; the terms that summary names are the next thing to count against the corpus.
+
+## 37. What shipped — the thirty-first wave
+
+Recorded below as *Session — the thirty-first wave, a threat list two editions old*. §36's queue: the terms
+SecAI+'s summary names, counted against the corpus, which led first to the lists those terms come from.
+
+| § | Item | Where it went |
+|---|---|---|
+| 36 | OWASP's Top 10 for LLM Applications, current edition | `ai` *AI Security — Attacking and Defending AI Systems*: the risk table is the 2026 order, with what changed since 2023/24 and 2025; the governance topic's OWASP card names the 2026 edition |
+| — | OWASP's Top 10 for Agentic Applications 2026 | A card in `ai` *Agent Safety &amp; Sandboxing*, ASI01 to ASI10 read against the topic's controls |
+| — | The EU AI Act's dates | A card in `ai` *AI Governance &amp; Frameworks*, from the Commission's page as updated on 19 October 2026 |
+| — | The jailbreak card's *insecure output handling* | *Improper output handling*, OWASP's name for it since 2025 |
+
+**A threat list two editions old.** The governance topic gave OWASP's list as *the canonical LLM threat list*
+and named ten entries; they were the 2023/24 edition's, entry for entry. OWASP has published two editions since,
+and its page for the 2026 one is dated 27 October 2026, four weeks before this wave. Six of the ten entries the
+site named are gone or renamed. No gate could have seen it: the list carried no date, and nothing on the site
+said which edition it was. Both cards that name it now carry fact anchors with the date, so the next edition
+will find a dated claim to check rather than a sentence that sounds timeless.
+
+**A regulation whose dates moved after they were written down.** The governance topic's verdict said the AI
+Act is *the one with dates attached*, and gave none. The dates it would have given in 2025 are no longer the
+dates: the AI Omnibus, in force from 27 July 2026, moved the high-risk rules later, to December 2027 and
+August 2028, and added a ninth prohibited practice from December 2026. The new card gives the dates and
+names the page they came from.
+
+**The queue.** First the AI ethics topic, whose card calls six pillars *trustworthy AI characteristics*
+under a title naming NIST's AI RMF: NIST's own list has seven, puts *valid and reliable* beneath the rest, and
+has no sustainability. Then the rest of SecAI+'s summary terms, alert correlation and behavior analysis among
+them, counted the same way. The visual baseline stays left alone, the ACE guide's AI tooling waits for a
+reader who asks, and OSCP stays off the queue.
+
+## 38. What shipped — the thirty-second wave
+
+Recorded below as *Session — the thirty-second wave, a framework's name over somebody else's list*. §37's
+queue: the AI ethics topic first.
+
+| § | Item | Where it went |
+|---|---|---|
+| 37 | The pillars card's claim to be NIST's characteristics | `ai` *AI Ethics &amp; Responsible AI (NIST AI RMF)*: retitled *Six Goals for a Policy to Name*, with a sentence on how NIST groups them |
+| 37 | NIST's seven characteristics | A card in the same topic, with the four functions and NIST's note that 1.0 is being revised |
+| — | NIST AI 600-1 | A card in the same topic: the Generative AI Profile's twelve risks, confabulation among them |
+| — | The framework's dates | A sentence in `ai` *AI Governance &amp; Frameworks*'s RMF card |
+
+**A framework's name over somebody else's list.** The topic's title names NIST's AI RMF, and its card called
+six pillars *trustworthy AI characteristics*, which is NIST's phrase. The six were a reasonable grouping and
+not NIST's: sustainability is not among NIST's seven, and valid and reliable, which NIST draws as the base the
+others stand on, was not among the six. A reader revising for SecAI+, whose summary names the NIST AI RMF,
+would have learned the wrong list under the right name. The pillars stay, under a title that claims less.
+
+**Sustainability had a home after all.** NIST's Generative AI Profile counts environmental impacts among its
+twelve risks, so the goal the pillars named is in NIST's work, as a risk of one kind of system rather than a
+characteristic of every one. The pillars card now says so.
+
+**The queue.** OWASP's web Top 10: three topics teach the 2021 edition, one of them titled with the year, and
+OWASP's project page calls the 2025 edition the current release. Then the rest of SecAI+'s summary terms. The
+visual baseline stays left alone, the ACE guide's AI tooling waits for a reader who asks, and OSCP stays off
+the queue.
+
+## 39. What shipped — the thirty-third wave
+
+Recorded below as *Session — the thirty-third wave, a year in a title*. §38's queue: OWASP's web Top 10.
+
+| § | Item | Where it went |
+|---|---|---|
+| 38 | The reference list | `pentest` *OWASP Top 10 (2025)*, retitled from *(2021)*: the ten in 2025 order |
+| — | Old findings cite 2021 numbers | A card in the same topic mapping each 2021 category to its 2025 place |
+| 38 | The essential explainer | `sec` *OWASP Top 10 — The Most Critical Web Security Risks*: the table follows 2025, and the card calls OWASP by its current name |
+| 38 | The beginner list | `sec` *OWASP Top 10 – The Web Vulnerabilities Everyone Must Know*: the 2025 list with analogies, the injection example renumbered A05 |
+| — | The API topic's pointer | *The web list, in its 2025 edition*, where it had said the 2021 list *remains correct* |
+
+**A year in a title.** One of the three topics carried *2021* in its name, so the retitle moved its address.
+`fix_topic_names.py --aliases-only` recorded the move, paths and related links follow it, and a near-duplicate
+verdict keyed by the old title was re-read and re-keyed rather than deleted. The landing card for `pentest`
+listed the old title among its start-here topics in `data/domain-intros.json`, which no gate in `make check`
+reads for titles; the smoke suite's start-here check caught it on the first run, and that suite was run again
+after the fix.
+
+**An old name on the card that introduces the list.** The essential topic's card was titled *Open Web
+Application Security Project*; OWASP's about page calls the foundation the Open Worldwide Application Security
+Project, as the site's own acronym dictionary already did.
+
+**The queue.** NIST CSF 2.0 in `grc`: a Start Here card counts five functions and mentions Govern in brackets,
+a compliance table lists five, and a code block colors the six functions in a way NIST's own figure does not,
+four of the six wrong. Then the rest of SecAI+'s summary terms. The visual baseline stays left alone, the ACE
+guide's AI tooling waits for a reader who asks, and OSCP stays off the queue.
+
+## 40. What shipped — the thirty-fourth wave
+
+Recorded below as *Session — the thirty-fourth wave, colors nobody had checked*. §39's queue: NIST CSF 2.0 in
+`grc`.
+
+| § | Item | Where it went |
+|---|---|---|
+| 39 | Five functions, Govern in brackets | `grc` *Frameworks Without the Jargon*: six, with Govern in the table |
+| 39 | The compliance table's five | `grc` *Compliance Frameworks — Playing by the Rules*: six |
+| 39 | The functions' colors | `grc` *NIST CSF &amp; ISO 27001 – GRC Frameworks Explained*: the colors of NIST's own figure, under *Color* |
+| — | Categories carried over or invented | `grc` *NIST Cybersecurity Framework 2.0*: NIST's 22 categories by name |
+
+**Colors nobody had checked.** A code block gave each function a color, and four of the six disagreed with
+NIST's figure of the six in the CSF 2.0 document: Govern is yellow there, Identify blue, Protect purple, Detect
+orange, Respond red and Recover green. No text extraction shows a color, so the check meant rendering the PDF's
+page and looking at it. The colored rows in the CSF 2.0 topic are the page's own styling and claim nothing, so
+they were left alone.
+
+**A census that could not see the problem.** The two queries about the functions opened answered: readers
+reached the cards, and the cards were wrong. The census measures whether a reader arrives, not what they find,
+and every fix in this wave came from reading NIST's documents against the cards.
+
+**The queue.** SecAI+'s summary terms, counted: of six, four reach a fitting topic and two do not.
+`alert correlation` misses the correlation topic, which never says *alert*, and `behavior analysis` misses the
+UEBA topic, which says *analytics*. The visual baseline stays left alone, the ACE guide's AI tooling waits for
+a reader who asks, and OSCP stays off the queue.
+
+## 41. What shipped — the thirty-fifth wave
+
+Recorded below as *Session — the thirty-fifth wave, the exam's words for what was already there*. §40's queue:
+SecAI+'s summary terms.
+
+| § | Item | Where it went |
+|---|---|---|
+| 40 | `alert correlation` | A sentence in `blueteam` *Correlation &amp; Sequencing*'s first card |
+| 40 | `behavior analysis` | A sentence in `blueteam` *User &amp; Entity Behavior Analytics*'s first card |
+| — | A badge two exams old | `pentest` *Methodology &amp; Phases*: PT0-003, which CompTIA launched on 17 December 2024 |
+
+**The exam's words for what was already there.** Six of SecAI+'s summary terms were counted. Four reached a
+topic that covers them on the words the site already used; two reached other cards because the right topics
+said *correlation* without *alert* and *analytics* where the exam says *analysis*. Each now carries one sentence
+naming the exam's term and what it changes for the topic, which is nothing: the costs of a correlation rule and
+the inversion in a learned baseline are the same whoever, or whatever, writes them.
+
+**The queue.** MITRE ATT&amp;CK: version 19, in April 2026, split Defense Evasion into Stealth and Defense
+Impairment, and Enterprise has fifteen tactics; the `threat` topic's badge says fourteen and two cards list the
+old tactic. The visual baseline stays left alone, the ACE guide's AI tooling waits for a reader who asks, and
+OSCP stays off the queue.
+
+## 42. What shipped — the thirty-sixth wave
+
+Recorded below as *Session — the thirty-sixth wave, a tactic split in two*. §41's queue: ATT&amp;CK version 19.
+
+| § | Item | Where it went |
+|---|---|---|
+| 41 | Fourteen tactics | `threat` *MITRE ATT&amp;CK Framework*: badge, first card and grid at fifteen, Stealth and Defense Impairment where Defense Evasion was |
+| 41 | The beginner card's tactic list | Fifteen in ATT&amp;CK's order, where it had named eleven |
+| — | The eleven technique IDs the site cites | Checked against ATT&amp;CK's pages: ten current, and T1574.002's revocation already recorded |
+
+**A tactic split in two.** ATT&amp;CK v19, in April 2026, renamed TA0005 from Defense Evasion to Stealth, for
+concealment that leaves the defenses alone, and created TA0112, Defense Impairment, for breaking them. The grid's
+old description, *obfuscation, log clearing, process injection*, turned out to belong wholly to Stealth:
+Indicator Removal, which holds log clearing, stayed there, and the impairment side is disabling tools,
+firewalls and command-history logging. The beginner card's list had a second, older fault: it named eleven of the
+fourteen tactics, without Reconnaissance, Resource Development or Command and Control.
+
+**A ceiling that held.** The new grid card first carried an inline color, and the lint's ceiling on inline style
+attributes, which may fall and may not rise, stopped the check at 402 against 401. It uses a color class instead.
+
+**The queue.** Post-quantum cryptography: NIST published IR 8547 as final in October 2026, deprecating
+quantum-vulnerable public-key algorithms after 2030 and disallowing them after 2035, with earlier federal
+deadlines, and chose HQC as ML-KEM's backup in March 2025; the PQC topic stops at the 2024 standards. The visual
+baseline stays left alone, the ACE guide's AI tooling waits for a reader who asks, and OSCP stays off the queue.
+
+## 43. What shipped — the thirty-seventh wave
+
+Recorded below as *Session — the thirty-seventh wave, a report a month old*. §42's queue: post-quantum
+cryptography.
+
+| § | Item | Where it went |
+|---|---|---|
+| 42 | NIST's transition dates | A card in `sec` *Post-Quantum Cryptography — Harvest Now, Decrypt Later*: deprecated after 2030, disallowed after 2035, and the earlier federal deadlines |
+| 42 | HQC | A sentence in the same topic's standards card |
+| — | AES-128 *effective 64-bit, move to AES-256* | The same topic's table row, as NIST's report rates it: Category 1, and not on its retirement list |
+
+**A report a month old.** NIST published IR 8547 as final in October 2026, nearly two years after its draft.
+It keeps the draft's two dates for quantum-vulnerable public-key algorithms and adds the federal deadlines that
+came since: Executive Order 14412 and OMB Memorandum M-26-15 move the most sensitive federal systems to
+post-quantum key establishment by the end of 2030 and signatures by the end of 2031.
+
+**A row that said more than NIST does.** The threat card's table told readers to move AES-128 to AES-256 because
+Grover's algorithm halves its effective strength. NIST's report counts every approved symmetric primitive of at
+least 128-bit strength as meeting its lowest post-quantum category and retires only the 112-bit ones. The row now
+follows NIST, and leaves AES-256 to policies that ask for the margin.
+
+**The queue.** Public TLS certificates: the CA/Browser Forum's Baseline Requirements cut the maximum lifetime
+from 398 days to 200 on 15 March 2026, with 100 and then 47 to come, and the PKI topic says CRL and OCSP give
+real-time revocation while Let's Encrypt turned its OCSP service off in August 2025. The visual baseline stays
+left alone, the ACE guide's AI tooling waits for a reader who asks, and OSCP stays off the queue.
+
+## 44. What shipped — the thirty-eighth wave
+
+Recorded below as *Session — the thirty-eighth wave, a limit that changed in March*. §43's queue: public TLS
+certificate lifetimes.
+
+| § | Item | Where it went |
+|---|---|---|
+| 43 | The lifetime schedule | A card in `sec` *PKI &amp; Certificate Lifecycle*: 398, 200, 100 and 47 days, and the domain-validation reuse beside them |
+| 43 | *CRL and OCSP enable real-time revocation checking* | The same topic's diagram card: clients check unreliably, and Let's Encrypt publishes CRLs only since August 2025 |
+
+**A limit that changed in March.** The CA/Browser Forum's Baseline Requirements cut the longest validity a
+public TLS certificate may have from 398 days to 200 on 15 March 2026, with 100 to follow in March 2027 and 47
+in March 2029, and the window for reusing a domain check shrinks to 10 days. The site had never stated the limit,
+so nothing was wrong in the old sense; a reader would simply not have learned that renewal is about to become
+something no person does by hand.
+
+**Revocation as it is.** The PKI diagram said CRLs and OCSP give real-time revocation, while the cryptography
+topic, elsewhere in the same domain, already said revocation checks fail open. The diagram now agrees with it,
+and adds that Let's Encrypt has turned its OCSP service off.
+
+**The queue.** The EU's Cyber Resilience Act, which the site never names, though its reporting obligations
+began on 11 September 2026: a 24-hour early warning for actively exploited vulnerabilities in products with
+digital elements. The visual baseline stays left alone, the ACE guide's AI tooling waits for a reader who asks,
+and OSCP stays off the queue.
+
+## 45. What shipped — the thirty-ninth wave
+
+Recorded below as *Session — the thirty-ninth wave, a regulation the site had never named*. §44's queue: the
+EU Cyber Resilience Act.
+
+| § | Item | Where it went |
+|---|---|---|
+| 44 | The Cyber Resilience Act | A row and a card in `grc` *The Regulatory Landscape — DORA, NIS2 &amp; Cyber Disclosure Rules* |
+
+**A regulation the site had never named.** The regulatory topic's table ran from DORA to state breach laws and
+had no row for the one regulation that applies to products rather than organizations. Its reporting clock has
+run since 11 September 2026: 24 hours for an early warning of an actively exploited vulnerability, 72 for the
+notification, through ENISA's Single Reporting Platform. The census's only opening answer was a coincidence of
+three ordinary words, which is the kind of answer the census exists to notice.
+
+**The queue.** Other numbered frameworks the site cites, starting with the CIS Controls. The visual baseline
+stays left alone, the ACE guide's AI tooling waits for a reader who asks, and OSCP stays off the queue.
+
+## 46. What shipped — the fortieth wave
+
+Recorded below as *Session — the fortieth wave, defaults that moved under the cards*. §45's queue: numbered
+frameworks, which led to one wrong word and, through the dictionary, to Kerberos.
+
+| § | Item | Where it went |
+|---|---|---|
+| 45 | *18 prioritized safeguards* | `blueteam` *CIS Benchmarks &amp; CIS-CAT*: CIS Controls v8.1, 18 Controls made of Safeguards, in IG1 to IG3 |
+| — | *Crack the RC4-encrypted ticket offline* | `sec` *Active Directory — Structure, Objects &amp; Attacks*: RC4 tickets only where RC4 is configured, since April 2026 |
+| — | RC4 *disabled everywhere* | The dictionary's note, saying what changed for Kerberos and when |
+
+**Defaults that moved under the cards.** The Kerberoasting row described the attack as it worked for twenty
+years, against RC4 tickets a domain controller handed out by default. Microsoft's updates for CVE-2026-20833
+changed that default this year, in three steps from January to July, and the row now says where RC4 tickets still
+come from and how to find those places. The dictionary's note had the opposite fault, claiming RC4 was gone
+everywhere while the attack table still depended on it.
+
+**Search does not read fact anchors.** The two Kerberos census queries stayed at zero after the first fix,
+because the CVE number and the registry value were only in the anchor, a comment the search never indexes. They
+are in the row's text now, where a defender holding Microsoft's KB would look for them.
+
+**The queue.** Microsoft's other recent defaults were checked the same way and needed nothing: the site makes no
+claim about SMB signing or NTLM defaults, and its LAPS cards already separate the built-in LAPS from the legacy
+one. Next, the seven topics `depth_report.py --thin` lists, starting with `linux`'s *Package Management*, the
+thinnest on the site. The visual baseline stays left alone, the ACE guide's AI tooling waits for a reader who
+asks, and OSCP stays off the queue.
+
+## 47. What shipped — the forty-first wave, and Netlify Functions at the owner's request
+
+Recorded below as *Session — the forty-first wave, a thin topic and a first function*. §46's queue: the thin
+topics, thinnest first; and, mid-wave, the owner asked for Netlify's Functions feature to be turned on.
+
+| § | Item | Where it went |
+|---|---|---|
+| 46 | The thinnest topic | `linux` *Package Management*: a card on how a repository is trusted, from Debian's and DNF's manuals |
+| — | Netlify Functions, asked for by the owner | `netlify/functions/health.mts`, a read-only status function at `/.netlify/functions/health` |
+| — | The service worker caching function responses | `sw.js` skips `/.netlify/` paths |
+
+**A thin topic, deepened rather than padded.** *Package Management* had a table of commands and a verdict about
+snaps. It gained the one thing a Linux+ reader most needs and the table never said: how a repository earns trust,
+why `apt-key` went, and what `Signed-By` scopes. The thin count fell from seven to six.
+
+**A first function.** The owner sent Netlify's Functions page for the `garrettstudies` project, showing the empty
+state, and asked for the feature to be enabled. Netlify turns Functions on for a project by deploying one, so the
+site now ships a status function written to Netlify's current handler shape: it reports the serving deploy, its
+context and region, makes no outbound requests and holds no secret. Two things needed care. The service worker is
+cache-first for every same-origin request, and would have frozen the function's first answer; it now leaves
+`/.netlify/` alone. And the publish directory is the repository root, so the function's source is also served as a
+static file, which is harmless for this one and a rule for every later one: no secret in that directory, ever.
+
+**How it reaches production.** The project builds `main`, and its current production deploy, of 23 November,
+reports no functions. The function is on `claude/charming-pascal-efiq4m` and goes live when that branch next
+reaches `main`. Function metrics then fill as the endpoint is called; nothing on the site calls it on its own.
+
+**The queue.** The six thin topics left, two military lookup cards first. The visual baseline stays left alone,
+the ACE guide's AI tooling waits for a reader who asks, and OSCP stays off the queue.
+
+## 48. What shipped — the forty-second wave, three thin topics and the visual baseline's cause
+
+Recorded below as *Session — the forty-second wave, the officers with no number*. §47's queue: the six thin topics,
+two military lookup cards first, and the visual baseline.
+
+| § | Item | Where it went |
+|---|---|---|
+| 47 | The visual baseline | `tools/visual_test.mjs` names the Playwright that drew the baselines and the one running, and refuses `--update` under another |
+| 47 | *Staff Functions 1–9* | `military`: a card on FM 6-0's three kinds of staff officer, and the verdict's claims corrected to the manual |
+| 47 | *Common Codes Decoded* | `military`: a card on the executive officer and the chief of staff, and on the hyphen in S-3 |
+| 47 | *Software Supply Chain Security* | `devops`: a card on the pipeline's own dependencies, CVE-2025-30066 and GitHub's workflow lockfile |
+| — | An action pinned to a branch | `sec` *Container Security 101*: the Trivy example's `@master` is a commit SHA |
+
+**The visual baseline, closed.** It failed in this container on every wave of this session, at exactly 10.335% and
+10.106%, and was carried as font rendering. It is not fonts: Share Tech Mono and Outfit both load here, and blocking
+them moves the diff to 13.15%. It is the browser. CI pins Playwright 1.56.0, whose Chromium 141 drew the baselines,
+and CI's last run to reach the step, on 11 October 2026, matched them 2/2; this container has Playwright 1.63.0 and
+Chromium 153, which draws the chip labels about 10% wider. The two runs since, on 23 November, stopped before the
+step, because `ubuntu-latest` had become 26.04, which the pinned Playwright cannot install on; the job has been
+pinned to 24.04 since the next day and has not run, because no pull request has been opened. So the baseline is
+right where it is, and the test now says why it fails here and refuses to accept this container's rendering, which
+would turn CI red on every push.
+
+**Three thin topics, and two claims the sources did not support.** *Staff Functions 1–9*'s verdict said one through
+six appear at every level and seven and eight start at division. FM 6-0 lists S-1 to S-6 and S-9 but says most
+battalions and brigades plan inside the S-3 rather than in an S-5, and it lists no 7 at any echelon. *Common Codes*
+called the XO the deputy commander; the manual makes the executive officer the principal staff officer, and second in
+command only usually, only below division. The `devops` overview named every control for what you ship and none for
+what builds it, and GitHub's advice there had moved: a workflow lockfile now comes before SHA pinning.
+
+**Closed as decisions, not as work.** Two items have sat at the end of every queue since the twenty-ninth wave, and
+they leave it here as decisions. The ACE guide's AI tooling is written when a reader asks for it, read from Google's
+pages on the day, because those products change faster than anything else in the guide and a card on them would need
+a date on every sentence. OSCP stays off the queue; *Cert Roadmaps* names it in the red-team track and needs nothing
+more.
+
+**The queue.** The three thin topics left, in `data`, `web` and `eng`.
+
+## 49. What shipped — the forty-third wave, and the thin list empty
+
+Recorded below as *Session — the forty-third wave, the cards the tables implied*. §48's queue: the three thin topics
+left, in `data`, `web` and `eng`.
+
+| § | Item | Where it went |
+|---|---|---|
+| 48 | *The Data Interview* | `data`: the second-highest-salary puzzle, three answers against three inputs, every result run on PostgreSQL 16 |
+| 48 | *The Full-Stack Picture* | `web`: the status codes by the layer that sends them, from RFC 9110 and RFC 6585, and the table's dead labels replaced with links |
+| 48 | *Cert Roadmaps* | `eng`: what each certification on the table costs to keep, from six bodies' own pages |
+| — | A row whose headline could be wrong and pass | `tools/check_plan_numbers.py` checks each row's first bold run against the tool's first number |
+
+**The thin list is empty.** Each of the six topics §46 left had a table that implied a card it never wrote. *The
+Data Interview* named the puzzle every SQL round asks and did not do it; doing it found a dialect trap worth the
+card, because Postgres sorts a NULL as larger than any value, so under `DESC` two of the three usual answers return
+the top salary again, where SQLite returns the right one. *The Full-Stack Picture* sent readers to *I4*, *I5* and
+*H\**, labels from an organization of the site that no longer exists, and never said what happens when the request
+in its diagram fails. *Cert Roadmaps* laid out tracks without saying that every rung expires, at different rates
+and prices, or that climbing within one body renews the rungs below for one fee.
+
+**A gate that passed a wrong headline.** When the three cards landed, the Thin row still read **3** over a tool
+printing 0, and `check_plan_numbers.py` passed it: every number it derived appeared somewhere in the row, and the 0
+of *0%* was one of them. It checks each row's first bold run for the tool's first number now, with three fixtures for
+the case, and all thirteen rows pass it as they stand.
+
+**The queue.** Nothing this file has queued is left. Every item is shipped, or closed as a decision §48 records: the
+ACE guide's AI tooling waits for a reader who asks, and OSCP stays off the queue. New work comes from whichever census
+next reports something, as *Where new work comes from now* says at the top. One thing waits on the owner rather than
+on a session: this branch reaches CI only through a pull request, so the browser job's Ubuntu 24.04 pin, the Netlify
+function and the waves since the last merge have been verified in this container and not yet in CI.
+
+# Error codes and packaging — three items from the owner
+
+## 1. The request
+
+Added as written:
+
+```
+* Add to system tray an error checker search which will be Error code | system type | use of it
+* Compare error code from Intune and MECM that are common involing packaging and deploying of software
+* MSI, Intunewin, Exe explain in how they work
+```
+
+The page has no system tray, so the first item is read as the nearest thing it has: the row of
+icon buttons at the right of the header — theme, expand all, random topic and acronym
+expansions — which sits where a tray sits and does what one does. The lookup becomes a fifth
+button there.
+
+## 2. What exists, measured
+
+| Item | What the site has | What is missing |
+|---|---|---|
+| 1. An error-code search in the tray | Site search, which finds a code only when some card's prose contains it, and then returns the card rather than the code's meaning | A lookup that takes a code and returns one row: the code, the system it comes from, and what it means and what to do about it |
+| 2. Intune and MECM codes, compared | Two cards of codes *you will see weekly*: five in *Application Troubleshooting — Reading the IME Log* and nine in *MECM Deployment &amp; Content Troubleshooting*. Three are in both: 0x87D00324, 1603 and 1618. No card puts the two systems side by side, and 1641 appears nowhere | One table that sorts the codes by what raised them — the installer, the management agent or the platform — so the same code reads the same way in either console |
+| 3. MSI, .intunewin and EXE | *Win32 App Packaging — .intunewin End to End*: one card, 3,436 characters, on the seven steps of the workflow. Nothing says what is inside an MSI, why an EXE has no standard switches, or that a .intunewin file wraps an installer rather than being one | A topic on the three by what actually installs, what Windows records afterward, and what a deployment tool can detect |
+
+## 3. The order to do them in
+
+1. **The readers first.** A batch in *a service desk engineer*, which already asks about
+   BitLocker and Autopilot, with each want named before its topic exists.
+2. **Items 3 and 2 as `endpoint` topics, 3 first.** The comparison rests on what each format
+   reports when it fails, so the formats come first.
+3. **Item 1 last, because it is code and its rows come from item 2.** A header button, a dialog
+   with one search box, and a table of *Error code · System type · What it means*. The rows
+   ship inside the page, so it works offline, and the smoke test covers it. It never says more
+   than a sourced topic says: every row is a code item 2 verified.
+4. **Every code is read in Microsoft's own reference before it is written** — the Windows
+   Installer error list, Intune's app installation error reference and Configuration Manager's
+   — and anything that cannot be confirmed there is left out rather than guessed.
+
+## 4. The owner's reference — MSI against EXE in MECM
+
+Added as written, as the reference items 2 and 3 are measured against. It is the owner's account
+of how the Application Model treats the two formats, and it is the shape the `endpoint` topics
+should have: the comparison table, the client's log trail, the pitfalls and a checklist. Its
+specific claims, the error codes above all, are checked against Microsoft's documentation
+before a card repeats them, and the record of the wave that writes the topics says which were
+confirmed and which were not.
+
+```markdown
+# MECM Application Model: MSI vs. EXE Deployment Guide
+
+## Overview
+
+In Microsoft Endpoint Configuration Manager (MECM), **MSI (Windows Installer)** files integrate natively with the Application Model by automatically populating install/uninstall strings, detection methods, and return codes. **EXE (Script Installer)** files are opaque wrappers that require administrators to manually research and configure silent switches, detection logic, and return codes in the console.
+
+> [!IMPORTANT]
+> **Recommended Action:** Always prioritize vendor **MSI** installers for standard enterprise deployments. If a vendor only provides an **EXE** or requires complex pre/post-install tasks (such as closing active processes or copying configuration files), wrap the deployment using a standardized PowerShell script via the **Script Installer** deployment type.
+
+---
+
+## Architectural Comparison: MSI vs. EXE in MECM
+
+When creating a Deployment Type under `Software Library > Overview > Application Management > Applications`, the MECM engine handles MSI and EXE files through two distinct workflows:
+
+| Feature / Mechanism | MSI (`Windows Installer (*.msi file)`) | EXE (`Script Installer`) |
+| --- | --- | --- |
+| **Metadata Parsing** | **Automatic:** MECM reads the MSI database tables directly to extract Product Name, Version, Publisher, and Product Code GUID. | **Manual:** MECM cannot see inside the EXE wrapper. All metadata must be typed manually into the wizard. |
+| **Install / Uninstall Strings** | **Auto-Generated:** Automatically populates `msiexec /i "app.msi" /q` and `msiexec /x {Product-GUID} /q`. | **Manual Research Required:** You must discover the vendor's underlying packager (InstallShield, Inno Setup, NSIS, WiX) and supply exact silent flags (e.g., `/S`, `/silent`, `/verysilent`, `/qn`). |
+| **Detection Method** | **Auto-Created:** Automatically configures detection using the **MSI Product Code GUID** and optionally the `ProductVersion` property. | **Manual Configuration Required:** You must manually build a Detection Clause using **Registry Keys** (`HKLM\...\Uninstall`), **File System** (file path and version), or a custom detection script. |
+| **Customization** | **Standardized:** Handled natively via Windows Installer Properties (`PROPERTY=VALUE`) or Transform files (`TRANSFORMS="custom.mst"`). | **Vendor-Specific:** Requires passing command-line arguments, answer files (`.iss`, `.ini`, `.xml`), or wrapping the EXE in a script. |
+| **Return Codes** | **Standardized:** Adheres strictly to `msiexec` standards (`0` = Success, `3010` = Soft Reboot, `1641` = Hard Reboot, `1603` = Fatal Error). | **Non-Standard:** Varies wildly by vendor. Custom return codes must be manually mapped in the **Return Codes** tab of the Deployment Type properties. |
+
+---
+
+## Client Enforcement & Evaluation Lifecycle
+
+Regardless of whether you deploy an MSI or an EXE, the MECM client agent processes them through the exact same local state machine, tracked in `C:\Windows\CCM\Logs`:
+
+| Execution Phase | Client Log File | How MSI Works vs. How EXE Works |
+| --- | --- | --- |
+| **1. Pre-Install Discovery** | `AppDiscovery.log` | **MSI:** Queries the local Windows Installer database for the `{GUID}`. <br>**EXE:** Checks the specific File Path or Registry Key manually defined. If detected, installation is skipped. |
+| **2. Content Download** | `CAS.log` & `DataTransferService.log` | Identical for both. The client downloads all files in the content source folder from the Distribution Point to `C:\Windows\ccmcache`. |
+| **3. Enforcement** | `AppEnforce.log` | Executes the command line under the `NT AUTHORITY\SYSTEM` context (if set to *Install for system*). Logs the exact command string, Process ID (PID), and waits for the process to exit. |
+| **4. Post-Install Verification** | `AppEnforce.log` | Immediately after the installer exits with a success code (`0` or `3010`), MECM re-runs the **Detection Method**. If a manual EXE detection rule is misconfigured, MECM throws error `0x87D00324` (*The application was not detected after installation completed*). |
+
+---
+
+## Common Pitfalls & Remediation
+
+> [!WARNING]
+> Always test EXE silent switches under the `NT AUTHORITY\SYSTEM` context prior to deploying to production collections to avoid hidden modal dialog prompts hanging the MECM client enforcement thread.
+
+| Pitfall | Root Cause | Remediation |
+| --- | --- | --- |
+| **Error `0x87D00324` on EXE Installs** | The EXE installed successfully, but the manual Detection Method checked the wrong registry hive (e.g., 32-bit vs. 64-bit `WOW6432Node`) or wrong file version. | Verify the exact registry path in `regedit` on a test machine after installing, or select **"This registry key is associated with a 32-bit application on 64-bit systems"** in the Detection Rule window. |
+| **Installation hangs for 120 minutes (`0x87D00664`)** | The EXE silent switch was omitted or incorrect, causing a hidden UI dialog box to prompt for user input under the non-interactive `SYSTEM` account. | Test the exact command line locally using `psexec.exe -i -s cmd.exe` to simulate the MECM `SYSTEM` context and verify zero UI popups appear before deploying. |
+| **EXE spawns child process and exits early** | Bootstrapper EXEs often extract an underlying MSI, launch it, and immediately close the main EXE process. MECM sees the main PID close, runs Detection too early, and fails. | Extract the underlying MSI from `%TEMP%` while the EXE is open, or use a PowerShell wrapper script that waits for child processes to finish before exiting. |
+
+---
+
+## Pre-Deployment Verification Checklist
+
+- [ ] Verify whether an official vendor `.msi` exists or can be extracted from the `.exe` bootstrapper.
+- [ ] Test silent install and uninstall command strings locally under the `SYSTEM` account (`psexec.exe -i -s cmd.exe`).
+- [ ] Validate that the Detection Method accurately reflects the installed state (Registry `Uninstall` key or primary executable `File Version`).
+- [ ] Confirm custom vendor exit codes are mapped in the Deployment Type **Return Codes** tab.
+- [ ] Distribute content to target Distribution Point Groups and validate `AppDiscovery.log` and `AppEnforce.log` on a pilot client.
+```
+
+## 5. What shipped — the twelfth and thirteenth waves
+
+Recorded below as two sessions. The twelfth wrote items 3 and 2 as topics, readers first: 8
+queries opened at **0 of 8** and closed at **8 of 8**. The thirteenth built item 1.
+
+| Item | Where it went |
+|---|---|
+| 3. MSI, .intunewin and EXE | `endpoint` *MSI, EXE &amp; .intunewin — What Each Package Is, and How It Installs*: what runs and what Windows records for each, what a deployment tool can read from an MSI and must be told about an EXE, and testing as SYSTEM with the guide's three pitfalls |
+| 2. Intune and MECM codes | `endpoint` *App Deployment Error Codes — Intune and MECM Side by Side, by What Raised Them*: three layers that raise codes, how 0x80070643 is 1603, twelve common codes with their pairs, and the two tools' return-code types and time limits side by side |
+| 1. The lookup in the tray | A 🧾 ERRORS button in the header, and the `c` key, open a search over 156 codes in whichever form a console printed them, with columns *Error code · System type · Use of it*. Every row is copied from a Microsoft reference that was read, and the rows ship inside the page |
+| The guide in §4 | Checked against Microsoft's pages. Confirmed: the auto-filled MSI detection, the 32-bit detection option's wording, MECM's 120-minute default run time, the return-code types, the log trail and the PsExec test, which Microsoft's own reference gives. **Not confirmed: 0x87D00664**, which appears in none of Microsoft's references, so the cards describe the timeout without a code |
+
+**What is left.** Intune's default return codes are confirmed only by packaging vendors'
+documentation, because Microsoft's page says defaults exist without listing them; the topic's
+anchor says so. And the lookup knows what Microsoft's three references list and nothing else,
+which is the point: a code it cannot find is one nobody here has a source for.
+
 
 # Domain shape — the connectivity measurement, and what it says
 
@@ -2500,3923 +3477,6 @@ that level. The remaining niche tail is the scheduled Routine's job, on its peri
 cadence — not this session's to manufacture.
 
 ---
-
-## Session — three cards the probe named, and none of them was a synonym
-
-The previous record left twelve named misses and called them "mostly kind 1:
-the card says it in the other word, which is a prose wave". That framing was
-half wrong, and reading the three best ones is what showed it.
-
-**Kind 1 says name both words. Two of these three had no word to name** — they
-had a hole where the reader's question goes, and the probe found the hole by
-looking for the word.
-
-| Miss | What the card already had | What was missing |
-|---|---|---|
-| `merge conflict` | `bisect`, `rebase -i`, `reflog`, `stash`, `cherry-pick`, `worktree`, `blame`, four kinds of undo | **Conflicts.** A card that teaches rebase and cherry-pick and never says what happens when they stop |
-| `cron not running` | PATH, redirect output, `chmod +x`, crontab.guru | The symptom. Four bullets of causes with no statement of what the reader is looking at |
-| `printer offline` | Technologies, deployment models, secure release, a six-step triage | The single commonest printer ticket there is |
-
-### The inversions each one turned out to have
-
-None of these were reachable by adding a word, and each has the shape the
-rubric asks for — the sentence that is true and contrary to instinct:
-
-* **A merge conflict is git declining to guess, and "ours" and "theirs" swap
-  meaning between a merge and a rebase.** A merge replays their commits into
-  your branch, so *ours* is yours. A rebase replays *your* commits onto their
-  branch, so while it runs *ours* is everyone else's work and *theirs* is your
-  own commit. Resolving a rebase by the reflex learned from merges deletes your
-  own change and leaves a clean-looking history that silently dropped it. Git
-  checks the markers are gone, not that the result makes sense.
-* **A cron job that "did not run" almost always ran.** The fingerprint is *it
-  works when you type it and not when cron types it*, which is one sentence
-  about the environment — and `env -i /bin/sh -c '/path/to/job'` reproduces it
-  in one line and is right far more often than the expression is wrong. The
-  `%` that cron reads as a newline and the dot that makes `run-parts` skip a
-  file are in the table now; both were missing and both are silent.
-* **"The printer is offline" is a claim by the client, not a report from the
-  device.** A device printing its configuration page for somebody standing
-  beside it can show offline on every desk in the building, because the queue
-  is reporting that *this computer* did not get an answer it expected. Which
-  makes power-cycling the printer a reboot of the one component that was never
-  at fault.
-
-### Why this is not keyword stuffing, and how to tell next time
-
-The probe's own rule is that seeding symptom phrases into cards is *"keyword
-stuffing with a rationalisation attached"*, and it is right. The test that
-separates the two is not whether the word appears afterwards — it is
-**whether the card was incomplete without the thing the word names**:
-
-> A card that teaches `git rebase -i` and never mentions conflicts is missing
-> content. A card that lists cron's PATH gotcha without naming the symptom is
-> missing a sentence. Adding "merge conflict" to a card that genuinely has no
-> conflict material would have been the stuffing.
-
-Three of nine remaining misses are still the synonym shape — *joiner* against
-*new starter*, *spacing* against *spaced repetition* — and they are a smaller,
-different edit. Two more, `kill a process` and `writing a detection`, are the
-matcher limit recorded last session and not a content problem at all.
-
-```
-probe 63 of 78 answered · 9 unexplained, named · 3 concept cards added
-depth mean 1,382 -> 1,383 · excluding verdicts 1,117, unmoved
-39 gates green · check · smoke 163 · search 51 · a11y 31 · resilience 64
-mobile 15 · visual 2 · backup 3
-```
-
----
-
-## Session — two symptoms infra described without naming, and a stale verdict
-
-Four more of the probe's misses, and the most useful thing this wave produced
-was not a card. It was catching a `keep` note that had gone false.
-
-### The two infra cards
-
-Both had the mechanism and neither had the ticket.
-
-**Processing Order & Precedence** explains LSDOU, Enforced, Block Inheritance,
-the computer/user split and loopback — and never says what the reader types.
-The missing card is the one the rest of the topic implies: *"it is not applying"
-usually means something else won*, because **precedence working correctly looks
-exactly like a policy that did not arrive**. Five reports, five causes, and only
-one of them is a fault. The verdict is `gpresult /h` run as the affected user on
-the affected machine, with its limit stated in the same breath — it reports what
-*did* happen and has nothing to say about what *should* have, so it settles "did
-something else win" and never "is this policy right".
-
-**File Services** had share-versus-NTFS, DFS and quotas, and nothing about the
-drive letter. *A mapped drive is an intention, not a connection* — re-established
-at every sign-in, in whatever security context the process doing the asking
-holds, which is why one letter can be present, absent and unreachable on one
-machine at one moment. The red cross that is cosmetic, the map that loses a race
-with the network, the elevated process holding a different token, one credential
-set per server name, and the address that authenticates differently from the
-name. Five tickets that read as one.
-
-### The stale verdict, which is the part worth keeping
-
-`someone clicked the link` carried this note:
-
-> kind 3 — the response card exists and does not use these words
-
-It had been true. It was not true any more: the query stopped being a zero when
-the matcher gained its relaxation stage, and it was returning four cards — none
-of them the phishing-response card — while a note said it returned none. **A
-recorded verdict decays when the thing it describes changes underneath it**, and
-nothing checks a `keep` note the way `check_plan_numbers.py` checks a table row.
-
-Reading the card settled it, and the answer was smaller than the note: it says
-`clicked` three times, `someone` twice, `URL` twice and **`link` not once**. A
-phishing response card that never uses the word the person reporting it will use
-is not being precise, it is using the technical word where both belong. Two
-words changed.
-
-The general form, which is the thing to carry: **a verdict recorded against a
-zero is only valid while the query is still a zero.** Every `keep` note in that
-file asserts a state, and the ones asserting "returns nothing" are the ones a
-matcher change can silently falsify. The probe reports zeros and misses
-separately; it does not check that a note still describes the row it sits on.
-
-### And two recorded rather than fixed
-
-`kill a process` and `writing a detection` are the matcher limit from the
-previous session, now written into the file instead of reappearing as
-unexplained every run. Both have every word of the query in the wanted card; a
-literal phrase in a worse card answers first and stops the search. Preferring a
-later stage needs ranking, and this matcher is a filter.
-
-```
-probe 78 · 66 answered · 5 unexplained, named · zeros 5 -> 4
-5 concept cards this wave and last · mean 1,384 / 1,118 excluding verdicts, both +2
-39 gates green · check · smoke 163 · search 51 · a11y 31 · resilience 64
-mobile 15 · visual 2 · backup 3
-```
-
----
-
-## Session — the check that already existed, one file over
-
-The previous record ended on a general statement and did not act on it:
-
-> A verdict recorded against a zero is only valid while the query is still a
-> zero. The probe reports zeros and misses separately; it does not check that a
-> note still describes the row it sits on.
-
-It does now. And the first thing the work turned up is the part worth keeping:
-**`near_duplicates.py` has had exactly this check for as long as it has had
-verdicts.**
-
-```
-# A verdict whose pair no longer scores is a verdict about content that has
-```
-
-Its docstring even argues the case — *"a verdict whose pair no longer scores is
-reported as stale, so the queue is worked"*. Two files in the same `tools/`
-directory store a human's recorded judgement about a measurement. One checked
-that the judgement still had something to be about. The other did not, and the
-one that did not is where a note went false and stayed false.
-
-**The lesson is not "add staleness checks".** It is that a convention invented
-once for a good reason does not travel to the next file that needs it unless
-somebody carries it, and the thing that made this visible was a *defect*, not a
-review. Looking for the same shape elsewhere costs a grep: `search_test.mjs`
-also holds recorded misses, and it already handles the same decay in the same
-direction — *"a miss that starts working is reported too — it should be promoted
-into FIXTURES"*. Two of three had it. Nobody had noticed the third.
-
-### What is checkable, and what deliberately is not
-
-A `keep` note is prose, and most of what it says is an argument. Two assertions
-in it are not:
-
-| Claim | Check |
-|---|---|
-| The note says the query **returns nothing** | It either returns nothing or it does not. "zero", "found nothing", "returns nothing", "no results" |
-| The note explains why a query **misses its `want`** | It either still misses or it reaches the card, in which case the reason has been answered and the note is hiding finished work |
-
-No threshold, nothing for a reader to overrule — the sharp shape
-`check_css_vars.py` argues for. What it will not do is judge whether the prose
-is *right*: a note reading "the comparison is not phrased" could be wrong about
-the corpus and this cannot tell. It checks the one assertion a machine can
-evaluate and leaves the argument to a person, which is the division this file
-draws everywhere else.
-
-### It reports; its logic gates
-
-The probe is a census and stays one — gating it would make a content wave's
-findings break the build, which is the whole reason it exits 0. But the
-staleness decision is ordinary logic, so `--self-test` runs it against eight
-fixtures in `make check` and in CI, with no browser. **Gates 39 → 40**, the
-same 40 in both lists.
-
-Proved twice, because a check that has never fired is a check nobody has tested:
-the fixtures, and then the live path, by falsifying a real note on a copy of the
-file and watching it name the row.
-
-```
-  "printer offline"  (a service desk engineer)
-      the note says this returns nothing; it returns 1
-```
-
-The stale report prints **before** the findings and again after them, because a
-note that has gone false is a defect in the file rather than a fact about the
-site, and every count on the page is read through it.
-
-```
-gates 39 -> 40 · probe self-test 8 fixtures · 78 queries · 66 answered
-0 stale verdicts · smoke 163 · search 51 · a11y 31 · resilience 64
-mobile 15 · visual 2 · backup 3
-```
-
----
-
-## Session — the queue emptied, and the number it emptied to is lower than the one it started at
-
-```
-72 of 78 answered   ← counting results
-57 of 78 answered   ← counting whether the right card came back
-71 of 78 answered   ← after the matcher stage and eleven cards
- 0 unexplained
-```
-
-The middle number is the honest one and it is the reason the last is worth
-anything. A census that went **up** from 72 would have been the same lie in a
-better mood.
-
-### The last five, and what each turned out to be
-
-| Miss | Verdict |
-|---|---|
-| `outlook won't connect` | **A hole.** The M365 troubleshooting playbook is five abstract layers and a symptom table written in categories — it never names one product. A playbook whose examples are "one user, one feature" cannot be found by a ticket that says *Outlook won't connect*, and cannot be used by the person holding that ticket either |
-| `spaced repetition` | **A wrong `want`.** The card I pointed it at names Spacing in its *title* and covers it in one table row about teaching other people. The card that teaches the technique is in `productivity`, which then turned out not to name it in running text — it says "spaced-repetition software" in a verdict and nowhere else |
-| `why does caching break things` | Synonym, with something worth adding underneath it |
-| `first week as a manager` | Synonym, same |
-| `onboarding a new starter` | Synonym — the card says *joiner* three times and *onboarding* never |
-
-### The correction is the part to keep
-
-`spaced repetition` was pointed at the wrong card by me, in the same session
-that argued a `want` should only be written where one card is the defensible
-answer. Two cards had the word in scope and I picked the one whose **title**
-matched instead of the one whose **content** did. The probe caught it the only
-way it could — by continuing to report a miss after a change that should have
-closed it.
-
-**Title-matching is how a `want` goes wrong**, and it is worth writing down
-because it is the cheap, plausible move: the career card is called *How Adults
-Actually Learn — Relevance, Practice, Feedback & Spacing* and is about running
-training for other people. The reader typing "spaced repetition" wants to study,
-not to teach. Same word, different subject, and the slug is no help at all.
-
-### Three synonyms, and what they were covering
-
-None of the three was worth only a word, which has now happened often enough
-this session to be the rule rather than the exception:
-
-* **Caching breaks things in one direction only.** It never makes the source
-  wrong; it serves an answer that *used to be* correct — which is why a cache
-  bug reproduces perfectly for one person and is invisible to everybody else,
-  including whoever is trying to fix it.
-* **The first week as a manager is not phase one, it is the week that decides
-  whether you get one.** A new manager who spends it answering the technical
-  questions has told the team precisely what they intend to be for.
-* **Every M365 report arrives phrased as a client problem, because the client
-  is the only layer the user can see.** Four of the five layers are invisible
-  from a desk, so a tenant incident, an expired token, a disabled service plan
-  and a Conditional Access policy all surface as one sentence. Which is why the
-  instinct is to repair the thing the sentence names, and why that instinct is
-  wrong four times out of five.
-
-### Where the probe stands
-
-Every one of the 78 now carries the topic it should reach or a recorded reason
-why it cannot, and the seven recorded ones are: four zeros a previous session
-reasoned about and kept, and three misses that are matcher limits rather than
-corpus gaps. **The backlog is empty and the file says why for every row in it.**
-
-The next session should not read this as "the probe is finished". It is finished
-*against its own 78 questions*, and those were written by people who know the
-site. The measurement that would move now is more queries, not more fixes — and
-the honest expectation is that a fresh 78 would open at something like 57 again.
-
-```
-probe 78 · 71 answered · 0 unexplained · 11 concept cards and prose edits
-across 9 domains this session · 40 gates green · smoke 163 · search 51
-a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
-```
-
----
-
-## Session — the prediction, tested: a fresh 29 questions opened at the same third
-
-The last record made a claim and it was cheap to check:
-
-> The probe is finished *against its own 78 questions*, and those were written by
-> people who know the site. The honest expectation is that a fresh 78 would open
-> at something like 57 again.
-
-**Twenty-nine new questions opened with ten misses.** The original 78 opened
-with fifteen. Both are about a third, and the agreement is the useful part: the
-miss rate is a property of writing a reference, not of this particular batch or
-of the people who wrote it. A site that answers its own questions is not the
-same as a site that answers a reader's.
-
-### What the ten were
-
-Three of them were **holes**, and each hole sits directly under a heading that
-promised to cover it:
-
-* **`"The Disk Is Full"` never mentioned inodes.** Its step 1 is `df -h`, and
-  inode exhaustion is precisely the case where `df -h` tells you there is no
-  emergency while every write fails with the *"No space left on device"* the
-  card opens on. The shape underneath is worth the card on its own: the more
-  often a job fails, the faster it exhausts the thing that would let it report
-  the failure.
-* **The SSH card never quoted `Permission denied (publickey)`.** The most common
-  SSH error there is, and the message misleads in a specific direction — it
-  almost never means the key is wrong. The cause that outranks all the others is
-  a group-writable **home directory**, which the card's own `chmod` block does
-  not cover because it stops at `~/.ssh`.
-* **Subject Access Requests at Scale never said "GDPR" or "data subject".** The
-  card is about a right, and it named neither the right's holder nor the
-  regulation that creates it.
-
-Four were synonyms with something real underneath — *penetration test* against
-*pentest*, *screen sharing* against *Screen Shares*, *on call* against
-*on-call*, the leaver's *files* against *the OneDrive*. And three are the
-matcher.
-
-### Two `want` values that were wrong, both mine, both caught the same way
-
-`spaced repetition` last session, and `port already in use` this one. The second
-is the more instructive: I pointed it at Process Management because the phrase
-has "process" in it, and the commands that answer *what is holding this port*
-live in the performance-debugging card's `lsof`/`fuser` section. **The probe
-caught both by continuing to report a miss after a change that should have
-closed it** — which is the only way a wrong target can announce itself, and an
-argument for fixing the card *and* re-running rather than fixing and assuming.
-
-### The stage-stop class now has four members
-
-`kill a process`, `writing a detection`, `incident postmortem`, `penetration
-test report`. In every one of them **the wanted card contains every word of the
-query**, and a single other card containing the words *adjacent* answers first
-and stops the search:
-
-```
-penetration test report   1 match in 1 domain
-incident postmortem       1 match in 1 domain · matched ignoring hyphens
-kill a process            1 match in 1 domain
-writing a detection       1 match in 1 domain
-```
-
-All four return **exactly one result**, and that is a signal rather than a
-coincidence. Recorded here rather than acted on, because the fix is a change to
-the stage order and that deserves its own measurement.
-
-```
-probe 105 questions · 95 answered · 3 unexplained, named · 8 concept cards
-and prose edits across 7 domains · 40 gates green · smoke 163 · search 51
-a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
-```
-
----
-
-## Session — a single result is a coincidence, except when it is the answer
-
-The previous record left four misses with one fingerprint and declined to act:
-
-```
-penetration test report   1 match in 1 domain
-incident postmortem       1 match in 1 domain · matched ignoring hyphens
-kill a process            1 match in 1 domain
-writing a detection       1 match in 1 domain
-```
-
-In all four the card the reader wanted contains **every word of the query**, and
-a single unrelated card containing those words *adjacent* answers first and
-stops the search. Being adjacent is the whole of its claim.
-
-So a single result escalates now. It is safe in the strict direction because
-each stage is a superset of the one before: a card containing the query as a
-phrase necessarily contains the query's words, so widening cannot lose the hit
-it started from.
-
-### The guard, and the three discriminators that did not work
-
-The first version broke two gated fixtures, both of which had exactly one result
-and the *right* one. `why is my laptop slow` returned the card called **"Why Is
-My Laptop Slow?"** and widening it to sixteen serves nobody.
-
-Three candidate rules were measured before one worked:
-
-| Rule | Why not |
-|---|---|
-| Result count after widening | The four good cases land at 12, 16, 22 and 30; the two bad ones at 10 and 16. No cap separates them |
-| Word rarity | `penetration` is in 1.0% of topics, `revoke` in 2.6%. The word that should have been protected is the *commoner* one |
-| **The lone hit's own slug carries a word of the query** | **This works**, and it is not a coincidence that it does — a slug is built from a title, and a title is a claim about the subject rather than a mention of it |
-
-That leaves one fixture genuinely worse: `revoke before reset` goes from one
-perfect hit to ten containing it, because the phrase is the card's *thesis* and
-not its title, and no rule reaches that. **Its ceiling moved 8 → 20 and the
-fixture table says in full that this is a cost paid rather than a stale number
-corrected** — the one exception to a rule that file states plainly, written down
-beside the number so nobody later reads 20 as generosity.
-
-### The staleness check earned its keep two waves after it was written
-
-It fired for the first time on this change, unprompted, naming three rows:
-
-```
-"writing a detection"   the note explains a miss that no longer misses
-"kill a process"        the note explains a miss that no longer misses
-"standups"              the note explains a miss that no longer misses
-```
-
-`standups` is the one worth pausing on. Its note is **the reason the probe grew
-a `want` field at all**, it had survived several sessions, and it ended with a
-refusal: *writing 'standups' into the prose to close it is the keyword stuffing
-this file forbids.* The escalation closed it without a word of prose being bent,
-which is exactly what that note was holding out for — and without the check,
-three verdicts describing a world that no longer exists would have sat there
-until somebody happened to re-read them.
-
-### And one word
-
-`explain oauth` returned **nothing** against a domain full of OAuth cards. The
-conjunction required a word the OAuth card has no reason to contain, and the
-query is two words long, so the relaxation stage's floor of two could not drop
-it. `explain` is an instruction to the site, never a subject, and it joins
-`how what why when where`. Only that one: **`show` is a Cisco command here**,
-and `define` and `describe` are ordinary content verbs in a reference.
-`explained` and `explains` are separate tokens and stay, which is what keeps
-*Load Balancers Explained* reachable by its own title.
-
-```
-probe 105 questions · 101 answered · 0 unexplained · 0 wrong-card · 0 stale
-4 zeros, all recorded · search 51/51 with one ceiling moved and the reason
-written beside it · 40 gates green · smoke 163 · a11y 31 · resilience 64
-mobile 15 · visual 2 · backup 3
-```
-
----
-
-## Session — the guard this file credits with catching "whitelist" was not catching it
-
-Found by reading, not by a tool, and while doing something else entirely. The
-SSH card was open for a different reason and one of its rows said:
-
-```
-AllowUsers   alice bob   Whitelist who can SSH in
-```
-
-`data/renames.json` has listed **whitelist → allowlist since 2020-06**.
-`check_renames.py` runs in `make check` and in CI. The build had been green
-throughout. And the session operating manual at the top of this file names that
-exact rename as failure #3, with the guard column reading *"`check_renames.py`,
-already in `make check`. First time it caught same-session writing."*
-
-It caught that one. It could not have caught these:
-
-```
-whitelist   Whitelist who can SSH in                       linux
-whitelist   Whitelists exactly where scripts may load from sec
-whitelist   Whitelist which executables are allowed to run sec
-whitelist   Application whitelisting, EDR                  threat
-whitelist   a whitelisted domain added to fix one          m365
-blacklist   Check your IP against blacklists regularly     linux
-```
-
-### Two characters of regex, and both of them hid the same class
-
-```python
-re.finditer(r"\b" + re.escape(old) + r"\b", text)
-```
-
-**No `re.I`.** A rename is a rename whatever the capitalisation, and a
-sentence-initial capital is the single likeliest place for one to hide, because
-that is exactly where prose puts the word it is about. Four of the six were
-capitalised.
-
-**A trailing `\b`.** `\bwhitelist\b` does not match *whitelisting*, and the word
-most often appears as a gerund. Five of the six were inflected; four were both.
-
-Inflection is opt-in per entry — `"inflect": true` — because a product name does
-not pluralise into a different product, and `(?:s|d|ed|ing)?` hung on "Azure AD"
-is noise looking for somewhere to happen. Case-insensitivity is not opt-in,
-because there is no entry for which it is wrong.
-
-### What this is actually an instance of
-
-The register's fifth risk is *this file believing its own record*. This is the
-tooling version of it: **a guard's entry in a table says what it is for, not
-what it does**, and the table is the thing everyone reads. The manual's failure
-list has a column called "Guard", one row of which has been quietly wrong since
-it was written.
-
-Two cheap habits fall out of it, and the second is the one worth keeping:
-
-1. A check whose registry is *data* wants a self-test over that data's shapes,
-   not over the one case that motivated it. This one now has twelve fixtures —
-   lowercase, capitalised, gerund, plural, participle, historical, beside-the-
-   new-name, allow-listed suffix, wrong case on a product, and a non-inflecting
-   entry that must not inflect. **Gates 40 → 41.**
-2. **Grep for what a guard claims to cover before trusting the claim.** One
-   `grep -rin whitelist data/` would have found this at any point in five years.
-   Nobody ran it, because the check existed and the build was green — which is
-   the precise failure mode a green build creates.
-
-```
-renames 6 fixed across 4 domains · check_renames self-test 12 fixtures
-gates 40 -> 41 · probe 105 · 101 answered · smoke 163 · search 51 · a11y 31
-resilience 64 · mobile 15 · visual 2 · backup 3
-```
-
----
-
-## Session — applying the last finding to the next guard, and the port list nothing read
-
-The previous record ended on a habit rather than a fix:
-
-> **Grep for what a guard claims to cover before trusting the claim.**
-
-So it was applied to the other guards, and the interesting result is that
-**most of them survived it.** `lint_content.py` claims to find hard-coded
-colours; sweeping every hex literal in `data/` outside code blocks turns up
-exactly two, and both are the cases its own docstring says it deliberately
-excludes — *"deploy #4521"* and a card teaching hex notation. That check does
-what its row says.
-
-`check_contradictions.py` did not.
-
-### Fifteen services, fourteen of them from one domain
-
-Its port half reads prose — *"SSH on port 22"*, *"port 22 (SSH)"*, *"22/tcp"* —
-and prose is where a port gets **mentioned**. It is not where a reference
-**states** one. `net` carries *Common Ports — Protocol Reference*, a table whose
-header row reads `Port(s) | Protocol | Transport | Security Notes`, and the
-check could not read a table. A wrong number in that table is simultaneously
-the likeliest port error on this site and the least likely to be caught by eye.
-
-Reading by **header** rather than by shape — a table qualifies when one header
-cell names a port and another names a protocol or service, and no other table
-qualifies — took the count from **15 services to 44**.
-
-### The combined row, which is where a naive reader invents a finding
-
-The first prototype reported **IMAPS on 993 and 995**. The row is:
-
-```
-993 / 995   IMAPS / POP3S
-```
-
-The row is correct and the reader was wrong, which is the exact failure this
-file exists to avoid committing. Three shapes, and only one needs a rule:
-
-| Row | Reading |
-|---|---|
-| `20 / 21` · `FTP (data/control)` | one service, two ports — both are FTP |
-| `22` · `SSH / SFTP / SCP` | one port, three services — all three |
-| `993 / 995` · `IMAPS / POP3S` | two and two — paired positionally |
-| `80 / 443 / 8080` · `HTTP / HTTPS` | **skipped.** Which goes with which is not in the row, and guessing is how a check starts inventing findings |
-
-Parentheticals are stripped before splitting, so the slash inside *FTP
-(data/control)* is not read as a separator.
-
-### The second rule was found by the injection test, not by the fixtures
-
-The fixtures passed with only the first and third rules. Then a wrong port was
-injected into the real table — and **nothing happened**, because `22 | SSH /
-SFTP / SCP` is three names and one port, which the rule skipped as ambiguous.
-It is not ambiguous; it is how a reference writes a family, and skipping it lost
-the site's only tabular statement of the most quoted port on it.
-
-With the rule added, the same injection reads:
-
-```
-SSH: 22 in net; 2222 in net
-```
-
-and the multi-port count returns to eight on restore. **A fixture suite proves
-the rules you thought of.** Running the check against the real file, having
-deliberately broken it, is what finds the rule you did not — and this is the
-second time this session that the difference has produced the finding.
-
-The eight services now reported with more than one port are all legitimate
-pairs — DHCP 67/68, FTP 20/21, IPsec 500/1701/4500, NetBIOS 137/139, SIP
-5060/5061, SNMP 161/162, DNS 53/853, TLS 443/853 — which is the report doing
-its job: it says *read this list, do not automate it*, and the list is readable.
-
-```
-port table 15 -> 44 services · self-test 17 -> 18 fixtures · 41 gates green
-smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
-```
-
----
-
-## Session — do the gates actually fire, and the thousand reads nobody checked
-
-Two sessions of auditing guards by reading them. This one asked the cruder
-question instead: **break the file on purpose and see whether the check
-notices.** Six injections, each in a place awkward enough to be a plausible
-blind spot — a cross-reference inside a table cell, a hex literal in a `style`
-attribute on a `<td>`, an unclosed `div` mid-card, an undefined custom property,
-a `data-checked` in the future, an old product name in a table:
-
-```
-xref: a broken cross-reference inside a table cell          FIRED
-colour: a hex literal in a style attr on a table cell       FIRED
-markup: an unclosed div at the end of a concept card        FIRED
-css-vars: an undefined custom property                      FIRED
-volatility: a data-checked in the future                    FIRED
-renames: an old product name in a table cell                FIRED
-```
-
-Six for six, which is the answer you want and is worth the ten minutes it took
-to be sure of rather than confident about.
-
-### The gap was not in what a guard checked. It was in where it looked
-
-`check_css_vars.py` exists because of `var(--bg1)` — a name nothing declares,
-which CSS handles by discarding the declaration and **inheriting**, so the
-symptom is a plausible wrong colour rather than a missing one. Its docstring
-scopes it to `style.css` and gives a reason:
-
-> The `data/*.html` corpus mentions `var(--gap)` and `var(--spacing-md)` inside
-> code samples that *teach* custom properties, and flagging a teaching example
-> would be the instrument being wrong about what it is reading.
-
-That is right about the corpus and wrong about the scope. A `var()` inside a
-**style attribute** is not a teaching example — it is a live declaration with
-exactly that bug available to it. The counts settle it:
-
-| Where | Reads |
-|---|---|
-| `style.css` | 17 names, checked since the file was written |
-| `style="…"` in `data/*.html` | **1,061**, checked by nothing |
-| `script.js`, written into generated markup | **10**, checked by nothing |
-| `var()` anywhere else in `data/` | **4** — the teaching examples, and scoping to the attribute excludes them by construction rather than by exemption |
-
-All 1,071 are clean today. That is the point: the check now holds them there,
-and it needs no allow-list to do it.
-
-### The boundary was the shape of the bug, not the shape of the class
-
-Worth stating because it is the second time this session:
-`check_renames.py` matched case-sensitively because the rename that motivated it
-was written in lower case. `check_css_vars.py` read only the stylesheet because
-the `var()` that motivated it was in the stylesheet. **A guard written from one
-defect inherits that defect's accidents**, and the accidents are invisible
-afterwards because the check is green and the row in the table says what it is
-for.
-
-The rule this file should have had from the start, and now does: *every place
-the site names a custom property, the name is declared or it is not.*
-
-```
-css-vars now covers style.css + 1,061 attribute reads + 10 in script.js
-self-test 7 -> 13 fixtures · 6 injections, 6 fired · 41 gates green
-smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
-```
-
----
-
-## Session — the half of the acronym check that was written backwards
-
-The breadth census in `lint_content.py` has said the same thing for many
-sessions — *64 single-meaning acronyms rendered in 6+ domains; breadth is the
-only signal that a second meaning has been borrowed somewhere* — and the manual
-lists the matching failure: **two wrong acronym expansions shipped and were
-found by reading, not by any check.** So the queue was read.
-
-It found something one layer down from where it was looking.
-
-### The site writes definitions both ways round; the check reads one
-
-`check_contradictions.py` has `INLINE_EXP_RE`, which matches `ACRO
-(Expansion)`. The site also writes `Expansion (ACRO)` — *"Tech companies
-borrowed the **Incident Command System (ICS)** from emergency services"* — and
-there are **85 of those**, none of them ever in front of the check that exists
-to compare them with the dictionary.
-
-Reading the reversed form needed two normalisations, both mechanical:
-
-* **A leading article belongs to the sentence.** "…is An Architecture Decision
-  Record (ADR)" defines the same thing as "Architecture Decision Record".
-* **A trailing `s` is the sentence's, not the expansion's.** "Web Application
-  Firewalls (WAF)" is not a disagreement with "Web Application Firewall".
-
-Without those, five of the fifteen findings would have been the instrument being
-wrong about what it was reading, which is this file's oldest rule.
-
-### And a dictionary with two entries missing from it
-
-```python
-return {e["a"].upper(): [m["e"] for m in e["m"]] for e in entries}
-```
-
-The dictionary deliberately distinguishes **`SOC` from `SoC`** and **`IOC` from
-`IoC`**. Upper-casing collides them, and a dict comprehension lets the later one
-win — so this check had been reading a dictionary with *Security Operations
-Center* and *Indicator of Compromise* silently absent. Nothing noticed, because
-**the check's job is to find disagreements and a meaning it cannot see produces
-none.** Merged now, which is right rather than merely safe: the comparison is
-case-insensitive anyway.
-
-### What the ten real findings were
-
-Two were spellings — one card writing *Approximate Nearest Neighbor* two lines
-from an annotation saying *Neighbour*, and *Organisational Unit* against the
-dictionary's *Organizational*. Aligned to the dictionary, which is what a single
-source of truth is for.
-
-The other eight were **meanings the site uses and the dictionary does not
-carry**: Language Server Protocol, Internal Developer Platform, Top Secret, EFI
-System Partition, Tuition Assistance, Global Catalog, Incident Command System.
-Three of them were sitting in a `n` note reading *"Also: Incident Command
-System"* — recorded as a remark where the reader of the acronym page sees one
-meaning and the card means the other. They are meanings now.
-
-### The change immediately made another gate fire, correctly
-
-Giving ICS a second meaning turned it into an ambiguous acronym, and
-`lint_content.py` **failed the build** for `sec` and `threat`:
-
-> ICS renders in 'sec' with no byDomain decision, so it annotates as 'Industrial
-> Control System'. Add "sec" to that entry's byDomain.
-
-Which is the guard working: an implicit choice became an explicit one the moment
-a second meaning existed to choose between. `ops` is the Incident Command
-System; `sec` and `threat` are industrial control. **The ambiguous-acronym
-counter fell 4 → 3**, the first time it has moved.
-
-`check_plan_numbers.py` then caught the README, which states the dictionary's
-size and had not been told about the new entry. Both guards did in one run what
-this session has spent three waves discovering by hand.
-
-### And the dictionary disagreeing with itself
-
-Aligning *Organisational Unit* to the dictionary did not take in `infra`,
-because the annotator kept putting it back — from the dictionary. **`LSDOU`
-expands to "Local, Site, Domain, Organisational Unit" and `OU` expands to
-"Organizational Unit".** Two entries in the single source of truth, one term,
-two spellings, and no check looks *inside* the dictionary: `check_contradictions`
-compares the content against it and takes it as given.
-
-Fixed by hand rather than by a tool, because n is one and a check for "no two
-entries spell the same term differently" needs a notion of "same term" that this
-repository would have to invent. Worth knowing it is unguarded, though: the file
-every other acronym check treats as authoritative is the one file nothing
-checks. The remaining British spellings in `ops` are *Organisationally* and
-*Organisational Memory* — ordinary prose, not the product term, and correctly
-left alone.
-
-```
-reversed-form definitions now read: 85 · dictionary merge fixes 2 lost entries
-8 meanings added, 2 spellings aligned · ambiguous acronyms 4 -> 3
-dictionary 1,102 -> 1,103 · 41 gates green · probe 105 · 101 answered
-smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
-```
-
----
-
-## Session — checking the file every other check treats as authoritative
-
-The previous record ended on a sentence that was meant as an observation and
-turned out to be a queue:
-
-> The file every other acronym check treats as authoritative is the one file
-> nothing checks.
-
-So it was checked, seven ways. **Four came back clean and two of the checks I
-designed were wrong**, which is most of what this session was worth.
-
-### The two that should not exist
-
-**Spelling consistency.** The dictionary is British-spelled prose, so a word
-appearing in both conventions looked like a defect worth finding. It finds two
-pairs and both are correct:
-
-```
-neighbour (ANN)  vs  neighbor (NDP)    — Neighbor Discovery Protocol, RFC 4861
-fibre (FCoE)     vs  fiber (FDDI)      — Fibre Channel, and Fiber Distributed
-                                          Data Interface, each a registered name
-```
-
-Two findings, two false positives. A check with that record does not get
-written.
-
-**Dead per-domain configuration.** 34 of 204 `byDomain` decisions name a domain
-the acronym never appears in, which reads like stale config until you look: they
-are *anticipatory*, pre-answering the question for the day the term arrives, and
-deleting them would silently hand that day's writer the default meaning. The
-first version of the measurement was also simply wrong — it borrowed the
-annotator's rule that skips slash compounds, so **`CI/CD` did not count as `CD`
-appearing anywhere** and inflated the finding to 51. The instrument was wrong
-about what it was reading, twice in one wave.
-
-### The three that were worth writing, and what they found
-
-The fields that steer the annotator are the quietest possible place for a
-defect: `annotate` falls through to `m[0]` when it is misspelled, a misspelled
-`byDomain` key is simply never consulted, and the build stays green while the
-wrong expansion ships **site-wide**. That is failure #10's exact shape arriving
-through configuration instead of prose. Four rules, all passing today, all now
-held there.
-
-Then two rules about the meanings themselves, and these found things:
-
-| Entry | Carried | Reading |
-|---|---|---|
-| `ATT&CK` | *Adversarial Tactics, Techniques, and Common Knowledge* **and** *…Techniques and Common Knowledge* | An Oxford comma is not a second meaning. The dictionary page listed both |
-| `DPAPI` | *Data Protection Application Programming Interface* **and** *Data Protection API* | One of them leaves an acronym short. The differing tail's initials spell it, which is the definition of being the same phrase |
-
-Both are decidable, which is why they are rules and not a similarity score. And
-**seven entries carried `annotate` beside `noAnnotate`** — a value the annotator
-can never reach, naming in every case the meaning it would have defaulted to.
-A comment wearing a setting's clothes, removed.
-
-### The pattern across three waves now
-
-```
-check_renames      matched case-sensitively    because the rename was lower case
-check_css_vars     read only style.css         because the var() was in style.css
-check_acronyms     read only the prose         because the wrong expansion was prose
-```
-
-**A guard written from one defect inherits that defect's accidents.** The
-accidents are invisible afterwards, because the check exists, the build is
-green, and the table in this file says what the guard is *for* rather than what
-it *does*. The cheap counter-habit, which has now paid three times: when a
-guard's row says it covers a class, spend ten minutes proving it covers the
-class and not the instance.
-
-```
-check_acronyms self-test 12 -> 24 fixtures · 7 inert fields removed
-2 duplicate meanings collapsed · 1,180 -> 1,178 meanings · 41 gates green
-smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
-```
-
----
-
-## Session — asking the question the reader asks, not the one the writer filed it under
-
-Three batches of reader questions now, and the third was written differently on
-purpose. Batches one and two asked about **subjects** — *what is a subnet mask*,
-*third party risk*, *incident postmortem* — and opened at about a third missing.
-Batch three asked about **symptoms**, aimed at the domains the first two barely
-touched:
-
-```
-my query returns duplicates          the load balancer says unhealthy
-my regex is too slow                 why is my cloud bill so high
-my tests pass individually but       my lambda times out
-  fail together
-```
-
-**Six of the nine missed.** Two thirds, against a third for the subject-shaped
-questions, and every one of the six was a card that covers its mechanism
-thoroughly and had never written down the sentence a reader would type.
-
-That is the pattern this session has been finding one instance at a time — cron,
-printers, SSH, inodes, Group Policy, mapped drives, the M365 playbook — arriving
-as a measured rate rather than an anecdote. **A reference is written from the
-subject outwards and read from the symptom inwards**, and nothing in a normal
-review notices the gap, because from inside the card the subject is obviously
-covered.
-
-### What each one turned out to be missing
-
-None of the six needed a word. All six needed the sentence the word belongs to:
-
-* **SQL Joins** explains fan-out and never says *duplicates* — which is what
-  people call it. The tell is that the row count is a clean multiple of what you
-  expected, and the fix is aggregating the many side, not `DISTINCT`, which
-  hides the fan-out and leaves `SUM()` just as inflated.
-* **Load Balancers** covers health checks well and never says *unhealthy*. So
-  the causes are ranked now, and three of the four are the check rather than the
-  server: unreachable from the balancer's own subnet, a `401` or a redirect
-  where `200` was expected, a timeout shorter than the endpoint's own dependency
-  call. Curl the health path from the balancer's side of the network first — if
-  it answers and the console still says unhealthy, the disagreement is the
-  finding.
-* **FinOps** is an answer to *"why is the bill so high?"* and never asks it.
-  A bill with no attribution is a single large number, and a single large number
-  can only be negotiated, not reduced.
-* **AWS Serverless** describes Lambda's scale-to-zero and never its ceiling.
-  *"My Lambda times out"* is usually the design saying it is not a function.
-* **Test Data** names order-dependent failures; *"they pass individually and
-  fail together"* is that sentence said out loud, and hearing it as a diagnosis
-  rules out timing and environment in one go.
-* **Catastrophic Backtracking** needed nothing at all — see below.
-
-### One of the six was the matcher, and it took two words to prove
-
-```
-regex slow       →  Catastrophic Backtracking — When a Regular Expression Is a
-                    Denial of Service
-regex too slow   →  nothing
-```
-
-The card is right there. `too` was a hard requirement, and a card about a regex
-that takes minutes has no reason to contain it — and the query is two content
-words, so the relaxation stage's floor of two cannot drop it. **A comparative
-intensifier is never a subject**, so it joins `explain` and the question words.
-
-`only` at 55.6% of topics and `just` at 22.1% were measured beside it and left
-alone: both are load-bearing here — *only the first hop*, *just enough* — and a
-stop list earns its entries one at a time.
-
-```
-probe 105 -> 116 questions · 112 answered · 0 unexplained · 5 cards given their
-symptom · 41 gates green · smoke 163 · search 51 · a11y 31 · resilience 64
-mobile 15 · visual 2 · backup 3
-```
-
----
-
-## Session — the domain with thirty-nine topics and nothing on the cascade
-
-Batch four, same shape as batch three and aimed at the domains still barely
-probed — `script`, `web`, `ai`, `endpoint`. The rate held: **six of nine
-symptom-phrased questions missed**, against a third for subject-phrased ones.
-Five were sentences a card had never written down. One was a whole card that
-did not exist.
-
-### `my css is not applying` returned nothing at all
-
-`web` carries 39 topics — Flexbox, Grid, Responsive, Modern CSS, the DOM, the
-event loop, React, bundlers, Design Systems — and **nothing on the cascade**.
-No specificity, no origin order, no layers-versus-`!important`. The foundation
-every other CSS card sits on was the one thing missing, and the domain's own
-shape made it invisible: each CSS topic pairs a "what it is" card with a named
-failure mode, and none of the five failure modes was *the rule did not apply*.
-
-Written to that shape, with the part worth carrying being the ladder:
-
-| # | The question | What wins |
-|---|---|---|
-| 1 | Origin and importance | A *user* `!important` beats an author one — how a reader's accessibility stylesheet overrides yours |
-| 2 | Cascade layer | Unlayered beats layered, later beats earlier — **and for `!important` the whole order reverses** |
-| 3 | Specificity | A tuple compared left to right, not a three-digit number. Eleven classes never add up to one id |
-| 4 | Source order | Only here. This is the rung people think is rung one |
-
-And the failure card's first row is the one that matters: **a struck-through
-declaration and a missing declaration are completely different bugs, and they
-look identical from the editor.** Open the inspector before the stylesheet.
-
-### The thing found by chasing an anomaly
-
-`the model keeps making things up` reached its card and returned **thirty**
-results, with the card's exact phrase in exactly one of them. The single-result
-escalation was firing on a perfect hit, because the named-topic guard compares
-the query's words against the slug's words *literally* — and the query says
-`model` where the slug says `models`. It now runs both through the same plural
-fold as the conjunction, and the query returns one.
-
-That guard was written two waves ago to stop exactly this, and it had a hole in
-it the width of a plural. **A guard you added to protect a case can still miss
-that case**, and the only way to know is the anomaly: thirty results for a query
-whose phrase exists once.
-
-### The rest
-
-*"The model keeps making things up"* is a fair description of the symptom and a
-misleading one of the cause — nothing is being made *up*, in the sense of a
-decision to invent; the same machinery produced the true sentence with the same
-confidence. The endpoint card says *a device that shows as non-compliant* now,
-which is what the console says. And `script`'s file-handling card already
-answered the encoding question.
-
-```
-probe 116 -> 124 questions · 120 answered · 0 unexplained
-topics 1,551 -> 1,552 · related 4,790 -> 4,798 links, mainland 1,466
-41 gates green · smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 15
-visual 2 · backup 3
-```
-
----
-
-## Session — forty-seven topic names with a space in the wrong place
-
-Batch five of reader questions, aimed at `hw`, `infra`, `threat`, `cs` and
-`mind`. The rate held a third time — six of eleven missed — and the fixes are
-the usual shape, three of them worth repeating:
-
-* **"The computer randomly restarts"** is the commonest intermittent-fault
-  report, and it splits in one question: a machine that reboots *without* a stop
-  screen was never asked to reboot — it lost power long enough to drop out,
-  which is supply, thermals or a connector. One that shows a stop screen crashed,
-  and that is a different investigation entirely.
-* **"No signal" is the monitor reporting on the cable, not on the computer.**
-  Five of the six checks are outside the monitor, and the monitor is the part
-  the ticket names — because it is the part with a screen to say something on.
-  Swap the cable rather than reseating it: reseating fixes a connection and
-  tells you nothing about a cable that failed internally, which is the one that
-  comes back next week.
-* **A process that vanishes with nothing in its own log** did not crash — it was
-  killed, and a process cannot log its own `SIGKILL`. `dmesg` has the verdict,
-  and the trap is that the killed process is frequently not the one that
-  consumed the memory: the kernel picks by score, so the database dies and the
-  batch job that caused it carries on.
-
-### And then the gate caught something none of that was looking for
-
-Adding a per-domain decision so `POST` expands correctly in `hw` made a smoke
-check fail:
-
-```
-FAIL : every landing card's 'start here' names resolve, in all domains
-       — hw: POST, Beep Codes & Diagnostic LEDs — Reading a Machine That Will Not Boot
-```
-
-The name the page had was **`POST , Beep Codes`**. The annotator writes
-` <span class="acro-exp">(…)</span>` after an acronym, and the code that strips
-it back out to recover "the title as written" left the leading space stranded in
-front of whatever punctuation followed. Scanning every topic: **forty-seven
-names carried it.** `SPF, DKIM , DMARC`. `MTU , Fragmentation`. `SSRF , XXE &
-Deserialization`.
-
-Not cosmetic: that text is the name the search index, the study list, the jump
-lists and the start-here resolver all compare against. It had been there for as
-long as the annotator had, and the only reason it surfaced now is that one of
-the forty-eight happened to be named in a landing card.
-
-### The fix was wrong twice, and the second time was the interesting one
-
-**Attempt one** tidied every space-before-punctuation in the title. That looked
-obviously safe — slugs drop punctuation and collapse whitespace, so `POST , Beep`
-and `POST, Beep` have always produced the same slug. They do. But:
-
-```
-Custom Properties, :has() & Layers
-```
-
-That space is nowhere near an acronym, and closing it merges `Properties` and
-`has` into one word, moving the Modern CSS permalink. `suggest_related.py
---check`, `check_paths.py` and two smoke checks all failed on the same moved
-slug within a single run.
-
-**Attempt two** added a lookahead — tidy only when no word character follows.
-It worked, and it was still the wrong shape, because it operates on the whole
-title and can touch text that had nothing to do with any acronym. The near miss
-was not bad luck; it was the surface.
-
-**The actual fix is one character, and it was already written three times in
-this repository.** The annotator emits ` <span class="acro-exp">(…)</span>`, and
-the space belongs to the span:
-
-```
-lint_content.py      \s*<span class="acro-exp">…      correct since it was written
-gen_cheatsheet.py    \s*<span class="acro-exp">…      correct
-stamp_freshness.py   \s*<span class="acro-exp">…      correct
-script.js               <span class="acro-exp">…      the odd one out
-```
-
-In the pair that is supposed to be byte-for-byte identical. Taking the space
-with the span cannot touch anything that was not adjacent to something removed,
-so `:has()`, `.NET` and `.intunewin` are safe by construction rather than by
-lookahead. `labelText()` needed the DOM version of the same idea — that space is
-a separate text node, so it survives `remove()` — and trims only the node
-immediately before each span.
-
-**The reason to write this down is the sequence.** A content wave touched an
-acronym's configuration; that exposed a long-standing defect in unrelated code;
-the obvious fix moved a permalink; three separate gates caught it before it
-could ship; and the correct fix turned out to be a convention the repository
-already followed everywhere else. None of those five steps was planned, and the
-middle two are the argument for the other three existing.
-
-The transferable part is the last step. **When a fix needs a special case, check
-whether the codebase already solved the general one somewhere.** It had, in
-three files, and the version that needed no special case was one character
-long.
-
-```
-probe 124 -> 135 questions · 131 answered · 0 unexplained
-47 topic names corrected · 41 gates green · smoke 163 · search 51 · a11y 31
-resilience 64 · mobile 15 · visual 2 · backup 3
-```
-
----
-
-## Session — the sentence a card is an answer to, and never asks
-
-Batch six, aimed at `script`, `eng`, `ops` and `blueteam`. The rate held a
-fourth time, and the five fixes share a shape sharper than "the symptom is not
-named". In each one **the card is an answer to a question it never states**:
-
-| The reader types | The card | What it was missing |
-|---|---|---|
-| `too many alerts` | *Alert Fatigue as a Reliability Problem* | The complaint it is an answer to. "Too many alerts" is not about volume — it reports that the ratio crossed the point where reading carefully stopped being rational |
-| `our estimates are always wrong` | *Planning Without Theatre — Honest Estimates* | Its own premise. The estimate was a range read as a date, and **a range is not wrong when the outcome lands inside it** |
-| `circular import` | *Modules, Packages & pip* | The failure, which appears nowhere on the site. The error names the innocent module — the one that was half-built when the loop came back round |
-| `we got a vulnerability report from a stranger` | *Responsible Disclosure & Bug Bounties* | Nothing, as it turned out — see below |
-
-Both of the first two now return **exactly one card**, which is the best result
-this measurement produces.
-
-### The one that was already covered, found by reading the whole card
-
-`we got a vulnerability report from a stranger` looked like the biggest gap of
-the batch: the disclosure card is written entirely from the researcher's side,
-title included. Writing the receiving-side card was the obvious move.
-
-It is in the card already — compressed into the closing verdict, which is this
-site's convention for *the same subject arriving from the other direction*:
-*"publish a policy and a contact address, acknowledge within days, never
-threaten a good-faith reporter, and give credit."*
-
-So the edit was one clause naming the moment, plus the sentence that verdict was
-missing: **the first reply, not the patch, decides whether this becomes an
-incident or a story.** **Reading to the end of the card before writing a new one
-is the cheapest habit in this file**, and it is the third time this session it
-has turned a proposed card into a sentence.
-
-### The query is still a zero, and that is the right answer
-
-It stays at zero because `got` is a verb no reference card has reason to
-contain, and a zero is never relaxed — `script.js` settled that with four
-measured examples of relaxation turning honest zeros into confident wrong cards.
-**A recorded zero on a card that answers the question is a better outcome than a
-sentence bent to reach it**, and the note now says which of the two it is.
-
-```
-probe 135 -> 143 questions · 138 answered · 0 unexplained · 5 recorded zeros
-41 gates green · smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 15
-visual 2 · backup 3
-```
-
----
-
-## Session — the one risk that closed itself, and was then left without a condition
-
-This session has added **1,353 lines to this file — a 31% increase** — and at no
-point did anybody think about its length. Which is the fifth risk exactly, so it
-was worth checking what the register says about it.
-
-It says **Closed**, and nothing else. No *reopens when* column, in the one row
-that had earned the right to have one: the fifth risk is the only entry here
-that the file closed **by following its own instruction** rather than by
-somebody happening to notice. The section directly above it spends four
-paragraphs arguing that *a closed risk with no reopen condition is a risk that
-will come back unannounced*, gives all four accumulation risks a condition, and
-then writes the fifth up as a success story with a State column and nothing else.
-
-### Why it went unnoticed, which is the interesting half
-
-**The evidence for this risk is the file you are reading, and a file does not
-look long from inside a session that is adding to it.** Every other row in the
-register points at a number in a table a tool checks. This one points at a
-property of the document doing the pointing.
-
-That is the accumulation shape in its purest form: a small cost per session,
-never collected, and no day on which it becomes today's problem. The register's
-own text says *"act when it gets bad" fails precisely because bad has no
-threshold* — and then the row demonstrating that was the row left without one.
-
-### The condition
-
-`check_plan_numbers.py` prints the live file's line count on every `make check`
-and warns past **8,000**. Measured, not chosen: double the ~4,000 the split left,
-and a third of the 22,745 that made the risk acute. Far enough not to nag, close
-enough that the file is still comfortably splittable on the day it fires.
-
-It reports and does not fail. A long plan is not a broken build, and gating it
-would mean a session that wrote a good record could not commit it.
-
-### The fourth instance of one pattern
-
-```
-check_renames      case-sensitive        its own example was lower case
-check_css_vars     style.css only        its own example was in style.css
-script.js          missing the \s*       three sibling files had it
-the risk register  no reopen condition   on the risk that proved they were needed
-```
-
-**A rule written for a category tends not to be applied to the case that
-motivated it.** Four times in one session, in four unrelated places, found four
-different ways — by a grep, by an injection, by a smoke failure, and by noticing
-that the file had grown while nobody was watching. The rule is written down now;
-the habit it wants is to apply a new rule backwards to its own origin before
-applying it forwards to everything else.
-
-```
-plan.md 4,323 -> 5,705 lines · reopen condition at 8,000, evaluated by make check
-41 gates green · smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 15
-visual 2 · backup 3
-```
-
----
-
-## Session — five zeros, four of them one word apart from their own card
-
-Batch seven, across `sec`, `grc`, `devops`, `productivity` and `eng`. Five
-queries returned **nothing at all**, and four of those had a card sitting right
-there:
-
-```
-i keep procrastinating          →  a card titled Procrastination
-my terraform destroyed something →  Terraform — Infrastructure as Code in Practice
-my code review comments ignored  →  Code Review — Doing It Well
-an employee is leaving and we
-  think they took data           →  Offboarding as a Security Control
-```
-
-Every one of them an **inflection**: `procrastinating` against
-*procrastination*, `destroyed` against *destroy*, `ignored` against *ignore*,
-and an offboarding card that never says *leaving* or *employee* — it says
-*departing person* and *leaver record* throughout, which is better prose and
-worse findability.
-
-All four now return **exactly one card**, and none of the edits was a word
-dropped in. Each turned out to have something to say:
-
-* **"I keep procrastinating" is said about one task while a great deal else gets
-  done that day**, and *keep* is the useful half — a recurring avoidance points
-  at a feeling attached to that task rather than at a character flaw.
-* **"Terraform destroyed something" is almost never `destroy` run by mistake.**
-  It is an `apply` whose plan contained a red line nobody read, because a
-  rename, a moved resource or a changed immutable attribute all replace rather
-  than update.
-* **A comment answered with a reason is not ignored**; one silently left
-  unaddressed reads as a judgement about the reviewer. That is what the
-  *respond to every comment* row is for, and it is the row that gets skipped.
-* **"They took data" is answerable only by telemetry collected before the
-  suspicion arose** — which is the real argument for offboarding being a control
-  rather than an errand.
-
-### The inflection class, recorded rather than solved
-
-Four instances in one batch, and this session has now seen ten: `sharing` against
-*Screen Shares*, `report` against *Reporting*, `spaced` against *spacing*,
-`models` against *model*, and these four. `plurals()` folds a trailing `s` and
-nothing else, deliberately — the file's own note says a real stemmer needs a
-tokenised index and this matcher reads raw text.
-
-A prefix rule would close most of them: `procrastinating` and `procrastination`
-share thirteen characters, `destroyed` and `destroy` seven. It would also match
-`string` to `str` unless the threshold is high, and a threshold is exactly the
-soft, arguable shape this toolchain keeps rejecting in favour of sharp ones.
-
-**So it is written down rather than built**, with its ten instances, because the
-next session to consider stemming should decide it with a list and not an
-intuition — and because every one of the ten was closable in prose, by a
-sentence the card was better for having.
-
-```
-probe 143 -> 151 questions · 146 answered · 0 unexplained · 5 recorded zeros
-41 gates green · smoke 163 · search 51 · a11y 31 · resilience 64 · mobile 15
-visual 2 · backup 3
-```
-
----
-
-## Session — the topic named Vim could not be found by searching for Vim
-
-Batch eight ended on one query the probe would not let go of: `how do i use
-vim` missed `shortcut/vim`. So did `vim`. So did every query containing the
-word. The topic is *named* Vim, its first sentence is *Vim starts in Normal
-mode*, and the search index held both — as `…modal editingvim starts in normal
-mode…`.
-
-### An element boundary is a word boundary, and the index did not know
-
-`plainText` drops a tag rather than replacing it with a space, and says why:
-
-> Tags become nothing, not a space. That looks like the more dangerous choice
-> and is the correct one: it is what `textContent` does, and the source already
-> carries a newline between anything that needs separating.
-
-The first half is true. The second half is a fact about the files that existed
-when it was written, and it stopped being true the moment a topic was authored
-on one line. `shortcut/vim` is. So is every generated acronym page, because the
-generator writes one line per topic.
-
-The word survives the fusion only if it is long enough to be matched as a
-substring. `vim` is three characters, and `matcher()` requires a word boundary
-below `SHORT_TERM` — for a good reason of its own, the one that stopped `IR`
-matching *requires*, *first* and *directory*. Two correct rules, each blameless,
-and between them a topic nobody could find by its own name.
-
-The fix is the distinction the original note was reaching for: **block tags
-become a space, inline tags still become nothing.** The acronym expansion the
-note was protecting — `CIDR (Classless Inter-Domain Routing)` rather than
-`CIDR ( Classless Inter-Domain Routing )` — is inline and is untouched.
-
-A census over the built page afterwards: **1,233 of 1,552 topics** were losing
-at least one short term to a fused boundary, 6,621 terms in all. Almost all were
-reachable by another route — an acronym's expansion is long enough to match as a
-substring, which is why `sacl`, `abac` and `ahci` all worked and the defect
-stayed invisible for as long as anybody spot-checked it. `vim` had no other
-route, and so was the one that showed.
-
-### The `ss` exception was right about `class` and wrong about why
-
-`my tests pass locally but fail in ci` missed the flaky-test card that says, in
-its verdict, that the tests **pass** on your machine. `tests`/`test` folded.
-`fail`/`fails` folded. `pass`/`passes` could not, because `plurals()` folds one
-character and excepted `ss` endings — on the stated ground that *class* is not
-the plural of *clas*.
-
-True, and the wrong conclusion. The plural of `class` is not `clas`; it is
-`classes`. The exception marked exactly the words that take `-es` and then did
-nothing with them, so the rule produced a non-word in both directions:
-`switches` offered `switche`, `processes` offered `processe`, and `pass`,
-`switch` and `process` offered nothing at all.
-
-Going back the other way, `-es` is two plurals wearing one spelling — `cases` is
-`case` + s, `passes` is `pass` + es, and the string does not say which. Both
-singulars are offered rather than guessed at: **a wrong alternate is a regex
-that matches nothing, a wrong guess is a card the reader never sees.** `-ies` is
-the one that *is* decidable and is handled first.
-
-This is not the prefix rule the last session wrote down and declined to build.
-That decision stands — a prefix rule needs a threshold, and a threshold is the
-arguable shape this toolchain keeps refusing. Two more plural rules are still
-rules.
-
-### One first draft, caught by the census it was written for
-
-The first version of `plurals()` returned the term unchanged for anything three
-characters or shorter — a guard the old code applied only when *stripping*. It
-also stopped `use` offering `uses`, and `why do we use containers`, answered for
-eight batches, went to a miss. The probe named it on the next run. A census kept
-green is a regression test that nobody had to write.
-
-### Four zeros, four cards that were already there
-
-```
-teams meeting audio not working  →  Teams Call Quality — the card says "calls are bad"
-laptop battery drains fast       →  Batteries: What Wears Them Out
-my ssh key stopped working       →  "Permission denied (publickey)"
-my tests pass locally, fail in ci→  Flaky Tests — a Reliability Problem
-```
-
-Each gained the sentence naming the symptom it already answers, and each had
-something to say once it was written:
-
-* **"The audio was bad in that meeting" is two investigations, and how many
-  people said it decides which one** — one call is per-user analytics, a pattern
-  is the dashboard.
-* **"It drains fast now" is a capacity complaint, not a settings one**, which is
-  why the answer is chemistry and not a power plan.
-* **"My key stopped working" is how `Permission denied (publickey)` arrives as a
-  ticket** — and the error almost never means the key is wrong.
-* **The test that passes on your machine and fails in CI is a timing
-  assumption**, and the local machine is too fast to violate it.
-
-### The one that was a gap: a page that came out wrong
-
-`the printer prints blank pages` found nothing, and the printer topic covers
-offline queues, drivers, deployment and secure release — every way *nothing*
-comes out. It had nothing for a page that came out and is wrong, which is the
-opposite investigation and an easier one: the path worked end to end, so the
-fault is in what was sent or in what put it on the paper.
-
-Six symptoms, ranked by what they actually mean, each with the test that settles
-it — and the same first step as the triage order above it, for the opposite
-reason. There it proves the device works; here it separates the device from
-everything upstream, because the config page is the one page in the building
-that no driver, queue or application touched.
-
-### The fifth instance, and the sharpest
-
-```
-check_renames      case-sensitive        its own example was lower case
-check_css_vars     style.css only        its own example was in style.css
-script.js          missing the \s*       three sibling files had it
-the risk register  no reopen condition   on the risk that proved they were needed
-plainText          tags become nothing   "the source already carries a newline"
-plurals()          one character         "class is not the plural of clas"
-```
-
-The first four were a rule not applied to the case that motivated it. The last
-two are a step past that: **a rule that writes down its own assumption is still
-only as true as the assumption, and neither of these was ever checked against
-the corpus.** Both notes are careful, both are cited approvingly by later code,
-and both were false — one about the files, one about English. The habit the
-first four wanted was to apply a new rule backwards. The habit these two want is
-to go and measure the sentence that begins *because*.
-
-```
-probe 151 -> 164 questions · 159 answered · 0 unexplained · 5 recorded zeros
-1,233 of 1,552 topics were fusing words at an element boundary; 0 now
-41 gates green · smoke 163 · search 53 · a11y 31 · resilience 64 · mobile 15
-visual 2 · backup 3
-```
-
----
-
-## Session — the note that reasoned from a fact it had not measured
-
-The last record ended on a habit: *go and measure the sentence that begins
-`because`.* This one is that habit, run once, on the nearest available target.
-
-`script.js` carries a note explaining why its tag pattern is `</?[a-zA-Z][^>]*>`
-and not `<[^>]+>`:
-
-> `<[^>]+>` looks equivalent and is not — `WHERE created_at < now()` inside a
-> code block has a `>` somewhere after it, so the loose pattern swallows the
-> comparison operator and everything up to it.
-
-`lint_content._CODE_TAG` has the same rule, with the same one-line reason. Six
-Python tools had the loose pattern, each with its own copy of it.
-
-### Eight spans, four files
-
-```
-math.html                  < 0 and f(1) = 1 >          erased outright
-script.01-references.html  < <span class="num">        a shell redirect and the tag after it
-career.html                <!-- Four cards did not      the comment ends at its own >=,
-philosophy.html   ×2         clear the >=15-card bar     and the rest becomes card text
-```
-
-Two kinds. Content the loose pattern eats, and comments it only half-eats.
-
-### The paragraph that was wrong
-
-The comment half was already known. `lint_content.gt_in_comment` gates it, and
-the note above that gate is careful, specific, and reasons from a measurement:
-
-> Three such comments exist. All three sit *between* topics, so nothing measures
-> them and no number on this site is currently wrong.
-
-The first sentence is true. The second does not follow, and checking took one
-command. `depth_report.topics()` takes each block from one topic's start to the
-**next one's start**, so whatever sits between two topics is measured as part of
-the topic above it. All three comments were being counted: **112, 112 and 102
-characters of phantom content on three real cards.**
-
-No number was wrong, which is exactly why it stayed invisible for as long as it
-did. The mean moves by 0.2 characters across 1,552 topics, and checking every
-one of the eight disputed spans against the thin threshold and the deep
-threshold, in both directions, gives **zero crossings**. The invariant held. It
-held by luck, which is what the note said about the *content* and had not
-checked about itself.
-
-### One definition, six imports
-
-`TAG_RE` now lives once, in `lint_content.py`, and `acronym_drift`,
-`check_contradictions`, `check_renames`, `depth_report`, `near_duplicates`,
-`orphan_report` and `build.py` import it. Three of them already imported
-`domain_files` from that file, so the dependency is not new — only the second
-thing crossing it.
-
-The gate's own note argued the other way: *gating the condition is cheaper and
-more complete than hardening sixteen regexes*. That was true of sixteen copies
-and false of one definition, and it was never true of the content half — no
-comment rule reaches `< 0 and f(1) = 1 >`. The gate stays, with its reasoning
-corrected in place, because the inline `<[^>]+>` calls that read a single
-already-narrow match are still there and still cheap to protect.
-
-**Every census output is byte-identical before and after.** That is the result,
-not a disappointment: a latent defect closed, nothing to re-verify, and one
-paragraph in the repository that now says something true.
-
-```
-6 tools + build.py share one TAG_RE · 6 census outputs byte-identical
-0 threshold crossings, checked both ways across all 8 disputed spans
-41 gates green · smoke 163 · search 53 · a11y 31 · resilience 64 · mobile 15
-visual 2 · backup 3
-```
-
----
-
-## Session — the stop word that was rare, and the accents nobody could type
-
-Batch ten, and two matcher changes that both had to argue against the evidence
-that admitted the last ones.
-
-### `got`, which fails the frequency test and joins anyway
-
-`WIDE_STOP` has been grown one word at a time, each with a measured
-justification, and the measurement has always been frequency: `actually` at
-39.1% of topics is filler; `only` at 55.6% and `just` at 22.1% are load-bearing
-in this corpus and stayed out.
-
-`got` is at **3.5%**. By that test it is a rare word, and a rare word is
-normally precious — it narrows. It joins on the other half of the test, the one
-the note stated and never named as the test: **it is never a subject.** Nobody
-searches for `got`. It arrives attached to the thing that happened — `i got
-paged at 3am again`, `we got a vulnerability report from a stranger` — and a
-card describing that thing has no reason to narrate its arrival. Requiring it
-requires a word the corpus cannot supply, which is a guaranteed zero and not a
-narrow answer.
-
-The second of those queries had been sitting in `query_probe.mjs` for eight
-batches as a recorded, unsolvable kind-3 zero, **with the diagnosis already
-written out**:
-
-> `got` is a verb no reference card has reason to contain, and a zero cannot be
-> relaxed.
-
-Both clauses true, conclusion backwards. A verb no card has reason to contain is
-the argument for stopping it. And the thing that noticed was the staleness check
-added two sessions ago: the verdict said the query returns nothing, the query
-returned six, and the harness said so on the next run.
-
-### 17 accented words, and an English keyboard
-
-`ubermensch` returned nothing. The card names it in a table, spelled
-**Übermensch**, and no keyboard a reader is likely to have types that.
-
-A census of the whole corpus: **17 distinct accented words, 31 occurrences** —
-Niccolò, Übermensch, Schrödinger, ásatrú, façade, café. Three were unreachable
-(`ubermensch`, `schrodinger`, `niccolo machiavelli`); `machiavelli` alone worked,
-because the surname carries no accent.
-
-Folding diacritics is a rule and not a threshold, which is the only reason it is
-here: NFD splits a letter from its combining marks and the marks are dropped. It
-runs on **both sides** — the index at parse, the query where the query is
-lowercased. Folding one side would move the bug rather than fix it: the reader
-who *does* have the umlaut would become the one who finds nothing. Both
-spellings are gated fixtures for exactly that reason.
-
-It costs a highlight. The marker searches the live DOM, where the accent is
-still there, so a hit on one of those 31 occurrences opens its topic and marks
-nothing in it. A card a reader can reach and has to skim beats a card they
-cannot reach.
-
-### The experiment that was run and thrown away
-
-The last session recorded an **inflection class** — ten queries whose word was
-one suffix away from the card's — and declined to build a stemmer, asking that
-whoever next considered it decide "with a list and not an intuition".
-
-`i got paged at 3am again` was the eleventh, so the list was long enough.
-`check_renames.py` already folds `(?:s|d|ed|ing)?`, so the rule existed in this
-repository and had not been applied to its sibling — the shape this session has
-found five times.
-
-It was built, measured, and reverted:
-
-```
-search_test   51/53   "should we fine tune or use rag"  9 > ceiling 8
-                      "how do i find a file"          178 > ceiling 140
-probe         one more query over 60, and `i got paged at 3am again`
-              still returned nothing — "again" is the word that breaks it
-```
-
-**The change did not fix the case that motivated it and widened two gated
-queries by a third.** The recorded decision stands, now with a measurement
-underneath it instead of a prediction. That is worth more than the feature would
-have been: the next session to consider stemming has a number.
-
-What fixed the query was the card. *On-Call Done Humanely* said "pages at 3am
-for non-issues drive burnout"; it now says being **paged** at 3am for a
-non-issue, **and then again the next night**, is what drives it — the recurrence
-rather than any one night, which is both the reader's phrasing and the truer
-sentence.
-
-### Three more cards that already answered the question
-
-```
-what should i put on my resume  →  Your CV — the question is the wrong one,
-                                   and the card can say why
-my manager wants an estimate    →  Estimates People Can Trust
-the printer prints blank pages  →  (the card written last wave, now indexed)
-```
-
-*Your CV* opened on "the question is not what to include — it is what earns the
-top third". It now names the question first: **"what should I put on my CV" is
-the wrong question and a comforting one — the answer to it is "everything", and
-everything is what nobody reads.** *Estimates People Can Trust* now opens on who
-is asking: **when a manager wants an estimate, what they almost always want is a
-date to repeat to somebody else**, which is why the padding cycle starts.
-
-```
-probe 164 -> 170 questions · 166 answered · 0 unexplained · 4 recorded zeros
-WIDE_STOP +1 (measured against its own frequency rule, and against it)
-41 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
-visual 2 · backup 3
-```
-
----
-
-## Session — three cards that were carrying a judgement in a table
-
-The thin counter has sat at eight for several waves with a note beside it
-saying seven of the eight are short by design. That note was written from the
-badges, which is a reasonable way to triage a list and not a way to read a card.
-Read properly, three of the eight had something to say.
-
-### The list first, because the list is the interesting part
-
-The `military` domain has **ten** topics on staff codes. Six are substantial —
-prefixes, functional numbers, sub-designators, branch comparison, the
-cross-matrix, and how the three parts combine. Four are short, and the learning
-path shows why: they are steps 1–4 and 10 of *Reading Military Structure*, an
-on-ramp deliberately placed before the deep versions.
-
-So the first instinct — these are duplicates, retire them into the deep cards —
-was wrong, and `paths.json` said so in one grep. **A short card placed before a
-long one is scaffolding, not redundancy.** What was wrong with them was
-different: two of the four had no sentence at all.
-
-### `Common Codes Decoded` — 342 characters, zero concept cards
-
-A bare table of ten codes, eight of which the cross-matrix covers better. The
-two it did not cover were the card's actual subject and nobody had noticed:
-**XO and NCO are not staff codes.** They sit in that table because they sit in
-the same sentences — an org chart says *S4*, *XO* and *SNCO* in one breath — and
-a reader who tries to parse *XO* as letter-plus-number gets nothing back. That
-failure is the fastest way to learn where the code system stops and the
-vocabulary of rank and appointment begins. The card now says so, and the table
-that was the whole topic is now the evidence for it.
-
-### `Staff Functions 1–9` — and the contradiction inside it
-
-Same shape, and this one had a factual disagreement with its own deep version:
-the thin card listed **S7** among the examples for function 7; *Functional
-Numbers 1 through 9* lists J7 · G7 · A7 and notes that usage varies by branch.
-One of them was over-claiming, and the careful one is the deep one.
-
-Fixing the row exposed the card's missing sentence, which was sitting in the
-table's last column all along: **the gaps are the useful part.** One through six
-appear at every level; seven and eight generally start at division. A battalion
-holds no budget of its own and has no force-generation role, so there is no S8
-and, in most structures, no S7. The number tells you the function; whether the
-number exists at all tells you how large the headquarters is.
-
-### `Rules of Engagement — Read This First`
-
-The redteam domain's preamble, and the one every other card in that domain
-cross-references. It said *always work inside a signed scope* and stopped there
-— which is the advice everybody gives and nobody expands.
-
-It now names what the document has to contain, with the usual omission beside
-each line, and ends on the two that actually matter: **the third-party line and
-the stop condition.** A client can authorise testing of their own systems and
-cannot authorise testing of their provider's, so an engagement that drifts onto
-a platform's shared infrastructure has no permission behind it however carefully
-the rest was scoped. And the moment a test causes an outage, the only thing that
-matters is whether somebody can be reached and told to stop.
-
-### The ceiling that came down
-
-`lint_content`'s "table with no verdict" ceiling has been 12 for many waves,
-with the twelve recorded as deliberate: *lookup tables where a judgement would
-be filler*. Two of them were not. The ceiling is now 10, lowered in the commit
-that earned it, as the note above it requires.
-
-**"A judgement would be filler" is a verdict about a card, and it expires.** It
-was true of those two when it was written — they were tables nobody had looked
-at — and stopped being true the moment somebody read them. A recorded verdict on
-a backlog is a snapshot of attention, not a property of the thing.
-
-### Two measurements that came back clean
-
-Both were run in the habit the last wave set: go and measure the sentence that
-begins *because*.
-
-* `lint_content.bare_tables` fires on a table that is the **first** child of
-  `.topic-body`. **84 tables sit directly in `.topic-body` and not one of them
-  is first**, so the check has never fired on real content. That is not a
-  defect: the note above it already records that the highlighting reason was
-  fixed in `script.js` instead, that widening this to all 84 was considered and
-  rejected, and that what remains is a narrow layout rule. Measured, correct,
-  left alone.
-* `check_volatility`'s console queue is three rows and **all three are false
-  positives** — two generic uses of "the admin center" and one job title. The
-  bare `<vendor> admin` alternatives look redundant with `admin cent(er|re)` and
-  are not: they catch a table of console names where the word *center* is in the
-  heading. The note already says the regex cannot separate *Exchange admin* the
-  console from *Exchange admin* the person and prints the sentence so a reader
-  can. Measured, correct, left alone.
-
-Two clean results are worth recording next to the two that were not. The habit
-is not "the notes are wrong"; it is "the notes are checkable".
-
-```
-thin 8 -> 7 · depth tail 2,122 -> 2,135 · verdictless tables 12 -> 10
-site's two thinnest topics: 317 and 500 chars -> 1,205 and 1,056
-41 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
-visual 2 · backup 3
-```
-
----
-
-## Session — the tail is short on purpose, and the counter-example worth keeping
-
-### Reading the rest of the thin list, because the last wave's note said to
-
-The thin row now reads *the ones left are short by design*, and the last wave
-put that sentence there after reading three of the eight. This wave read the
-other four, because a claim made from three cases is the shape of claim this
-file keeps catching.
-
-They hold. *The Data Interview*, *The Full-Stack Picture*, *Cert Roadmaps* and
-*Software Supply Chain Security* are map cards: each one's job is to connect a
-domain to the rest of the site, each ends on a judgement, and each would be
-worse for being longer. The two `linux` entries below them — *File Ops & Text
-Processing*, *Networking (CLI)* — are Linux+ objective references, the same form
-the duplicate census already records as deliberate.
-
-Below the thin line the tail is almost entirely the `script` beginner series:
-eighteen cards of 600–1,100 characters, three or four concept cards each, and
-**zero `.verdict` spans between them**. That reads like a gap and is not one.
-Those cards end on judgements — *keep variables as local as possible*, *bugs
-love the edges, test there* — inside the concept description, because they have
-no tables for a verdict to follow. The `.verdict` class marks a sentence after a
-table, not the presence of a sentence worth reading.
-
-**So the deepening wave the depth row asks for has no work in it right now**,
-and that is the finding. `Cert Roadmaps` gained one row — an Azure track, absent
-from a cert map on a site whose cloud, endpoint and m365 domains are largely
-Microsoft — and nothing else in the tail needed a word.
-
-### Two more cards that already answered the question
-
-`my email went to spam` returned **nothing**, against a card titled *Email
-Authentication — SPF, DKIM, DMARC* that contains both "spam" and "junk". The
-blocker was `went`, and the fix was the opening sentence the card should have
-had anyway: **"our email went to spam" and "somebody is sending mail as us" are
-the same problem read from opposite ends, and the same three DNS records answer
-both.** One card, one hit, and the reader who arrives from either end lands in
-the same place.
-
-`somebody deleted the wrong thing` reached seventeen cards and not the
-postmortem one, which is about exactly that and never says it. It now opens on
-the archetype: *somebody deleted the wrong thing, or shipped the wrong config,
-and the only question that matters now is which question the room asks next.*
-
-### The counter-example, recorded rather than fixed
-
-`the intern deleted the wrong thing` is the same query with one extra word, and
-it still returns seven cards about nothing. The relaxation stage is working
-exactly as designed: `intern` is the rarest word, so it is the one kept.
-
-There is no honest fix. The site has no reason to name an intern, and writing
-one in to catch the query is the keyword stuffing this census exists to refuse.
-So it is checked in **with a `want` as well as a verdict**, which makes the
-harness score it as a wrong-card miss and count it as explained rather than
-quietly passing on its result count — the same distinction that caught
-`standups` four waves ago.
-
-It is the first entry in the census's wrong-card column, and it is there to stay
-visible. **A relaxation rule that keeps the rarest word is right almost always,
-and this is what its failure looks like** — worth one row that a future session
-reads before proposing to change the rule.
-
-```
-probe 170 -> 175 questions · 170 answered · 0 unexplained · 4 zeros · 1 wrong card
-thin 7, unchanged and read in full · one Azure track added to the cert map
-41 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
-visual 2 · backup 3
-```
-
-## Session — the card I wrote to close a query used the site's words, not the reader's
-
-### The queue was empty, so the questions had to be new
-
-Every census came back clean: thin 7 at 0%, 0 deep orphans, 0 unread
-duplicate pairs, 0 unexplained probe rows, 41 gates green. That is the state
-this file says means *the queue is no longer a list* — so the work had to come
-from asking something nobody had asked. **Batch twelve: 27 fresh reader
-questions**, spread across all nine reader groups rather than concentrated,
-because the previous eleven batches' split by reader is the only thing that has
-reliably predicted where the gaps are.
-
-Seven came back zero. The split, after ruling the matcher out on each — retype
-with contractions expanded, then with the rarest word alone, *before* concluding
-the corpus is at fault:
-
-| Query | Verdict |
-|---|---|
-| `the certificate renewed and the site still says expired` | **kind 2.** Real gap, written |
-| `usb device not recognised` | **kind 2.** Real gap, written |
-| `retrospectives are a waste of time` | **kind 1.** The card answers it and never says it |
-| `a laptop is beaconing out` | kind 3 — `beaconing` alone reaches 11 cards |
-| `nat gateway is the biggest line on the bill` | kind 3 — `cloud` already states the hourly-plus-per-GB-per-AZ billing |
-| `floating point rounding is wrong` | kind 3 — the card says *it is not a bug in your code*; `wrong` is one word too many |
-| `the meeting invite is an hour out` | **kind 2, named and not written** — see below |
-
-### The best finding was a card that had already ruled out what I found
-
-`sec`'s TLS card carries a four-row *Errors You'll See* table, and under it a
-verdict claiming the incomplete chain is **"the only failure in this table that
-does not announce itself."** That is a falsifiable claim sitting in prose, and
-it is false: the table had no row for the certificate that was renewed on disk
-and never reloaded into the running process. It is the second-commonest cert
-ticket after plain expiry, and the table's own first row is what causes it —
-*Renew/replace cert (Let's Encrypt auto-renews)* is the sentence that makes
-people stop at the renewal.
-
-So the row went in, and **the verdict had to be rewritten, not appended to**,
-because the claim it made no longer held. The two failures turn out to be
-mirror images, which is the sentence the card now leads on: the incomplete
-chain works on your machine and fails for everybody else; the renewed-and-not-
-reloaded cert fails for everybody while the file on disk says it is fine.
-*Renewal is not deployment.* One command settles both, and `ops`'s web-server
-card already had it — `openssl s_client … | openssl x509 -noout -dates` — which
-is the argument for reading the neighbours before writing: the fix was already
-on the site, one domain over, unattached to the failure it diagnoses.
-
-### And then I made the exact mistake I had just written down
-
-Two of the seven zeros were recorded as **kind 1 — the site names the
-practitioner's concept and the reader types the symptom**: `data is leaving
-over dns` misses because the site says *exfiltration*, and `setting up a new
-laptop` misses because the site says *provisioning* and *zero-touch*. I wrote
-that pattern into the probe as two verdicts, in this session, before writing
-the cards.
-
-Then I wrote the USB card using *enumerate*, *descriptor exchange* and
-*unnamed or unknown device* — and re-ran the probe, and `usb device not
-recognised` **still returned zero**. The card was correct, mechanism-first, and
-unreachable by the person it was written for.
-
-The fix was not a compromise, which is the part worth keeping: *"USB device not
-recognised"* is not a keyword to stuff, it is **the string the operating system
-puts on the user's screen**, and a card about a failure should quote the words
-the reader is looking at. Naming it is the rubric's second property — give the
-failure a fingerprint — not an accommodation to a matcher. It now returns
-exactly one card, the right one.
-
-**The general form:** *writing down a pattern does not install it.* This file
-has recorded that shape four times for rules applied to every case but the one
-that motivated them. This is the same defect one step earlier — the rule was
-written **for** the case in front of me and still did not reach the card I wrote
-ninety seconds later.
-
-### The staleness checker caught its own author, and was right to
-
-`--self-test`'s verdict-staleness check reported my note on `setting up a new
-laptop` as claiming a zero on a query returning six. The note does not claim a
-zero. It says *"the card is provisioning and zero-touch"* — and `\bzeros?\b`
-matched **zero** inside **zero-touch**, because a hyphen is a word boundary.
-
-This is the token-boundary failure this file already records for `DP` inside
-`UDP` and `RA` inside `YARA`, arriving in a different alphabet. The guard is the
-same shape — `(?<!-)\bzeros?\b(?!-)` — and it matters more than it looks,
-because *zero-trust*, *zero-day* and *zero-touch* are three subjects this site
-writes about at length, so the false-positive rate was going to climb with every
-security wave. Two fixtures added; the self-test fails without the guard.
-
-**The rule about rules holds here too.** The check was written because a note
-went false and nothing noticed. The first thing it did once it had a real
-corpus of notes to read was report a true note as false — and the temptation was
-to reword the note, which would have been bending the record to fit the tool.
-
-### Left named rather than guessed at
-
-`the meeting invite is an hour out` is a genuine kind 2 and is **not** written.
-`m365` has 42 topics and says *time zone* **zero times**; the two cards that
-cover time zones are `script`'s, and both are written for somebody storing a
-timestamp, not for somebody whose room mailbox disagrees with the organiser's
-client. The causes — client versus mailbox time zone, a room with its own, a
-recurring series created before a DST rule changed, an external iCal with a
-floating time — return nothing in that domain. It is named here with its
-evidence rather than written in a wave that had already spent its three cards,
-because this file's own audit rule says a probe pass producing more than two or
-three card edits has stopped being an audit.
-
-The same applies to the two kind-1 rows above: both now carry a `want` and a
-verdict, so the next session starts from the finding rather than re-deriving it.
-
-```
-probe 175 -> 202 questions · 190 answered · 0 unexplained · 9 zeros · 3 wrong cards
-3 cards edited: sec TLS (row + verdict rewritten), hw docks (concept card), career retros (prose)
-1 tool fix: CLAIMS_ZERO guarded against hyphenated compounds, +2 fixtures
-41 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
-visual 2 · backup 3 · mean/card 1,389 -> 1,390, excluding verdicts 1,122 unchanged
-```
-
-## Session — closing the three things the last wave named rather than wrote
-
-### The queue was a list this time, because the last session left one
-
-The previous record ends by naming three findings it deliberately did not act
-on: one kind-2 gap with its evidence, and two kind-1 misses each carrying a
-`want` and a verdict. That was the whole point of writing them down — **a wave
-that stops at its audit limit is only disciplined if the next one starts there**,
-and this file has a history of naming work that then waited weeks.
-
-All three are closed. It cost one new topic and two paragraphs.
-
-### `m365` had forty-two topics and said *time zone* zero times
-
-The new card is **Calendar Time Zones — Why the Invite Lands an Hour Out**, and
-the sentence it exists for is that *a meeting has no time*. It has one stored
-instant and one rendering per mailbox, so "the invite is an hour out" is never a
-question about the meeting — the instant is almost always right, and the ticket
-is a disagreement between two renderings of it.
-
-That reframing does the diagnostic work, which is why it leads. It makes one
-question obvious — **who sees it wrong?** — and that question partitions the
-causes in a way nothing else does: one attendee points at a client or mailbox
-zone, everybody points at the organiser or a room object, only the panel points
-at the room mailbox's own zone, set at creation and never touched again. The
-reflex the card argues against is the one a service desk actually uses: walking
-the caller through their own Outlook settings, which confirms nothing in three
-of the five rows because the wrong object belongs to somebody else.
-
-The second card is the recurring series that is right until the clocks change,
-and it carries the one row on the page that is **nobody's mistake** — two
-countries changing clocks on different weekends genuinely puts a call an hour
-out for a fortnight twice a year, and the calendar is telling the truth. A
-troubleshooting card that cannot say *this one is not a fault* teaches people to
-keep fixing it.
-
-It closes by naming what it is **not**: the storing-timestamps problem, which
-`script` already covers and which the calendar already gets right. Store the
-instant, render late — the calendar does that. What is left is a configuration
-disagreement between objects that each hold an opinion, and no amount of
-correctness in the store prevents it.
-
-### The two kind-1 fixes, and the one that was an inflection rather than a word
-
-`data is leaving over dns` reached seven cards and not the exfiltration one.
-The card's own first concept is titled *How Data Leaves* — so the site was not
-using a different **word**, it was using a different **inflection**, and the
-matcher does not relate *leaving* to *leaves*.
-
-That distinction decided the fix. A stemmer is the obvious answer and this
-project already tried one and reverted it, which is a recorded result and not a
-thing to re-litigate on a single query. So it was fixed in prose, and the
-sentence earns its place independently: *exfiltration is the attacker's word for
-it; the defender meets the same event as a question — why is data leaving over
-DNS at three in the morning*. Two vocabularies for one event is exactly why that
-table is read from both ends, and the card claims to be a detection skill in its
-second sentence without ever saying what detection looks like from the inside.
-
-`setting up a new laptop` missed Autopilot the same way. The fix names the
-ticket and then inverts it — the point of Autopilot is that **nobody sets one
-up** — with the honest cost attached: a profile that is wrong is wrong on every
-machine at once, and there is no technician in the loop to notice.
-
-### The new topic was a deep orphan for about four minutes
-
-`orphan_report.py` reported **1 deep orphan** immediately after the splice,
-which is the precise condition the register's *unreachable quality* row says
-reopens the risk. It was doing its job on the first new hand-written topic since
-the risk was closed.
-
-Five bidirectional pairs fixed it, chosen by hand and not from the tool's
-ranking — `suggest_related.py` put *Windows DNS Administration*, *Landing Zones*
-and *Firewall Policy Design* in the top six, all of them matching on the word
-**zones**, which is three different meanings of the word in one list. The tool
-scores lexically and says so; the reason the loop's step 10 says *by hand* is
-sitting in that output.
-
-It also went onto the `m365-administration` path, after the mailbox-types step
-rather than at the end, because the room mailbox is where the fault comes from
-and the general playbook is already the last step. Mainland went 1,466 → 1,467,
-so it joined the graph rather than starting a fourth island.
-
-### One ordering constraint earned its row in the table again
-
-`make check` failed on a stale social card, because the topic count is rendered
-into the image and the count moved. That is constraint #4 in the manual — *any
-content change → `make og`* — and it is the second-cheapest thing on the list to
-forget, because nothing about editing a data file suggests an image is
-downstream of it. The gate caught it in nine seconds.
-
-### And one thing that was checked rather than assumed
-
-The scratch query runner used for diagnosis returned 6 for one query and 34 for
-a near-identical one, which looked like state leaking between queries in a
-shared page. It is not: they were two different strings, and a **longer** query
-returning **more** cards is the staged matcher falling through to a wider stage
-when the conjunction finds nothing. Verified by running the pair isolated and
-batched and comparing — identical both ways.
-
-Worth a paragraph because the alternative was to quietly discard a session's
-worth of measurements on a hunch, and the check cost one command. The file's
-third habit is *verify by measurement, not by assertion*, and that applies to
-suspecting your own instruments as much as to trusting them.
-
-```
-probe 202 questions · 193 answered (was 190) · 0 unexplained · 8 zeros · 1 wrong card
-1 topic added (m365, 1,552 -> 1,553) · 2 prose fixes · 5 related pairs · 1 path step
-41 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
-visual 2 · backup 3 · mean/card 1,390 -> 1,391, excluding verdicts 1,122 -> 1,123
-```
-
-## Session — one navigation layer was gated and the other was only asserted
-
-### Measuring something nobody had measured, which is the register's own habit
-
-The register says it plainly: *once a phase, measure something nobody has
-measured*, and all four accumulation risks came from an afternoon of counting
-things the repository already contained. The queue was clear again after the
-last two waves, so this wave counted.
-
-The claim chosen was the **domain-shape row**, because it is the only row in the
-opening table that makes two assertions in one sentence:
-
-> Both navigation layers complete — **0 hand-written orphans, 0 hand-written
-> topics off a path**
-
-The first half is measured. `orphan_report.py` names deep orphans, the register
-reopens the *unreachable quality* risk on a single one, and the previous wave
-watched it fire on a new topic within four minutes of the splice.
-
-The second half had never been checked by anything. **It was false.**
-
-| Topic | Added by | Related links | Path step |
-|---|---|---|---|
-| `mind` CBT and DBT — What Each One Trains | `6bec6c0` | ✅ | ❌ |
-| `philosophy` Qigong — The Three Regulations | `6bec6c0` | ✅ | ❌ |
-| `web` The Cascade & Specificity | `65b5c5b` | ✅ | ❌ |
-
-Two content waves, both of which linked their new topics into `related.json`
-and neither of which added a path step. That is not carelessness — it is
-**exactly what differential enforcement produces**. One layer has a gate that
-fails a build; the other has a sentence in a plan. Every session did the half
-that was checked.
-
-### Why the coverage line could not show it
-
-`check_paths.py` was already printing *1,490 distinct topics of 1,553*. The
-three were in that gap the whole time and invisible, because **60 generated
-acronym pages are off every path by design** and swamp them. A reader of the
-bare count has no way to tell three strays from the deliberate sixty, and would
-have had none at any site size.
-
-So the fix is the move `depth_report.py --thin` already makes for cards that are
-short on purpose: when the deliberate cases dominate a count, stop printing the
-count and print **the ones a person has to judge**. `check_paths.py` now names
-hand-written topics on no path, and says how many generated pages it excluded so
-the two numbers reconcile in the output rather than in the reader's head.
-
-### The comment that asserted a fact about two other files
-
-`orphan_report.py` carried this, and it is worth quoting because it is the
-mechanism:
-
-> *The same 60 are the whole of the gap in `suggest_related.py --check` and in
-> `check_paths.py`, so three reports were each re-deriving the same exclusion in
-> the reader's head. One line here says it once.*
-
-True when written. False by the time anybody counted — the path gap was 63. A
-comment in one file making a numeric claim about two others is a measurement
-written in the one place nothing can check it, and the sentence that makes it
-dangerous is the last one: it tells future readers **not to re-derive it**.
-
-Corrected there, and the claim now lives where it can be seen to be true.
-
-### What changed, and the row that makes it stick
-
-Four path steps: CBT/DBT after the anxiety card, qigong after taoism, and the
-cascade card in **two** paths — before grid and flexbox in *Frontend, From the
-Browser Up*, which jumped from the DOM straight to layout, and after the
-selectors card in *The Front of the Web*. Shared steps are established here;
-`surviving-on-call` has been in two paths for a long time.
-
-Then the part that matters more than the four steps: **the stranded count is now
-a checked row.** `check_plan_numbers.py` derives it, so the plan cannot say zero
-while three topics sit off a path, and `check_paths.py` gained a `--self-test`
-over the five set-arithmetic cases that decide the split. Gates 41 → 42, and
-`check_gates.py` made me add it to CI in the same commit, which is what it is
-for.
-
-**It reports and never fails.** A topic does not owe a path, and a gate here
-would teach people to pad a syllabus to clear a build — the same argument
-`check_volatility.py` makes for never failing its console candidates.
-
-### The general form, and it is not the one this file usually records
-
-The recurring lesson here has been *a rule written for a category tends not to be
-applied to the case that motivated it*. This is a different shape and worth
-naming separately:
-
-> **Where two obligations are stated in one sentence and only one is gated, the
-> ungated half is not half-enforced. It is unenforced, and it decays at full
-> speed while the sentence keeps claiming both.**
-
-Nobody skipped the path step on purpose. They did the half that would have
-stopped them, which is the only half that was ever going to happen.
-
-```
-3 stranded topics found, 4 path steps added, 0 off-path now
-check_paths: --self-test + 5 fixtures, names its own strays
-check_plan_numbers: Learning paths row now carries the stranded count
-gates 41 -> 42, Makefile and CI in the same commit
-41 -> 42 gates green · smoke 163 · search 56 · a11y 31 · resilience 64
-mobile 15 · visual 2 · backup 3 · probe 193 of 202, 0 unexplained
-```
-
-## Session — the register wrote the rule, and Phase 11 never got it
-
-### Applying the last wave's lens to the rest of the file
-
-The previous record ends on a general form: *where two obligations are stated in
-one sentence and only one is gated, the ungated half is unenforced and decays at
-full speed while the sentence keeps claiming both.* A form like that is only
-worth writing down if the next session points it at something, so this one did —
-at every remaining number in this file that a tool produces and nothing checks.
-
-**Phase 11 is where they all live**, and every one of them had drifted:
-
-| Claim, as written | Today |
-|---|---|
-| *46 volatile spans and 5 fact anchors: 51 dated claims* | **45 spans, 12 anchors, 57 claims** |
-| *across 1,432 topics* | **1,553** |
-| *now down to 2 candidates* | **3** |
-| *it is 2 candidates today* | **3** |
-| *`check_volatility.py` still reports 46 spans* | **45** |
-| *its only two console candidates* | **three** |
-
-Six sentences, none of them checked, all of them wrong. The phase is marked
-**📘 living** in the index, which is the part that stings: it was the section a
-reader was most invited to trust.
-
-### The rule already existed, three sections down, written for this exact defect
-
-The risk register says it, and says why:
-
-> *No number is repeated here. Each row points at the row of the measured-state
-> table that carries its figure, because that table is checked by
-> `check_plan_numbers.py` and a second copy would only be a second thing to go
-> stale — **which is how this table got wrong in the first place.***
-
-The register learned it the hard way, wrote the rule, and applied it to itself.
-Phase 11 sat directly above it carrying six inline copies. That is **the fourth
-instance this file has recorded of the same shape** — a rule written for a
-category and not applied to the case that motivated it — and the first one where
-the rule and the violation are in the same document, eighty lines apart.
-
-Worse: the register **broke its own rule in one row**. The *unfalsifiable
-freshness* row repeated *51 dated claims* inline, and its own *where the number
-lives now* column said **nowhere — that is the risk**. It knew the figure had no
-checked home and wrote a copy anyway, because there was nowhere to point.
-
-### So the fix was to give it somewhere to point
-
-A **Dated claims** row now sits in the measured-state table, derived by
-`check_plan_numbers.py` from `check_volatility.py`: spans, anchors, their total,
-and the console-candidate count. Thirteen derivable rows, up from twelve.
-
-Phase 11 §1 and §4, the V5 wave, and the register row now all point at it and
-carry no copies. §7's audit record is **left as a record** — what that pass
-found is history and history does not get edited — but its present-tense
-parenthetical is replaced with what is true now, including the third candidate
-and why it is a false positive.
-
-The distinction Phase 11 §3 makes survives intact and is now stated where it
-cannot be confused: **the numerator was always countable and the denominator
-never will be.** The phase's whole argument is about the denominator. Nobody
-noticed the numerator was sitting beside it, uncounted, for a year.
-
-### Proved rather than assumed
-
-The row was checked by breaking it: 45 changed to 44 in the table, the tool
-reported *Dated claims: the row does not carry 45, 57* and exited 1, then the
-file was restored and it exited 0. Adding a row to a checker and not confirming
-it can fail is the *asserts it did not throw* row of this file's own three-shapes
-table, and it would have been particularly funny here.
-
-```
-13 derivable rows (was 12) · 0 drifted · 6 stale prose numbers retired
-Phase 11 §1 §4, V5, and the register row now point at the checked row
-42 gates green · plan.md 6,670 lines, reopens at 8,000
-```
-
-## Session — the front door was the most-read file and the least-checked one
-
-### Pointing the lens at the two documents that are not this one
-
-Two waves ago the lens was *one navigation layer gated, the other asserted*. Last
-wave it found six stale numbers in Phase 11. This wave pointed it outward, at
-`README.md` and `CONTRIBUTING.md` — the files a **stranger** reads, where this
-file is what a returning session reads.
-
-`check_plan_numbers.py` already had a README check. It covered the Domains
-table, the icons, the dictionary size, and any bare *N domains*. Everything else
-on the page was unchecked, and three of those had drifted:
-
-| README said | Actually |
-|---|---|
-| measured at **1,545** topics | 1,553 |
-| 475 elements at rest instead of **140,926** | 142,790 |
-| the closed programmes and **241** session records | 242 |
-
-The existing check's own docstring calls this *"the fifth place this repository
-has found the same defect: prose quoting a number about the repo, maintained by
-hand, drifting."* It then fixed the one instance in front of it and left the rest
-of the page alone — which is the same shape as everything else this run has
-found, in the tool written to stop it.
-
-### The check is built so a rewrite is legal
-
-This is the part worth copying, because the obvious implementation is worse.
-
-Each figure is located **by the sentence that makes the claim** — *measured at N
-topics*, *instead of N\*\**, *and N session records* — not by scanning the page for
-integers. A figure the README no longer states returns `None` and is skipped.
-
-So deleting a sentence is a legal edit and only a **surviving, wrong** number
-fails. A check that forces a file to keep saying something has stopped checking
-the file and started writing it, and a front door should be free to stop quoting
-a number without a build going red.
-
-Both halves proved rather than asserted: 1,553 changed to 1,500 in the README
-produced *says 1,500 topics, the tools say 1,553* and one problem; deleting the
-clause entirely produced **zero**; restoring gave zero. The sequence matters more
-than either result, because the second property is the one an implementation
-silently loses.
-
-### And the claim that was better off with no number in it
-
-`CONTRIBUTING.md` said `.ai-table` was *used in 360 tables across 18 domains*. It
-is 358 across 16.
-
-The reflex, three waves deep into this, is to derive it and check it. That would
-be wrong, and Phase 11 §5 says why — written about freshness, and the argument
-was never about freshness:
-
-> **A claim that is rewritten to not depend on a fact does not need a date.**
-> Dating a claim promises to re-check it. Rewriting it removes the promise.
-
-Nothing on that page turns on 358 versus 360. The sentence exists to tell a
-contributor that `.ai-table` is a real alternative in wide use and not
-deprecated, and *"used across most of the site, and the linter reports the live
-count"* says that without promising anything. The count now lives in exactly one
-place — the tool that derives it — and the page points at the tool.
-
-So this wave added a check to one file and **removed the need for one** from the
-other, and the difference between the two cases is a single question: does a
-reader's decision turn on the number? The README's topic count is the site's
-headline claim about itself. The table count was trivia with a maintenance bill.
-
-### A third instance of one lesson, stated once
-
-Three waves, three files, one shape:
-
-| Where | The gated half | The asserted half |
-|---|---|---|
-| Navigation | orphans, by `orphan_report.py` | topics off a path |
-| Phase 11 | nothing | six numbers |
-| Front door | the Domains table | topics, elements, records |
-
-In every case the asserted half was wrong and the gated half was fine, and in
-every case a tool that covered part of the claim already existed. **The failure
-is never that nobody built the check. It is that the check was scoped to the
-instance that prompted it.**
-
-```
-README: 3 figures now checked, located by sentence so a rewrite stays legal
-CONTRIBUTING: one count removed rather than checked — Phase 11 §5, outside freshness
-verified both ways: wrong number fails, deleted sentence passes, restored passes
-42 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
-```
-
-## Session — three inflection misses in one batch, and the copula that was missing one form
-
-### Batch thirteen, and a 20% zero rate
-
-Twenty-five fresh questions, five zeros. The split after ruling the matcher out
-on each:
-
-| Query | Verdict |
-|---|---|
-| `permission denied but i am root` | **kind 2**, written — and the zero was a stop word |
-| `we outsourced it who is responsible` | **kind 1**, the card says *Outsource the Work, Not the Risk* and never names the question |
-| `the screen is flickering` | **kind 1**, the symptom table says *flicker* |
-| `the user says the file is gone` | kind 3 — the ladder is real and spread across three `m365` cards |
-| `a service account signed in from another country` | **kind 2, named and not written** |
-
-### The card that was missing, and it is a good one
-
-`linux` had five cards on permissions and nothing on **being refused while
-root**, which is one of the few Linux faults that genuinely stops people. The
-sentence it exists for: *root is the answer to one check, and it is not the
-check that failed.* Being root satisfies the discretionary check on the mode
-bits. Five mechanisms sit outside it — a read-only mount, the immutable
-attribute, mandatory access control, NFS root squash, a dropped capability —
-and none consults your uid.
-
-What makes the ticket expensive is that **all five produce identical words.**
-`EPERM`, *Permission denied*, and nothing naming the layer. So the diagnostic is
-not reading the error harder; it is asking which layer is in play, and four of
-the five answer to a read-only command that needs no privileges.
-
-The causes were not evenly absent, which is what made this kind 2 rather than
-kind 3. Mandatory access control has a whole topic and says *even root is
-constrained*; `strace`'s card names `EACCES` and says to check the path. But
-`chattr`, `root_squash`, `remount` and `read-only mount` returned **zero** in
-`linux`, and nothing anywhere put the five in one place.
-
-Two judgements in it worth keeping. The read-only row goes **first and not
-because it is commonest** — it is the only one that might mean the disk is
-dying, and a filesystem the kernel remounted itself is reporting an I/O error.
-And the verdict refuses `chmod 777` on the grounds that it *cannot work*: every
-row in the table sits outside the bits it changes, so it fails and leaves a
-world-writable file behind. **A fix that could not have worked and did not get
-reverted is the worst outcome available, and it is the commonest one.**
-
-### The linter caught an invented cross-reference, again, within a minute
-
-The xref was written as *SELinux (Security-Enhanced Linux) & AppArmor —
-Mandatory Access Control*, copied from the rendered page where the annotator had
-already inserted the expansion. The source title has no expansion in it. Failure
-#2 in the manual — *titles reconstructed from memory* — except this one was
-reconstructed from the **rendered output**, which is a new way to get it wrong
-and the same fix: run the linter, it names the correction.
-
-### Three inflection misses, and why the answer was not a stemmer
-
-`leaves`/`leaving` last wave, and this wave `flicker`/`flickering` and
-`outsource`/`outsourced`. Three independent instances is where this file usually
-stops calling something a coincidence.
-
-**The stemmer is still the wrong answer, and that is not a guess.** `b90bd2b`
-built one, measured it, and reverted it: it breached two ceilings
-(`how do i find a file` 129 → 178) and *did not fix the query that motivated
-it*. A recorded measurement beats three new anecdotes, so the fix stayed in prose
-both times — and both prose edits were better writing independent of the search:
-a column headed **Symptom** exists to be recognised in the reader's words, so
-*Flickering, or an occasional momentary black* is simply the correct entry, and
-naming the question a third-party-risk card is an answer to is the rubric's
-first property.
-
-### The one that was a stop word, and the shape it came in
-
-`permission denied but i am root` returned nothing while `permission denied
-root` returned eight including the new card. The blocker was **`am`**.
-
-`WIDE_STOP` contains *is are was were be been*. It did not contain *am*. The
-copula was complete except for the first person singular — which is **this
-file's most-recorded shape, in a list of function words**: a rule applied to a
-category with one member missed.
-
-It is the cheapest entry the list will ever take. 61 occurrences in the corpus,
-every one a copula — *who am I*, *what am I automating*, *Am I allowed to do
-it?* — no acronym claims the letters, and nobody searches for it. The cost of
-missing it fell entirely on **first-person symptom queries**, which is how a
-reader describing their own problem phrases it. Search gates unchanged at 56/56
-with no ceiling moved. `being` was measured beside it (466 occurrences,
-load-bearing in titles) and left alone, because the list's own note says entries
-are earned one at a time.
-
-### Named and not written
-
-`a service account signed in from another country`. Both halves exist and the
-join does not: `sec` governs non-human identity, `blueteam` covers impossible
-travel **for people**, and nothing says the obvious thing — *a service account
-has no travel to be impossible*, so a geo anomaly on one is a different alarm and
-a louder one. Recorded with its evidence rather than written, because the wave
-had spent its three cards.
-
-```
-probe 202 -> 227 questions · 216 answered · 0 unexplained · 10 zeros · 1 wrong card
-1 topic added (linux, 1,553 -> 1,554) · 2 prose fixes · 5 related pairs · 1 path step
-matcher: `am` joins WIDE_STOP — search 56/56, no ceiling moved
-42 gates green · smoke 163 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
-```
-
-## Session — I filed a kind-2 from a grep, and the card refuted it
-
-### The correction first, because it is the finding
-
-Last wave named `a service account signed in from another country` as **kind 2,
-a real gap, not written** — the two halves exist apart and the join does not.
-That verdict was reached from a grep over `sec` and `blueteam`. Reading the card
-took two minutes and refuted it: `Non-Human Identity` already carries both
-alerting rows, *alert on interactive sign-in by a service account* and *alert on
-use from a new address, region or client*.
-
-The probe's docstring warns about the inverse of this and has for a long time:
-
-> a kind-3 call is a decision not to write something, and it was being made
-> from a topic list.
-
-**A kind-2 call made from a grep is the same error pointed the other way, and it
-is the more expensive one**, because a wrong kind-3 leaves a gap and a wrong
-kind-2 ships a duplicate. The rule generalises: *neither verdict is safe until
-the nearest card has been read*, and the card is the unit, not the domain and
-not the grep.
-
-What was actually missing was a sentence. Both rows were carrying a judgement
-the prose never made — the *three cards that were carrying a judgement in a
-table* shape, again — so it is stated now: **a person's location varies
-legitimately and a workload's does not.** Impossible travel is probabilistic for
-a human, who flies and uses VPNs, and nearly deterministic here, because a
-service account has no travel to be impossible. The query reaches the card
-first now.
-
-Then the tool corrected me a second time. With the query answered, its note
-became *"a miss that no longer misses"* by the staleness rule's own definition,
-so the note had to go and the correction had to live here instead. That is the
-rule working exactly as designed: **the probe records defects, not history.**
-
-### `wide` was the one outcome with no verdict trail
-
-Zeros carry a `keep` and are counted explained or unexplained. Wrong-cards do
-too. **Wide was incremented into a headline number and forgotten** — for
-thirteen batches, three queries sat in it and nothing recorded whether that was
-acceptable or whether nobody had looked. Same shape as the navigation claim and
-Phase 11's numbers, arriving in the census that found both.
-
-It is scored like the other two now, and the three have verdicts. Two are
-inherent and say so: `what is a hash` reaches 126 because *hash* is in a ninth
-of the site and every use of it is correct, and `how does dns work` reaches 67
-for the same reason. Ranking would fix them; this matcher is a filter by design
-and says so.
-
-### The third had a cause, and the fix did not survive contact
-
-`what is big o for` returns **114 cards — a fourteenth of the site — because it
-collapses to the single word `big`.** The `o` is one character and dropped as a
-free-floating requirement, which is correct and deliberate: a one-character word
-narrows nothing.
-
-The measurements that make it a defect rather than a fact of life: `big o`
-returns **10** and `big o notation` returns **2**, both correct, because a short
-query is answered by the phrase stage and never reaches this one. **A reader who
-wraps the term in a question gets a different search from one who does not.**
-
-There is a mechanism in the matcher for exactly this — `joined`, which pairs a
-word with its neighbour because `fine-tune` folds to `finetune`. It could not
-see this case, because it is computed from the list the one-character word has
-already been removed from. So the fix looked obvious: require the pair joined
-rather than dropping the short word.
-
-**Built, measured, reverted.** It broke `the 5 whys`, a gated fixture, which
-needs the number kept as its own token rather than fused. Narrowing the rule to
-letters does not save it either: `what is a c pointer` needs `pointer` and
-would get `cpointer`, which is nothing. Nothing in a query says whether a
-one-character word is part of a compound or a word in its own right, and that
-is Phase 11 §3's conclusion in a different file — **the right response to a rule
-that cannot be narrowed is not to ship it.**
-
-One narrowing is left and is *decidable*, which is why it is named rather than
-dismissed: keep the join only where the joined form actually occurs in the
-folded corpus. `bigo` does, `cpointer` and `5whys` do not. It is not attempted
-because it costs a corpus sweep on every query rather than only inside
-relaxation, and that is a real budget rather than a guess.
-
-### The fixture that caught the interaction I introduced
-
-Scoring `wide` broke the staleness check within the hour. Its rule — *a note
-explaining a miss that now reaches its topic is stale* — fired on all three new
-verdicts, because **a wide query does reach its want. That is the definition of
-wide**: the answer present inside a set nobody can read.
-
-The rule was right for the case it was written for and had no way to know a
-second existed. It now retires a note only when the query is *otherwise
-healthy*, and the two new fixtures cover both directions — a wide set that still
-reaches its want is not stale, a set that has since narrowed is.
-
-Twelve fixtures, and the guard is real: without it the first fails.
-
-```
-probe 227 questions · 217 answered · 0 unexplained · 9 zeros · 1 wrong · 3 wide, all recorded
-wide is now a scored outcome with a verdict trail; staleness distinguishes it from solved
-one matcher fix built, measured against the gates, and reverted
-42 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
-mean/card 1,391 -> 1,392, excluding verdicts 1,123 unchanged — this wave's prose was a verdict
-```
-
-## Session — the two Phase 11 waves that had never been read
-
-### §7 is titled "V1, V3 and V5", and nothing ever said why
-
-Phase 11 §6 lists five verification waves. §7 records an audit pass over three of
-them and its own heading names the three it did. **Nothing anywhere explains the
-omission of V2 and V4**, and the phase sits in the index marked *📘 living*, so a
-reader takes the pass for complete.
-
-They were the only genuinely outstanding items in the file's only remaining
-queue, so this wave read them. The full result is Phase 11 §8; what follows is
-what the reading was like, which the table there cannot carry.
-
-### Thirty claims, two actionable
-
-**V4 — default retention.** Eighteen duration claims in a retention context. All
-five that are vendor defaults already carry a date. The other thirteen are not
-claims about the world: `--vacuum-time=7d` and `MaxRetentionSec=1month` are
-config examples, *delete after 3 years per schedule DR-014* is a sample policy
-inside a sample document, *14 or 30 days for application logs* is advice about
-what the reader should set, and *3–6 months of expenses* is a rule of thumb about
-money. One is a **quote being argued with** — `cloud`'s *"We keep 90 days"*,
-answered in the same row by *Analytics vs Basic vs Archive behave differently* —
-and a mechanical check would have flagged the sentence whose entire point is
-that the number is not the answer.
-
-The §9 cross-check V4 asks for came back clean too. The two 93-day figures in
-`m365` and `cloud` are different subjects that happen to share a number, which is
-the shape a contradiction check has to be able to not fire on.
-
-**V2 — service limits.** Twelve limit-shaped claims outside code blocks, two
-real: MongoDB's 16 MB document ceiling and Entra Connect's 500-object deletion
-threshold. Both now carry a span.
-
-### Both additions are the case §5 says a span is *for*, and that matters
-
-§6 ends on a counter-discipline that is easy to skip: *every wave should reduce
-the number of dated claims where it can. A rising volatile-span count is not
-automatically progress.* This wave raised it from 45 to 47 and rewrote nothing,
-which looks like the failure that warning describes.
-
-It is not, and the distinction is the phase's own:
-
-> The volatile span is right **where the specific number is the point — a limit
-> you must design around.** It is the wrong tool where the number was only ever
-> illustrative.
-
-The MongoDB card's next words after the number are *model as a separate
-collection* — a schema decision taken **because** of that ceiling. Entra
-Connect's sentence already carried its durable half, *know the threshold exists
-before you meet it*, and the number is what tells you whether your nightly run is
-near it. Neither is illustrative. And nothing was rewritten because there was
-nothing to rewrite: the other ten were never facts about the world.
-
-### The ratio, which is the actual finding
-
-**Thirty claims examined, two actionable.** The mechanical searches over-match by
-about fifteen to one, exactly as §2 predicted, and for the reason §3 gives:
-**the shape of a number says nothing about whether the world can move underneath
-it.** What separates a limit from an illustration is always the sentence around
-it.
-
-`hw`'s *SATA III ceiling ~600 MB/s* is the cleanest example. It looks exactly
-like a product limit — a vendor name, a unit, a number — and it is a **published
-standard**, fixed forever. It is §2's Wi-Fi-rates case in different clothing, and
-it is the fourth time this file has caught the same pattern-matcher on the same
-mistake.
-
-Five waves read across two passes, **four real edits in total.** Phase 11 opened
-by failing to count the denominator and guessing the site was more disciplined
-than a check could show. That guess now has thirty read instances under it, which
-is a better answer than the number it set out to produce.
-
-```
-V2 and V4 read: 30 claims, 2 dated, 0 rewritten, 0 contradictions
-dated claims 57 -> 59 — both limits a card designs around, which is §5's test
-V1–V5 now all read, none closed: §6 is a standing discipline, not a queue
-42 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
-```
-
-## Session — American spelling, and the dictionary the prose had been disagreeing with
-
-### The request, and the thing that made it more than a preference
-
-The site is written for a Northeast American reader and was spelling *centre*
-the British way in **93 places across 22 files**.
-
-The part worth recording is what turned up on the way to checking scope. The
-site ships `data/acronyms.json`, and that dictionary has **always** expanded the
-same word the American way:
-
-| Acronym | Expansion, as the dictionary has always had it |
-|---|---|
-| KDC | Key Distribution **Center** |
-| NOC | Network Operations **Center** |
-| ISAC | Information Sharing and Analysis **Center** |
-| CIS | **Center** for Internet Security |
-| AZ | an isolated **datacenter** within a cloud region |
-
-So `sec` wrote *Key Distribution Centre* in prose while the dictionary the same
-page loads expanded KDC as *Key Distribution Center*. **The prose had been
-disagreeing with the reference it ships for as long as both existed**, and no
-check could see it because the acronym checker compares expansions against the
-dictionary and never the surrounding sentence.
-
-That makes this a correctness fix that happened to arrive as a preference.
-
-### One brand, and the anchor that protects it for free
-
-`Lenovo ThinkCentre` is a product name and must not move. It needs no special
-case, and the reason is the same one that decides how the guard is built:
-`\bcentre\b` requires a word boundary, and there is none between *Think* and
-*Centre*.
-
-The same anchor is why **one registry row is not enough**. `datacentre` has no
-boundary before *centre* either, so a single `centre → center` rule would have
-silently left every compound behind. Two rows, and a note in the registry saying
-why, because the next person adding a spelling rule will hit this exact edge.
-
-### Made a rule rather than an edit
-
-A one-time replace would drift back on the first card somebody writes. So the
-convention went into `data/renames.json`, which `check_renames.py` fails the
-build on — **the same mechanism that has enforced *allowlist* over *whitelist*
-since 2020**, and the registry now says out loud that it holds two kinds of
-entry rather than only vendor renames.
-
-**Proved rather than assumed, in both directions.** A `centre` and a
-`datacentre` were reintroduced into two domains; the guard named both with line
-numbers and exited 1. Restoring them gave 0. Adding a rule to a checker without
-confirming it can fail is the *asserts it did not throw* row of this file's own
-three-shapes table, and it is the second time this run that habit has been worth
-the minute it costs.
-
-### The generated file, which is the whole reason for the ordering table
-
-`CALCULUS-CHEAT-SHEET.md` still said *centre* after the pass, because it is
-**generated from `data/math.html`** and the sweep had already fixed the source.
-Editing the artefact would have been undone by the next build, and
-`gen_cheatsheet.py --check` would have gone red on the next commit rather than
-this one. The manual's ordering table exists for exactly this, and this is the
-second constraint in it to earn its row this run — `make og` did in wave 2.
-
-```
-93 occurrences, 22 files, 1 brand untouched
-2 registry rows — a spelling needs the compound form as well as the word
-verified both directions: reintroduce -> exit 1 with line numbers, restore -> exit 0
-CONTRIBUTING documents it; cheat sheet regenerated from source, not edited
-42 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
-```
-
-## Session — "whole reference domains" was true of one of the three
-
-### The claim, and why it was worth testing rather than accepting
-
-`orphan_report.py` has computed islands for a long time, and its docstring
-settles them:
-
-> The islands that remain are **whole reference domains** whose neighbours are
-> legitimately their own kind: the calculus track, the keyboard-shortcut tables,
-> the quotes collection. Requiring every component to be connected would mean
-> inventing a link out of `math`, and an invented "See also" is worse than a
-> short one.
-
-That is a good argument and it is the reason the census is not a gate. It was
-also a verdict on three islands reached from the strongest of the three, which
-is the shape this run has now found in the navigation claim, in Phase 11, in the
-front door, and in a stop list. So it got measured:
-
-| Island | Islanded | Already on the mainland |
-|---|---|---|
-| `math` | 16 | **0** — whole, and the argument holds exactly |
-| `shortcut` | 7 | **29** |
-| `quotes` | 3 | **3** |
-
-**Two of the three were not domains standing apart. They were the cards nobody
-got to.** A link from `shortcut/windows` to *Windows Administration
-Fundamentals* is not invented when twenty-nine of its siblings already reach
-`endpoint`, `linux`, `script`, `sec` and `military` — and the three connected
-`quotes` cards are the Stoic, Existentialist and Eastern collections, all
-pointing at `philosophy`, while the three islanded ones are the *meta* cards
-about sourcing and misattribution.
-
-### One link per card, not one link per component
-
-Worth stating because the cheap version is wrong and looks right. A **single**
-link from any island member to any mainland member merges the whole component,
-and the census would go quiet.
-
-It would do nothing for a reader. The "See also" strip is per topic: someone
-sitting on `shortcut/macos` sees `macos`'s links, not the component's. **Graph
-connectivity is a property of the graph and not of the page anybody is on**, so
-seven bridges went in, one per card that had an honest target:
-
-| Card | Now also reaches | Why |
-|---|---|---|
-| `windows` | Windows Administration Fundamentals | the shortcuts, then the job |
-| `macos` | macOS for Windows Admins | same, and the translation table is what a Windows person needs next |
-| `Microsoft Office (Excel/Word)` | Data Analysis with pandas — Spreadsheets in Code | the step after the spreadsheet stops being enough |
-| `Universal Shortcuts` | Desk, Body, Eyes, Wrists, Back | keyboard over mouse is an **ergonomics** move before it is a speed one |
-| `Text Editing & Window Shortcuts` | Intermediate Vim — Editing as a Language | the deep end of the same subject |
-| `Sourcing a Quotation` | How You Know — Evidence, Certainty, Changing Your Mind | provenance of a claim, which is what both cards are about |
-| `Misattributed — Famous Lines` | the same | a quote that survives because nobody checked |
-
-`spotify-media` and `system-general` got none, and that is the discipline
-working rather than failing: no honest target existed, and a short strip beats a
-padded one. They stay reachable because their neighbours now lead out.
-
-**Mainland 1,467 → 1,478 (98%), three islands → one.**
-
-### The number the judgement turned on was the one not printed
-
-The report named each island and its domain spread and **never said how much of
-that domain was already connected** — so the two cases are indistinguishable in
-its output, and the verdict written from it treated them as one thing for as
-long as it stood.
-
-It prints it now: `math 16 islanded, 0 on the mainland`. **An island whose
-domain is wholly islanded is a decision. An island beside twenty-nine connected
-siblings is a backlog.** The words are identical without the figure.
-
-### And the slug truncated, exactly where the manual says it does
-
-The macOS bridge was written from the title as
-`…the-translation-table-security-model`. The real id ends `-mode`: slugs
-truncate at 60 characters, which is failure #7 in the operating manual and cost
-a session a one-way edge once. Caught by checking the target against
-`related.json` before writing it rather than after — thirty seconds, and the
-only reason this record does not have a broken link in it.
-
-```
-7 bridges, one per card that had an honest target; 2 cards left deliberately short
-islands 3 -> 1 · mainland 1,467 -> 1,478 (98%) · links 4,818 -> 4,832 · 0 one-way
-orphan_report now prints mainland coverage per island — the number the call needs
-42 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
-```
-
-## Session — three tools nothing runs, and the one that is a census
-
-### The question nobody had asked of `tools/`
-
-Every checker here is wired into `make check` and into CI, and
-`check_gates.py` fails the build if the two lists diverge. **Three files in
-`tools/` are in neither**, and nothing had ever asked why:
-
-| File | What it is | Verdict |
-|---|---|---|
-| `retire_topic.py` | Merges a topic and records the alias, so five `localStorage` prefixes survive | A **manual operation**, correctly unwired — it edits content on request |
-| `patch_chrome_shortcuts.py` | A one-shot injector from an earlier wave | Same shape, spent |
-| `acronym_drift.py` | A **census** — capitalised tokens the dictionary has never heard of | Should be read, and was not |
-
-Two of three are fine. The third is a census, and this file's operating manual
-§6 has a rule about those: *a census nobody reads is decoration*, written after a
-counter rose 39% while being "tracked". The start-of-session list names
-`lint_content.py` and `check_volatility.py` and does not name this one.
-
-### Read, and measured against the bar the repository already set
-
-`check_volatility.py` states the standard in its own comment, and it is the only
-place here that puts a number on it: its first version was **21% precise**, and
-*"a candidate list that noisy is not a work queue, it is wallpaper."* It was
-tuned in one pass over its own output.
-
-`acronym_drift.py` had never been given that pass. It reported **1,485 rows**,
-and the largest false-positive class was one rule away:
-
-> **A run of three lowercase letters means the capitals are word starts, not
-> initials.**
-
-PowerShell, JavaScript, SharePoint, GraphQL, DynamoDB, PostgreSQL,
-CloudFormation, BigQuery, LinkedIn, AppArmor — **344 rows removed, and not one
-true acronym among them.**
-
-Three rather than two, and measured rather than picked: `SaaS`, `PaaS` and
-`IaaS` are S-**aa**-S, a two-letter middle the dictionary itself uses, and a
-threshold of one would take `GHz`, `IPv6` and `10GbE`.
-
-### The 1,141 that are left cannot be narrowed, and that is the finding
-
-The survivors include `GitHub`, `DevOps`, `MySQL`, `NoSQL`, `MITRE`, `Win32` and
-`M365` — proper nouns whose shape is **identical** to `GB`, `GHz`, `EU`, `CV` and
-`L3`. An initialism's letters are the initials of an expansion and a product
-name's are not, and you need the expansion to tell, which is the thing that is
-missing by definition.
-
-That is **Phase 11 §3 in a fourth place**: *the distinguishing property is not
-the shape of the text.* The list there is now:
-
-| Check | First version matched | Fixed by |
-|---|---|---|
-| Hard-coded colors | invoice numbers, CSS examples | a color *context* |
-| Ambiguous acronyms | every note containing "also" | evidence of real use in two domains |
-| Vendor consoles | MMC, `old-admin.example.com` | word boundaries |
-| Ageing claims | IP addresses, Wi-Fi standards | **nothing** |
-| **Capitalised drift** | **product names** | **a compound-word rule, then nothing** |
-
-The difference from the ageing-claims row is that this one **had a narrowing
-available and had never been given it**. So the 344 ship, and the honest label
-for the rest ships in the same breath: sorted by frequency the first screen is
-where the real ones are, and past that it is product names all the way down.
-
-### And it stays out of the start-of-session list
-
-Which is the decision the §6 rule actually asks for. A census belongs on that
-list when reading it changes what a session does; this one, at 1,141 rows whose
-top entries are `GitHub` and `DevOps`, would be the decoration the rule was
-written against. **It is a reading list before a dictionary wave, and the
-docstring now says so rather than implying a queue.**
-
-The alternative — adding it and letting sessions skim it — is exactly how the
-counter that rose 39% while "tracked" came to rise.
-
-```
-tools/ audited: 3 unwired, 2 correctly so, 1 a census that had never been read
-acronym_drift 1,485 -> 1,141 rows; 344 product names removed, 0 true acronyms lost
-threshold measured, not picked: 3 keeps SaaS/PaaS/IaaS, 1 would lose GHz/IPv6/10GbE
-the remainder hits Phase 11 §3's wall — no property left to require
-42 gates green · make check clean
-```
-
-## Session — the color check was reading an empty set, and zero looked like health
-
-### Starting somewhere else entirely
-
-The lead was the linter's `401 inline style attribute (ceiling 401)`, a counter
-that has not moved in a long time. The theory — `color: var(--cyan)` appears 400
-times and `.c-cyan` already exists, so hundreds could become classes — was
-**wrong, and measuring took two minutes**: of the 401 *avoidable* attributes,
-**7** are a pure color with a matching class, all on `<th>`. The cyan ones are
-nearly all in the 757 `.ref-table` first cells where a `c-*` class loses on
-specificity, exactly as that comment says.
-
-What the measurement turned up instead was three rows further down the list.
-
-### 168 color literals the check could not see
-
-`lint_content.py` fails the build on a hard-coded color, with this message:
-
-> *hard-coded colour {literal} — it keeps its dark-mode value in light mode.*
-
-Its detector is `HEX_RE = #[0-9a-fA-F]{3,8}` — **hex notation only**. The content
-carries **168 `rgba()` literals across ten domains**, and the hex count is
-**zero**. The check had been passing on an empty set for as long as it existed,
-and a green line that says nothing is wrong is indistinguishable from one that
-says *I am not looking*.
-
-It is the defect its own message describes, precisely. `--cyan` is `#00d4ff`
-in dark and `#0274af` in light, so `rgba(0, 212, 255, 0.3)` in a card kept the
-dark value in daylight.
-
-### Fourteen of them were worse than stale
-
-`rgba(168, 85, 247, …)` appears fourteen times, and `style.css` says what that
-number is:
-
-```css
---purple: #ad5ff7;   /* was #a855f7, 4.47:1 on --bg3 — just under */
-```
-
-**`#a855f7` is the superseded purple.** A contrast fix was applied to the
-variable and fourteen hardcoded copies kept the failing value — so the
-accessibility problem the change was made to solve was still on the page,
-fourteen times, in the one form the fix could not reach.
-
-### All 168 mapped, which is what made the fix mechanical
-
-154 matched a current theme variable exactly; the other 14 were the purple
-above. None was an arbitrary color. So each became
-`color-mix(in srgb, var(--X) N%, transparent)` — already house style, used 20
-times in `style.css`.
-
-### The proof, which is the part worth copying
-
-`make equiv` exists to say whether a styling change rendered identically, and
-this change **should not be identical** — in light mode that is the entire
-point. So it was run against dark mode and the output checked numerically rather
-than read:
-
-```
-154,566 elements compared across 30 domains, 33 properties each
-192 colour pairs · 187 numerically identical · 5 genuinely different
-```
-
-The 187 are a **serialisation** change and nothing else: Chrome prints a
-`color-mix()` result as `color(srgb 1 0.690196 0.12549 / 0.3)` where it printed
-`rgba(255, 176, 32, 0.3)`, and 176/255 = 0.690196. Byte-identical rendering,
-different string.
-
-The 5 are `rgb(168, 85, 247) → rgb(173, 95, 247)`. That is `#a855f7 → #ad5ff7`:
-**the only elements whose appearance changed are the fourteen that were carrying
-the pre-fix purple**, and they now carry the corrected one.
-
-A diff of 45 rows read by eye would have been "all the same, fine". Parsing it
-turned one number into the finding.
-
-### And the check had no fixtures at all
-
-Which is why nothing noticed. Every other rule in that file has a fixture group;
-the color rule had none, so there was never a case asserting *this input must be
-reported*. **A check with no fixture cannot tell "nothing is wrong" from "I am
-not looking", and this one had been unable to tell since it was written.**
-
-Nine fixtures now: hex, `rgba`, `rgb`, `hsl`, an SVG paint attribute, a ticket
-number that looks like hex, a CSS sample inside `<pre>`, and the two forms that
-must **not** report — `var()` and `color-mix()` over a variable, because the
-point is a color that cannot follow the theme rather than the mention of one.
-55 fixtures in the file, 0 failures.
-
-```
-168 literals converted in 10 domains · 14 of them the superseded --purple
-equiv: 192 pairs, 187 identical, 5 changed — and the 5 are the contrast fix landing
-lint_content: FUNC_RE added, 9 colour fixtures where there were none, 55 total
-42 gates green · smoke 163 · search 56 · a11y 31 both themes · visual 2 · mobile 15
-```
-
-## Session — the triage card had no word for the commonest alert in a modern SOC
-
-### Batch fourteen
-
-Twenty-three questions, four zeros (17%), and one of them was a real gap in a
-card this file would have called finished.
-
-`blueteam`'s **Alert Triage — Working the Queue From Alert to Verdict** is a
-good card: three concepts, an inversion worth the price of entry (*an alert is a
-rule matching, not a thing that happened*), and a cost-ordered question list.
-Grepped for the words a prevented alert arrives as:
-
-```
-blocked 0 · prevent 0 · quarantin 0 · contained 0 · stopped 0
-```
-
-**Zero.** A card about turning alerts into verdicts, in an estate where EDR
-blocks hundreds a week, with no word for the shape most of them have.
-
-### The sentence it was missing
-
-*A block is a detection, not a resolution.* The control did its job on this
-attempt on this host, and the queue reads that as the end of the matter — but a
-block is **evidence of arrival**. Something reached that machine and tried.
-
-The distinction that makes it workable is **delivery versus execution**:
-execution was stopped, delivery succeeded, and delivery is the finding. A
-payload that reached an endpoint reached it through a path, and that path is
-still open when the alert closes.
-
-Which produces one question rather than a full investigation — *what was the
-delivery path, and is it still open?* — answerable in about a minute from the
-telemetry the card's own third row already uses.
-
-The second card is the part that keeps it honest. **This is not an argument for
-working every blocked alert**; there are hundreds a week and treating them as
-incidents is how a queue dies, because the analyst stops reading any of them —
-strictly worse than auto-closing them on purpose. So it gives a promotion rule
-(the same indicator on a host without the control; an unexplained delivery path;
-a target that does not receive commodity malware by accident; a second block on
-one host in a week; a block late in a chain) and ends on the decision:
-**auto-close the rest deliberately, and write down that you did.** A documented
-suppression is revisitable; an analyst who has quietly stopped reading a category
-is the same outcome with nobody accountable for it.
-
-### Written, reachable, and still a zero
-
-`blocked alert` returns exactly one card. `prevented alert` returns exactly one
-card. Both are this one.
-
-`the alert says it was blocked do i still care` still returns **nothing**,
-because of `says` and `care` — filler a card about prevention has no reason to
-contain, and the relaxation stage deliberately never runs on a zero. Recorded,
-not papered over. The content gap was real and is closed; the query is a matcher
-limit already documented three times in this file.
-
-### Two more named rather than written
-
-The wave had spent its cards, so both carry their evidence instead:
-
-- **`we found crypto mining on a server`** — `mining` appears **six times
-  site-wide**, every one a passing mention in a findings list. The card would
-  have one sentence: *mining is a symptom of access, not the incident.* Somebody
-  had enough access to run a process, and what they chose to monetise it with is
-  the least interesting thing about that.
-- **`the autoscaler keeps flapping`** — autoscaling is covered in `cloud`,
-  `devops` and `eng`; the oscillation fault is not. **`cooldown` and
-  `hysteresis` each return zero across the whole site**, and they are the two
-  words the answer is made of.
-
-Naming the missing *words* rather than the missing subject is what makes these
-two pickable up by a session that has not read this record — the same form that
-got `m365`'s calendar gap written two waves after it was found.
-
-### And the printer already had the card, in the wrong word
-
-`the printer is printing garbage` reached nothing against a concept card titled
-*It Printed, and the Page Is Wrong — Blank, **Garbled** or Streaked*, whose
-second row is the PostScript-driver-against-a-PCL-device answer. Garbled is the
-technician's word; **garbage**, gibberish and *it printed junk* are the user's.
-The card now says both, which is the fourth time this run that naming the
-reader's word has been the whole fix.
-
-```
-probe 227 -> 250 questions · 237 answered · 0 unexplained · 12 zeros · 1 wrong · 3 wide
-2 concept cards added to Alert Triage · 1 prose fix · 2 gaps named with their evidence
-42 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15 · visual 2
-```
-
-## Session — writing the two cards the last wave named, and the verb that cost one its query
-
-### Both gaps written
-
-The previous record named two and wrote neither, with the missing **words**
-rather than the missing subject — which is the form that makes a finding
-pickable up cold. Both are cards now.
-
-**`eng` — Autoscaling in Practice.** The sentence: *an autoscaler is a control
-loop, and every control loop can oscillate.* The delay in the loop is not the
-decision, which is instant; it is the time from deciding to having capacity
-that is **actually serving** — boot, runtime start, cold cache, two passing
-health checks. Two to five minutes is ordinary, and for that whole window the
-metric still says what it said before you acted.
-
-So flapping is a **lag problem wearing a threshold costume**, and the reflex —
-widening thresholds — treats the symptom and slows every genuine response. The
-second card is about metric choice, and its verdict is the one that decides
-configurations: **scale on the thing that fills up, alert on the thing users
-feel.** Queue depth leads, CPU lags, p99 lags badly; using one metric for both
-jobs is where most bad autoscaling comes from.
-
-`cooldown` and `hysteresis` were the two words that returned zero site-wide when
-the gap was named. That was the whole diagnosis, and it survived contact with
-the writing.
-
-**`threat` — Cryptojacking.** The sentence the last wave predicted: *mining is a
-symptom of access, not the incident.* A process ran on your server as some user,
-reached the internet, and stayed — and **every one of those facts is true of a
-ransomware operator on the same box.** The finding is not *we have a miner*, it
-is *somebody can run code here and we did not know*.
-
-The verdict is the part worth keeping: **it is the cheapest true positive you
-will get all year.** A miner is an intrusion that volunteered its own detection
-by burning a metered resource, and an estate that finds one and cleans it up has
-spent the evidence without reading it. Work it as an intrusion and let the mining
-be the timestamp — most investigations never get a reliable moment when the
-attacker was definitely present.
-
-### And `found` joined the stop list, on a rule already written
-
-`we found crypto mining on a server` returned **nothing** on the day the card was
-written, while `cryptojacking` returned it alone and `crypto mining on a server`
-returned it among six. The blocker was **`found`**.
-
-This file already settled the test, for `got`:
-
-> a rare word is normally a *narrowing* word and precious. The reason it joins is
-> the other half of the test: **it is never a subject.** It arrives attached to
-> the thing that happened, and a card describing that thing has no reason to
-> narrate its arrival.
-
-`found` is a **reporting verb** of exactly that shape — the reader narrating
-their own discovery. 7% of topics, **zero topic titles**, and requiring it
-requires a word the corpus cannot reliably supply.
-
-Measured before shipping, not after: search **56/56 with no ceiling moved**, and
-`usb found in car park` — a query that has been in the census since batch one —
-returns the same two cards it always did. `find`, `finds` and `finding` stay,
-because *Finding What Detection Missed*, *Finding and Fixing Weaknesses* and
-*Finding Your First IDOR* are titles here.
-
-**This is the opposite of the failure this run keeps recording.** Every other
-instance was a rule not applied to the case that motivated it; this is a rule
-written for one word being applied to the next word of the same shape, which is
-what the rule was for.
-
-### The depth tail moved, which it had not for a while
-
-Two cards of five and six concept cards each moved the **10th percentile from
-2,135 to 2,142** — the number the measured-state table calls *what a deepening
-wave has to move*. A recent record concluded that the deepening wave had no work
-in it, and it was right about the tail: the way to move that number turned out
-not to be lengthening thin cards but adding deep ones, because the percentile is
-a position in a distribution and new mass at the top pushes it.
-
-The padding counter-metric behaved too — mean 1,392 → 1,393 and
-excluding-verdicts 1,123 → 1,124, moving **together**, which is the shape the
-row asks for.
-
-```
-2 topics added (1,554 -> 1,556) · 9 related pairs · 3 path steps
-probe 250 questions · 239 answered · 0 unexplained · 10 zeros · 1 wrong · 3 wide
-`found` joins WIDE_STOP on the `got` test — 56/56, no ceiling moved
-10th percentile 2,135 -> 2,142 · mean/card and excl-verdicts both +1
-42 gates green · smoke 163 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
-```
-
-## Session — the decks were fine, and the isolation table stopped one row short
-
-### Two censuses that came back clean, which is worth the paragraph
-
-The plan records *a flashcard with a blank back* and *a quiz that answered
-itself* as things found **by reading**, and nothing has ever counted them. So
-they were counted.
-
-**The decks are in good shape.** 1,556 index entries: **1,487** carry both a
-concept title and a description, **5** carry a title alone, **0** carry a
-description alone, and **64** are excluded — 60 of them the generated acronym
-dictionary. The blank-back problem was already solved properly, by a rule about
-*shape* rather than domain, so the next lookup card somebody writes is excluded
-without anyone remembering to add it.
-
-The one thing the measurement corrected was the comment beside that rule, which
-names **six** topics that build an empty card. It is **four**: the AI glossary
-and the military code list have since gained prose and the shape test lets them
-back in. The comment is now explicit that the six are the evidence that produced
-the rule and the live count is whatever `stIsStudyable` says — the distinction
-Phase 11 §8 drew between a record and a claim.
-
-### Then `data`, which is comprehensive and stops one row short
-
-Forty-four topics covering vacuum, bloat, isolation levels, repeatable read,
-serializable, phantoms, stale statistics and deadlocks. Three phrases return
-**zero across the whole site**: `write skew`, `parameter sniffing`, and
-`long-running transaction`. The first and third are the two findings.
-
-**Write skew.** The ACID card teaches the four isolation levels against *the
-three anomalies — dirty, non-repeatable, phantom*, which is the textbook set and
-is what the levels were historically defined against. **None of them is why
-anybody needs `SERIALIZABLE`.**
-
-Write skew is: two transactions read the same rows, each checks an invariant
-across them, each writes a *different* row. Nothing was overwritten, nothing was
-re-read, both commit, and the invariant both checked is now false. Two doctors
-each confirming another is on call before going off, both seeing the other, both
-going off.
-
-The reason an isolation table cannot express it is the interesting part and it is
-now the card's verdict: **the table describes what each level permits, and write
-skew is a relationship between two transactions rather than a property of
-either.** Snapshot isolation allows it precisely because each transaction is
-individually well-behaved. The rule that replaces the table: *if a transaction
-reads rows to decide whether it may write, the rows it read are part of what it
-is writing.*
-
-**The idle transaction.** The MVCC card says *keep transactions short* and
-explains the lock-contention half. The expensive half was missing: an open
-transaction pins a snapshot, and **nothing older than the oldest live snapshot
-can be reclaimed anywhere in the database** — not just in the tables that
-transaction touched.
-
-Which produces the symptom that sends people to the wrong place entirely:
-**autovacuum running, on schedule, succeeding — and bloat growing.** It is not
-failing. It is finding nothing it is allowed to remove. So the verdict is a
-reordering of the investigation: *ask what the oldest transaction is before you
-ask anything about vacuum*, which is one query against `pg_stat_activity`, and
-`idle in transaction` is the answer more often than any vacuum setting is.
-
-Both cards state the thing the surrounding material implies and never says,
-which is the same shape as *three cards that were carrying a judgement in a
-table* — except here the judgement was not in the table either. It was absent.
-
-### And the reader's word, for the fifth time this run
-
-`why is my table bloated` returned **nothing** against a card written twenty
-minutes earlier whose first symptom row read *Table and index bloat rising*.
-`bloat` is the noun the documentation uses; **bloated** is the adjective a person
-types, and it appeared twice on the site, both in unrelated domains.
-
-The row now opens *The table is bloated*. Fifth instance this run, and the first
-where the card it failed to reach was one I had just written — which is the same
-correction as the USB card in the first wave, arriving after the lesson had been
-written down twice.
-
-```
-deck census: 1,487 strong · 5 title-only · 0 blank · 64 excluded (60 generated)
-2 concept cards added to `data`; topics unchanged at 1,556, mean/card unchanged
-probe 250 -> 254 · 243 answered · 0 unexplained
-42 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
-```
-
-## Session — the diagnosis I had reached by hand five times, printed
-
-### Five is where a tool earns its keep
-
-`usb device not recognised`, `the screen is flickering`, `we outsourced it who is
-responsible`, `why is my table bloated`, `data is leaving over dns`. Five zeros
-in this run, five identical investigations, and the same three commands every
-time: retype the query with its rarest word, grep the corpus for each word, find
-the one that is not there.
-
-The fifth was against a card written twenty minutes earlier, by the session that
-had already written the lesson down twice.
-
-This file's operating manual settles what to do with that. **Six of ten failures
-were caught by a tool, and the ratio is the argument for the tools** — a
-diagnosis re-derived five times is a diagnosis that should be printed.
-
-### What it prints, and why it needs no judgement to read
-
-Under every unexplained zero, the probe now shows how many topics contain each
-word of the query, one word at a time. The two kinds of zero separate at a
-glance:
-
-```
-ZERO  "the laptop smells of burning"             0  nothing — investigate
-      in the corpus: laptop 106 · smells 0 · burning 8
-      → "smells" is not on the site — the reader's word, not a missing card
-
-ZERO  "the same query is fast sometimes and slow other times"   0
-      in the corpus: same 711 · query 244 · fast 414 · sometimes 90 · slow 304 · other 684 · times 263
-      → every word is here; the conjunction is what failed
-```
-
-A word at **0** is kind 1 — *fix in prose, it is better writing anyway*. Every
-word present and still a zero is the matcher, and the relaxation stage
-deliberately does not run on a zero. No threshold, nothing for a reader to
-overrule.
-
-It runs **only on a zero with no recorded verdict**, because it costs a corpus
-sweep per query and a zero somebody has already explained has had this done once.
-
-**It is deliberately not a suggestion engine.** It names the absent word; whether
-the card should use it is a judgement, and the difference between naming a
-symptom a reader recognises and keyword stuffing is exactly that judgement.
-
-### Both of its first two findings were real, and one was a safety gap
-
-The `fast sometimes` one is **kind 3**, and the tool said so before any grep:
-every word present. `data` has a concept card titled *The Query That Was Fast and
-Went Slow: Stale Statistics and the Plan Flip*. The narrower gap beside it is
-recorded — `parameter sniffing` and `cardinality estimat` each return zero
-site-wide, and they are the *intermittent* case rather than the one-way flip.
-
-The other one mattered more. `hw` covers a burning smell properly — *Smell of
-burnt electronics, no visible damage → power it down* — in **Components &
-Schematics**, which is the card for somebody holding a board. The card a person
-with a laptop lands on is *Laptops — Batteries, Thermals & What Is Actually
-Replaceable*, and it had **zero** mentions of smell or burning. It covers
-swelling carefully, including that swelling is a safety issue.
-
-Swelling and a burning smell are not the same urgency, and the card said one and
-not the other:
-
-> **Stop.** A burning or sharp chemical smell is not a wear symptom — power down,
-> unplug, and do not charge it again. **Swelling gives you days; a smell does
-> not.**
-
-The query reaches both cards now. **The tool found a missing safety instruction
-on its first run**, from a query written to test whether the tool worked.
-
-### And the `want` was wrong, which the measurement caught
-
-The verdict first pointed at *Systematic Hardware Troubleshooting* — a guess from
-the subject rather than from the search. The probe put the row in **Components &
-Schematics**, and the card a reader actually needs was a third one. Three
-candidates, and the one that mattered was not the guess or the hit.
-
-```
-query_probe: per-word corpus counts under every unexplained zero
-probe 254 -> 257 · 245 answered · 0 unexplained
-2 prose fixes, one of them a missing safety instruction
-42 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
-```
-
-## Session — a number I incremented fifteen times, and it was wrong every time
-
-### The register's rule, broken in the index of the file that states it
-
-Two rows carried the session-record count. The measured-state table's row is
-derived by `check_plan_numbers.py`. The index table's row at the top of the file
-was maintained by hand — and they disagreed **by five, in every version of this
-file since the split**: 62 against 67, then 63 against 68, all the way to 78
-against 83.
-
-The register three sections down states the rule this breaks, and states why:
-
-> **No number is repeated here.** Each row points at the row of the
-> measured-state table that carries its figure, because that table is checked by
-> `check_plan_numbers.py` and a second copy would only be a second thing to go
-> stale — **which is how this table got wrong in the first place.**
-
-The index row was a second copy. It went stale immediately and stayed stale.
-
-### The part that is about me rather than the file
-
-I incremented it **fifteen times in this run**, once per wave, alongside the
-checked one. Every increment was correct arithmetic on a wrong number, and the
-wrongness was one subtraction away the whole time: `83 − 242` against
-`78 − 242`. I never did it, because the row *looked like* a thing that needed
-incrementing and incrementing it made `make check` pass — the check was
-satisfied by the other row, so the ritual felt verified.
-
-**A hand-maintained duplicate beside a checked original is worse than a
-hand-maintained number alone**, because the green build is evidence about the
-copy that is checked and reads as evidence about both.
-
-So the row carries no count now. It points at the checked one, the way every
-register row does.
-
-### And the trigger the file set for itself is about to fire
-
-`check_plan_numbers.py` prints the live file's length on every run, and the
-fifth risk reopens at **8,000 lines**. At the start of this wave the file was at
-**7,861**, and this record was written expecting to cross it.
-
-**It did not.** The file is at **7,922** — the record came to 61 lines and the
-threshold is 78 away. So the sentence above was wrong when it was written, and
-correcting it is a better demonstration of this section's own argument than
-being right would have been: **I forecast a threshold crossing while standing
-next to a tool that reports the number, and missed by 78 lines.** The condition
-is still false. The split waits for the wave that makes it true, and that wave
-will know because the tool will say so rather than because somebody judged the
-file long.
-
-That number was chosen carefully — *double the ~4,000 the split left, and a
-third of the 22,745 that made it acute* — and the reason the file's most-quoted
-passage is about this risk is that it is the only one that ever carried a
-**condition** rather than a judgement about when something feels too long:
-
-> That is a condition a session can evaluate by running the censuses it runs
-> anyway, and **the session that found it true is the session that acted.**
-
-It was not true when this wave started, at 7,861 lines, and acting then would
-have been acting on a forecast — which is the thing this file criticises in
-*"act when it gets bad"*, because a forecast has no threshold either. So the
-work went first, the record went in, and the condition is now true on its own
-terms.
-
-```
-the index row's count removed rather than corrected — it points at the checked row now
-13 derivable rows · 0 drifted
-plan.md 7,861 -> 7,922 · the fifth risk reopens at 8,000 and did NOT fire
-the crossing was forecast in this record's own first draft and missed by 78 lines
-```
-
-## Session — the diagnostic was wrong twice, and both corrections made it useful
-
-### Batch sixteen, and a first result worth stating
-
-Sixteen questions, eight zeros, and **not one of them was a vocabulary gap.**
-Every zero came back *every word is here*. After five kind-1 fixes in this run,
-a fresh batch produced no missing-word misses at all.
-
-That reading turned out to be worth about ninety seconds, because the tool that
-produced it was wrong twice.
-
-### First: it was not folding, and the matcher is
-
-`the wifi adapter disappeared` reported **`wifi 4`**. The site writes **Wi-Fi**,
-53 times in `net` alone. The diagnostic was comparing raw lowercase text while
-the search folds separators on both sides of its own comparison, so every
-hyphenated term in the corpus was undercounted by roughly tenfold.
-
-**A diagnostic that undercounts is worse than none**, because it turns a matcher
-problem into a false *the reader's word is missing* and sends the next session to
-write prose that was already there. Folded on both sides now, with the same
-function the search uses: `wifi 4` → **`wifi 44`**.
-
-### Second: "every word is here" was true and useless
-
-`the handover was useless` — *handover 14 · useless 30 · every word is here*.
-True, and it says nothing about where to look. The conjunction needs every word
-in **one** card, so the rarest word is the binding constraint — which is the
-reasoning the relaxation stage already uses when it keeps the rarest and drops
-the rest.
-
-It names it now: *“useless” at 30 is the binding one, and no card carries it with
-the rest.*
-
-### Third, and this is the one that made it actionable
-
-A word can be all over the site and absent from **the one card that should
-answer**, and the corpus count cannot see that. `the meeting room screen is
-blank` reported *every word is here* — `screen` 116, `blank` 29 — while the
-conference-room card said **neither**, describing the same fault as *wrong input
-selected* and *check the display's input source*.
-
-Where a query carries a `want`, that question is computable, and it is the
-question that matters. So four zeros now read like this:
-
-```
-in hw/conference-room-technology…: “screen”, “blank” are not in the card that should answer
-in redteam/data-exfiltration-channels…: “exfiltrating” is not in the card that should answer
-in sec/phishing-beyond-email-smishing…: “weird” is not in the card that should answer
-in blueteam/shift-handover-in-a-soc: “useless” is not in the card that should answer
-```
-
-**Four investigations replaced by four lines, and only one of them is a fix.**
-
-### Which is the judgement the tool cannot make, made easy
-
-The conference-room card is about displays and never says *screen* or *blank*.
-That is a genuine prose gap and it is fixed — the Display row now opens
-*Screen blank, or “No Signal” on an otherwise working display*.
-
-The other three are the reader's **editorial** vocabulary, not the card's
-subject. `exfiltrating` is an inflection of the card's own title. `weird` is the
-reader's verdict on the message, and a card describing a smishing attempt has no
-reason to call it weird. `useless` is the same shape.
-
-**`useless` was tested properly and refused**, which is the counter-case that
-gives the stop-word rule teeth. It blocks three queries — standups, handover,
-stack trace — and looked exactly like `got` and `found`. It cannot join:
-*The Risk Register in Practice — Wording, Ownership & Why Most Are Useless* is a
-topic title, and stopping it would cost that card its own name. That is the
-`get`/`gets` guard from the `got` note, firing for the first time.
-
-### One real gap, named
-
-`should i specialise or generalise` is the only content finding in the batch.
-`specialise` 6 and `generalise` 8 are scattered across domains, `specialist or
-generalist` returns zero, `t-shaped` returns four and none of them is `career`.
-**One of the commonest questions in an IT career, and the domain has 45 topics
-without it.**
-
-```
-probe 257 -> 273 · 254 answered · 0 unexplained · 18 zeros · 1 wrong · 4 wide
-the per-word diagnostic corrected twice: folds like the matcher, names the binding word
-and checks the wanted card — three lines that replaced four investigations
-1 prose fix · 8 verdicts recorded · 1 stop-word candidate tested and refused
-42 gates green · smoke 163 · search 56 · a11y 31 · resilience 64 · mobile 15
-```
-
-## Session — the condition fired, and the file did what it says
-
-### 8,020
-
-The previous record forecast this crossing and missed by 78 lines. This one did
-not forecast anything: it appended, and `make check` said
-
-```
-plan.md is 8,020 lines. The fifth risk reopens at 8,000.
-::warning::plan.md has passed 8,000 lines — the fifth risk in the register has
-reopened. Read 'The fifth, which is about this file': the options are on record
-and so is the reason option 1 was chosen last time.
-```
-
-**That is the whole point of the row**, and it is worth being precise about what
-just happened, because this register has five risks and only one of them has ever
-been tested.
-
-The first split happened at 22,745 lines — nearly double the 11,600 that made the
-risk *acute* — because somebody eventually noticed. The file wrote down why that
-was a failure even though the outcome was fine: *"act when it gets bad" fails
-precisely because **bad** has no threshold*, and the plan sat at double the
-acute length with no session ever deciding that was the day.
-
-This time nobody decided. The tool printed a number, the number crossed a line
-somebody had set in advance, and the warning named the section to read.
-
-### What was actually done
-
-Option 1, the way the first split did it and for the same stated reason: **line
-conserving, nothing deleted, reordered or edited.**
-
-| | before | after |
-|---|---|---|
-| `plan.md` | 8,020 | **4,227** |
-| `plan-archive.md` | 20,972 | **24,765** |
-| total | 28,992 | **28,992** |
-
-45 records moved, oldest first, to the end of the archive — where they land in
-chronological order because both files were already chronological. 40 remain
-here. The assertion ran **before** either file was written, which is the habit
-the first split recorded: *the one thing that would make this a bad trade is
-losing a paragraph of reasoning to a tidy-up.*
-
-**4,227 is not a chosen number either.** The threshold was set as *double the
-~4,000 the split left*, so landing near 4,000 is what keeps 8,000 meaningful for
-the next firing. Keeping the last 40 records was the option that did that; 35
-would have left 3,863 and 45 would have left 4,713, and both were measured before
-picking.
-
-### The row now says it was tested
-
-A closed risk with a reopen condition that has never fired is a closed risk with
-an untested condition, and this register makes that argument about the other
-four. This one has fired, and been acted on, and the row records both — because
-*"✅ Closed"* on a risk that reopened and closed again is a less useful sentence
-than the story of the reopening.
-
-### And the thing the first split could not have known
-
-The first split's own record ends by noticing that the fifth risk was written up
-as a success story and **left with no reopen condition** — the exact defect the
-four accumulation risks above it had been given a column to prevent. The
-condition was added afterwards, at 8,000, and described as *"far enough away not
-to nag, close enough that the file is still comfortably splittable on the day it
-fires."*
-
-It was 68 lines away when the previous wave started and fired on the next
-record. **The estimate was good**, which is not something a session can usually
-say about a threshold it set for itself two hundred records earlier.
-
-```
-plan.md 8,020 -> 4,227 · archive 20,972 -> 24,765 · 28,992 lines before and after
-45 records moved, 40 kept · nothing deleted, reordered or edited
-the fifth risk: reopened by its own condition, acted on, and closed again
-```
-
-## Session — the card the census named, and the two fixes it took after that
-
-### The gap was real, and writing it was a third of the work
-
-`should i specialise or generalise` had carried a **kind 2** verdict since batch
-sixteen — *named and not written, the only genuine content gap in batch sixteen* —
-with the evidence already filed: `specialist or generalist` returned zero,
-`t-shaped` returned four and none of them was `career`, and the domain had 45
-topics without one on the commonest question in an IT career.
-
-Verified before writing, the way step 1 of the loop says: `Growing Into Senior`
-carries a concept card titled **Two Valid Ladders**, which is the
-individual-contributor-or-manager axis and a different question. The four
-`t-shaped` hits are `cloud`, `data`, `infra` and `web`, and every one is a JSON
-shape or a traversal. Nothing covered the choice.
-
-**`career` — Specialist or Generalist.** Five concept cards. The sentence:
-*nobody gets to choose this in year one, and when the choice arrives it is much
-narrower than the debate.* The two failure modes are the content —
-the specialist's arrives all at once and has a date, the generalist's never
-arrives at all — and the verdict is which one that makes dangerous: **the one
-with no date is the one that gets left**, because a skill that stops being
-bought produces a bad month and a bad month produces a plan.
-
-The last card is the one that changes what a reader does: the shape is mostly an
-**employer decision wearing a study plan**. Under ~50 people you are a
-generalist by enforcement; at 500+ you are a specialist by org chart. *If you
-want to be broader, change employers; if you want to be deeper, change teams* —
-a curriculum is competing with forty hours a week and loses.
-
-### Then the query was still zero, which this file has already recorded once
-
-The previous time was verbatim: *"I wrote the USB card using enumerate,
-descriptor exchange and unnamed or unknown device — and re-ran the probe, and
-`usb device not recognised` **still returned zero**. The card was correct,
-mechanism-first, and unreachable by the person it was written for."*
-
-Same shape here, one word narrower. The card said `specialist` eleven times and
-`specialization` twice and **never the verb**. That is an ordinary kind 1, and
-the kind-1 rule is *fix in prose, it is better writing anyway* — so the opening
-sentence became the reader's question rather than a paraphrase of it:
-
-> *Should I specialize or generalize?* is asked as though it were a fork in the
-> road at the start, and it is not.
-
-`should i specialize or generalize` went from 0 to **1, the right card and
-nothing else**. The British spelling stayed at 0.
-
-### And the third fix is the one worth keeping
-
-That residual is a clean claim, because everything else had been ruled out: same
-card, same words, same matcher, one letter apart. The site is written in
-American English by convention, `CONTRIBUTING.md` says so, and
-`check_renames.py` enforces it — for `centre` and `datacentre`, which are the two
-rows the registry has.
-
-**Kind 1's own example is a spelling** — the site writes *imposter*, the reader
-types *impostor* — and its remedy is to name both words in the card. That works
-because it is one word, chosen once, in one place. It does not work here, and
-the reason is the test this session added to the probe's docstring:
-
-> could the writer have chosen the reader's word without changing anything
-> else? If yes it is kind 1 and belongs in the prose. If the reader's word is
-> the site's own word under a spelling **rule**, the card is not the place.
-
-Naming both spellings in one card closes exactly one query; doing it everywhere
-is the keyword stuffing kind 3 forbids, wearing an accommodation to readers as a
-costume. So it went where `3-way`/`three-way` already lives: `dialectForms` in
-`script.js`, beside `numberForms`, for the same stated reason — **the site and
-the reader disagree and neither of them is wrong.**
-
-### What joined, and the two families that did not
-
-| Family | Joins | Why |
-|---|---|---|
-| `-ise`/`-ize`, `-isation`, `-yse`/`-yze` | **yes** | No English word means one thing with an `s` and another with a `z`. A stem that only looks like the suffix — *advise*, *exercise*, *franchise* — offers `advize`, which matches nothing: one wasted alternate, the bargain `plurals()` already makes |
-| `-our`/`-or` | **no** | `four`→`for` and `tour`→`tor` are real words, so a wrong guess **widens** instead of missing, and widening is what this matcher recovers from worst. A length floor that excludes them also excludes `color` and `favor`, which are five characters |
-| `-ce`/`-se` | **no** | `advice`→`advise` is a different word. A wrong card the reader never sees is worse than a miss they can retype |
-
-Six characters is the floor, and it is what keeps `prize`/`prise` out — two
-words, not one word twice, and the only pair short enough to collide.
-
-### Proved in both directions, because a check that cannot fail is not a check
-
-The 56 gated search fixtures were captured with the rule and again with
-`dialectForms` stubbed to a no-op, and the two runs are **byte-identical** —
-every count, every fixture. The rule is purely additive at the gate. Then the
-two new fixtures were run against the stub: `should i specialise or generalise`
-**FAIL, 0 results, NOT FOUND**, and 57/58. Restored: 58/58.
-
-Both spellings are fixtures, and the comment says why: the American one passes
-on the prose fix alone, so a rule that widened in only one direction would pass
-it and look finished.
-
-### The staleness check caught its own author again
-
-The note written for this query two hours earlier said it returns nothing. By
-then it returned 1, and the census said so by name. The note was retired rather
-than reworded — the query is answered, so it keeps a `want` and no verdict.
-
-**That is the second time this check has reported a note by the person who wrote
-it, and the two outcomes are opposite**: the first time the note was right and
-the check was wrong, and the guard was fixed. This time the note was simply out
-of date, which is the case it exists for.
-
-### And the row it reads through had drifted the same way
-
-`Reader questions answered` is one of the four rows `check_plan_numbers.py`
-names as **not checked here — they need a browser or a stopwatch**. Its headline
-had been kept current at *254 of 273*. The three sub-counts in the same sentence
-had not: they said **10 zeros, 1 wrong-card, 3 wide** while the tool was printing
-**18, 1 and 4**. The last record to touch them incremented the zeros by one, from
-9 to 10, on a run that reported 18.
-
-So the row is both halves of this file's own argument in one sentence: the number
-a tool checks stayed right, and the number beside it, in the same cell, drifted
-eight. It is corrected here. **Making it derivable is the next wave**, and it is
-tractable — `query_probe.mjs` already has every one of those numbers at the
-moment it prints them.
-
-```
-1 topic added (1,556 -> 1,557) · 5 related pairs · 1 path step
-probe 273 questions · 254 -> 255 answered · 0 unexplained · 17 zeros · 1 wrong · 4 wide
-dialectForms joins script.js: -ise/-ize only, 6-char floor, -our/-or and -ce/-se refused
-search 56 -> 58 · the 56 byte-identical with the rule stubbed out · new fixture fails without it
-plan row corrected: 10/1/3 -> 17/1/4, the sub-counts of an unchecked row
-42 gates green · smoke 163 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
-```
-
-## Session — naming a row as unchecked, and calling that checking it
-
-### The row the last wave named
-
-The previous record ended on a specific claim: *"Making it derivable is the next
-wave, and it is tractable — `query_probe.mjs` already has every one of those
-numbers at the moment it prints them."* This is that wave, and the claim held
-with nothing discovered on the way that changed it.
-
-`check_plan_numbers.py` derives thirteen of the measured-state table's rows and
-prints the four it cannot, with a reason each, *"rather than letting them pass
-as verified."* That sentence is the whole defect. **Naming a row as underivable
-is not a check on it**, and the row it names first is the one that drifted: its
-headline was kept current at *254 of 273* across four waves while the three
-sub-counts in the same sentence said **10 zeros, 1 wrong-card, 3 wide** against a
-tool printing **18, 1 and 4**. One record incremented the zeros from 9 to 10 on a
-run that reported 18.
-
-### The argument for where it goes
-
-The reason given for not deriving it is true and is not a reason: *`query_probe.mjs`
-drives a real browser*, and `make check` has none by design — its docstring says
-so, and that is why four generated artefacts moved into it. But **the browser is
-already running**, seventeen seconds into a census that holds all six numbers at
-the moment it prints them. So the check went beside the count rather than into
-the tool that cannot take one:
-
-```
-node tools/query_probe.mjs --check-plan
-```
-
-It reads plan.md, finds the row, and requires the cell to carry all six of the
-run's numbers — answered, queries, unexplained, zeros, wrong-card and wide — by
-containment on digit boundaries, which is exactly how `present()` does it one
-file over. Same convention, because a second convention for the same job is a
-second thing to learn.
-
-**It gates.** `make all` runs it, `build-check.yml` runs it, and
-`check_gates.py` now agrees on **43**. The census itself still exits 0 whatever
-it finds — a zero is a finding, not a failure — and that is untouched: a row
-misquoting a tool is not a finding about the site, it is drift, which is what
-the sibling tool has always exited 1 for.
-
-### Proved by reproducing the original drift
-
-The row was set back to **10 zeros … 3 wide**, the values it actually carried,
-and the gate printed:
-
-```
-"Reader questions answered": the row does not carry 17 (zeros), 4 (wide)
-    this run  answered 255 · queries 273 · unexplained 0 · zeros 17 · wrong-card 1 · wide 4
-```
-
-and exited 1. Not a constructed fixture — the exact sentence that was in this
-file this morning, failing the check that did not exist then.
-
-Eleven fixtures for the row reader joined the self-test, and four of them fail
-against a naive `cell.includes(String(value))`: **4 satisfied by 42**, **17 by
-173**, **173 by 2,173**, and `1,557` not found at all. Those four are the ones
-that would let the gate pass while the row was wrong, which is the only failure
-mode a containment check has.
-
-### One thing the row had to give up
-
-The cell briefly carried its own drift story — *"had drifted to 10, 1 and 3"* —
-and that had to come out, because a containment check cannot tell a current
-number from a historical one, and a cell quoting both can be satisfied by the
-wrong one. **A measured-state row that quotes its own history is a row that can
-be right about the past and wrong about now.** The history is three paragraphs
-up, in the record, where it cannot be mistaken for a measurement.
-
-### And the sentence above the table was wrong in the same way
-
-*"Eleven of the fifteen rows are now checked."* The table has **seventeen** rows
-and thirteen are checked. The sentence was accurate when written and had been
-read past ever since, one paragraph above the table whose drift it was
-describing — which is the fourth time this file has recorded a rule stated in
-prose beside the thing that enforces it, and not applied to itself.
-
-It now says thirteen of seventeen, plus a fourteenth in `make all`, and **three
-left, all of which want a stopwatch**. That is a claim a future session can
-check by counting the rows, which the old one was too.
-
-```
-query_probe.mjs --check-plan: 6 numbers, containment on digit boundaries, exit 1 on drift
-gates 42 -> 43, agreeing in `make all` and build-check.yml
-self-test 12 -> 23 fixtures · 4 of the 11 new ones fail a naive containment
-proved by restoring the real drifted cell: named both wrong numbers, exit 1
-plan preamble corrected: eleven of fifteen -> thirteen of seventeen, +1 elsewhere
-43 gates green · smoke 163 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
-```
-
-## Session — the convention was stated site-wide and enforced for two words
-
-### What the measurement found
-
-`CONTRIBUTING.md` has said, without qualification, *"The site is written in
-**American English**"*, and named `data/renames.json` as the mechanism. The
-registry carried **two** spelling rows: `centre` and `datacentre`, added by the
-session that fixed 93 occurrences of one word.
-
-A count across the site's prose of forty-two British/American pairs:
-
-| | | | | | |
-|---|---|---|---|---|---|
-| behaviour **246** | organise **252** | programme **138** | licence **115** |
-| artefact **88** | authorise **78** | optimise **73** | colour **65** |
-| defence **62** | judgement **58** | catalogue **54** | enrolment **50** |
-
-**2,192 occurrences**, across 37 files, with the build green the whole time.
-
-### The evidence that made it a correctness fix rather than a preference
-
-The `centre` record's argument was that the site's own acronym dictionary had
-*always* expanded KDC, NOC and ISAC the American way, so the prose had been
-disagreeing with the reference it ships. The same argument holds here and is
-sharper, because both halves are **inside one object**:
-
-```json
-"CAL": { "e": "Client Access License",
-         "n": "Per-user or per-device licence to connect to a Windows Server" }
-```
-
-The expansion is the canonical name of a real thing and is American. The note
-one line below it is British. The file disagrees with itself field by field, and
-it does it in `D3FEND` (*Network Defense*), `DISA` (*Defense Information Systems
-Agency*), `EULA` (*End User License Agreement*) and `ISO` (*International
-Organization for Standardization*) too, every one of them beside prose spelling
-the same word the other way.
-
-### Three rules and a dictionary that says it is one
-
-The registry was the wrong mechanism and that is the finding, not the count. **A
-spelling is not a vendor rename** — it has no vendor and no month, and both rows
-carried a `since` that was the date somebody decided. Enforcing a spelling by
-row enforces exactly the words somebody thought of, which is how a site-wide
-convention came to cover two.
-
-`tools/check_spelling.py` enforces it by rule instead:
-
-| | Exceptions | Why that shape |
-|---|---|---|
-| `-ise` → `-ize` | ~40 named | The words where `ise` is not a suffix are a closed set English will not extend — *compromise*, *enterprise*, *otherwise*, and `malvertise`, which is a coinage spelled that way in both dialects |
-| `-yse` → `-yze` | `analyses` | It is also the plural of *analysis*, identical in both dialects, and nothing in the string says which. **A miss taken on purpose**, for the reason `plurals()` in `script.js` already gives: a wrong guess is a card the reader never sees, a wrong alternate matches nothing |
-| `-our` → `-or` | `detour`, `glamour` | A three-character stem floor does the rest, and it is load-bearing: it is what excludes `four`, `hour`, `tour`, `pour`, `sour`, `your`, `our` and `flour` **without naming one of them** |
-| the irregulars | — | **A dictionary, and the docstring says so.** There is a rule under the doubled `l` and it turns on stress: `cancelled` and `installed` are not separable by any regex, so they are not separated by one |
-
-One `ALLOW` phrase on the whole site: **Fibre Channel**, which is the standard's
-name. `ThinkCentre` needed no allow-list because `\b` cannot match inside it —
-Fibre Channel has a space where ThinkCentre has nothing, which is the edge the
-registry's own note predicted for compounds and got backwards for phrases.
-
-### Three defects the tool had, and each one is a shape this file records
-
-**The report and the fix disagreed.** `prose_of()` concatenated the text between
-tags, so `<b>machine</b>otherwise` read as **machineotherwise** — not in the
-exception list, so the rule offered *machineotherwize*. Thirty-odd findings were
-that shape, including `corefour` and `linkyour`, the two `-our` words the stem
-floor exists to exclude. **An element boundary is a word boundary**, which this
-repository learned when `script.js` indexed `…modal editingvim starts…` and
-could not find the topic named Vim. The fix always rewrote each chunk alone, so
-only the census was wrong — the half a person reads. They are one code path now.
-
-**`practise` became `practize`.** It belongs to the `-ise` rule *and* the
-dictionary, the rules ran first, and the dictionary never saw it. The self-test
-had eleven hand-picked dictionary fixtures and not that one, because it tested
-each mechanism on its own words and this defect was in the **ordering**. The
-fixture is derived now — every one of the 83 entries through the whole pipeline
-— and reverting the order fails five of them by name.
-
-**Hardcoding `indent=2` reformatted `domain-intros.json`**: 604 changed lines for
-ten replacements. A diff nobody can read is a diff nobody reviews, and this
-tool's whole claim is that its 2,192 edits were looked at.
-
-### What the sweep then uncovered, which is the part worth keeping
-
-`infra` had **`INFRA • Virtualization` ×4** beside **`Infra • Virtualisation`
-×3**, and the linter's one-badge-two-spellings check could not see it: the two
-badges differed in a *word*, so they were two badges. Americanizing the word left
-them differing only in case, and the check fired immediately. The domain's own
-form is `Infra •` — eight of its other badges use it — so five uppercase badges
-were corrected. **A latent inconsistency was being hidden by a second one.**
-
-And the generated artifacts went stale, both of them, exactly as the ordering
-table says: `CALCULUS-CHEAT-SHEET.md` builds from `data/math.html`, and
-`data/acronym.html` from `tools/gen_acronym_domain.py` — whose template says *"the
-grey text in brackets beside it."* That last British spelling on the site was in a
-**generator**, and fixing the artifact would have been undone by the next build.
-
-### The slug half, and the five the first attempt missed
-
-37 topic titles moved, and 41 slugs with them. The map was built by reading
-`<span class="topic-name">([^<]+)</span>` — and **five titles contain a nested
-`acro-exp` span**, put there by the annotator, so `[^<]+` skipped them. The
-symptom was 20 one-way related links and 16 dangling path steps.
-
-`fix_topic_names.py --aliases-only` had the right answer the whole time: it
-computes slugs the way the browser does and had recorded all 41. The lesson is
-narrow and reusable — **derive a slug from the tool that owns slugs**, never from
-a regex over the markup, because the markup has an annotator writing into it.
-
-### The gate built in the previous wave caught this wave
-
-`query_probe.mjs --check-plan`, three hours old, failed with *8 unexplained, 9
-wrong-card*: eight of the probe's `want` targets were retitled slugs. Nothing
-else in `make all` could see it — the queries still returned cards, just not the
-ones somebody had decided were right. That is the middle row of this file's
-three-shapes table, caught by a check whose whole argument was that naming a row
-as unchecked is not checking it.
-
-```
-2,192 replacements · 37 files · 83 dictionary entries, 3 rules, 1 allow phrase
-every <pre>/<code> block byte-identical across all 35 content files, asserted
-41 slugs moved · 41 aliases · 152 related targets and 45 path steps remapped
-5 badges corrected in infra — a defect the sweep exposed, not one it caused
-check_spelling.py: 145 fixtures · reverting the rule order fails 5 by name
-renames.json 27 -> 25: a spelling is not a rename, and now says so
-45 gates green · smoke 163 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
-```
-
-## Session — batch seventeen, and the card that already ruled out half of what I found
-
-### The queue was empty again, so the questions were new
-
-Every census clean: thin 7 at 0%, 0 deep orphans, 0 unread duplicate pairs, 0
-unexplained probe rows, 0 one-way links, 0 topics off a path, 45 gates green.
-That is the state this file says means the work has to come from asking
-something nobody has asked. **Batch seventeen: 29 fresh questions**, spread
-across all ten reader groups rather than concentrated.
-
-**22 of 29 answered.** Two thirds, again — the sixteen batches before it opened
-at the same fraction for symptom-shaped questions, and this file has now
-predicted that number three times running.
-
-The seven, after ruling the matcher out on each:
-
-| Query | Verdict |
-|---|---|
-| `my container image is not updating` | **kind 2.** Real gap, written — see below |
-| `one stick of ram or two` | **kind 1.** The card answers it in a table and says *module* |
-| `a domain admin logged in at 2am` | kind 3 — `2am` at 15 is the reader's detail; UEBA covers the mechanism and `off-hours` appears ten times |
-| `the mount disappeared after reboot` | kind 3, checked at fault level — `linux` has fstab, UUIDs over `/dev/sdb1`, `mount -a`, and `nofail` |
-| `how do i prove it is not the network` | wide and inherent — `network` is the widest noun this site has, and the answer is in the 83 |
-| `which of these two alerts do i work first` | wide and inherent, and the Alert Triage card is in the 106 |
-| `it works the first time and fails after that` | wide, **and the `want` is not decidable** — the symptom spans idempotency, config-management idempotence and plain leftover state |
-
-### The gap was real, and the card that covers it was already half-written
-
-`imagePullPolicy` appeared **zero times** on the site. `pushed a new image same
-tag` and `container running old code after deploy` both returned nothing. So:
-kind 2, and `near_duplicates.py --title` said *clear to write*.
-
-Then the habit this file calls the first of the three — **read the neighbours'
-concept-card titles, not their topic titles** — found that `devops`'s *Artifact
-& Registry Management* already carries a card called **"A Tag Is a Pointer, So
-'We Run v1.2.3 Everywhere' Is a Claim About a Name."** It is a good card. It
-covers the whole of one half: a tag can be moved, re-pushing it silently
-repoints it, the digest is the version, and the fingerprint is *a rollback that
-does not roll back*.
-
-It does not cover the other half, and the two are **mirror images** — the same
-shape as the TLS finding this file already records, where the incomplete chain
-and the renewed-and-not-reloaded certificate turned out to be one root arriving
-from two directions:
-
-> The moved tag deploys **something you did not expect**. The cached tag deploys
-> **nothing at all, while reporting that it did.**
-
-### And its verdict was a falsifiable claim that the second half falsifies
-
-The card ended on this:
-
-> *If an incident ever ends with "that is not the build we thought it was", the
-> cause is **upstream of the deploy**: a mutable tag was treated as an identity.*
-
-That is exactly the kind of sentence this file likes — a claim that can be wrong
-— and it is wrong for the case I had just found. In the pull-cache failure the
-registry is right, the manifest is right, the tag is right, and the cause is
-**downstream of the deploy**, on one node, in a layer cache. So the verdict was
-**rewritten rather than appended to**, which is the rule the TLS wave set: when
-a new row breaks the claim under the table, the claim goes.
-
-**The mechanism is a default nobody sets.** `imagePullPolicy` is `IfNotPresent`
-for every tag except `:latest`, and *present* is judged by the tag rather than
-the digest — so **the convention that makes tags safe is the one that turns the
-cache on.** Pin to `:v1.2.3` as every hardening guide says, and a node that has
-ever seen `:v1.2.3` will never fetch it again.
-
-The fingerprint is the part worth keeping: **the fix works for some requests and
-not others, and it correlates with the node rather than the user.** Nodes that
-already had the tag keep the old layers; nodes that joined afterwards pull the
-new ones, so a fleet is halfway through a rollout that has already been declared
-complete — a state nothing in the system has a word for. The verdict is *deploy
-the digest and let the tag be a label for humans*, and the diagnosis is one
-command: two `imageID` digests under one Deployment is the whole finding.
-
-### The same mistake as last time, caught one step earlier
-
-The card was written mechanism-first and `my container image is not updating`
-**still returned zero** — the fourth time this file has recorded that sequence.
-The card said *cached*, *did not go and look*, *never fetch it again*, and never
-the reader's phrase. The fix is a sentence that is better writing than what it
-replaced, which is what the kind-1 rule promises:
-
-> The sentence people arrive with is *the image is not updating*, and it is
-> exactly right: the image is not updating, on that node, and nothing in the
-> rollout is going to say so.
-
-The `hw` fix is the same shape. The memory card has a table that answers *one
-stick or two* precisely — single channel is half the bandwidth, two matched
-modules are the target — and the word the whole consumer world uses for a
-module is **stick**, which appeared in that domain once, inside *Sticky*. Naming
-it is not an accommodation to a matcher; a card about buying RAM that will not
-say *stick* is being precious.
-
-### A query that had been scored answered for a year
-
-`the deploy succeeded but nothing changed` has been on this census with **no
-`want`**, scored by result count, returning five cards — none about a deploy
-that did not deploy. That is the middle row of this file's three-shapes table,
-still sitting here after the pass that was supposed to have cleared it:
-
-| Asserts | Passes when |
-|---|---|
-| it did not throw | the feature is broken |
-| **it returned something** | **the something is wrong** |
-| it returned the right thing | — |
-
-It has a target now, and the card that answers it was written the day the gap
-was noticed rather than named for later.
-
-```
-1 concept card (devops Artifact & Registry) · 1 verdict rewritten, not appended
-2 prose fixes: the reader's phrase for the fault, and `stick` for a memory module
-probe 273 -> 302 questions · 282 answered · 0 unexplained · 19 zeros · 1 wrong · 7 wide
-batch seventeen opened at 22 of 29 — two thirds, the third batch running to predict it
-mean/card 1,394 unchanged, excluding verdicts 1,124 -> 1,125: one long card, not padding
-45 gates green · smoke 163 · search 58 · a11y 31 · resilience 64 · mobile 15 · visual 2 · backup 3
-```
 
 ## Session — a measurement of verdict quality that did not work, and what it found anyway
 
@@ -7965,4 +5025,1349 @@ topics 1,583 -> 1,585 · paths 111 -> 112 · path steps 2,014 -> 2,062 · relate
 dated claims 127 · near-duplicate pairs 96, 0 unread · plan.md under the 8,000 lines that reopen the fifth risk
 45 gates green · smoke 165 · search 59 · a11y 31/31 · resilience 64 · mobile 15/15 · backup 3/3
 visual 0/2 here, as in every wave: font rendering, baseline left alone
+```
+
+## Session — the twelfth wave, the owner's packaging items and the guide they came with
+
+The owner sent three items and, partway through, a guide to MSI against EXE in MECM, all
+written into plan.md as sent. The same message asked for the CI fix first, which went in on its
+own: the browser job now names ubuntu-24.04, because Playwright 1.56 does not support Chromium
+on 26.04. Adding the items took plan.md to 8,009 lines, and the fifth risk's split ran a third
+time before any content was written. *Error codes and packaging* §5 is the table.
+
+### The owner's guide was mostly right, and the one claim that was not had a number
+
+Every claim in the guide was checked against Microsoft's own pages before a card repeated it.
+Nearly all of it held, down to the wording of the 32-bit detection option and the PsExec test,
+which Microsoft's Configuration Manager reference gives in the same form. MECM's 120-minute
+default run time is real, but the code the guide gives for hitting it, 0x87D00664, is in none of
+Microsoft's references. The cards describe the timeout and give no code. **A guide written from
+experience is a list of claims to check, and the checking is quick when the source exists.**
+
+### One old question got the answer it had been waiting for
+
+`the software installed but does not appear` had sat in the service desk reader with no target,
+answered by whatever came back. It is the reader's own words for 0x87D00324 and 0x87D1041C:
+installed, and not detected. The error-code topic said "not detected" and never "appear", so the
+verdict now says both, and the query names the topic. **A query recorded with no target is a
+question the site was not ready to answer, and a new topic should look for them.**
+
+### What was verified, and how far
+
+Eight Microsoft pages were fetched and read. They were the Windows Installer error list,
+msiexec's switches, Intune's app installation error reference, its Win32 app preparation and
+add pages, Configuration Manager's application error reference, its create-applications page
+and its deployment troubleshooting page. Inno Setup's documentation was read as well. The NSIS
+manual refused the request, so its switch rests on search results and the anchor says so.
+Intune's default return codes are the same: Microsoft's page says defaults exist without listing
+them. Every card was rendered at size in both themes and read before its commit.
+
+```
+7 commits · 1 CI fix · 1 split (45 records, lines conserved) · 2 new topics (endpoint 2)
+reader: 8 queries in a service desk engineer, 0 of 8 -> 8 of 8 · census 513 of 537 -> 521 of 545, 0 unexplained
+topics 1,585 -> 1,587 · path steps 2,062 -> 2,066 · related links 5,082 -> 5,098 · mainland 1,509 -> 1,511
+dated claims 127 -> 138 · near-duplicate pairs 96, 0 unread
+```
+
+## Session — the thirteenth wave, the lookup in the tray
+
+The owner's first item, built last because its rows come from what the twelfth wave verified.
+The header has no tray, so the lookup became a button among its controls: 🧾 ERRORS, or `c`,
+opening the study modal with one search box and a table of *Error code · System type · Use of
+it*. *Error codes and packaging* §5 is the table.
+
+### Every printed form of one code is the same code
+
+A console shows one failure as 1603, 0x80070643 or -2016410844, depending on which layer printed
+it and how. The lookup reads all of them. It computes the signed form from the hex rather than
+storing it, and decodes 0x8007xxxx to the Windows error inside, because Microsoft's own tables
+disagree with themselves: two rows in Intune's Windows section print the same decimal for
+different codes. **Store the code once, as its source prints it, and derive every other form.**
+
+### The first placement failed a gate nobody had pointed at it
+
+The first version put the button in the column of switches, the tray's obvious place. Every
+suite passed except the visual check, which moved from its usual 10.3% to 11.5%. Comparing the
+old and new builds in the same fonts found the cause: the column sets the header's height, the
+header grew 28px, and the sticky filter bar's blurred background showed a different slice of the
+page, 1.33% of pixels against a 0.05% threshold. In CI, where the fonts match, that would have
+failed. Under the Chemical Engineer link the button costs no height, and the check went back to
+exactly 10.335%. **A gate that fails for a known reason still has to be read: the number moved.**
+
+### What was verified, and how far
+
+The 156 rows are copied from three Microsoft references read in the twelfth wave, each named in
+the data file and on every row. build.py refuses a malformed row. The lookup was driven in a
+browser at 1280 and 375 pixels in both themes: every code form, the decoding, a word search, no
+match, Escape returning focus to the button, the `c` key and the topic link. It has no axe
+violations and no page overflow.
+
+```
+1 commit · 1 feature · 156 codes from 3 Microsoft references · 0 new topics
+checks: smoke 165 -> 166 · axe 31/31 -> 33/33 · mobile 15/15 -> 16/16 · search 59 · resilience 64 · backup 3/3
+visual 0/2 here, as in every wave, and back to exactly 10.335% after the move: font rendering, baseline left alone
+45 gates green · plan.md 4,265 lines, far under 8,000 after the split
+```
+
+## Session — the fourteenth wave, two Microsoft paths and an exam that retired
+
+The request, from the owner's message, was to keep going through the waves once the three items
+were done. §19's list of header tags with no path came next, and three of them were Microsoft's,
+in the domains the twelfth and thirteenth waves had just worked in. *Content ideas* §20 is the
+table.
+
+### A header advertised an exam that no longer exists
+
+Reading the study guide before writing the path is what found it: AZ-800's page says the exam
+retired on 30 September 2026. The infra domain's header had carried the tag since the domain was
+written, and the README's domain table repeated it. Both now name what the domain covers instead.
+**A certification tag is a dated claim like any other, and the outline is where its date is.**
+
+### Two outlines, read against topics that already existed
+
+MD-102 mapped almost entirely onto `endpoint`, including the two packaging topics written two
+waves earlier, which now sit under its application skills. MS-102 did not: its Defender XDR
+area, the largest at 30 to 35%, names incidents, advanced hunting, attack simulation, Defender for
+Cloud Apps and vulnerability management, and the site has topics beside them but none on them.
+Its path points only at topics that answer an objective, and §20 lists the rest.
+
+```
+2 commits · 2 exam paths · 1 retired exam found and its tag corrected · 0 new topics
+paths 112 -> 114 · path steps 2,066 -> 2,128 · topics 1,587, unchanged
+45 gates green · smoke 166, whose learning-path checks read the new paths · mobile 16/16
+```
+
+## Session — the fifteenth wave, MS-102's Defender XDR area and a stamper that wrote when asked for help
+
+The request was the owner's again: keep going through the waves. §20's queue put MS-102's Defender XDR
+area first, the exam's largest at 30 to 35% and the site's thinnest, and four of its eight gaps make
+this wave. *Content ideas* §21 is the table.
+
+### Read first, then the census, then the cards
+
+Thirty-two pages from Microsoft Learn were fetched and read before a card was written: incidents,
+automated investigation, advanced hunting with its quotas and query resources report, custom
+detections and four table schemas; the attack simulation guides, its FAQ and the advanced delivery
+policy; eight pages on Defender for Cloud Apps and eight on vulnerability management. Thirteen
+queries went into *a SOC analyst or defender* next and opened at 0 of 13. Each of the 21 fact anchors
+names its page and the date Microsoft last updated it, so the next check knows which pages to open
+first.
+
+### What the pages said that the cards had to carry
+
+The cards carry six things that are true this month and dated as such: incident cases are in preview,
+Defender for Cloud Apps moved its anomaly policies to a dynamic model in June 2025, its Microsoft 365
+connector gained default components in January 2026, its file policies retire on 6 January 2027, an
+updated exposure score model is rolling out, and Secure Score for Devices reads Group Policy and can
+call Intune-made settings wrong. One more was a reading that would have been easy to get backwards:
+`UrlClickEvents` is filled by Safe Links, so an empty click query means no click Safe Links saw, not no
+click. Microsoft's simulation FAQ says the same of simulation clicks.
+
+### Two checks that were right about the words and wrong about the product
+
+`check_renames.py` failed `make check` on eight uses of *Office 365*. Seven were inside *Defender for
+Office 365*, the product's current name, which the rename registry itself gives as the successor of
+*Advanced Threat Protection*; the older `m365` cards say *Defender for Office*, a shortening the check
+never sees. One was a real old name, *an activity in Office 365*, copied from a Microsoft table
+description, and now reads Microsoft 365. The allow list was there; it matched only phrases that start
+at the flagged words, and this one ends at them, its first letter one character outside the window.
+Widened to the longest allowed phrase, with a fixture for each side.
+
+`check_volatility.py` does not fail; it counts topics that name a vendor console with no dated span,
+and the count went from three to six. All three new ones were these cards naming the Defender portal.
+Four volatile spans now mark the console paths, and the count is three again.
+
+### A tool that wrote when asked for help
+
+`stamp_freshness.py --help` was meant to print the options. The script never looked for `--help`, so it
+ran its default, the whole-tree write its own docstring warns against, and re-derived stamps until the
+pipe into `head` closed. `git status` showed 25 files changed. Twenty-three held only stamp changes
+and were checked out; in `m365` and `endpoint`, 80 moved stamps on existing topics were restored from
+HEAD by title, two of them by hand where the match missed, until the diff held nothing but this wave's
+additions. The script now prints its docstring for `--help` and refuses, writing nothing, an option it
+does not read or a domain name without `--only`. **A tool whose default is a write has to fail closed
+on an argument it does not recognize.**
+
+```
+3 commits · 4 topics, 16 concept cards · 13 census queries, 0 of 13 -> 13 of 13 · 2 tools fixed
+topics 1,587 -> 1,591 · path steps 2,128 -> 2,136 · related links 5,098 -> 5,138 · dated claims 138 -> 163
+45 gates green · smoke 166 · search 59 · resilience 64 · axe 33/33 · mobile 16/16 · backup 3/3
+visual 0/2 in this container, unchanged at 10.335% and 10.106%
+```
+
+## Session — expand made a mode, at the owner's request
+
+The owner asked for the EXPAND switch to open every topic of a domain they click while it is on,
+and gave endpoint's *Troubleshooting Toolkit* (`#troubleshooting-toolkit-log-reference`) as the
+example. It did not: `toggleAll()` opened the topics of the domain on screen and stopped there, so a
+domain opened next, by its chip or its header, arrived collapsed while the switch still read *on*.
+**The switch claimed a mode it did not keep.**
+
+`openDomain()` now reads `allExpanded`. A domain opened while it is on, by header, chip, link or
+search, arrives with every topic open; a domain already on screen is left alone, so a chip aimed at
+it does not reopen topics the reader has closed since. The switch's title says it is a mode, and so
+does the README.
+
+Smoke gained the check that drives the owner's case: switched on in `m365`, 46 of 46 open; `endpoint`
+by its chip, 63 of 63, the toolkit among them; `net` by its header, 73 of 73; switched off, `cs` opens
+none. Run against the old `script.js` it failed with `endpoint` at 0 of 63 and `net` at 0 of 73, the
+switch still checked, which is the report in numbers.
+
+```
+1 commit · 1 behavior changed · smoke 166 -> 167, and the new check fails on the old script
+```
+
+## Session — the sixteenth wave, MS-102's identity and Purview gaps, and a tool the outline still names
+
+The wave began, and then paused for the owner's expand request, which has its own record above and
+its own commit. §20's list of MS-102 gaps had four left after the fifteenth wave, and this wave is
+those four. *Content ideas* §22 is the table.
+
+### Read first, and one page that was gone
+
+Sixteen Microsoft Learn pages were read before a card was written: self-service password reset and
+its writeback, three on Password Protection, three on administrative units, preparing a directory for
+sync, `.local` domains and sync errors, two on sensitive information types and three on Endpoint DLP.
+A seventeenth, Microsoft's page on installing IdFix, returned 404. IdFix's own repository, read in its
+place, says the tool was deprecated and has been unsupported since 30 June 2026. MS-102's outline,
+skills measured as of 28 April 2026, still names it, so the topic teaches the rules IdFix checked and
+says not to install it. Thirteen queries went into *a service desk engineer* next and opened at 0 of
+13.
+
+### What the pages said that the cards had to carry
+
+Each card has a fact a service desk would otherwise learn from a ticket. Authenticator and the OATH
+tokens count as one reset method between them, so a policy raised from one method to two locks out
+everyone who registered only the app. A self-service reset reaches Active Directory as an admin reset,
+so a third-party password filter set only for users' own changes never sees it. A password refused by
+Password Protection on a domain controller shows Windows' ordinary complexity message, and a DC that
+has never downloaded a policy accepts everything. A group placed in an administrative unit brings the
+group into scope but not its members. A restricted management unit keeps out even Global
+Administrators. And Endpoint DLP classifies every file against every sensitive information type in the
+tenant, used or not, so a loose custom pattern costs something before any policy refers to it.
+
+### A new card took an old answer away
+
+`bitlocker recovery key`, a service desk query from an early batch, stopped finding the BitLocker topic
+when the administrative units card was spliced. Search tries the exact phrase first and widens only when
+that finds at most one topic. The phrase had been in one card, the Windows repair ladder, so search
+used to widen and reach the BitLocker topic. The new card's *BitLocker recovery keys* made two exact
+matches, search stopped there, and the topic about BitLocker recovery keys, which said *recovery key*
+and never Microsoft's full name for it, was not among them. Its table row says *BitLocker recovery
+key* now, and the query finds it first of three. **A card can change the answer to a query it never
+mentions, and only a census that runs every reader catches it.**
+
+### The census
+
+The batch closed at 13 of 13 with one prose fix: `helpdesk admin for one office only` lacked only
+*office*, which was what the card's example of a regional helpdesk meant, and the row says *one
+office's helpdesk* now. The census as a whole is 547 of 571 with nothing unexplained.
+
+```
+2 commits · 4 topics, 12 concept cards · 13 census queries, 0 of 13 -> 13 of 13 · 1 old query restored
+topics 1,591 -> 1,595 · path steps 2,136 -> 2,144 · related links 5,138 -> 5,170 · dated claims 163 -> 178
+45 gates green · smoke 167 · search 59 · resilience 64 · axe 33/33 · mobile 16/16 · backup 3/3
+visual 0/2 in this container, unchanged at 10.335% and 10.106%
+```
+
+## Session — the seventeenth wave, MS-102's last Defender objectives and a portal that retired
+
+§21 found three more MS-102 gaps inside the Defender XDR area, and this wave is those three. *Content
+ideas* §23 is the table. The session's worker restarted once, between the first topic's draft and the
+second; the scratchpad and the tree survived it, and the wave carried on from the draft.
+
+### Read first
+
+Nineteen Microsoft Learn pages were read before a card was written: restricted users and connectors,
+outbound spam protection and its policies, the compromised-account and compromised-connector responses,
+Exchange Online's limits and their troubleshooting page, the 5.7.7xx bounce codes, both alert policy
+pages, the two alert cmdlets, the audited-activities list, and five on threat intelligence. One URL for intel
+profiles, guessed from the old documentation's layout, returned 404, and the pages the current
+threat intelligence overview links to were read instead. Thirteen queries went into *a SOC analyst or
+defender* next and opened at 0 of 13.
+
+### What the pages said that the cards had to carry
+
+The portal Microsoft's outline names is gone: the standalone Defender TI portal and its Intel Explorer
+were retired on 1 August 2026, and the page for Defender Threat Intelligence now describes a page of the
+Defender portal. A sending limit is a compromise signal, and Microsoft's order for a restricted user
+puts unblocking last, after sessions, methods, apps, roles, forwarding and hidden inbox rules. The
+default forwarding-rule alert does not see rules made in the Outlook client, which the audit log files
+as `UpdateInboxRules`, and a default alert's recipients cannot be changed with the cmdlet that seems to
+offer it. A reputation score of *Unknown* means one rule or none matched, not that the address is clean.
+
+### A new card answered an old zero
+
+`the user says the file is gone`, recorded as a zero because no single card is the right answer, began
+returning 33 cards. The threat intelligence topic held *users*, *says*, *files* and *gone* in four
+sentences about other things, relaxation found that one topic, and widened. *A portal that is gone*
+became *a portal that no longer exists*, and the query returns nothing again, which is what its note
+says a reader gets. **The census caught a coincidence in the other direction from the sixteenth wave's:
+there a card took an answer away, here one gave an answer nobody should get.**
+
+### A fix the linter finished
+
+`DAG` in the Exchange Server topic's title had been expanded as a directed acyclic graph, the only
+meaning the dictionary had. The first correction added the Exchange meaning and decided it for `m365`.
+The full gate run then failed: the linter refuses an acronym with two meanings rendered in a domain
+that has not chosen between them, and the Airflow card in `script` had not. The entry decides both
+now. The browser suites had run on the first version, so they ran against a page the second does not
+change.
+
+### The census
+
+The batch closed at 13 of 13 with no prose fix: seven queries find their topic alone and six among two
+to fifteen. The census as a whole is 560 of 584 with nothing unexplained.
+
+```
+3 commits · 3 topics, 9 concept cards · 1 acronym corrected · 13 census queries, 0 of 13 -> 13 of 13 · 1 old zero restored
+topics 1,595 -> 1,598 · path steps 2,144 -> 2,150 · related links 5,170 -> 5,196 · dated claims 178 -> 197
+45 gates green · smoke 167 · search 59 · resilience 64 · axe 33/33 · mobile 16/16 · backup 3/3
+visual 0/2 in this container, unchanged at 10.335% and 10.106%
+```
+
+## Session — the eighteenth wave, four MD-102 gaps, a renamed feature and a merged channel
+
+§20 listed seven MD-102 gaps, and this wave is four of them, all in `endpoint`. *Content ideas* §24 is
+the table.
+
+### Read first
+
+Sixteen Microsoft Learn pages were read before a card was written: the Office Deployment Tool and its
+configuration reference, Intune's Microsoft 365 Apps app type, the update channels and their
+unification, the Microsoft 365 Apps admin center and Cloud Policy, four on Delivery Optimization, three
+on App Control for Business, and two on Windows Backup for organizations. Thirteen queries went into *a
+service desk engineer* next and opened at 0 of 13. Two of the zeros were words the site had never
+written, `semi-annual` and `click-to-run`, both about a product it had no topic for.
+
+### What the pages said that the cards had to carry
+
+The Semi-Annual Enterprise Channel no longer exists as a slow lane: from Version 2606 in July 2026 its
+devices take Monthly Enterprise's updates and report themselves as Monthly Enterprise, while some
+management reports still say Semi-Annual. Intune's own app type for Office can fail the Enrollment Status
+Page by starting while a tracked Win32 app installs, so Microsoft recommends wrapping Office as Win32
+for Autopilot. Leave the channel out of an ODT file and a new install gets Current Channel. Delivery
+Optimization that reports download mode 99 has usually fallen back there because it cannot reach its
+cloud service. Making Intune a managed installer merges an AppLocker policy into the device's own, and
+an empty *Not configured* rule collection in that policy can stop Windows signing anyone in. Windows
+Backup for Organizations has been renamed, turns on by default from Windows 11 26H2, and does not apply
+on a device where any of five activity-history or connected-devices policies is set to Disabled.
+
+### The same old zero, answered by chance again
+
+`the user says the file is gone` was answered by coincidence for the second wave running. This time the
+Microsoft 365 Apps topic held all four words, *the slow lane is gone* among them, and relaxation widened
+it to the same 33 cards. The phrase was reworded and the query is back to zero. Its note now says that
+the four words are common enough for this to recur, so the next session reads a record of the pattern
+rather than a surprise.
+
+### A ceiling the content outgrew
+
+The search suite failed one check: `how do i find a file` returned 145 topics against a ceiling of 9% of
+the corpus, 144. The ceiling guards the widened stage against losing its nouns, and it is a share so
+that it grows with the site, which assumes the share of topics holding both words stays put. It crept
+instead, to 9.05%, and every match was correct; the newest was the backup topic's advice to find which
+baseline turns a policy off, beside a table about files. The test file says a ceiling that fails on
+correct behaviour teaches people to raise ceilings, and an earlier session met this same query at 121
+against 120 and changed the test. This one moved it to a tenth, under the page's 12% cap so it can still
+fire, with the reason written beside the fixture, in a commit of its own.
+
+### The census
+
+The batch closed at 13 of 13 with no prose fix: eight find their topic alone and five among two to
+twenty. The census as a whole is 573 of 597 with nothing unexplained.
+
+```
+3 commits · 4 topics, 13 concept cards · 13 census queries, 0 of 13 -> 13 of 13 · 1 old zero restored again
+topics 1,598 -> 1,602 · path steps 2,150 -> 2,158 · related links 5,196 -> 5,232 · dated claims 197 -> 216
+45 gates green · smoke 167 · search 59 · resilience 64 · axe 33/33 · mobile 16/16 · backup 3/3
+visual 0/2 in this container, unchanged at 10.335% and 10.106%
+```
+
+## Session — the nineteenth wave, MD-102's last gaps and three agents that retired
+
+§20 listed seven MD-102 gaps and the eighteenth wave wrote four; this wave is the other three, all in
+`endpoint`. *Content ideas* §25 is the table.
+
+### Read first
+
+Eight Microsoft Learn pages were read before a card was written: Hotpatch from Windows Autopatch's
+documentation, multi admin approval, Copilot in Intune and the agents' overview, and the four agents'
+own pages. Six URLs guessed from Intune's older documentation
+layout returned 404, among them the agents' pages; the links in the current overview led to the right
+ones. Thirteen queries went into *a service desk engineer* next and opened at 0 of 13. `hotpatch` and
+`copilot in intune` were words the site had never written.
+
+### What the pages said that the cards had to carry
+
+Hotpatch has a calendar, not a promise: eight restart-free months and four baselines a year, and a
+device that misses any requirement, virtualization-based security above all, takes the ordinary update
+and restarts without anything failing. Upgrading Windows in a hotpatch month drops a device off the
+cycle until the next baseline. Multi admin approval has two quiet failure points: an approved change
+waits until its requestor comes back to complete it, and an approver group that is not a security group
+assigned to an Intune role loses its members or never resolves them. And three of the four Security
+Copilot agents in Intune were withdrawn in 2026, while the outline still asks for them; the remaining
+one ignores scope tags in preview and cannot be stopped once started.
+
+### Two misses that were the product's own words
+
+The batch closed at 13 of 13 after two prose fixes, and both were the same kind. `vbs not running` is the
+literal name of Autopatch's alert, *Hotpatch – VBS not running*; the card said Autopatch raises an alert
+for it by name without giving the name, and now gives it. `approval request expired` stopped at a
+governance card that held all three words, because the approval card said a request *expires*;
+Microsoft's status is *Expired*, and the card uses it. Adding `VBS` to the dictionary followed: the
+acronym domain promises that every acronym on the site is expanded, and a `redteam` card had used it
+unexpanded since before this session.
+
+### The census
+
+Six queries find their topic alone and seven among two to sixteen. The census as a whole is 586 of 610
+with nothing unexplained, and no older query moved.
+
+```
+2 commits · 3 topics, 9 concept cards · 1 acronym added · 13 census queries, 0 of 13 -> 13 of 13
+topics 1,602 -> 1,605 · path steps 2,158 -> 2,164 · related links 5,232 -> 5,258 · dated claims 216 -> 229
+45 gates green · smoke 167 · search 59 · resilience 64 · axe 33/33 · mobile 16/16 · backup 3/3
+visual 0/2 in this container, unchanged at 10.335% and 10.106%
+```
+
+## Session — the twentieth wave, RASP and IAST, a CKA path, and a controller that retired
+
+With both Microsoft outlines covered, this wave took the oldest item in the queue, RASP and IAST, and the
+first header tag with no outline read, CKA. *Content ideas* §26 is the table.
+
+### Read first
+
+For RASP and IAST, NIST SP 800-53's catalog, read as the OSCAL JSON NIST publishes, last modified 22
+October 2026, for controls SA-11(9) and SI-7(17), and OWASP's DevSecOps guideline on IAST. For CKA, the
+Linux Foundation's exam page, after GitHub's web pages refused this container a request for CNCF's
+curriculum repository (403), and twelve kubernetes.io pages. Fifteen queries went into two readers before
+any card and opened at 0 of 15.
+
+### What the pages said that the cards had to carry
+
+NIST puts IAST and RASP in different families: one is a requirement on how developers test, the other an
+integrity control, and NIST's own wording sets RASP against firewalls that judge by network information
+without the application's context. Kubernetes retired Ingress NGINX in March 2026, and two of the site's
+tables still offered nginx as the example controller. kubeadm's certificates last a year and only upgrades
+renew them by default, so the cluster nobody upgrades is the one that breaks. And the etcd page's change of
+27 October 2026 documents a trap: after restoring into a new data directory, the `kubeadm-config`
+ConfigMap must point at it too, or the next upgrade writes the old directory back.
+
+### Two old queries over the wide line
+
+`i cannot install software` and `why do we use containers` each reached 61 results, one over the census's
+line, because the new Kubernetes topics hold ordinary words such as *install*, *software*, *use* and
+*containers*. Neither is a wrong answer in the sense of the earlier coincidences: the second still finds the
+Docker card it wants, and the first never had one. Both now carry verdicts saying so, which is how the
+census records a query that is wide by nature.
+
+### The census
+
+The two batches closed at 15 of 15 after two prose fixes, both the reader's form of a word the card had in
+another form. The census as a whole is 601 of 625 with nothing unexplained.
+
+```
+2 commits · 4 topics, 12 concept cards · 1 path · 15 census queries, 0 of 15 -> 15 of 15
+topics 1,605 -> 1,609 · paths 114 -> 115 · path steps 2,164 -> 2,183 · related links 5,258 -> 5,290 · dated claims 229 -> 246
+45 gates green · smoke 167 · search 59 · resilience 64 · axe 33/33 · mobile 16/16 · backup 3/3
+visual 0/2 in this container, unchanged at 10.335% and 10.106%
+```
+
+## Session — the twenty-first wave, GCIH, DAIR, and a lifecycle NIST retired
+
+The second header tag with no outline read was GCIH, on `blueteam`. *Content ideas* §27 is the table.
+
+### Read first
+
+GIAC's GCIH page for its fifteen objectives and exam format; SANS's announcement of the DAIR book, the
+book's page and SANS's DAIR poster; and NIST's publication page for SP 800-61 Revision 3. A web search
+found the SANS pages; every fact in the topic is from those pages as fetched and read, not from the search
+summary. Five queries went into *a SOC analyst or defender* and opened at 0 of 5.
+
+### What the pages said that the cards had to carry
+
+The six steps the site called PICERL were SANS's own process, from Schultz in 1990 and Northcutt and
+Paller's *Step-by-Step*, and SANS replaced them in September 2026 with DAIR: waypoints instead of a line,
+explicit Verify &amp; Triage and Scope, a loop of Scope, Contain, Eradicate and Recover run as often as the
+incident needs, and an exit that someone names and signs. NIST had already retired its own four-phase
+lifecycle: SP 800-61 Revision 3, in April 2025, recast incident response as a profile of the Cybersecurity
+Framework 2.0. Two of the site's sentences still described the old lifecycle as current, and one credited
+PICERL to CompTIA; both now say what happened.
+
+### A want moved, not a word
+
+One query, `nist 800-61 rev 3`, was aimed at the PICERL topic before the cards were written, and on the
+first run it found the DAIR topic alone, whose third card is about exactly that revision. The fix was the
+query's want, not the prose: the census's job is to record which card answers a question, and the first
+guess was wrong.
+
+### The census
+
+The batch closed at 5 of 5: three find the DAIR topic alone and two among two to eight. The census as a
+whole is 606 of 630 with nothing unexplained.
+
+```
+2 commits · 1 topic, 3 concept cards · 1 path · 2 statements corrected · 5 census queries, 0 of 5 -> 5 of 5
+topics 1,609 -> 1,610 · paths 115 -> 116 · path steps 2,183 -> 2,208 · related links 5,290 -> 5,298 · dated claims 246 -> 253
+45 gates green · smoke 167 · search 59 · resilience 64 · axe 33/33 · mobile 16/16 · backup 3/3
+visual 0/2 in this container, unchanged at 10.335% and 10.106%
+```
+
+## Session — the twenty-second wave, SAA-C03, and two AWS services closed to new customers
+
+The third header tag with no outline read was AWS, on `cloud`. *Content ideas* §28 is the table.
+
+### Read first
+
+AWS's SAA-C03 exam guide, page by page: its overview for the format and scoring, its four domain pages
+for the task statements, and its list of in-scope services. Then the service documentation for each gap,
+fetched and read: SQS's queue types, visibility timeout and dead-letter queues; SNS; EventBridge; Step
+Functions; Kinesis Data Streams; Amazon Data Firehose; Glue; Athena; EMR; Storage Gateway's S3 File, FSx
+File, Volume and Tape guides; DataSync; Transfer Family; and Snowball Edge. Fourteen queries went into
+*somebody with a cloud bill and a pager* and opened at 0 of 14.
+
+### What the pages said that the cards had to carry
+
+Two of the services the guide lists are closed to new customers. Snowball Edge's own guide opens by
+saying so and pointing to DataSync, AWS Data Transfer Terminal, partners and, for edge computing,
+Outposts; FSx File Gateway's guide says the same of itself. A study card that described either as a
+current choice for a new account would teach something the console will refuse. Two details the pages
+gave are the kind that go wrong in production rather than on an exam: a standard queue's dead-letter
+queue expires messages by their original enqueue time, so the retention it shows is longer than the
+retention it gives, and Kinesis now offers queue consumers beside stream consumers, which trade a
+shard's order for isolation from one failing record. EventBridge has a newer bus, the Custom Event Bus,
+which AWS advises new applications to start on.
+
+### A phrase the reader used and the card did not
+
+`step functions express` opened at 26 cards on ordinary words, and once the topic landed it reached 27:
+the card said *Express workflows* and *Step Functions* in separate sentences, and no sentence put them
+together. The verdict now says *A Step Functions Express workflow*, which is what the reader typed and
+what AWS calls it, and the query finds its topic alone. Search has no ranking, so a reader's phrase that
+appears nowhere is the difference between one answer and a page of them.
+
+### The census
+
+The batch closed at 14 of 14: eight find their topic alone and six among two to six. The census as a
+whole is 620 of 644 with nothing unexplained.
+
+```
+2 commits · 3 topics, 9 concept cards · 1 path · 0 statements corrected · 14 census queries, 0 of 14 -> 14 of 14
+topics 1,610 -> 1,613 · paths 116 -> 117 · path steps 2,208 -> 2,243 · related links 5,298 -> 5,332 · dated claims 253 -> 271
+45 gates green · smoke 167 · search 59 · resilience 64 · axe 33/33 · mobile 16/16 · backup 3/3
+visual 0/2 in this container, unchanged at 10.335% and 10.106%
+```
+
+## Session — the twenty-third wave, seven services the exam names and a dashboard with three names
+
+The twenty-second wave's queue, taken first: seven services SAA-C03 gives as examples that no topic
+mentioned. *Content ideas* §29 is the table.
+
+### Read first
+
+AWS's documentation for each, fetched and read: Cognito's overview, user pools, identity pools and token
+pages; the Shield chapter, its Standard and Advanced overviews, Advanced's capabilities and its list of
+protected resources; Global Accelerator's overview, how it works and its FAQ, for AWS's own comparison
+with CloudFront; RDS Proxy, its page on pinning, and RDS read replicas; ElastiCache's overview and its
+caching strategies; AWS Backup's overview, Vault Lock and the logically air-gapped vault; Lake Formation's
+overview, data filters, tag-based access control and underlying data access; and the AWS Quick guide's
+overview and document history. Fifteen queries went into *somebody with a cloud bill and a pager* and
+opened at 0 of 15.
+
+### What the pages said that the cards had to carry
+
+Shield Advanced protects nothing until resources are added to it, and its response team needs a Business
+or Enterprise Support plan on top of the subscription. Vault Lock's compliance mode has a grace time of at
+least three days, after which not even AWS can delete a backup early, and AWS's own warning is the cost of
+a recovery point kept *always*. A logically air-gapped vault stores its backups in an account AWS Backup
+owns and can be restored from a shared account even if the owning one is closed. RDS Proxy pins a session
+that changes its state, or sends any statement over 16 KB, which quietly undoes the pooling. And QuickSight
+has been renamed: AWS's guide dates it to 9 October 2025, its documentation now says AWS Quick, and the exam
+guide says Amazon Quick.
+
+### A word inside a word
+
+The batch closed at 15 of 15 with no prose fix: eight queries find their topic alone and seven among two to
+six. The three Cognito queries return five cards each, and four of the five are not about Cognito: search
+matches inside words, and *incognito*, in the browser shortcut and web cards' private-window rows,
+contains `cognito`. The wanted topic is among them, so the census scores them answered, and the note is
+here so the next wave does not rediscover it.
+
+### A count that was a sample
+
+The twenty-second wave's record said seven services the task statements give as examples appeared nowhere
+on the site. The seven were real, but the search behind the sentence was of a list of names, not of every
+example, and the sentence read as if it were complete. This wave extracted all 154 example phrases from the
+four domain pages and searched for each service among them: seven more task-statement examples and seven
+in-scope services have no mention anywhere. §28 now says what its search covered, and §29 lists the rest.
+
+### The census
+
+The census as a whole is 635 of 659 with nothing unexplained.
+
+```
+2 commits · 5 topics, 15 concept cards · 2 paths extended · 1 table corrected · 15 census queries, 0 of 15 -> 15 of 15
+topics 1,613 -> 1,618 · path steps 2,243 -> 2,256 · related links 5,332 -> 5,378 · dated claims 271 -> 293
+45 gates green · smoke 167 · search 59 · resilience 64 · axe 33/33 · mobile 16/16 · backup 3/3
+visual 0/2 in this container, unchanged at 10.335% and 10.106%
+```
+
+## Session — the twenty-fourth wave, the guide's remaining examples, and a discovery service that closed
+
+The twenty-third wave's queue, taken in order of what the task statements name first. *Content ideas* §30 is
+the table.
+
+### Read first
+
+AWS's documentation for each service, fetched and read: the overviews of Rekognition, Textract, Comprehend,
+Transcribe, Polly, Translate, Lex and SageMaker AI, and the AWS Organizations page on AI services opt-out
+policies; Elastic Load Balancing's overview and how it works, and the Application, Network and Gateway Load
+Balancer guides; Amazon MQ's overview and FAQ, MSK and AppFlow; Application Discovery Service and its
+availability change, AWS Transform MGN and its document history, and DMS; and AWS Config's overview, rules,
+rule components, conformance packs and remediation. Seventeen queries went into *somebody with a cloud bill
+and a pager* and opened at 0 of 17.
+
+### What the pages said that the cards had to carry
+
+AWS AI services may use and store customer content to improve the service, possibly in a Region other than
+the one the call was made in, until an AI services opt-out policy says otherwise; that is the sentence a
+team sending regulated text needs before its first call. Application Discovery Service closed to new
+customers on 7 November 2025. Application Migration Service is AWS Transform MGN now, undated. Cross-zone
+load balancing is always on for an Application Load Balancer and off by default for Network and Gateway Load
+Balancers, and AWS's own example works out what that does to an uneven fleet: 25% to each of two targets in
+one zone and 6.25% to each of eight in the other. AWS Config's proactive mode checks a resource before it is
+deployed, beside the detective mode most people know.
+
+### A word that was not inside another
+
+Two queries would have missed on wording, and both were fixed in the draft before the first run.
+`classic load balancer migrate` needed *migrate*, and the card said *migrating*: search matches inside words,
+which is how `cognito` found *incognito* in the twenty-third wave, but *migrate* is not inside *migrating*,
+so the card now says what AWS says, *migrate to a current generation load balancer*. And `aws dms` needed
+the short name beside the long one, which AWS uses itself.
+
+### The census
+
+The batch closed at 17 of 17: twelve find their topic alone and five among two to seven. The census as a
+whole is 652 of 676 with nothing unexplained.
+
+```
+2 commits · 5 topics, 15 concept cards · 2 paths extended · 17 census queries, 0 of 17 -> 17 of 17
+topics 1,618 -> 1,623 · path steps 2,256 -> 2,266 · related links 5,378 -> 5,430 · dated claims 293 -> 316
+45 gates green · smoke 167 · search 59 · resilience 64 · axe 33/33 · mobile 16/16 · backup 3/3
+visual 0/2 in this container, unchanged at 10.335% and 10.106%
+```
+
+## Session — the twenty-fifth wave, cards inside topics that already owned the subject
+
+The twenty-fourth wave's queue, with the budget's advice taken: eight cards in six existing `cloud` topics, and
+one new topic. *Content ideas* §31 is the table.
+
+### Read first
+
+AWS's documentation, fetched and read: EBS volume types; S3 Requester Pays; AWS Data Exports and the Cost and
+Usage Report; Compute Optimizer; EC2 hibernation and the page on enabling it; AWS Batch; AWS Client VPN; the
+Well-Architected overview; and DocumentDB, Keyspaces, Neptune and Aurora Serverless. Fifteen queries went into
+*somebody with a cloud bill and a pager* before the cards.
+
+### What the pages said that the cards had to carry
+
+General Purpose gp3 volumes now reach 80,000 IOPS and 2,000 MiB/s on up to 64 TiB, while gp2 still stops at
+16,000 IOPS, so a volume moved to Provisioned IOPS for that ceiling alone may no longer need it. Hibernation
+cannot be turned on or off after an instance is launched. Compute Optimizer does nothing until an account opts
+in, and then judges from 14 days of metrics. AWS recommends CUR 2.0 over the original Cost and Usage Report.
+A Requester Pays bucket refuses anonymous access. A Client VPN endpoint grants nothing until an authorization
+rule does. Aurora Serverless can scale to zero ACUs and pause.
+
+### A batch that opened above zero
+
+Every earlier batch opened at zero because every want was a topic not yet written. Here most wants were
+existing topics, and three of the fifteen already reached theirs on ordinary words, `cost and usage report`
+among 24 cards in a topic that never named the report. Counting those as answered at the opening is what the
+census does, and the opening note says why they were.
+
+### An old zero answered, and a pair read
+
+`nat gateway is the biggest line on the bill`, a recorded zero, reached the cost control topic once its
+Compute Optimizer card listed NAT gateways among the resources it judges. The topic is a fair first stop,
+finding the line and an idle gateway, so the query is recorded as answered with a note naming what it still
+misses: the per-GB charge that makes the line large is in *Hybrid Connectivity*. And the new databases topic
+made a near-duplicate pair with *AWS Databases* on their shared words; read, they cover different engines, and
+the verdict is recorded.
+
+### The census
+
+The batch closed at 15 of 15: twelve alone and three among two to five. The census as a whole is 668 of 691
+with nothing unexplained, and one fewer zero than before.
+
+```
+2 commits · 1 topic and 8 cards, 11 concept cards · 2 paths extended · 1 old zero answered · 15 census queries, 3 of 15 -> 15 of 15
+topics 1,623 -> 1,624 · path steps 2,266 -> 2,268 · related links 5,430 -> 5,440 · dated claims 316 -> 330
+45 gates green · smoke 167 · search 59 · resilience 64 · axe 33/33 · mobile 16/16 · backup 3/3
+visual 0/2 in this container, unchanged at 10.335% and 10.106%
+```
+
+## Session — the twenty-sixth wave, the NAT instance and a gateway that spans zones
+
+The twenty-fifth wave's queue began with the one service its own count had found missing. *Content ideas* §32
+is the table.
+
+### Read first
+
+Amazon VPC's documentation, fetched and read: the NAT gateways overview, NAT gateway basics, the page on
+regional NAT gateways, NAT gateway pricing, the comparison of NAT gateways and NAT instances, and the NAT
+instances page. Three queries went into *somebody with a cloud bill and a pager* before the card.
+
+### What the pages said that the card had to carry
+
+The exam asks a question AWS has since added an answer to. A shared NAT gateway against one per zone is a
+trade between cost and the risk of one zone's outage cutting the others off, and AWS's advice is one per
+zone; but a regional NAT gateway now expands into each zone that has workloads, within up to an hour, needs
+no public subnet, and is one route target everywhere, at the price of not doing private NAT. The NAT
+instance is what AWS recommends migrating from: the NAT AMI it once supplied is built on an Amazon Linux
+release whose maintenance support ended on 31 December 2023. And the pricing page names the two ways to
+shrink a NAT line on the bill, keeping heavy senders in their gateway's zone and reaching AWS services
+through VPC endpoints.
+
+### A row that went out of date in place
+
+*A NAT gateway in a public subnet* was true when the VPC topic was written and is still true of the default
+kind. It is no longer the whole answer, and nothing would have flagged it: the sentence did not become false,
+only incomplete. It names the regional kind now.
+
+### The census
+
+The batch opened at 2 of 3 and closed at 3 of 3: all three find the VPC topic among two to thirteen cards,
+because NAT, gateway and instance are common words across `cloud` and `net`. The census as a whole is 671 of
+694 with nothing unexplained.
+
+```
+2 commits · 1 card · 1 row corrected · 3 census queries, 2 of 3 -> 3 of 3
+topics 1,624 · related links 5,440 · dated claims 330 -> 335
+45 gates green · smoke 167 · search 59 · resilience 64 · axe 33/33 · mobile 16/16 · backup 3/3
+visual 0/2 in this container, unchanged at 10.335% and 10.106%
+```
+
+## Session — the twenty-seventh wave, an ACE path and a product renamed two years ago
+
+The queue's next header tag was GCP, whose exam guide page renders by script. *Content ideas* §33 is the
+table.
+
+### Read first
+
+Google's Associate Cloud Engineer exam guide, as the PDF Google publishes, for its four sections, and the
+certification page for the format: two hours, 50 to 60 multiple choice and multiple select questions, valid
+for three years. Then Google Cloud's documentation for each gap, fetched and read: the Organization Policy
+Service, Cloud Identity, Workforce Identity Federation, billing export to BigQuery, Cloud Asset Inventory,
+Shared VPC, Cloud NGFW and its tags, Network Service Tiers, Cloud Run's traffic management, Eventarc, the
+comparison of Cloud Run functions, and Google's blog post announcing the rename. Twelve queries went into
+*somebody with a cloud bill and a pager* and opened at 0 of 12.
+
+### What the pages said that the cards had to carry
+
+Organization policy and IAM answer different questions, what may be configured and who may act, and a new
+constraint can run in dry-run first. Workforce Identity Federation keeps no user accounts in Google Cloud at
+all. Google advises turning on billing export when the billing account is created, and Cloud Asset Inventory
+keeps only 35 days of history. A network tag has no access control, so a rule keyed on one trusts whoever
+can edit a VM; a secure tag is governed by IAM. And on Cloud Run, after a traffic split or a rollback, later
+deployments keep the old pattern, so a new revision can deploy and serve nobody.
+
+### A name the registry did not know
+
+`cloud run functions` opened at 30 cards and none of them about the product, because the site called it
+Cloud Functions, the name it lost on 21 August 2024. The renames gate exists to catch exactly that and had
+no entry for it. Adding one found the four old uses, and a fifth that was not one: a generic *Cloud functions*
+label in the Python domain, which the gate matched because it ignores case; it now says *Serverless
+functions*, which is what it meant.
+
+### The census
+
+The batch closed at 12 of 12: four alone and eight among two to fifteen. The census as a whole is 683 of
+706 with nothing unexplained.
+
+```
+2 commits · 3 topics, 9 concept cards · 1 path · 1 rename registered, 4 uses corrected · 12 census queries, 0 of 12 -> 12 of 12
+topics 1,624 -> 1,627 · paths 117 -> 118 · path steps 2,268 -> 2,300 · related links 5,440 -> 5,470 · dated claims 335 -> 348
+45 gates green · smoke 167 · search 59 · resilience 64 · axe 33/33 · mobile 16/16 · backup 3/3
+visual 0/2 in this container, unchanged at 10.335% and 10.106%
+```
+
+## Session — the twenty-eighth wave, a retired product described as retiring
+
+The twenty-seventh wave's queue, its flagged item first. *Content ideas* §34 is the table.
+
+### Read first
+
+Google's Deployment Manager documentation, whose address now redirects to a page that returns 404, and its
+deprecation page, which does not; Infrastructure Manager's overview; and for the ACE gaps, the pages on OS
+Login, VM Manager, Spot VMs, Hyperdisk, regional Persistent Disk, AlloyDB, Bigtable, Memorystore for Valkey,
+Dataflow and Pub/Sub, all fetched and read. Twelve queries went into *somebody with a cloud bill and a pager*
+and opened at 0 of 12.
+
+### What the pages said that the cards had to carry
+
+Deployment Manager's dates, from Google's notice: support ended on 31 March 2026, new users refused from 30 June
+2026, the service turned down after 30 June 2027, and the resources it made left running. OS Login's own warning
+that whoever can SSH to a VM can use every permission of the VM's service account. Spot VMs at up to 91% off
+with no preemption notice unless one is set, and Google's recommendation of 120 seconds for any workload that
+needs more than 30 to wind down. Regional disks that survive one zone failing, but only for software that
+tolerates a crash. And Dataflow's exactly-once processing by default, with an at-least-once mode for pipelines
+where duplicates cost less than latency.
+
+### An old zero answered through another word
+
+The census reported one recorded note stale: `terraform state locked`, a zero since an earlier wave, returned
+three cards. The Deployment Manager card's table said *new users blocked*, search matches inside words, and
+*blocked* contains *locked*. Nothing about Terraform state locking had been written, so the row says *refused*
+now and the query is a zero again, which its note says it is.
+
+### The census
+
+The batch closed at 12 of 12: five alone and seven among two to ten. The census as a whole is 695 of 718 with
+nothing unexplained.
+
+```
+2 commits · 2 topics and 1 card, 7 concept cards · 1 topic retitled · 12 census queries, 0 of 12 -> 12 of 12
+topics 1,627 -> 1,629 · path steps 2,300 -> 2,304 · related links 5,470 -> 5,492 · dated claims 348 -> 360
+45 gates green · smoke 167 · search 59 · resilience 64 · axe 33/33 · mobile 16/16 · backup 3/3
+visual 0/2 in this container, unchanged at 10.335% and 10.106%
+```
+
+## Session — the twenty-ninth wave, operations and storage, inside topics that owned them
+
+The twenty-eighth wave's queue, as five cards in three existing GCP topics. *Content ideas* §35 is the table.
+
+### Read first
+
+Google Cloud's documentation, fetched and read: Cloud Logging's routing and storage overview and its page on
+configuring log buckets; the Ops Agent overview; Managed Service for Prometheus; Personalized Service Health;
+Active Assist; Storage Transfer Service; NetApp Volumes; Managed Lustre; and Managed Service for Apache Kafka.
+Ten queries went into *somebody with a cloud bill and a pager* before the cards, their wants the existing
+topics.
+
+### What the pages said that the cards had to carry
+
+The _Required sink and its bucket's retention cannot be changed; the _Default bucket keeps logs for 30 days
+unless told otherwise, between 1 and 3,650, and keeping them longer has been charged since 1 April 2023; and
+buckets in folders and organizations cannot have their retention extended at all. Managed Service for
+Prometheus keeps 24 months of data and answers PromQL, so dashboards move without being rewritten. Storage
+Transfer Service is built for more than a tebibyte. And Managed Kafka's tiered storage makes a full disk
+unlikely, which leaves topic retention as the only thing between a topic and an unbounded bill.
+
+### A failure that did not come back
+
+The resilience suite failed one check of 64 on its first run and passed all 64 on three reruns. The run's
+output had been filtered to its summary lines, so which check failed is not known; nothing in this wave touched
+script.js or the storage code those checks exercise. It is recorded here rather than rounded away, and the
+next suite run should keep each suite's full output.
+
+### The census
+
+The batch opened at 1 of 10 and closed at 10 of 10: five alone and five among two to eleven. The census as a
+whole is 705 of 728 with nothing unexplained.
+
+```
+2 commits · 5 cards in 3 topics · 10 census queries, 1 of 10 -> 10 of 10
+topics 1,629 · related links 5,492 -> 5,494 · dated claims 360 -> 370
+45 gates green · smoke 167 · search 59 · axe 33/33 · mobile 16/16 · backup 3/3
+resilience 63/64 on the first run, then 64/64 on three reruns; the failing check was not named
+visual 0/2 in this container, unchanged at 10.335% and 10.106%
+```
+
+## Session — the thirtieth wave, a tag for an exam that does not exist
+
+§35's queue, AI+, which turned out to name no exam. *Content ideas* §36 is the table.
+
+### Read first
+
+CompTIA's SecAI+ page and its certification list, and NIST's publication page for AI 100-2 E2025, all fetched
+and read. Seven queries went into *somebody revising for a CompTIA exam* before the path, their wants the
+existing `ai` topics.
+
+### What the pages said that the path had to carry
+
+SecAI+ is exam CY0-001, launched on 17 February 2026: at most 60 multiple-choice and performance-based
+questions in 60 minutes, passing at 600 on a scale of 100 to 900, with three to four years in IT and two
+hands-on in security recommended. Its four domains are weighted 17, 40, 24 and 19 percent, and the 40 belongs
+to securing AI systems. The full objectives come through a short form, so the path follows the summary on the
+page. NIST's taxonomy of adversarial machine learning, AI 100-2 E2025, was published in March 2025.
+
+### A path that needed words, not topics
+
+The census opened at 5 of 7, the subjects present and two of the exam's terms absent. The first run of the
+suites passed everything but the visual pair, resilience included: 64 of 64 on the first run, where the
+twenty-ninth wave's first run had failed one check it could not name. Each suite's full output was kept this
+time, as that record asked.
+
+### The census
+
+The batch opened at 5 of 7 and closed at 7 of 7: one alone and six among two to ten. The census as a whole is
+712 of 735 with nothing unexplained.
+
+```
+2 commits · 1 path of 30 steps · 2 sentences in 2 topics · 7 census queries, 5 of 7 -> 7 of 7
+topics 1,629 · paths 118 -> 119 · path steps 2,304 -> 2,334 · dated claims 370 -> 372
+45 gates green · smoke 167 · search 59 · axe 33/33 · resilience 64/64 · mobile 16/16 · backup 3/3
+visual 0/2 in this container, unchanged at 10.335% and 10.106%
+```
+
+## Session — the thirty-first wave, a threat list two editions old
+
+§36's queue led to the lists SecAI+'s terms come from, and the first one checked was out of date.
+*Content ideas* §37 is the table.
+
+### Read first
+
+OWASP's pages for the Top 10 for LLM Applications in its 2023/24, 2025 and 2026 editions, the ten 2026 entry
+pages, the Top 10 for Agentic Applications 2026 and its ten entry pages, and the European Commission's AI Act
+policy page, all fetched and read; OWASP's page dates came from its own site's records. Twelve queries went in
+before the cards: eight into *somebody revising for a CompTIA exam* and four into *somebody answerable to an
+auditor*. The four first landed in *a Linux or platform engineer*, because the string the insertion looked
+for occurs twice in the file; the census printed them under the wrong reader, and they were moved before the
+opening run was recorded.
+
+### What the pages said that the cards had to carry
+
+OWASP's 2026 order is prompt injection, sensitive information disclosure, excessive agency, supply chain, data
+and model poisoning, unbounded consumption, misinformation, hidden context exposure, vector and embedding
+weaknesses, and improper output handling. Unbounded consumption takes in denial of service, denial of wallet
+and model extraction; misinformation says overreliance remains a key factor; hidden context exposure says to
+assume the context is discoverable and keep credentials out of it. Excessive agency has risen in each
+edition, eighth, sixth, third. The agentic list runs from goal hijack to rogue agents, and several of its
+entries name the LLM entries they relate to. The Commission's page, updated on 19 October 2026, gives the AI Act's dates
+after the AI Omnibus: in force from 27 July 2026, high-risk rules from 2 December 2027 and 2 August 2028, and
+a ninth prohibition from December 2026.
+
+### A count corrected before it was pushed
+
+The topics commit first said five of OWASP's ten entries differed from the site's list. Counted entry by entry
+it is six, and the commit message was amended before the push. The plan's section says six.
+
+### The census
+
+The two batches opened at 0 of 12, ten zeros and two that found other cards, and closed at 12 of 12: three
+alone and nine among two to four. The census as a whole is 724 of 747 with nothing unexplained.
+
+```
+2 commits · 2 new cards, 1 table rewritten, 3 cards corrected in 4 topics · 12 census queries, 0 of 12 -> 12 of 12
+topics 1,629 · dated claims 372 -> 377
+45 gates green · smoke 167 · search 59 · axe 33/33 · resilience 64/64 · mobile 16/16 · backup 3/3
+visual 0/2 in this container, unchanged at 10.335% and 10.106%
+```
+
+## Session — the thirty-second wave, a framework's name over somebody else's list
+
+§37's queue, the AI ethics topic. *Content ideas* §38 is the table.
+
+### Read first
+
+NIST's AI Risk Management Framework page, the framework's sections on trustworthiness and on its core from
+NIST's AI Resource Center, and NIST AI 600-1 as the PDF NIST publishes, all fetched and read; the PDF's text
+was extracted with `pdftotext`. CSRC's address for AI 600-1 returned 404, and the PDF came from
+nvlpubs.nist.gov instead. Six queries went into *somebody revising for a CompTIA exam* before the cards.
+
+### What the pages said that the cards had to carry
+
+AI RMF 1.0 was released on 26 January 2023 for voluntary use, and NIST's page says it is being revised as part
+of the White House AI Action Plan. Its seven characteristics are valid and reliable, safe, secure and
+resilient, accountable and transparent, explainable and interpretable, privacy-enhanced, and fair with harmful
+bias managed; the figure puts valid and reliable at the base and accountable and transparent beside the rest.
+Govern runs through the other three functions. AI 600-1, released on 26 July 2024, names twelve risks, calls
+hallucination confabulation, and maps each risk to the characteristics.
+
+### A widening that put TCP first
+
+`valid and reliable` closed answered, among thirteen. The phrase is in one topic, the search counts topics,
+and a single topic whose address holds none of the query's words widens to the words stage, where TCP's
+reliability comes first in page order. The rule is documented in `script.js` beside the measurements that
+chose it, and the record says so rather than rewording the card to dodge it.
+
+### The census
+
+The batch opened at 0 of 6 and closed at 6 of 6: three alone, two among two, and one among thirteen. The census
+as a whole is 730 of 753 with nothing unexplained.
+
+```
+2 commits · 2 new cards, 1 card retitled, 1 card dated in 2 topics · 6 census queries, 0 of 6 -> 6 of 6
+topics 1,629 · dated claims 377 -> 382
+45 gates green · smoke 167 · search 59 · axe 33/33 · resilience 64/64 · mobile 16/16 · backup 3/3
+visual 0/2 in this container, unchanged at 10.335% and 10.106%
+```
+
+## Session — the thirty-third wave, a year in a title
+
+§38's queue, OWASP's web Top 10. *Content ideas* §39 is the table.
+
+### Read first
+
+OWASP's Top 10:2025 site — its front page, its introduction, and the pages for A01, A03, A08, A09 and A10 —
+the OWASP Top 10 project page, and the OWASP Foundation's about page, all fetched and read. The 2025 site now
+lives at top10.owasp.org, and owasp.org's address for it redirects there. Five queries went into *somebody
+revising for a CompTIA exam* before the cards.
+
+### What the pages said that the cards had to carry
+
+The 2025 edition is OWASP's eighth, and its project page calls it the current release. Two categories are new,
+Software Supply Chain Failures at A03, which widens 2021's vulnerable components to the whole chain, and
+Mishandling of Exceptional Conditions at A10, and Server-Side Request Forgery is folded into Broken Access
+Control. Security Misconfiguration rose from fifth to second; cryptography, injection and insecure design each
+fell two places; authentication and logging were renamed where they stood, the latter for alerting. OWASP's
+own notation puts the year beside the number, A03:2021 and A05:2025, which is the habit the mapping card
+recommends.
+
+### Two things the first runs caught
+
+The closing census first found `security logging and alerting failures` in two topics but not the one it
+wanted, which wrote the category with an ampersand, as OWASP's introduction does; it writes *and* now, as
+OWASP's list does. And the smoke suite failed one of 167 on a landing card naming the retitled topic by its old
+title. Both were fixed before anything was pushed; the smoke suite was run again and passed 167 of 167, and the
+other six suites, which had passed against the build before the one-string fix, were not run again.
+
+### The census
+
+The batch opened at 0 of 5 and closed at 5 of 5, all five among three to six topics. The census as a whole is
+735 of 758 with nothing unexplained.
+
+```
+2 commits · 3 topics updated, 1 retitled, 1 new card, 1 pointer corrected · 5 census queries, 0 of 5 -> 5 of 5
+topics 1,629 · dated claims 382 -> 388
+45 gates green · smoke 166/167 on the first run, 167/167 after the fix · search 59 · axe 33/33
+resilience 64/64 · mobile 16/16 · backup 3/3 · visual 0/2 in this container, unchanged at 10.335% and 10.106%
+```
+
+## Session — the thirty-fourth wave, colors nobody had checked
+
+§39's queue, NIST CSF 2.0 in `grc`. *Content ideas* §40 is the table.
+
+### Read first
+
+NIST's Cybersecurity Framework page, and two documents as the PDFs NIST publishes: CSWP 29, the CSF 2.0 of
+26 February 2024, and the CSF 1.1 of 16 April 2018, both extracted with `pdftotext`. The page carrying CSF
+2.0's figure of the six functions was rendered with `pdftoppm` and viewed, because a color is not text. Three
+queries went into *somebody answerable to an auditor* before the fixes.
+
+### What the documents said that the cards had to carry
+
+CSF 2.0's six functions are Govern, Identify, Protect, Detect, Respond and Recover, and Govern informs how the
+other five are prioritized. They hold 22 categories: six under Govern, three under Identify, five under
+Protect, two under Detect, four under Respond and two under Recover. Version 1.1 had 23 categories in five
+functions, among them Business Environment, Detection Processes and an Improvements category under both
+Respond and Recover, none of which is a CSF 2.0 category. NIST's figure colors Govern yellow, Identify blue,
+Protect purple, Detect orange, Respond red and Recover green.
+
+### Two kinds of wrong
+
+Of the four wrong names in the categories topic, two were 1.1's, Business Environment and Improvements, and two
+are in neither version, *IOC Detection & Alerting* and *Restoration & Validation*. The colors matched no figure
+of NIST's that this wave found. The CSF 2.0 topic's own colored rows match none either, but they are styling and
+state nothing, so they stay.
+
+### The census
+
+The batch opened at 2 of 3 and closed at 3 of 3. The census as a whole is 738 of 761 with nothing unexplained.
+
+```
+2 commits · 4 topics corrected in grc · 3 census queries, 2 of 3 -> 3 of 3
+topics 1,629 · dated claims 388 -> 392
+45 gates green · smoke 167 · search 59 · axe 33/33 · resilience 64/64 · mobile 16/16 · backup 3/3
+visual 0/2 in this container, unchanged at 10.335% and 10.106%
+```
+
+## Session — the thirty-fifth wave, the exam's words for what was already there
+
+§40's queue, SecAI+'s summary terms. *Content ideas* §41 is the table.
+
+### Read first
+
+CompTIA's SecAI+ page, read in the thirtieth wave and read again for the two domain lines quoted here, and
+CompTIA's PenTest+ page, fetched and read. Six queries went into *somebody revising for a CompTIA exam*, with
+their wants named after the opening run showed what each reached.
+
+### What the pages said
+
+SecAI+'s AI-assisted security domain lists event triage, alert correlation and response orchestration as
+workflows to automate, and threat modeling, behavior analysis and continuous monitoring as places to apply AI in
+operations. PenTest+ PT0-003 launched on 17 December 2024 and PT0-002 retired on 17 June 2025.
+
+### Wants named after the run, and said so
+
+The six queries went in without wants, because the question was whether each term reached anything fitting, and
+the wants were set from the topics that cover the subjects once the opening showed where the queries landed.
+That is weaker than naming the want first, and it is recorded rather than smoothed over: four of the six landed
+somewhere reasonable on their own, and the two that did not are the two this wave changed.
+
+### The census
+
+The batch opened at 4 of 6 and closed at 6 of 6, the two it changed finding their topics alone. The census as a
+whole is 744 of 767 with nothing unexplained.
+
+```
+2 commits · 2 sentences in 2 topics, 1 badge · 6 census queries, 4 of 6 -> 6 of 6
+topics 1,629 · dated claims 392 -> 394
+45 gates green · smoke 167 · search 59 · axe 33/33 · resilience 64/64 · mobile 16/16 · backup 3/3
+visual 0/2 in this container, unchanged at 10.335% and 10.106%
+```
+
+## Session — the thirty-sixth wave, a tactic split in two
+
+§41's queue, MITRE ATT&amp;CK. *Content ideas* §42 is the table.
+
+### Read first
+
+ATT&amp;CK's Enterprise tactics page, the pages for TA0005 and TA0112, the April 2026 (v19) release notes and the
+versions page, all fetched and read, and the pages of the eleven techniques the site cites by ID. Three queries
+went into *a SOC analyst or defender* before the cards.
+
+### What the pages said that the cards had to carry
+
+Version 19's release notes call the split of Defense Evasion into Stealth and Defense Impairment its biggest
+change, and count fifteen Enterprise tactics. TA0005 keeps its ID under the name Stealth, with 31 techniques
+that reduce the chance of detection without touching the controls; TA0112, created on 14 April 2026, holds 18
+that degrade or disable them. Version 20.1, of 13 October 2026, is current.
+
+### The census
+
+The batch opened at 1 of 3, the old name already finding the topic, and closed at 3 of 3, each among two. The
+census as a whole is 747 of 770 with nothing unexplained.
+
+```
+2 commits · 2 cards corrected in 1 topic, 11 technique IDs checked · 3 census queries, 1 of 3 -> 3 of 3
+topics 1,629 · dated claims 394 -> 396 · inline style attributes held at the ceiling of 401
+45 gates green · smoke 167 · search 59 · axe 33/33 · resilience 64/64 · mobile 16/16 · backup 3/3
+visual 0/2 in this container, unchanged at 10.335% and 10.106%
+```
+
+## Session — the thirty-seventh wave, a report a month old
+
+§42's queue, post-quantum cryptography. *Content ideas* §43 is the table.
+
+### Read first
+
+NIST IR 8547's CSRC pages for the draft and the final, and the final as the PDF NIST publishes, extracted with
+`pdftotext`; and NIST's release of 11 March 2025 choosing HQC, all fetched and read. CSRC's address for a FIPS 206
+draft returned 404, and nothing here depends on it. Four queries went into *somebody revising for a CompTIA exam*
+before the cards.
+
+### What the report said that the cards had to carry
+
+Quantum-vulnerable public-key algorithms are deprecated after 2030 and disallowed after 2035 under NIST's
+standards, and the window between is for lower-risk systems with legacy constraints. Federal high value assets
+and high impact systems move earlier, to post-quantum key establishment by 31 December 2030 and signatures by
+31 December 2031, and federal agencies support TLS 1.3 by 2 January 2030. Symmetric primitives of at least
+128-bit strength meet NIST's lowest post-quantum category; the few 112-bit symmetric standards are disallowed in
+2030. HQC backs up ML-KEM on different math, with its final standard expected in 2027.
+
+### The census
+
+The batch opened at 1 of 4 and closed at 4 of 4, three alone. The census as a whole is 751 of 774 with nothing
+unexplained.
+
+```
+2 commits · 1 new card, 1 sentence, 1 table row corrected in 1 topic · 4 census queries, 1 of 4 -> 4 of 4
+topics 1,629 · dated claims 396 -> 398
+45 gates green · smoke 167 · search 59 · axe 33/33 · resilience 64/64 · mobile 16/16 · backup 3/3
+visual 0/2 in this container, unchanged at 10.335% and 10.106%
+```
+
+## Session — the thirty-eighth wave, a limit that changed in March
+
+§43's queue, public TLS certificate lifetimes. *Content ideas* §44 is the table.
+
+### Read first
+
+The CA/Browser Forum's page for Ballot SC081v3 and its Baseline Requirements for TLS certificates, version
+2.3.1, read as the PDF the Forum publishes and extracted with `pdftotext`, and Let's Encrypt's two posts on
+ending OCSP, all fetched and read. The ballot page describes the change and its vote; the schedule's exact
+dates are in the requirements' sections 6.3.2 and 4.2.1, which is why the PDF was read. Four queries went into
+*a Linux or platform engineer* before the card.
+
+### What the documents said that the card had to carry
+
+A certificate issued before 15 March 2026 could be valid for 398 days; from then 200, from 15 March 2027 100,
+and from 15 March 2029 47, and the requirements ask CAs not to issue for the maximum by default. Domain
+validation can be reused for 200, 100 and finally 10 days on the same dates. All four browser makers voted for
+the ballot and no certificate issuer voted against it. Let's Encrypt dropped OCSP URLs from its certificates on
+7 May 2025 and turned its responders off on 6 August 2025, citing the privacy cost of a responder that learns
+which site each visitor opens.
+
+### The census
+
+The batch opened at 0 of 4 and closed at 4 of 4, two alone. The census as a whole is 755 of 778 with nothing
+unexplained.
+
+```
+2 commits · 1 new card, 1 sentence corrected in 1 topic · 4 census queries, 0 of 4 -> 4 of 4
+topics 1,629 · dated claims 398 -> 400
+45 gates green · smoke 167 · search 59 · axe 33/33 · resilience 64/64 · mobile 16/16 · backup 3/3
+visual 0/2 in this container, unchanged at 10.335% and 10.106%
+```
+
+## Session — the thirty-ninth wave, a regulation the site had never named
+
+§44's queue, the EU Cyber Resilience Act. *Content ideas* §45 is the table.
+
+### Read first
+
+The European Commission's Cyber Resilience Act page, last updated on 23 November 2026, and its page on the act's
+reporting obligations, both fetched and read. Three queries went into *somebody answerable to an auditor* before
+the card.
+
+### What the pages said that the card had to carry
+
+The act, Regulation (EU) 2024/2847, entered into force on 10 December 2024, and its main obligations apply from 11
+December 2027. Reporting began on 11 September 2026: a manufacturer that becomes aware of an actively exploited
+vulnerability or a severe incident sends an early warning within 24 hours and a notification within 72, and a final
+report within 14 days after a fix is available, or a month after the notification for an incident, all through
+ENISA's Single Reporting Platform, which reaches the national CSIRT and ENISA together. Open-source stewards report
+from December 2027.
+
+### A coincidence the census reported as an answer
+
+`cyber resilience act` opened answered, because the regulatory topic held *cyber*, *resilience* and *act* in
+three sentences about other things. The census counted it, which is what the census does; the record says what
+it was, because a count cannot.
+
+### The census
+
+The batch opened at 1 of 3 and closed at 3 of 3, the regulation's name alone. The census as a whole is 758 of 781
+with nothing unexplained.
+
+```
+2 commits · 1 new card and 1 table row in 1 topic · 3 census queries, 1 of 3 -> 3 of 3
+topics 1,629 · dated claims 400 -> 401
+45 gates green · smoke 167 · search 59 · axe 33/33 · resilience 64/64 · mobile 16/16 · backup 3/3
+visual 0/2 in this container, unchanged at 10.335% and 10.106%
+```
+
+## Session — the fortieth wave, defaults that moved under the cards
+
+§45's queue, numbered frameworks. *Content ideas* §46 is the table.
+
+### Read first
+
+CIS's Controls page and its page for version 8.1, Microsoft Learn's *Detect and remediate RC4 usage in Kerberos*,
+and Microsoft Support's KB5073381 for CVE-2026-20833, all fetched and read. Four queries went in before the fixes,
+two into *somebody answerable to an auditor* and two into *a SOC analyst or defender*.
+
+### What the pages said that the cards had to carry
+
+CIS describes its Controls, at version 8.1, as a prioritized set of Safeguards; the 18 are the Controls. Microsoft's
+updates for CVE-2026-20833 audited RC4 service tickets from January 2026, made domain controllers assume AES when
+nothing is configured from April 2026, and removed audit mode in July 2026; an explicit
+DefaultDomainSupportedEncTypes value is left as it is, and one that allows RC4 logs KDCSVC event 205.
+
+### The census
+
+The batches opened at 0 of 4 and closed at 4 of 4, all four alone. The census as a whole is 762 of 785 with
+nothing unexplained.
+
+```
+2 commits · 2 table rows and 1 dictionary note corrected · 4 census queries, 0 of 4 -> 4 of 4
+topics 1,629 · dated claims 401 -> 403
+45 gates green · smoke 167 · search 59 · axe 33/33 · resilience 64/64 · mobile 16/16 · backup 3/3
+visual 0/2 in this container, unchanged at 10.335% and 10.106%
+```
+
+## Session — the forty-first wave, a thin topic and a first function
+
+§46's queue, the thin topics, and the owner's request to turn on Netlify Functions. *Content ideas* §47 is the
+table.
+
+### Read first
+
+Debian's apt-key(8) for bookworm and sources.list(5) for trixie, and DNF's configuration reference, all fetched and
+read, for the package card; three queries went into *a Linux or platform engineer* before it. For the function:
+the owner's saved copy of the project's Functions page, Netlify's own guidance for writing functions, read through
+the connected Netlify tools, and the project's current production deploy, which builds `main` and reports *No
+functions deployed*.
+
+### What the function does, and how it was checked
+
+`netlify/functions/health.mts` returns JSON naming the site, the serving deploy's id and context, the region, the
+request id and the time, with `no-store` set in code because `netlify.toml`'s header rules do not reach function
+responses. It was called with a mock context under Node's type stripping, bundled with esbuild and called again.
+The service worker change was checked in a browser over HTTP, because the smoke suite runs over `file://`, where
+service workers never start: with the old worker, the second call to a local stand-in for the function returned
+the first call's cached answer; with the new one, each call reached the server and nothing was cached.
+
+### The census
+
+The batch opened at 0 of 3 and closed at 3 of 3, all alone. The census as a whole is 765 of 788 with nothing
+unexplained.
+
+```
+3 commits · 1 new card in 1 topic · 1 function, 1 service-worker rule · 3 census queries, 0 of 3 -> 3 of 3
+topics 1,629 · thin 7 -> 6 · dated claims 403 -> 406
+45 gates green · smoke 167 · search 59 · axe 33/33 · resilience 64/64 · mobile 16/16 · backup 3/3
+service worker over HTTP: old worker cached the function's answer, new worker does not
+visual 0/2 in this container, unchanged at 10.335% and 10.106%
+```
+
+## Session — the forty-second wave, the officers with no number
+
+§47's queue: the visual baseline, then the thin topics, two military lookup cards first. *Content ideas* §48 is the
+table.
+
+### Read first
+
+FM 6-0, *Commander and Staff Organization and Operations* (May 2022), from the Army Publishing Directorate, read as
+its PDF; the Joint Staff's J-7 page, which refused the fetch and is cited from search results; NVD's record for
+CVE-2025-30066, read through NVD's API; and GitHub's *Secure use reference*, *Workflow dependency lockfiles* and
+*Enforcing lockfiles* pages. Six queries went into *a learner meeting a subject* and four into *a Linux or platform
+engineer* before the cards. For the baseline, CI's own job logs for its last three runs.
+
+### What the sources said that the cards had wrong
+
+The *Staff Functions* verdict made two claims nobody had checked. Its account of which numbers exist where was
+right in outline and wrong in detail: no S-5 at most battalions and brigades, and no 7 at all. Its reason for the
+missing S8, that a battalion holds no budget of its own, is not in the manual; the card now gives the one that is, the
+G-8 setting the funding allocated below it. *Common Codes* called the XO the deputy commander, which FM 6-0 says is
+true only usually and only below division. And the first draft of the `devops` card said the attack touched no
+victim's repository, which is true of how it reached them and not of what the stolen secrets could do next; it now says
+the attacker needed no access to any victim's repository.
+
+### The census
+
+The batches opened at 0 of 10, six zeros and four that found other cards, and closed at 10 of 10, five alone. The
+census as a whole is 775 of 798 with nothing unexplained.
+
+```
+3 commits · 3 new cards in 3 topics · 1 verdict, 2 table rows and 1 example corrected · 1 test tool change
+10 census queries, 0 of 10 -> 10 of 10 · topics 1,629 · thin 6 -> 3 · dated claims 406 -> 411
+45 gates green · smoke 167 · search 59 · axe 33/33 · resilience 64/64 · mobile 16/16 · backup 3/3
+visual 0/2 in this container, unchanged at 10.335% and 10.106%: Playwright 1.63.0 here, 1.56.0 in CI
+```
+
+## Session — the forty-third wave, the cards the tables implied
+
+§48's queue: the three thin topics left. *Content ideas* §49 is the table.
+
+### Read first
+
+PostgreSQL's documentation on sorting rows, and the queries themselves, run on PostgreSQL 16.15 and SQLite 3.53.1 in
+this container against a tie, a single distinct salary and a NULL; RFC 9110 and RFC 6585 from rfc-editor.org; and the
+renewal pages of CompTIA (the renewal policy, the CEU table, the fee table and the higher-level renewal table), ISC2's
+member policies, GIAC's renewal page, AWS's recertification page, Google Cloud's Associate Cloud Engineer page and
+Microsoft Learn's renewal page, all fetched and read. Nine queries went into three readers before the cards.
+
+### What doing it found
+
+The first two answers to the salary puzzle are the ones most people write, and on Postgres both return 300 for the
+input with a NULL in it, because Postgres sorts NULL above every value and `DESC` puts it first. That is a property
+of one database, not of SQL, and the card's table says which. The full-stack topic's references were labels from an
+organization of the site that no longer exists; nothing checks a parenthesized label, only a cross-reference, so
+they are cross-references now. And the measured-state gate passed a stale headline for the length of a build, which
+is the one failure a gate that checks numbers should not have.
+
+### The census
+
+The batches opened at 1 of 9, four zeros and four that found other cards, and closed at 9 of 9 after three wording
+fixes, two alone. The census as a whole is 784 of 807 with nothing unexplained.
+
+```
+3 commits · 3 new cards in 3 topics · 4 dead labels replaced with 8 links · 1 gate fixed
+9 census queries, 1 of 9 -> 9 of 9 · topics 1,629 · thin 3 -> 0 · dated claims 411 -> 415
+45 gates green · smoke 167 · search 59 · axe 33/33 · resilience 64/64 · mobile 16/16 · backup 3/3
+visual 0/2 in this container, unchanged at 10.335% and 10.106%: Playwright 1.63.0 here, 1.56.0 in CI
 ```

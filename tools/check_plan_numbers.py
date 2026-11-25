@@ -347,7 +347,14 @@ def present(value, cell):
     return any(re.search(r"(?<![\d,])" + re.escape(f) + r"(?![\d,])", cell) for f in forms)
 
 
+def headline(cell):
+    """The row's first bold run: the number a reader takes away from it."""
+    m = re.search(r"\*\*(.+?)\*\*", cell)
+    return m.group(1) if m else cell
+
+
 def check(rows, derived):
+    """-> (missing, unknown). Each missing entry is (measure, numbers, cell, headline_wrong)."""
     missing, unknown = [], []
     for measure, values in derived.items():
         if measure not in rows:
@@ -355,8 +362,14 @@ def check(rows, derived):
             continue
         cell = rows[measure]
         gone = [v for v in values if not present(v, cell)]
-        if gone:
-            missing.append((measure, gone, cell))
+        # Somewhere in the cell is not enough for the first number. The thin row
+        # read "**3**, 0%" over a tool printing 0 and 0%, and passed on the 0 of
+        # "0%": every number the tool derived was in the cell, and the one a
+        # reader takes away was wrong. So the first derived number, which is
+        # each row's headline, must be in the row's first bold run as well.
+        headline_wrong = bool(values) and values[0] not in gone and not present(values[0], headline(cell))
+        if gone or headline_wrong:
+            missing.append((measure, ([values[0]] if headline_wrong else []) + gone, cell, headline_wrong))
     return missing, unknown
 
 
@@ -392,6 +405,18 @@ def self_test():
         failures.append(f"  expected Gates to drift, got {[m[0] for m in missing]}")
     if check(rows, {"Nonexistent row": [1]})[1] != ["Nonexistent row"]:
         failures.append("  a row the table does not have was not reported")
+
+    # The headline: a stale first number must not hide behind a zero elsewhere.
+    heads = table_rows(
+        "| Measure | Value | Tool |\n|---|---|---|\n"
+        "| Thin | **3**, 0% — short by design | `depth_report.py` |\n"
+        "| Thin now | **0**, 0% — short by design | `depth_report.py` |\n"
+        "| Depth tail | **10th percentile 2,238 chars**, median 3,889 | `depth_report.py` |\n"
+    ).items()
+    for (measure, cell), values, want in zip(heads, ([0, 0], [0, 0], [2238, 3889]), (True, False, False)):
+        got = bool(check({measure: cell}, {measure: values})[0])
+        if got != want:
+            failures.append(f"  {measure} {cell!r} against {values}: drifted={got}, expected {want}")
 
     if failures:
         print("check_plan_numbers self-test FAILED:")
@@ -435,8 +460,12 @@ def main():
     missing, unknown = check(rows, derived)
     readme = readme_problems()
 
-    for measure, gone, cell in missing:
-        print(f"{measure}: the row does not carry {', '.join(f'{v:,}' for v in gone)}")
+    for measure, gone, cell, headline_wrong in missing:
+        if headline_wrong:
+            print(f"{measure}: the row's headline, its first bold run, is not {gone[0]:,}")
+            gone = gone[1:]
+        if gone:
+            print(f"{measure}: the row does not carry {', '.join(f'{v:,}' for v in gone)}")
         print(f"    row says  {cell}")
         print(f"    tools say {', '.join(f'{v:,}' for v in derived[measure])}")
     for measure in unknown:

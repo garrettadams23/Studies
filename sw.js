@@ -9,7 +9,7 @@
 // Deriving it means a release can never ship with a stale cache because someone
 // forgot to bump a number, and an unchanged build never invalidates a cache for
 // no reason.
-const CACHE_VERSION = "techref-73879ae67d10";
+const CACHE_VERSION = "techref-55ddb89a03c3";
 
 const PRECACHE = [
   "/",
@@ -60,6 +60,10 @@ self.addEventListener("message", (event) => {
 self.addEventListener("fetch", (event) => {
   const req = event.request;
   if (req.method !== "GET") return;
+  // Netlify Functions answer live: a cached copy of /.netlify/functions/health
+  // would keep reporting the first deploy it saw, and would never reach the
+  // function again to be counted in its metrics.
+  if (new URL(req.url).pathname.startsWith("/.netlify/")) return;
 
   event.respondWith(
     caches.match(req).then((cached) => {

@@ -2827,7 +2827,7 @@ p99                 =  4,000 ms  ← this is what a user experiences
               </div>
             </div>
           </div>
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🎓</span>
               <span class="topic-name">The Data Interview</span>
@@ -2855,6 +2855,52 @@ p99                 =  4,000 ms  ← this is what a user experiences
                     <strong class="c-green">Highest-leverage prep:</strong> window functions and the
                     NULL/join traps — they separate mid from senior. Practice explaining <em>why</em>,
                     not just writing the query. Every card in this domain maps to one of these rounds.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">The puzzle</div>
+                <div class="concept-title">Second Highest Salary: Three Answers, and the Inputs That Break Them</div>
+                <div class="concept-desc">
+                  The puzzle in the first row is worth doing once properly, because its usual answers fail on different
+                  inputs, and naming those inputs is most of the grade. Try each answer on three small tables: a tie at the
+                  top (300, 300, 200, 100), only one distinct salary (300, 300), and a NULL (300, NULL, 200). The first
+                  query below is right on all three: an aggregate skips NULLs, and <code>MAX</code> over no rows is NULL,
+                  which is what <em>there is no second salary</em> should look like. The other two need the clauses shown.
+                  <!-- fact: PostgreSQL documentation, 7.5 Sorting Rows: by default, null values sort as if larger than any non-null value; that is, NULLS FIRST is the default for DESC order, and NULLS LAST otherwise | source: postgresql.org/docs/current/queries-order.html, fetched and read | checked: 2026-11 -->
+                  <!-- fact: The results table was produced by running each query on PostgreSQL 16.15 against the three inputs shown: MAX below MAX gave 200, NULL and 200; ORDER BY DESC LIMIT 1 OFFSET 1 without DISTINCT gave 300 on all three; with DISTINCT it gave 200, no row and 300; DENSE_RANK() = 2 gave 200, no row and 300, and 200 with NULLS LAST. SQLite 3.53.1 sorts NULLs last under DESC and gave 200 for the last two on the NULL input | source: queries run in this container | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <pre class="code-block"><span class="com">-- 1. The largest salary below the largest: right on all three inputs</span>
+<span class="kw">SELECT</span> <span class="fn">MAX</span>(salary) <span class="kw">FROM</span> emp
+<span class="kw">WHERE</span> salary &lt; (<span class="kw">SELECT</span> <span class="fn">MAX</span>(salary) <span class="kw">FROM</span> emp);
+
+<span class="com">-- 2. Sort and skip one: needs DISTINCT for ties, and NULLS LAST on Postgres</span>
+<span class="kw">SELECT DISTINCT</span> salary <span class="kw">FROM</span> emp
+<span class="kw">ORDER BY</span> salary <span class="kw">DESC NULLS LAST</span>
+<span class="kw">LIMIT</span> <span class="num">1</span> <span class="kw">OFFSET</span> <span class="num">1</span>;
+
+<span class="com">-- 3. Rank: the same query answers the Nth, and per department with PARTITION BY</span>
+<span class="kw">SELECT DISTINCT</span> salary <span class="kw">FROM</span> (
+  <span class="kw">SELECT</span> salary, <span class="fn">DENSE_RANK</span>() <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> salary <span class="kw">DESC NULLS LAST</span>) <span class="kw">AS</span> r
+  <span class="kw">FROM</span> emp
+) ranked <span class="kw">WHERE</span> r = <span class="num">2</span>;</pre>
+                  <table class="ref-table">
+                    <thead><tr><th>Run on PostgreSQL 16</th><th>Tie at the top</th><th>One distinct salary</th><th>A NULL salary</th></tr></thead>
+                    <tbody>
+                      <tr><td>1. <code>MAX</code> below <code>MAX</code></td><td>200</td><td>NULL</td><td>200</td></tr>
+                      <tr><td>2. without <code>DISTINCT</code></td><td>300, the top again</td><td>300</td><td>300</td></tr>
+                      <tr><td>2. with <code>DISTINCT</code>, without <code>NULLS LAST</code></td><td>200</td><td>No row at all</td><td>300: the NULL sorted first</td></tr>
+                      <tr><td>3. without <code>NULLS LAST</code></td><td>200</td><td>No row at all</td><td>300, for the same reason</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Name the tie, the empty case and the NULL before the interviewer does.</strong> Postgres
+                    sorts a NULL as larger than any value, so under <code>DESC</code> it comes first and becomes rank 1; SQLite
+                    sorts it last and gets 200 from the same query, which is how a solution that passed on one database fails
+                    on another. Lead with the first query, offer the third for the follow-up that always comes, <em>third
+                    highest in each department</em>, and wrap the second in a scalar subquery if the answer must be NULL rather
+                    than no row.
                   </div>
                 </div>
               </div>

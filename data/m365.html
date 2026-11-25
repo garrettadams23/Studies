@@ -270,6 +270,223 @@
   </div>
 </div>
 
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: SELF-SERVICE PASSWORD RESET & PASSWORD PROTECTION ─── -->
+  <div class="topic-header">
+    <span class="topic-icon">🔁</span>
+    <span class="topic-name">Self-Service Password Reset &amp; Password Protection — Who Can Reset, and Which Passwords Get Refused</span>
+    <span class="topic-badge">M365 • Entra ID</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Self-service reset</div>
+      <div class="concept-title">A User Can Reset Only With Methods They Registered Before They Were Locked Out</div>
+      <div class="concept-desc">
+        Self-service password reset lets users reset or unlock their own password at aka.ms/sspr, with no
+        call to the service desk. Before it lets anyone in, Entra ID runs a short list of checks, and a user
+        who fails any of them is told to contact their administrator. The methods it accepts are Authenticator
+        notifications, OATH tokens, text messages, voice calls and an emailed one-time code, and a policy can
+        require one or two of them. Authenticator and the OATH tokens count as one method between them, and
+        Authenticator cannot be the only method when one is required.
+        <!-- fact: SSPR checks that the user is enabled, has registered the number of methods the policy requires (one or two), and, where the password is managed on-premises (federated, pass-through or hash sync), that writeback is configured, otherwise the user is told to contact their administrator; users with an administrator role get the two-gate policy; methods are Authenticator notifications, hardware OATH tokens (preview), software OATH tokens, SMS, voice call and email OTP; Authenticator and OATH tokens count as a single method, and Authenticator can't be the only method when one is required; raising the requirement from one method to two leaves users with one registered unable to reset; registration can be required at sign-in, with reconfirmation after 0 to 730 days; Microsoft accounts invited as guests can't use SSPR | source: Microsoft Learn, "How it works: Microsoft Entra self-service password reset" (updated 2026-11-10), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>What Entra ID checks</th><th>When it fails</th></tr></thead>
+          <tbody>
+            <tr><td>The user is enabled for self-service reset</td><td>A group-scoped policy left them out</td></tr>
+            <tr><td>The user registered as many methods as the policy requires</td><td>They never registered, or the policy went from one method to two and they had one</td></tr>
+            <tr><td>A password managed on-premises can be written back</td><td>Writeback is off, so a synced or federated user cannot reset in the cloud</td></tr>
+            <tr><td>Administrators meet the stricter two-gate policy</td><td>An admin registered only what the user policy asked for</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Require registration at sign-in, or the first reset is when people find out.</strong>
+          A user who never registered learns it at the moment they are locked out. The policy can prompt for
+          registration at sign-in and ask for reconfirmation every so many days, and a change from one method to
+          two belongs after everyone has two. Guests signed in with a personal Microsoft account cannot use it
+          at all. Who may reset an administrator's password instead is in
+          <span class="xref">Admin Roles &amp; Least Privilege — The Roles Worth Knowing, and PIM for the Rest</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Hybrid</div>
+      <div class="concept-title">A Synced User's Reset Is Written Back, and Active Directory's Policy Still Decides</div>
+      <div class="concept-desc">
+        When a user's password lives in Active Directory, a cloud reset is passed back to it by Entra Connect
+        Sync or Cloud Sync, outbound over port 443 with no inbound firewall rule. Writeback is synchronous: the
+        on-premises agent sets the password through Active Directory's own interface, so the domain's history,
+        complexity, age and password filters are applied, and the user hears straight away if the password is
+        refused. Writeback can be switched off <span class="volatile" data-checked="2026-11">in the Entra admin center</span> without touching Connect,
+        and can be allowed to unlock an account without resetting it.
+        <!-- fact: Password writeback is synchronous, enforcing on-premises history, complexity, age and password filters through the AD DS SetPassword API; it uses an Azure Service Bus relay, outbound on port 443, with no inbound firewall rules; the on-premises service account cannot reset passwords of users in protected groups; where Cloud Sync and Connect Sync coexist for one domain, Cloud Sync processes writeback; writeback can be disabled in the admin center without reconfiguring Connect; users can be allowed to unlock without resetting; SSPR performs the equivalent of an admin-initiated reset in AD DS, so a third-party password filter must apply to admin resets to be checked | source: Microsoft Learn, "How does self-service password reset writeback work in Microsoft Entra ID?" (updated 2026-11-11) and "How it works: Microsoft Entra self-service password reset" (updated 2026-11-10), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Whose password</th><th>What a self-service reset does</th></tr></thead>
+          <tbody>
+            <tr><td>A cloud-only user</td><td>Sets it in Entra ID</td></tr>
+            <tr><td>A synced or federated user, writeback on</td><td>Sets it in Entra ID and Active Directory, under the domain's rules</td></tr>
+            <tr><td>A synced or federated user, writeback off</td><td>Nothing: the user is sent to an administrator</td></tr>
+            <tr><td>A member of a protected group, such as Domain Admins</td><td>Cannot be written back: the sync account is not allowed to reset it</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">To Active Directory, a self-service reset is an admin reset.</strong> A
+          third-party password filter configured only for users' own changes is skipped, so it has to be set to
+          apply to admin resets too. And the domain's own policy wins over the cloud's: a password Entra ID would
+          accept can still be refused on the way back. How the synced account came to exist is
+          <span class="xref">Entra Connect &amp; Hybrid Identity — Choosing How Passwords Are Checked</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Password Protection</div>
+      <div class="concept-title">Banned Passwords Are Scored, Not Just Matched: Five Points or It Is Refused</div>
+      <div class="concept-desc">
+        Every change and reset is checked against Microsoft's global banned list, which is always on, cannot be
+        turned off and is never published, and against a custom list of up to 1,000 terms of your own. The new
+        password is lowercased and common substitutions are undone: 0 becomes o, 1 becomes l, $ becomes s and @
+        becomes a. Banned terms are then found with fuzzy matching, so a term one edit away still counts, and
+        the user's first and last names and the tenant's name are found anywhere inside it if they are four
+        letters or more. Each banned term found scores one point, each other character one point, and a
+        password under five points is refused.
+        <!-- fact: The global banned list is applied to all users, can't be disabled, and isn't published; the custom list holds up to 1,000 terms and should hold base terms such as brand, product and place names rather than variants; normalization lowercases and substitutes 0 to o, 1 to l, $ to s, @ to a; fuzzy matching at an edit distance of one; substring matching on first name, last name and tenant name for terms of at least four characters, with tenant name not checked on domain controllers; one point per banned term found and one per remaining character, at least five points to be accepted; worked examples C0ntos0Blank12 (4 points, rejected) and ContoS0Bl@nkf9! (5 points, accepted); the global list requires no license for cloud-only users, the custom list Entra ID P1 or P2, and synced users P1 or P2; the global list comes from Entra security telemetry on password spray attacks, not third-party breach lists | source: Microsoft Learn, "Eliminate bad passwords using Microsoft Entra Password Protection" (updated 2025-03-04), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>New password</th><th>Normalized</th><th>Score</th><th>Result</th></tr></thead>
+          <tbody>
+            <tr><td><code>C0ntos0Blank12</code></td><td><code>contosoblank12</code></td><td>contoso + blank + 1 + 2 = 4</td><td>Refused</td></tr>
+            <tr><td><code>ContoS0Bl@nkf9!</code></td><td><code>contosoblankf9!</code></td><td>contoso + blank + f + 9 + ! = 5</td><td>Accepted</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Put base terms in the custom list, never variants.</strong> Microsoft's own
+          example is a company called Contoso, in London, that makes Widgets: three entries, not a thousand
+          spellings of them, because normalization and fuzzy matching already catch <code>Contoso!1</code> and
+          <code>C0nt0so</code>. The global list is built from Microsoft's sign-in telemetry rather than from
+          breach dumps, aimed at password spraying, which tries a few of the weakest passwords against every
+          account; the attack is in <span class="xref">Password &amp; Authentication Attack Types</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">On-premises</div>
+      <div class="concept-title">On Domain Controllers, Start in Audit, and Expect Windows' Old Complexity Message</div>
+      <div class="concept-desc">
+        The same lists reach Active Directory through two pieces of software. A proxy service on any
+        domain-joined server fetches the policy from Entra ID, so domain controllers never talk to the
+        internet, and a DC agent on each domain controller, a password filter and a service, checks every change
+        against the policy cached in SYSVOL <span class="acro-exp">(System Volume)</span> and refreshed hourly. Nothing changes in the schema and no ports
+        open on the DCs. A DC without the agent checks nothing, so enforcement is only universal once every DC
+        has it, and a DC that has never downloaded a policy accepts every password and logs a warning.
+        <!-- fact: On-premises Password Protection uses a proxy service on any domain-joined machine and a DC agent (password filter DLL and service) on domain controllers; DCs never communicate with the internet, no new ports are opened, no schema changes are needed; the policy is stored in SYSVOL and refreshed when older than an hour; enforcement applies only where the DC agent is installed; with no local policy a password is accepted and an event logged; it supplements AD DS password policy rather than replacing it; audit mode logs and enforce mode rejects, and a rejection shows the traditional message that the password does not meet the length, complexity, or history requirements of the domain | source: Microsoft Learn, "Enforce on-premises Microsoft Entra Password Protection for Active Directory Domain Services" and "Enable on-premises Microsoft Entra Password Protection" (both updated 2025-03-04), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Piece</th><th>Runs on</th><th>Does</th></tr></thead>
+          <tbody>
+            <tr><td>Proxy service</td><td>Any domain-joined server</td><td>Passes policy downloads between the DCs and Entra ID, and keeps nothing</td></tr>
+            <tr><td>DC agent</td><td>Every domain controller</td><td>Its password filter hands each change to its service, which checks it against the cached policy</td></tr>
+            <tr><td>The policy</td><td>SYSVOL, replicated between DCs</td><td>Refreshed when it is more than an hour old</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A refusal looks like an ordinary complexity failure.</strong> In enforced mode a
+          banned password gets Windows' usual message, that it <em>does not meet the length, complexity, or
+          history requirements of the domain</em>, so a user whose password meets every rule they can see is
+          probably meeting this one. Run in audit mode first and read its events before enforcing. The domain's
+          own policy still applies alongside it, as
+          <span class="xref">Group Policy Architecture — Where the Settings Actually Live</span> explains.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: ADMINISTRATIVE UNITS ──────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🧱</span>
+    <span class="topic-name">Administrative Units — Delegating Part of the Tenant, and Fencing Off the Accounts That Matter</span>
+    <span class="topic-badge">M365 • Entra ID</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Scoped roles</div>
+      <div class="concept-title">An Administrative Unit Narrows Where a Role Applies, Not What the Role Can Do</div>
+      <div class="concept-desc">
+        An administrative unit is a container of users, groups or devices in Entra ID. Assign a role with the
+        unit as its scope, Helpdesk Administrator for a region's support staff for instance, and the role works
+        only on the unit's members and none of the tenant's settings. A user can sit in several units, by
+        place and by division, but units cannot be nested. Members are added by hand, or by a dynamic rule for
+        users or devices, never for groups. Each administrator with a unit-scoped role needs Entra ID P1, the
+        members need nothing beyond Free, and a dynamic rule needs P1 for every member it covers.
+        <!-- fact: An administrative unit contains only users, groups or devices; units can't be nested; a user can be in several; dynamic membership rules work for users or devices, not groups; scoped admins need Entra ID P1 (or P2), members Free, and dynamic membership P1 for each member; adding a group scopes the group, not its members; units scope management permissions only and don't stop browsing; the roles assignable at unit scope include Authentication, Groups, Helpdesk, License, Password, Privileged Authentication, SharePoint, Teams and User Administrator and custom roles with user, group or device permissions; unit-scoped admins can reset passwords and change authentication methods of non-administrators only; the scope is written /administrativeUnits/ followed by the unit's ID | source: Microsoft Learn, "Administrative units in Microsoft Entra ID" (updated 2024-10-29) and "Assign Microsoft Entra roles" (updated 2025-06-04), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>You want</th><th>What does it</th></tr></thead>
+          <tbody>
+            <tr><td>One office's helpdesk to reset passwords there and nowhere else</td><td>A unit of that office's users, and Helpdesk Administrator scoped to it</td></tr>
+            <tr><td>Membership that follows HR data, such as department</td><td>A dynamic rule on users or devices, with P1 for each member</td></tr>
+            <tr><td>A scoped admin who can rename a group and change who is in it</td><td>The group added to the unit</td></tr>
+            <tr><td>The same admin resetting those members' passwords</td><td>The users themselves added to the unit, because a group brings itself in, not its members</td></tr>
+            <tr><td>Other users hidden from a scoped admin</td><td>Nothing: a unit limits what they can manage, not what they can read</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A scoped role still stops at administrators.</strong> Within a unit, password
+          resets, authentication methods and account deletion apply only to members who hold no admin role, so
+          an administrator in Seattle is not reset by the Seattle helpdesk. In PowerShell the scope is the string
+          <code>/administrativeUnits/</code> plus the unit's ID, not the ID alone. The roles worth scoping in the
+          first place are in
+          <span class="xref">Admin Roles &amp; Least Privilege — The Roles Worth Knowing, and PIM for the Rest</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Restricted management</div>
+      <div class="concept-title">A Restricted Management Unit Stops Even Global Administrators Changing What Is Inside</div>
+      <div class="concept-desc">
+        An ordinary unit adds permissions; a <strong class="c-cyan">restricted management</strong> unit takes
+        them away. Once an object is in one, its Entra ID properties can be changed only by administrators
+        assigned at that unit's scope. A tenant-wide Helpdesk, User or even Global Administrator can read the
+        account but cannot reset its password, edit it, delete it or change a protected group's members. It
+        holds users, devices and security groups, but not Microsoft 365 groups, mail-enabled security groups or
+        distribution lists. Global and Privileged Role Administrators can still manage the unit itself,
+        including assigning themselves a role on it, so nobody is locked out for good, and each step is logged.
+        <!-- fact: Restricted management administrative units block administrators not assigned at their scope from modifying Entra properties, deleting, resetting passwords or changing group owners and members, while reading standard properties and adding members to other groups stay allowed; members can be users, devices and security groups, not Microsoft 365, mail-enabled security or distribution groups; Global Administrator and Privileged Role Administrator can't modify objects but can manage the units, including assigning roles to themselves; operations on related objects in Microsoft 365 services aren't affected; Microsoft warns that placing objects there can break existing workflows; changes are recorded in the Entra audit logs | source: Microsoft Learn, "Restricted management administrative units in Microsoft Entra ID" (updated 2026-03-04), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>A tenant-scoped administrator tries to</th><th>Allowed?</th></tr></thead>
+          <tbody>
+            <tr><td>Read the account's name, UPN <span class="acro-exp">(User Principal Name)</span> and photo</td><td>Yes</td></tr>
+            <tr><td>Reset its password, edit it or delete it</td><td>No</td></tr>
+            <tr><td>Change the members of a protected group</td><td>No</td></tr>
+            <tr><td>Add a protected user to an ordinary group</td><td>Yes</td></tr>
+            <tr><td>Assign themselves a role on the unit, as a Global Administrator</td><td>Yes, and it lands in the audit log</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Fence the accounts whose takeover ends the company, and expect workflows to
+          break.</strong> Microsoft's examples are executives' accounts and their devices, whose BitLocker
+          recovery keys a helpdesk could otherwise read, and the security groups that grant access to sensitive
+          applications. A provisioning tool or script working at tenant scope will now fail on those objects,
+          which Microsoft warns about. And the fence is around the directory object: Microsoft 365 services
+          acting on related objects are not blocked. Group scoping inside Intune is a separate mechanism,
+          <span class="xref">Intune RBAC &amp; Scope Tags — Delegating Without Handing Over the Fleet</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ── TOPIC: SERVICE HEALTH ─────────────────────────────────── -->
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
@@ -1237,6 +1454,112 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
           Roll DLP out in stages: audit silently, then tip the user, then warn with an override, and
           only then block. A policy that blocks on day one is a policy the business will demand
           exemptions from by day three, and exemptions are permanent.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: SENSITIVE INFORMATION TYPES & ENDPOINT DLP ───────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🔍</span>
+    <span class="topic-name">Sensitive Information Types &amp; Endpoint DLP <span class="acro-exp">(Data Loss Prevention)</span> — The Pattern That Finds It, and the Device That Stops It</span>
+    <span class="topic-badge">M365 • Purview</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Sensitive information types</div>
+      <div class="concept-title">A Sensitive Information Type Is a Pattern Plus Evidence, Scored at Three Confidence Levels</div>
+      <div class="concept-desc">
+        A sensitive information type is the pattern Purview looks for in content, and DLP policies, auto-labeling,
+        retention labels and insider risk all use them. Each pattern has a <strong class="c-cyan">primary
+        element</strong>, which is a regular expression, optionally with a checksum, or a keyword list, a
+        keyword dictionary or one of Microsoft's functions. It can add <strong class="c-cyan">supporting
+        elements</strong> found within so many characters of it, 250 in Microsoft's examples, and the more
+        evidence a match carries, the higher its confidence. Microsoft's built-in types cannot be edited but can
+        be copied, the named-entity types for names, addresses and medical terms cannot even be copied, and
+        exact data match types are built from a table of your own values.
+        <!-- fact: SITs are pattern-based classifiers used in DLP, sensitivity labels, retention labels, insider risk, communication compliance, auto-labeling and Priva; a pattern has a primary element (regex with or without checksum, keyword list, keyword dictionary or function), supporting elements, a confidence level and proximity in characters, 250 in the examples; confidence levels are low 65, medium 75 and high 85, high giving the fewest false positives and the most false negatives; Microsoft suggests high confidence with low counts (five to 10) and low confidence with higher counts (20 or more); built-in SITs can't be edited but can be copied, named entity SITs can't be edited or copied, and EDM SITs are built from scratch from your data; Endpoint DLP classifies files against all SITs in the tenant, including custom ones not used in any policy | source: Microsoft Learn, "Learn about sensitive information types" (updated 2026-07-24), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Confidence</th><th>Value</th><th>A rule set to it returns</th><th>Microsoft pairs it with</th></tr></thead>
+          <tbody>
+            <tr><td>Low</td><td>65</td><td>Low, medium and high matches: the fewest misses, the most false positives</td><td>Higher counts, 20 or more</td></tr>
+            <tr><td>Medium</td><td>75</td><td>Medium and high matches</td><td>Between the two</td></tr>
+            <tr><td>High</td><td>85</td><td>High matches only: the fewest false positives, the most misses</td><td>Low counts, five to ten</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Confidence and count trade against each other.</strong> A rule that fires on
+          one low-confidence nine-digit number fires on a great many numbers that are not identity numbers, and a
+          rule that waits for twenty high-confidence matches misses the document that holds three. Pick the pair
+          for the harm you are preventing. What DLP and labels do with a match is
+          <span class="xref">Sensitivity Labels &amp; DLP — Classification That Survives Contact With Users</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Writing one</div>
+      <div class="concept-title">A Custom Pattern's Regex Has One Capturing Group and No Anchors</div>
+      <div class="concept-desc">
+        A custom type is made <span class="volatile" data-checked="2026-11">in the Purview portal under <em>Information Protection &gt; Classifiers &gt;
+        Sensitive info types</em></span>, or copied from a built-in one. Its regular expressions run on the Boost.Regex
+        5.1.3 engine and follow two rules Microsoft enforces when the pattern is saved: no <code>^</code> or
+        <code>$</code>, because nothing guarantees where scanned content starts or ends, and exactly one
+        capturing group, with every variant inside it as alternation. A new type finds nothing in existing
+        SharePoint and OneDrive content until that content is crawled again, and Microsoft's support will
+        troubleshoot a pattern but not write one.
+        <!-- fact: Custom SITs are created under Information Protection, Classifiers, Sensitive info types; regexes use the Boost.RegEx 5.1.3 engine; patterns must not use positional anchors ^ and $, and must have a single primary capturing group with alternation inside it, several top-level capturing groups being blocked at validation; supporting elements have their own character proximity; existing SharePoint and OneDrive content must be recrawled for a new SIT to find it; Microsoft support can't help create custom patterns beyond samples and troubleshooting | source: Microsoft Learn, "Create custom sensitive information types in the Microsoft Purview portal" (updated 2026-06-26), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># Refused: three capturing groups at the top level</span>
+(?:[\s,;])([A-Z]{2}[0-9]{3})(?:[\s,;])|(?:[\s,;])([A-Z]{2}[A-Z]{4}[0-9])(?:[\s,;])|(?:[\s,;])([A-Z]{2}[0-9]{5})(?:[\s,;])
+
+<span class="com"># Accepted: one capturing group, the variants alternated inside it</span>
+(?:[\s,;])([A-Z]{2}[0-9]{3}|[A-Z]{2}[A-Z]{4}[0-9]|[A-Z]{2}[0-9]{5})(?:[\s,;])</pre>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Tune a custom type before it exists anywhere, not before a policy uses
+          it.</strong> Endpoint DLP classifies every file against every type in the tenant, custom ones
+          included, whether or not a policy refers to them, so a loose pattern costs classification on every
+          onboarded device from the day it is saved. Why pattern matching over-matches, and what that costs a
+          DLP program, is in <span class="xref">Data Loss Prevention — Classification, Egress &amp; the False-Positive Problem</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Endpoint DLP</div>
+      <div class="concept-title">On the Device, DLP Watches What Is Done With a File, Not Only Where It Is</div>
+      <div class="concept-desc">
+        Endpoint DLP takes the same policies to onboarded Windows 10 and 11 devices, the three latest macOS
+        releases and Windows Server 2019 or later, though not domain controllers or Server Core, and servers
+        only once it is turned on for them. Devices are onboarded with Intune, Group Policy, Configuration
+        Manager, a local script or a VDI <span class="acro-exp">(Virtual Desktop Infrastructure)</span> package. A file is classified each time it is created or changed, and
+        a policy with the devices location applies only when both the user and the device are in its scope.
+        What it adds is the action: copying, printing, uploading or pasting a sensitive file can be audited,
+        blocked, or blocked with an override the user has to justify.
+        <!-- fact: Endpoint DLP supports onboarded Windows 10/11, the three latest macOS versions and Windows Server 2019 and later, not domain controllers or Server Core, and must be enabled for servers; onboarding by Group Policy, Configuration Manager, Intune, local script or VDI packages; files are classified on creation or modification; a policy with the Devices location applies only when both the user and the device are in scope; activities include upload to restricted service domains or from unallowed browsers (redirected to Edge), paste to browsers, copy to clipboard, copy to USB, copy to network share, print, Bluetooth, RDP, create, rename and access by restricted apps; removable USB device groups allow up to 20 groups of up to 50 devices; Office, PDF and CSV file activity is audited by default on onboarded devices even outside a policy; for removable storage device control see Defender for Endpoint | source: Microsoft Learn, "Learn about Endpoint data loss prevention" (updated 2026-08-05), "Get started with Endpoint data loss prevention" (updated 2026-08-20) and "Configure endpoint DLP settings" (updated 2026-06-26), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>What the user does</th><th>What a policy can do</th></tr></thead>
+          <tbody>
+            <tr><td>Copies a sensitive file to USB <span class="acro-exp">(Universal Serial Bus)</span></td><td>Audit, block with override, or block, with different actions for named groups of USB devices</td></tr>
+            <tr><td>Uploads it to a cloud service</td><td>Audit or block by service domain; a browser on the unallowed list is blocked and the user sent to Edge</td></tr>
+            <tr><td>Prints it, copies it to a network share, sends it by Bluetooth or into a remote session</td><td>Audit or restrict</td></tr>
+            <tr><td>Copies from it, or pastes into a browser</td><td>Audit or restrict; a paste is judged on what is pasted</td></tr>
+            <tr><td>Opens it in an app on the restricted apps list</td><td>Audit or restrict</td></tr>
+            <tr><td>Creates or renames it</td><td>Audit only</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Start in audit; the activity log will already have data.</strong> Onboarded
+          devices audit Office, PDF <span class="acro-exp">(Portable Document Format)</span> and CSV <span class="acro-exp">(Comma-Separated Values)</span> file activity by default even with no policy, so the activity
+          explorer shows what a block would have stopped before anyone is blocked. And DLP's USB rule is about
+          sensitive content: blocking USB storage outright is device control in Defender for Endpoint, which is
+          <span class="xref">Firewall &amp; Removable Media Policy — The Two Controls Auditors Ask About</span>.
         </div>
       </div>
     </div>
@@ -3338,6 +3661,799 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             </div>
           </div>
 
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: RESTRICTED ENTITIES & OUTBOUND SPAM ───────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">⛔</span>
+    <span class="topic-name">Restricted Entities &amp; Outbound Spam — Why a Mailbox Stops Sending, and Unblocking It Safely</span>
+    <span class="topic-badge">Exchange Online • Security</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Blocked from sending</div>
+      <div class="concept-title">A Mailbox Over Its Sending Limit Still Receives, and Everything It Sends Bounces With 5.1.8</div>
+      <div class="concept-desc">
+        Every Exchange Online mailbox may send to 10,000 recipients in any 24 hours, a hard limit of the
+        service, and an outbound spam policy can set lower hourly and daily ones. Sending faster than 30
+        messages a minute is only slowed down. A sender who goes over a recipient limit, or who sends more
+        spam than thresholds Microsoft does not publish, is restricted. They can still receive mail, but every message they send comes back in a bounce with
+        <code>550 5.1.8 Access denied, bad outbound sender</code>, and the user is listed on the
+        <span class="volatile" data-checked="2026-11"><strong class="c-cyan">Restricted entities</strong> page in the Defender portal, under
+        <em>Email &amp; collaboration &gt; Review</em></span>, which is where an administrator unblocks them. Microsoft does not publish the spam thresholds so that spammers cannot
+        work just under them.
+        <!-- fact: A user who exceeds the service's sending limits or an outbound spam policy's limits is restricted from sending but can still receive, is added to the Restricted entities page, and gets an NDR with 550 5.1.8 Access denied, bad outbound sender; a restricted entity is a user account or connector blocked from sending due to indications of compromise; Microsoft says a sender exceeding the outbound limits is an indicator of a compromised account; the spam and volume thresholds are undisclosed so spammers can't game them; outbound spam policy limits for external recipients per hour, internal per hour and recipients per day take 0 to 10,000, 0 meaning the service defaults; the action when a limit is reached is restrict until the following day by UTC (the default), restrict until an admin removes the user, or alert only; the automatic forwarding setting Automatic - System-controlled became equivalent to Off in 2021 for new organizations and those not actively using it, and Microsoft advises setting On or Off explicitly | source: Microsoft Learn, "Remove blocked users from the Restricted entities page" (updated 2026-10-30), "Outbound spam protection for cloud mailboxes" (updated 2026-05-21) and "Configure outbound spam policies" (updated 2026-08-10), fetched and read | checked: 2026-11 -->
+        <!-- fact: The recipient rate limit is 10,000 recipients per day on a 24-hour sliding window and the message rate limit 30 messages per minute, both hard limits that can't be increased, with excess submissions throttled into following minutes; the recipient limit per message is 500 by default, customizable from 1 to 1,000 | source: Microsoft Learn, "Troubleshoot outbound sending limits in Exchange Online" (updated 2026-05-27) and "Exchange Online limits" (updated 2026-11-11), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Outbound spam policy setting</th><th>Default</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td>External, internal and daily recipient limits</td><td>0, meaning the service's own limits</td><td>Lower caps, up to 10,000, per hour for external and internal recipients and per day for all</td></tr>
+            <tr><td>Restriction when a limit is reached</td><td>Restrict the user until the next day, by UTC <span class="acro-exp">(Coordinated Universal Time)</span></td><td>Or restrict until an administrator removes them, or raise an alert and restrict nobody</td></tr>
+            <tr><td>Automatic forwarding rules</td><td><em>Automatic - System-controlled</em></td><td>Off for tenants created since 2021, but it can still mean On in older ones, so set On or Off explicitly</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A sending limit is a compromise detector that happens to be a quota.</strong>
+          Microsoft calls a sender over the limits an indicator of a compromised account, and the limits are
+          set high enough that an ordinary business user never reaches them. A user who suddenly has is far
+          more often an attacker sending from a real mailbox than a salesperson with a big list, which is the
+          case <span class="xref">Business Email Compromise — The Attack With No Malware</span> makes from the
+          other side.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Unblocking</div>
+      <div class="concept-title">Unblock Last: Microsoft's Order Secures the Account Before It Can Send Again</div>
+      <div class="concept-desc">
+        Microsoft's steps for a restricted user assume the account is compromised, and they run in an order.
+        Disable the account, or at least reset its password, and revoke its sessions. Remove sign-in methods
+        and consented apps the user did not add, and admin roles they should not hold. Then remove the
+        forwarding and inbox rules the attacker made, hidden rules included. Only then unblock the user, in
+        the portal or with <code>Remove-BlockedSenderAddress</code>; the restriction lifts within an hour as
+        a rule and within 24 at most. A password reset does not revoke app passwords, and for an account
+        synced from Active Directory Microsoft says to reset it there, twice.
+        <!-- fact: Microsoft's steps for a compromised mailbox: disable the account (or reset the password if that's not possible), revoke sessions with Revoke-MgUserSignInSession, review MFA registered devices, review consented applications, review admin roles, review forwarding with Get-Mailbox Forwarding*Address and DeliverTo*, and inbox rules with Get-InboxRule -IncludeHidden; app passwords aren't revoked by a password reset; a synced account's password is reset in AD twice to mitigate pass-the-hash; afterwards remove the user from Restricted entities; Get-BlockedSenderAddress lists restricted senders and Remove-BlockedSenderAddress removes one; restrictions are removed within one hour under most circumstances and no longer than 24 hours; the Blocked Sender History diagnostic shows listing history and MFA status | source: Microsoft Learn, "Respond to a compromised cloud email account" (updated 2026-07-17) and "Remove blocked users from the Restricted entities page" (updated 2026-10-30), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># Who is restricted (Exchange Online PowerShell)</span>
+<span class="fn">Get-BlockedSenderAddress</span>
+
+<span class="com"># Forwarding set on the mailbox, then every inbox rule, hidden ones included</span>
+<span class="fn">Get-Mailbox</span> -Identity user@contoso.com | <span class="fn">Format-List</span> Forwarding*Address,DeliverTo*
+<span class="fn">Get-InboxRule</span> -Mailbox user@contoso.com -IncludeHidden |
+  <span class="fn">Format-List</span> Name,Enabled,RedirectTo,Forward*,Identity
+
+<span class="com"># Signed-in sessions and refresh tokens (Microsoft Graph PowerShell)</span>
+<span class="fn">Revoke-MgUserSignInSession</span> -UserId user@contoso.com
+
+<span class="com"># Last, once the account is yours again</span>
+<span class="fn">Remove-BlockedSenderAddress</span> -SenderAddress user@contoso.com</pre>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Unblocking first gives the attacker back a mailbox that can send.</strong>
+          The portal's unblock wizard says the same thing in its own steps, offering MFA <span class="acro-exp">(Multi-Factor Authentication)</span> and a password reset
+          before it lets the user go. A user who cannot send calls the service desk, and the pressure is to
+          unblock them on the call, when the restriction may be the only thing that has stopped the attacker
+          so far. Why a reset alone leaves a stolen session signed in is
+          <span class="xref">Token Lifetime &amp; Revocation — The Logout That Does Not, and How to Fix It</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Connectors and the tenant</div>
+      <div class="concept-title">A Connector, or the Whole Tenant, Can Be Restricted Too, and the Bounce Code Says Which</div>
+      <div class="concept-desc">
+        The Restricted entities page lists connectors as well as users. An inbound connector from an
+        on-premises server that an attacker created or changed to relay spam is blocked, and its mail bounces
+        with <code>550 5.7.711</code>. Above both sits the tenant. A daily cap on external recipients, the
+        <strong class="c-cyan">tenant external recipient rate limit</strong>, scales with the number of
+        licenses, and mail from the tenant's <code>onmicrosoft.com</code> domain may reach only 100 external
+        recipients a day. When a tenant sends too much spam, often through a compromised on-premises server or
+        a connector made with a stolen admin account, Exchange Online blocks its outgoing mail altogether, and
+        only Microsoft Support lifts that.
+        <!-- fact: A potentially compromised inbound connector is prevented from sending or relaying and added to the Restricted entities page, with NDR 550;5.7.711 Access denied, bad inbound connector; an inbound connector of type OnPremises is considered compromised when an attacker creates or modifies one to send spam or phish; symptoms include a spike in outbound volume, a 5321.MailFrom and 5322.From mismatch, mail from unprovisioned domains, a connector no admin created, and a recently compromised admin account; unblocking a connector can take up to 1 hour; the Suspicious connector activity alert notifies admins | source: Microsoft Learn, "Remove blocked connectors from the Restricted entities page" and "Respond to a compromised connector" (both updated 2026-07-03), fetched and read | checked: 2026-11 -->
+        <!-- fact: The tenant external recipient rate limit is the maximum number of external recipients per day on a 24-hour sliding window, scaling with the tenant's licenses, 5,000 for trial tenants, counting distribution group members individually, shown in the Tenant Outbound External Recipients report, with NDR 550 5.7.233; mail from the default onmicrosoft.com domains is limited to 100 external recipients per organization in a 24-hour rolling window, with NDR 550 5.7.236; 550 5.7.705 Access denied, tenant has exceeded threshold is generated when an organization sends too much spam or bulk mail, commonly from a compromised on-premises server or a compromised admin account used to create connectors, and Microsoft Support removes the block after the cause is addressed; 550 5.7.750 is sending from an unregistered domain | source: Microsoft Learn, "Exchange Online limits" (updated 2026-11-11), "Troubleshoot outbound sending limits in Exchange Online" (updated 2026-05-27) and "Fix email delivery issues for error codes 5.7.700 through 5.7.750" (updated 2026-10-03), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>The bounce says</th><th>What is restricted</th><th>What lifts it</th></tr></thead>
+          <tbody>
+            <tr><td><code>5.1.8</code> bad outbound sender</td><td>One user</td><td>An administrator, from Restricted entities, after the account is secured</td></tr>
+            <tr><td><code>5.7.711</code> bad inbound connector</td><td>One inbound connector</td><td>An administrator, from Restricted entities, after finding who created or changed it</td></tr>
+            <tr><td><code>5.7.233</code></td><td>External mail, tenant-wide, for the rest of the 24 hours</td><td>Time: the window slides. The Tenant Outbound External Recipients report shows how close you are</td></tr>
+            <tr><td><code>5.7.236</code></td><td>External mail from the <code>onmicrosoft.com</code> domain, past 100 recipients a day</td><td>Time, and sending from a custom domain instead</td></tr>
+            <tr><td><code>5.7.705</code> tenant has exceeded threshold</td><td>All outgoing mail from the tenant</td><td>Microsoft Support, once the compromised accounts, servers or connectors are dealt with</td></tr>
+            <tr><td><code>5.7.750</code></td><td>Mail from a domain the tenant has not added</td><td>Adding and verifying the domain, then Microsoft Support</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Bulk mail belongs somewhere else.</strong> Microsoft calls sending bulk email
+          through Microsoft 365 unsupported and best-effort, and recommends a separate subdomain with its own
+          SPF, DKIM <span class="acro-exp">(DomainKeys Identified Mail)</span> and DMARC <span class="acro-exp">(Domain-based Message Authentication, Reporting and Conformance)</span> and a provider built for volume. The tenant's external limit is shared, so a
+          newsletter that uses it up stops everyone's external mail until the window moves on. A connector from your own servers is configured in
+          <span class="xref">Mail Flow — Connectors, Transport Rules &amp; the Path a Message Takes</span>, and
+          the records a sending subdomain needs are in
+          <span class="xref">Email Security — SPF, DKIM &amp; DMARC</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: ALERT POLICIES ────────────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🔔</span>
+    <span class="topic-name">Alert Policies in Defender for Office 365 — The Default Alerts, Who Gets Them &amp; Writing Your Own</span>
+    <span class="topic-badge">M365 • Security</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">How a policy works</div>
+      <div class="concept-title">An Alert Policy Watches Audited Activity, and Fires Every Time, Past a Threshold, or When It Is Unusual</div>
+      <div class="concept-desc">
+        An alert policy names an activity from the audit log, conditions on it such as who did it or from
+        which IP <span class="acro-exp">(Internet Protocol)</span> address, and when to fire: every time it happens, when it passes a count within a time
+        window, or when it is unusual against a baseline Microsoft builds over up to seven days. Each policy
+        carries a category and a severity, Low, Medium, High or Informational, and can email a list of
+        recipients up to a daily limit. Thresholds and unusual-activity alerts need E5, or E3 with an add-on
+        such as Defender for Office 365 Plan 2; on E3 alone a policy can only fire every time. A new or
+        changed policy takes up to 24 hours to start firing, and none of it works with audit logging off.
+        <!-- fact: An alert policy defines the activity tracked, activity conditions (IP address, users, file name or URL, user tags), when the alert is triggered (every time, a threshold, or unusual activity against a baseline that takes up to seven days to establish, during which no alerts are generated), a category (data loss prevention, information governance, mail flow, permissions, threat management, others), a severity (Low, Medium, High or Informational), automated investigation, and email notifications with a daily notification limit; threshold and unusual-activity alerts need E5/G5 or E1/E3 with Defender for Office 365 P2, Microsoft 365 E5 Compliance or eDiscovery and Audit add-on, and E1/E3 alone can only alert every time; a created or updated policy takes up to 24 hours to sync to the detection engine; events within the aggregation interval are added to the existing alert, 1 minute for E5/G5, Defender for Office 365 Plan 2 and the E5 Compliance or eDiscovery and Audit add-ons, 15 minutes for E1/E3 and for the built-in protection or Defender for Office 365 Plan 1 | source: Microsoft Learn, "Alert policies in the Microsoft Defender portal" (updated 2026-08-03), fetched and read | checked: 2026-11 -->
+        <!-- fact: For alerts to work, audit logging must be turned on, which it is by default | source: Microsoft Learn, "Remove blocked users from the Restricted entities page" (updated 2026-10-30), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Fires</th><th>Meaning</th><th>License</th></tr></thead>
+          <tbody>
+            <tr><td>Every time</td><td>An alert for each matching activity, with repeats inside the aggregation window added to it</td><td>Any plan with alert policies</td></tr>
+            <tr><td>Past a threshold</td><td>A set number of matches within a time window</td><td>E5, or E3 with an add-on</td></tr>
+            <tr><td>When unusual</td><td>Activity greatly above a baseline, which takes up to seven days to build and raises nothing meanwhile</td><td>E5, or E3 with an add-on</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A silent new policy is not broken for a day, or for a week if it watches for
+          the unusual.</strong> The policy takes up to 24 hours to reach the detection engine and its baseline
+          up to seven days, so test it after both. And one alert can hold several events: matching activity
+          inside the aggregation window, a minute on E5 and fifteen on E3, is added to the open alert rather
+          than raising another, so read its activity list before deciding it happened once. Working the alert
+          once it arrives is
+          <span class="xref">Alert Triage — Working the Queue From Alert to Verdict</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The defaults</div>
+      <div class="concept-title">The Built-In Policies Email the Global Administrators, Who Are Not the People Watching</div>
+      <div class="concept-desc">
+        Microsoft ships default policies, shown in bold with the type <em>System</em>, and they are on until
+        someone turns them off. Three things about each can change: whether it is on, who is emailed, and the
+        daily notification limit. Their recipients default to the TenantAdmins group, which is the Global
+        Administrators, a role Microsoft itself says to keep for emergencies. Some defaults also carry filters
+        the portal does not show, which <code>Get-ProtectionAlert</code> displays. These are the ones that
+        say a mailbox may be in an attacker's hands:
+        <!-- fact: Default alert policies are shown in bold with policy type System and are turned on by default; you can turn them off or on, set email recipients and a daily notification limit, and the other settings can't be edited; some include filters not visible in the portal, shown by Get-ProtectionAlert, with IncludeRuleXml for the rule definition; default rows and severities: User restricted from sending email (High, automated investigation), Suspicious email sending patterns detected (Medium, an early warning before restriction), Email sending limit exceeded (Medium), Suspicious email forwarding activity (High, autoforwarding to a suspicious external account), Creation of forwarding/redirect rule (Informational, only rules created in Outlook on the web or Exchange Online PowerShell), Suspicious connector activity (High, an inbound connector blocked), Tenant restricted from sending email (High), Elevation of Exchange admin privilege (Low), Messages have been delayed (High, 2,000 or more messages queued for more than an hour); the default recipients of the outbound alerts are the TenantAdmins group, Global Administrator members | source: Microsoft Learn, "Alert policies in the Microsoft Defender portal" (updated 2026-08-03) and "Configure outbound spam policies" (updated 2026-08-10), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Default policy</th><th>Severity</th><th>Fires when</th></tr></thead>
+          <tbody>
+            <tr><td>User restricted from sending email</td><td>High</td><td>A user has been blocked for outbound spam and is on the Restricted entities page</td></tr>
+            <tr><td>Suspicious email sending patterns detected</td><td>Medium</td><td>A user's sending looks like compromise but has not yet earned a restriction</td></tr>
+            <tr><td>Email sending limit exceeded</td><td>Medium</td><td>A user went over an outbound spam policy's limit</td></tr>
+            <tr><td>Suspicious email forwarding activity</td><td>High</td><td>A user's mail is being forwarded automatically to a suspicious external address</td></tr>
+            <tr><td>Creation of forwarding/redirect rule</td><td>Informational</td><td>An inbox rule forwards or redirects mail, if it was made in Outlook on the web or PowerShell</td></tr>
+            <tr><td>Suspicious connector activity</td><td>High</td><td>An inbound connector was blocked for suspicious activity</td></tr>
+            <tr><td>Tenant restricted from sending email</td><td>High</td><td>Microsoft blocked the tenant's outbound mail</td></tr>
+            <tr><td>Elevation of Exchange admin privilege</td><td>Low</td><td>Someone was given Exchange admin permissions, such as Organization Management</td></tr>
+            <tr><td>Messages have been delayed</td><td>High</td><td>2,000 or more messages have queued for over an hour for an on-premises or partner server</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Send these to whoever works the queue.</strong> Add the security team's
+          address to the recipients of at least the outbound and forwarding policies, in the portal: the
+          <code>NotifyUser</code> parameter of <code>Set-ProtectionAlert</code> is documented as reserved for
+          Microsoft's internal use. Note the severities as well. The forwarding-rule alert, the classic sign of
+          a mailbox taken over for invoice fraud, is Informational. What the restricted-user alert means, and
+          what to do before unblocking, is
+          <span class="xref">Restricted Entities &amp; Outbound Spam — Why a Mailbox Stops Sending, and Unblocking It Safely</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Writing your own</div>
+      <div class="concept-title">The Forwarding-Rule Alert Misses Rules Made in Outlook Itself, and a Custom Policy Fills the Gap</div>
+      <div class="concept-desc">
+        The default forwarding-rule alert watches only rules created in Outlook on the web or Exchange Online
+        PowerShell. A rule made in the Outlook desktop client is audited as a different operation,
+        <code>UpdateInboxRules</code>, which covers creating, changing or removing any rule from the client. A
+        custom policy on that operation closes the gap, at the price of firing on every rule change and not
+        only on forwarding. Custom policies are created in the portal or with
+        <code>New-ProtectionAlert</code>, which needs two things said explicitly: its aggregation defaults to
+        a threshold, so set it to <code>None</code> to fire every time, as E3 requires; and its
+        <code>Operation</code> parameter accepts a list but works with only one value, so one policy watches
+        one operation.
+        <!-- fact: New-InboxRule is audited for an inbox rule created in Outlook on the web, and UpdateInboxRules when a mailbox owner or other user with access created, modified or removed an inbox rule using the Outlook client | source: Microsoft Learn, "Audit log activities" (updated 2026-11-03), fetched and read | checked: 2026-11 -->
+        <!-- fact: New-ProtectionAlert's AggregationType takes None (every occurrence), SimpleAggregation (the default, threshold and time window) or AnomalousAggregation (unusual levels, baseline up to 7 days); Operation takes activities from the audited activities list and, although it technically accepts several values, multiple values don't work, and it requires ThreatType Activity; Category takes values including ThreatManagement and MailFlow; Severity Low (default), Medium or High; NotifyUser is the SMTP address that receives notifications; in Set-ProtectionAlert the NotifyUser parameter is reserved for internal Microsoft use | source: Microsoft Learn, New-ProtectionAlert and Set-ProtectionAlert cmdlet references, fetched and read | checked: 2026-11 -->
+        <!-- fact: Built-in alert tuning rules suppress alerts from common benign activity without affecting AIR investigations or email notifications, are listed on the Alert tuning page, don't apply to custom detection rules and Custom TI, and the Security Copilot Phishing Triage Agent doesn't classify alerts they suppress | source: Microsoft Learn, "Alert policies in the Microsoft Defender portal" (Defender for Office 365, updated 2026-08-24), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># What a default policy matches, including filters the portal does not show</span>
+<span class="fn">Get-ProtectionAlert</span> -Identity <span class="str">"Creation of forwarding/redirect rule"</span> | <span class="fn">Format-List</span>
+
+<span class="com"># Rules changed from the Outlook desktop client, which that policy does not see</span>
+<span class="fn">New-ProtectionAlert</span> -Name <span class="str">"Inbox rule changed in Outlook desktop"</span> -Category ThreatManagement `
+  -ThreatType Activity -Operation UpdateInboxRules -Severity Medium `
+  -NotifyUser soc@contoso.com -AggregationType None</pre>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">An alert in your inbox but missing from the queue was probably tuned
+          out.</strong> Defender's built-in alert tuning rules hide some alerts as benign while still sending
+          their email and running their investigations, so check the
+          <span class="volatile" data-checked="2026-11"><em>Alert tuning</em> page, under the Defender portal's
+          <em>System &gt; Settings &gt; Microsoft Defender XDR <span class="acro-exp">(Extended Detection and Response)</span></em>, in its <em>Rules</em> section</span>, before deciding a policy is broken. Tuning does not touch custom detection rules, which are the other way to write
+          your own, from a hunting query, in
+          <span class="xref">Defender XDR Incidents &amp; Advanced Hunting — One Queue for Mail, Devices, Identities &amp; Apps</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: DEFENDER XDR INCIDENTS & ADVANCED HUNTING ────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🚨</span>
+    <span class="topic-name">Defender XDR <span class="acro-exp">(Extended Detection and Response)</span> Incidents &amp; Advanced Hunting — One Queue for Mail, Devices, Identities &amp; Apps</span>
+    <span class="topic-badge">M365 • Defender XDR</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Alerts and incidents</div>
+      <div class="concept-title">An Alert Is One Product's Signal; an Incident Is Defender's Judgment That Several Are One Attack</div>
+      <div class="concept-desc">
+        The <span class="volatile" data-checked="2026-11">Microsoft Defender portal, at security.microsoft.com,</span> collects alerts from Defender for Endpoint,
+        Defender for Office 365, Defender for Identity and Defender for Cloud Apps, and from Microsoft Sentinel
+        when it is connected. It groups the alerts it judges to belong to one attack into an <strong
+        class="c-cyan">incident</strong>, which carries the attack story, a graph of the users, devices,
+        mailboxes and apps involved, the evidence, and any automated investigations. A phish one user reported,
+        the sign-in that followed and the inbox rule created after it can arrive as alerts from different
+        products, and the incident is where they appear together.
+        <!-- fact: The Defender portal's two kinds of signal are alerts and incidents, an incident being a container of related alerts that tells the story of an attack; alerts come from Defender for Endpoint, Office 365, Identity and Cloud Apps and from Sentinel when onboarded; incident cases are in preview as the recommended experience and the legacy incident experience remains available during the preview | source: Microsoft Learn, "Incidents and alerts in the Microsoft Defender portal" (updated 2026-09-23) and "Investigate incidents in the Microsoft Defender portal (legacy)" (updated 2026-11-04), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Source</th><th>What it raises alerts on</th><th>What it adds to an incident</th></tr></thead>
+          <tbody>
+            <tr><td>Defender for Endpoint</td><td>Processes, files, network connections and sign-ins on onboarded devices</td><td>Devices, which can be isolated or put through an automated investigation from the incident</td></tr>
+            <tr><td>Defender for Office 365</td><td>Malicious mail, clicks on bad links, and messages users report</td><td>Mailboxes and messages, with Explorer one click away</td></tr>
+            <tr><td>Defender for Identity</td><td>Activity on domain controllers and by on-premises accounts</td><td>On-premises users and their sign-ins</td></tr>
+            <tr><td>Defender for Cloud Apps</td><td>Activity inside connected cloud apps, and OAuth <span class="acro-exp">(Open Authorization)</span> apps</td><td>Apps, with their details a click away in Defender for Cloud Apps</td></tr>
+            <tr><td>Microsoft Sentinel, if connected</td><td>Its own analytics rules, over whatever it ingests</td><td>Sources outside Microsoft's products</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Triage the incident, not the alert.</strong> Closing the reported phish on its
+          own can leave the sign-in and the inbox rule open in the same incident. The grouping is the portal's
+          judgment rather than a fact, which is why incidents can be merged and why each one has a
+          <em>Similar incidents</em> tab: the graph is where you check what it joined. The general method is
+          <span class="xref">Alert Triage — Working the Queue From Alert to Verdict</span>, and the phish itself
+          is <span class="xref">A User Reported a Phishing Email — The First Ten Minutes</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Automation</div>
+      <div class="concept-title">Automated Investigation Names the Fix; Your Settings Decide Whether It Is Applied</div>
+      <div class="concept-desc">
+        An alert can start an automated investigation, which gives each piece of evidence a verdict:
+        malicious, suspicious, or no threats found. For the malicious and suspicious ones it names remediation
+        actions, such as quarantining a file, stopping a process, isolating a device or blocking a URL <span class="acro-exp">(Uniform Resource Locator)</span>, and,
+        depending on how automation is configured, it either takes them or leaves them pending until an analyst
+        approves. Related alerts that arrive while it runs join the investigation, and an affected entity seen
+        elsewhere widens its scope. Not every alert starts one.
+        <!-- fact: An automated investigation gives each piece of evidence a verdict of Malicious, Suspicious or No threats found; remediation actions include sending a file to quarantine, stopping a process, isolating a device and blocking a URL, taken automatically or only on approval depending on configuration; all pending and completed actions are listed in the Action center; not every alert triggers an investigation | source: Microsoft Learn, "Automated investigation and response in Microsoft Defender XDR" (updated 2025-04-28), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Where to look</th><th>What it shows</th></tr></thead>
+          <tbody>
+            <tr><td>The incident's <em>Investigations</em> tab</td><td>Automated investigations started by the incident's alerts. Defender for Office 365's show as zero there by design, and open from the alert itself</td></tr>
+            <tr><td><em>Evidence and Response</em></td><td>Every entity analyzed, with its verdict and remediation status. Actions pending approval can be approved or rejected here</td></tr>
+            <tr><td>Action center</td><td>Every remediation action, pending and completed, across all incidents</td></tr>
+          </tbody>
+        </table>
+        <!-- fact: For incidents with Defender for Office 365 alerts the Investigations tab shows zero Defender for Office 365 investigations by design, and the investigation opens from the alert's details pane; entities on the Evidence and Response tab carry a verdict and remediation status, and actions pending approval can be approved or rejected there | source: Microsoft Learn, "Investigate incidents in the Microsoft Defender portal (legacy)" (updated 2026-11-04), fetched and read | checked: 2026-11 -->
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Pending approval is the state to watch.</strong> The investigation has found
+          something and named the fix, and nothing has been removed until somebody approves it. The portal's
+          home page has an <em>Automated investigation &amp; response</em> card that counts the actions waiting
+          and how long each has waited, and links to the Action center.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Advanced hunting</div>
+      <div class="concept-title">Advanced Hunting Is KQL Over Thirty Days of Raw Events, One Table per Kind of Event</div>
+      <div class="concept-desc">
+        Advanced hunting runs Kusto Query Language over the raw events the Defender products collect: up to 30
+        days of Defender data, or 90 days of supported data with an eligible license. Each product writes its
+        own tables, so a question that crosses products, such as who received a phish and who clicked it, is a
+        query over two tables that share the message's ID. A guided mode builds queries for anyone who does not
+        write KQL, and the same tables are what custom detection rules run against.
+        <!-- fact: Advanced hunting explores up to 30 days of raw Defender data, or up to 90 days of supported data with an eligible ISOC license (Microsoft Defender Suite, Microsoft 365 E5 or E7); guided and advanced modes; quotas of 100,000 rows, 10 minutes, 64 MB of results and a CPU allocation reset every 15 minutes, with queries blocked at 100% until the next cycle; all data is in UTC and results are converted to the portal's time zone | source: Microsoft Learn, "Proactively hunt for threats with advanced hunting in Microsoft Defender" (updated 2026-11-17), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Table</th><th>What a row is</th><th>Written by</th></tr></thead>
+          <tbody>
+            <tr><td><code>DeviceProcessEvents</code></td><td>A process starting, with its command line and parent</td><td>Defender for Endpoint</td></tr>
+            <tr><td><code>DeviceNetworkEvents</code></td><td>A network connection from a device</td><td>Defender for Endpoint</td></tr>
+            <tr><td><code>EmailEvents</code></td><td>A message to one recipient: sender, subject, delivery action and location</td><td>Defender for Office 365</td></tr>
+            <tr><td><code>EmailUrlInfo</code></td><td>A URL in a message</td><td>Defender for Office 365</td></tr>
+            <tr><td><code>UrlClickEvents</code></td><td>A click Safe Links saw, in mail, Teams or Office apps</td><td>Defender for Office 365</td></tr>
+            <tr><td><code>IdentityLogonEvents</code></td><td>An authentication against Active Directory or Microsoft online services</td><td>Defender for Identity and Defender for Cloud Apps</td></tr>
+            <tr><td><code>CloudAppEvents</code></td><td>An activity in Microsoft 365 or another connected cloud app</td><td>Defender for Cloud Apps</td></tr>
+            <tr><td><code>AlertInfo</code>, <code>AlertEvidence</code></td><td>An alert, and the files, addresses, users and devices in it</td><td>Every product</td></tr>
+          </tbody>
+        </table>
+        <!-- fact: Table descriptions, and the columns used in the queries below: EmailUrlInfo (NetworkMessageId, Url, UrlDomain), EmailEvents (NetworkMessageId, RecipientEmailAddress, Subject, DeliveryAction of Delivered, Junked, Blocked or Replaced, DeliveryLocation), UrlClickEvents (Safe Links clicks from email, Teams and Office apps; AccountUpn, Workload, ActionType, IsClickedThrough, IPAddress, Url); IdentityLogonEvents holds authentication activity from both Defender for Cloud Apps and Defender for Identity | source: Microsoft Learn, "Understand the advanced hunting schema" (updated 2026-11-09), the EmailEvents, EmailUrlInfo, UrlClickEvents and DeviceProcessEvents table pages, and "Create custom detection rules in Microsoft Defender XDR" (updated 2026-11-22), fetched and read | checked: 2026-11 -->
+        <pre class="code-block"><span class="com">// Who received mail linking to the domain. Hunting runs in UTC.</span>
+<span class="fn">EmailUrlInfo</span>
+| <span class="kw">where</span> Timestamp &gt; <span class="fn">ago</span>(<span class="num">7d</span>) <span class="kw">and</span> UrlDomain <span class="kw">has</span> <span class="str">"contoso-billing.example"</span>
+| <span class="kw">join</span> kind=inner (<span class="fn">EmailEvents</span> | <span class="kw">where</span> Timestamp &gt; <span class="fn">ago</span>(<span class="num">7d</span>)) <span class="kw">on</span> NetworkMessageId
+| <span class="kw">distinct</span> RecipientEmailAddress, Subject, DeliveryAction, DeliveryLocation
+
+<span class="com">// Who clicked it, and whether Safe Links let them through</span>
+<span class="fn">UrlClickEvents</span>
+| <span class="kw">where</span> Timestamp &gt; <span class="fn">ago</span>(<span class="num">7d</span>) <span class="kw">and</span> Url <span class="kw">has</span> <span class="str">"contoso-billing.example"</span>
+| <span class="kw">project</span> Timestamp, AccountUpn, Workload, ActionType, IsClickedThrough, IPAddress</pre>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">An empty click query means no click Safe Links saw, not no click.</strong>
+          <code>UrlClickEvents</code> is filled by Safe Links, so a link opened from a client or a copy it did
+          not protect leaves no row. The limits are per query: 100,000 rows, 64 MB and ten minutes, and a
+          tenant that uses up its CPU <span class="acro-exp">(Central Processing Unit)</span> allocation has queries blocked until the next fifteen-minute cycle. The
+          habit that makes the tables useful is in
+          <span class="xref">Threat Hunting — Assume Breach, Go Looking</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Custom detections</div>
+      <div class="concept-title">A Hunting Query Becomes a Rule When It Returns the Columns an Alert Needs</div>
+      <div class="concept-desc">
+        A query that found something once can run on a schedule as a custom detection rule, which raises
+        alerts and can take response actions. When a rule is first saved it checks the past 30 days, then runs
+        at the frequency you choose, and each run raises at most 150 alerts. To land the alert on the right
+        device, mailbox or user, the query returns <code>Timestamp</code> and <code>ReportId</code> from the
+        event that matched, and <code>DeviceId</code> for the device tables, which is also what lets the portal
+        draw the process tree.
+        <!-- fact: A new custom detection rule checks the past 30 days, then runs every 24, 12, 3 or 1 hours or continuously (NRT); Defender data lookbacks are 30 days, 48 hours, 12 hours and 4 hours for those frequencies; each rule generates at most 150 alerts per run; queries should return Timestamp and ReportId, and DeviceId for Defender for Endpoint tables; continuous rules must reference one table, use supported operators, and contain no joins, unions, externaldata or comments | source: Microsoft Learn, "Create custom detection rules in Microsoft Defender XDR" (updated 2026-11-22), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Frequency</th><th>Data each run looks back over</th></tr></thead>
+          <tbody>
+            <tr><td>Every 24 hours</td><td>30 days</td></tr>
+            <tr><td>Every 12 hours</td><td>48 hours</td></tr>
+            <tr><td>Every 3 hours</td><td>12 hours</td></tr>
+            <tr><td>Every hour</td><td>4 hours</td></tr>
+            <tr><td>Continuous (NRT)</td><td>Events as they arrive, for a query on one table with no joins, unions or comments</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Tune it in hunting before you schedule it.</strong> A query that matches
+          normal activity raises up to 150 alerts a run and teaches the team to ignore the rule. Tuning is
+          <span class="xref">Writing a Good Rule — Specificity, False-Positive Analysis &amp; the Tuning Fields</span>,
+          and what a rule needs once it exists, from review to retirement, is
+          <span class="xref">The Detection Lifecycle — Idea to Retirement, and the Gates Between</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: DEFENDER THREAT INTELLIGENCE ──────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🔭</span>
+    <span class="topic-name">Defender Threat Intelligence — Threat Analytics, Intel Explorer &amp; What a Reputation Score Means</span>
+    <span class="topic-badge">M365 • Defender XDR</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Where it went</div>
+      <div class="concept-title">The Standalone Portal Retired in August 2026; Threat Intelligence Is Now a Page in Defender</div>
+      <div class="concept-desc">
+        Defender Threat Intelligence was a portal of its own, with its own Intel Explorer. Microsoft retired
+        the standalone portal and that Intel Explorer on 1 August 2026, and its page for Defender Threat
+        Intelligence now describes what replaced them: <span class="volatile" data-checked="2026-11"><em>Threat intelligence</em> in
+        the Defender portal's navigation</span>.
+        It has two pages. <strong class="c-cyan">Overview</strong> shows the threats most relevant to the
+        tenant, the most recent, the highest impact and the highest exposure, and
+        <strong class="c-cyan">Intel explorer</strong> searches Microsoft's intelligence and your own by
+        threat actor, campaign, indicator, tool, vulnerability and more. Microsoft's publicly available threat
+        intelligence comes with Defender XDR <span class="acro-exp">(Extended Detection and Response)</span> at no extra cost. Threat analytics reports moved in as well, and
+        several of their types were renamed on the way.
+        <!-- fact: The legacy standalone Microsoft Threat Intelligence portal and legacy Intel Explorer experience were retired on August 1, 2026; threat intelligence is integrated into the Defender portal as Overview (executive summary from the Threat Intelligence Briefing Agent, latest threats, high-impact threats, highest exposure threats, threat articles) and Intel explorer (campaigns, indicators, attack patterns, identities, threat actors, tools, vulnerabilities, reports, with keyword search and filters by targeted industry, geography and source); threat analytics reports are available in Intel explorer; publicly available Microsoft Threat Intelligence data is available to Defender XDR customers at no additional cost; Intel explorer can also create STIX objects, run ingestion rules and export to TAXII 2.1 servers for Microsoft Sentinel threat intelligence; the Defender Threat Intelligence documentation URL now resolves to the page "Threat intelligence in Microsoft Defender" | source: Microsoft Learn, "Use Intel explorer in Microsoft Defender", "Threat intelligence in Microsoft Defender" and "Transition to the new Threat intelligence experience in Microsoft Defender" (all updated 2026-09-23), fetched and read | checked: 2026-11 -->
+        <!-- fact: The MS-102 study guide, skills measured as of 28 April 2026, lists "Review and respond to threats identified by Microsoft Defender Threat Intelligence" | source: Microsoft Learn, MS-102 study guide, fetched and read in the fourteenth wave | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Threat analytics called it</th><th>Intel explorer calls it</th></tr></thead>
+          <tbody>
+            <tr><td>Technique</td><td>Attack pattern</td></tr>
+            <tr><td>Actor</td><td>Threat actor</td></tr>
+            <tr><td>Activity</td><td>Campaign</td></tr>
+            <tr><td>OSINT <span class="acro-exp">(Open Source Intelligence)</span>, Core threat</td><td>Report</td></tr>
+            <tr><td>Tool, Vulnerability</td><td>Unchanged</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Look for the page, not the product.</strong> A guide written before August
+          2026 sends you to a portal that no longer exists, under type names that changed. MS-102's outline, with
+          skills measured as of April 2026, still asks for Defender Threat Intelligence by that name, the
+          third outline in four waves found trailing its product. The questions intelligence is meant to
+          answer come before any tool, and they are in
+          <span class="xref">Threat Intelligence — Turning Data Into Decisions</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Threat analytics</div>
+      <div class="concept-title">A Threat Analytics Report Answers Two Questions: What Is This Threat, and Is It Here</div>
+      <div class="concept-desc">
+        A threat analytics report is a write-up by Microsoft's researchers of an actor, campaign, technique or
+        vulnerability, joined to the tenant's own data. The dashboard ranks reports three ways: the latest,
+        the highest impact, by how many of your alerts they account for, and the highest exposure, from how
+        severe the threat's vulnerabilities are and how many of your devices have them. Any one Defender
+        product's license opens it, except Defender for Endpoint Plan 1 on its own, but each product's part
+        of a report, its incidents, assets and exposure, appears only with that product and a role that can
+        read it.
+        <!-- fact: Threat analytics reports cover threat actors and campaigns, attack techniques, vulnerabilities, attack surfaces and malware, plus OSINT articles; the dashboard has latest threats, high-impact threats (most active and resolved alerts first) and highest exposure threats (vulnerability severity and the number of exploitable devices); access needs a license for at least one Defender product, Defender for Endpoint P1 being an exception; all reports are visible with one product, but each product and role is needed to see its incidents, assets, exposure and recommended actions; report sections are Overview, Analyst report, Related incidents, Impacted assets, Endpoints exposure, Recommended actions and Indicators (preview); impacted assets counts distinct assets with at least one active alert, and alerts are triggered for mailboxes that receive threat emails; Recommended actions only displays recommendations tracked in Secure Score, the analyst report having more; the Indicators tab lists IOCs, keeps expired ones, and needs a verified tenant | source: Microsoft Learn, "Threat analytics in Microsoft Defender" (updated 2026-11-08), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Tab</th><th>Answers</th></tr></thead>
+          <tbody>
+            <tr><td>Overview</td><td>What the threat is, its aliases and targets, with charts of its impact on you and your exposure</td></tr>
+            <tr><td>Analyst report</td><td>How the attack works, mapped to MITRE ATT&amp;CK <span class="acro-exp">(Adversarial Tactics, Techniques, and Common Knowledge)</span>, with hunting guidance</td></tr>
+            <tr><td>Related incidents, Impacted assets</td><td>Whether it is in your tenant: its incidents, and the devices, users, mailboxes and apps with alerts</td></tr>
+            <tr><td>Endpoints exposure</td><td>How many of your devices have the vulnerabilities it uses, and whether their updates are deployed</td></tr>
+            <tr><td>Recommended actions</td><td>Mitigations and your status on each, but only those Secure Score tracks</td></tr>
+            <tr><td>Indicators (preview)</td><td>Its indicators of compromise, kept after they expire, for verified tenants only</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Impacted does not mean compromised, and the checklist is not the whole
+          list.</strong> A mailbox that received the campaign's mail has an alert, so it counts as an impacted
+          asset whether or not anyone opened the message. And Recommended actions lists only what Secure Score
+          tracks; Microsoft points to the analyst report for the rest. Which of those Secure Score items are
+          worth the effort is
+          <span class="xref">Secure Score &amp; the Tenant Baseline — Which Recommendations Are Worth Doing</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reputation</div>
+      <div class="concept-title">A Reputation Score Counts Rule Matches; Unknown Means Little Matched, Not Clean</div>
+      <div class="concept-desc">
+        Entity pages for IP <span class="acro-exp">(Internet Protocol)</span> addresses, domains, URLs <span class="acro-exp">(Uniform Resource Locator)</span> and files carry a <em>Threat Intelligence Insights</em>
+        tab, in preview, opened from an incident's evidence, the portal's search or a value in advanced
+        hunting results. Its reputation is a score from 0 to 100, from Microsoft's blocklist and from
+        machine-learning rules that weigh things such as the top-level domain, hosting provider, name server,
+        registrar and TLS <span class="acro-exp">(Transport Layer Security)</span> certificate. IP addresses and domains add infrastructure Microsoft has collected by
+        passive DNS <span class="acro-exp">(Domain Name System)</span>, port scans and web crawling: past resolutions, WHOIS, host pairs, subdomains,
+        certificates and services. URLs and files get sandbox detonation results instead.
+        <!-- fact: Entity pages for IP addresses, domains, URLs and files are enriched through the Threat Intelligence Insights tab (preview), at no extra cost for Defender XDR customers, reached from incident evidence, global search, advanced hunting results or direct links; reputation is a 0 to 100 score from proprietary data and machine learning rules of High, Medium or Low severity assessing the top-level domain, hosting provider, name server, registrar and TLS certificate characteristics, to be assessed holistically; 75 to 100 Malicious (confirmed associations to known malicious infrastructure on Microsoft's blocklist with machine learning rule matches), 50 to 74 Suspicious (three or more rules), 25 to 49 Neutral (at least two rules), 0 to 24 Unknown (one or zero rule matches); IP addresses and domains add DNS records, WHOIS, host pairs, subdomains, TLS/SSL certificates, services, components, trackers and cookies from passive DNS, port scans and web crawling; URLs and files add sandbox analysis | source: Microsoft Learn, "View threat intelligence in entity pages in Microsoft Defender (Preview)" (updated 2026-08-02), fetched and read | checked: 2026-11 -->
+        <!-- fact: Intel explorer can be used to search suspicious indicators safely, a defanged indicator such as contoso[.]com has its brackets removed before searching, and malicious indicators should not be entered in a web browser | source: Microsoft Learn, "Use Intel explorer in Microsoft Defender" (updated 2026-09-23), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Score</th><th>Category</th><th>Means</th></tr></thead>
+          <tbody>
+            <tr><td>75–100</td><td>Malicious</td><td>Linked to known malicious infrastructure on Microsoft's blocklist, with rule matches besides</td></tr>
+            <tr><td>50–74</td><td>Suspicious</td><td>Three or more rules matched</td></tr>
+            <tr><td>25–49</td><td>Neutral</td><td>At least two rules matched</td></tr>
+            <tr><td>0–24</td><td>Unknown</td><td>One rule matched, or none</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Unknown is an absence of evidence, not a clean bill.</strong> It means the
+          rules found little either way, and a domain stood up yesterday for a single campaign may not have
+          matched anything yet; Microsoft says to read the factors together rather than trust any one. Look a
+          suspicious address up in Intel explorer, with the brackets of a defanged one taken out, and never by
+          browsing to it. Why a bare indicator is worth so little on its own is
+          <span class="xref">Threat-Feed Reality — Why Most Indicators Are Worthless to You</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: ATTACK SIMULATION TRAINING ─────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🎣</span>
+    <span class="topic-name">Attack Simulation Training — Phishing Simulations, Training Campaigns &amp; the Clicks Nobody Made</span>
+    <span class="topic-badge">M365 • Defender for Office 365</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">What a simulation is</div>
+      <div class="concept-title">A Simulation Is a Technique, a Payload, the Training It Assigns, and a Window of Days</div>
+      <div class="concept-desc">
+        Attack simulation training, <span class="volatile" data-checked="2026-11">in the Defender portal under <em>Email &amp; collaboration</em></span>, sends
+        harmless phishing messages to the users you choose and records what each of them does. It needs
+        Microsoft 365 E5 or Defender for Office 365 Plan 2; E3 gets a trial limited to a credential-harvest
+        payload and two trainings. A simulation is built in a wizard: the social engineering technique, a
+        payload from Microsoft's built-in set or your own, the sign-in and landing pages, who is targeted and
+        who is excluded, the training assigned, the notifications users get, and how long it runs, from two
+        days to thirty. The Attack Simulation Administrator role runs campaigns, Attack Payload Author can only
+        write payloads, and there are no PowerShell cmdlets for any of it.
+        <!-- fact: Attack simulation training requires Microsoft 365 E5 or Defender for Office 365 Plan 2; the E3 trial offers a Credential Harvest payload and the ISA Phishing or Mass Market Phishing training only; roles Attack Simulation Administrator and Attack Payload Author; no corresponding PowerShell cmdlets; the seven techniques as described, with QR codes possible in place of the link; Assign training for me (Recommended) assigns from a user's previous simulation and training results; due dates of 7, 15 or 30 days after the simulation ends, 30 by default; a simulation ends after 2 to 30 days, 2 by default | source: Microsoft Learn, "Get started using Attack simulation training" (updated 2026-07-03) and "Simulate a phishing attack with Attack simulation training" (updated 2026-11-03), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Technique</th><th>What the message asks the user to do</th></tr></thead>
+          <tbody>
+            <tr><td>Credential Harvest</td><td>Follow a link, or scan a QR <span class="acro-exp">(Quick Response)</span> code, to a familiar-looking sign-in page and type a username and password</td></tr>
+            <tr><td>Malware Attachment</td><td>Open an attachment that would run code, such as a macro</td></tr>
+            <tr><td>Link in Attachment</td><td>Open an attachment, then follow the link inside it to a sign-in page</td></tr>
+            <tr><td>Link to Malware</td><td>Follow a link to a file on a well-known sharing site, and open it</td></tr>
+            <tr><td>Drive-by URL <span class="acro-exp">(Uniform Resource Locator)</span></td><td>Follow a link to a page that would run code in the background</td></tr>
+            <tr><td>OAuth <span class="acro-exp">(Open Authorization)</span> Consent Grant</td><td>Follow a link and grant an app access to data such as the mailbox</td></tr>
+            <tr><td>How-to Guide</td><td>Nothing. It teaches, how to report a phish for example, and tests no one</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Assign training in the same wizard.</strong> Microsoft recommends training for
+          every simulation, and the default, <em>Assign training for me</em>, chooses it from each user's own
+          history, due 30 days after the simulation ends. For a course everyone takes with no test attached,
+          a <em>training campaign</em> assigns modules without a simulation. The program around the tool, and
+          why it coaches rather than punishes, is
+          <span class="xref">Security Awareness — Turning People Into a Defense Layer</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Reading the numbers</div>
+      <div class="concept-title">Compare a Result With Its Payload's Predicted Compromise Rate, Not With Last Quarter's</div>
+      <div class="concept-desc">
+        Every payload carries a <strong class="c-cyan">predicted compromise rate</strong>: the share of
+        recipients that Microsoft's data across Microsoft 365 expects it to compromise. Each is also rated for
+        complexity by counting its giveaways, such as spelling mistakes and urgency, and more giveaways mean
+        lower complexity. A simulation's actual compromise rate is the users compromised divided by the users
+        who received it. A repeat offender is a user compromised by consecutive simulations, two by default.
+        Reports start filling a few minutes after launch and update every ten minutes for the first hour,
+        then less often.
+        <!-- fact: Predicted compromise rate is historical data across Microsoft 365 predicting the percentage compromised by a payload; complexity is calculated from the number of indicators of an attack such as spelling errors and urgency, more indicators meaning lower complexity; actual compromise rate is users compromised over users who received the simulation; a repeat offender is a user compromised by consecutive simulations, two by default; reports update every 10 minutes for the first 60 minutes, every 15 minutes to two days, every 30 minutes to seven days and every 60 minutes after | source: Microsoft Learn, "Simulate a phishing attack" (updated 2026-11-03), "Insights and reports for Attack simulation training" (updated 2026-04-23) and "Attack simulation training deployment considerations and FAQ" (updated 2026-11-03), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Number</th><th>What it is</th><th>What moves it</th></tr></thead>
+          <tbody>
+            <tr><td>Predicted compromise rate</td><td>The share of recipients Microsoft expects the payload to compromise</td><td>The payload you choose</td></tr>
+            <tr><td>Actual compromise rate</td><td>Users compromised, divided by users who received it</td><td>Your users, and the payload</td></tr>
+            <tr><td>Reported</td><td>Users who reported the message as phishing</td><td>Whether reporting works end to end, which the next card is about</td></tr>
+            <tr><td>Repeat offenders</td><td>Users compromised by consecutive simulations</td><td>The threshold, two by default, set on the <em>Settings</em> tab</td></tr>
+            <tr><td>Training status</td><td>Completed, in progress, not started, or not assigned</td><td>The due date, 7, 15 or 30 days after the simulation ends</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A falling click rate means nothing until the payload is held constant.</strong>
+          An easier payload lowers it and a harder one raises it, so set each simulation's actual rate against
+          its own predicted rate. To compare departments, Microsoft's advice is identical simulations scoped by
+          department. Reporting a rate upward has the same trap, and
+          <span class="xref">Reporting Security Upward — Metrics a Board Can Actually Act On</span> says how to
+          present it.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Bad data</div>
+      <div class="concept-title">The Clicks Nobody Made: Scanners, the Reporting Mailbox and a Mail Flow Rule</div>
+      <div class="concept-desc">
+        Microsoft's FAQ <span class="acro-exp">(Frequently Asked Questions)</span> has an entry for users marked as compromised who insist they never clicked, often
+        among many users who all clicked within seconds of delivery. Its explanation is that another security
+        tool opened the link to inspect it: a mail security service, an Outlook add-in, endpoint antivirus, or
+        a SOAR <span class="acro-exp">(Security Orchestration, Automation, and Response)</span> playbook triaging reported mail. Each click is recorded with an IP <span class="acro-exp">(Internet Protocol)</span> address and a time, and a
+        click a few seconds after delivery from an address that is not Microsoft's, yours or the user's was
+        most likely made by a machine.
+        <!-- fact: Unexpected clicks and compromise events come from other security devices or applications inspecting simulation messages (Outlook add-ins, email security applications, endpoint security, SOAR playbooks); EmailLinkClicked_IP and EmailLinkClicked_TimeStamp help; simulation messages are not sent from a static list of IP addresses; detonation by a reporting mailbox without the required exclusions results in training assignments; mail flow rules must not block junk@office365.microsoft.com, abuse@messaging.microsoft.com, phish@office365.microsoft.com or not_junk@office365.microsoft.com; audit logging off leaves reports empty and blocks training assignments; at least one E5 license must be assigned to an active user; Google Safe Browsing blocks some simulation URLs with a Deceptive site ahead message; Safe Links doesn't wrap simulation URLs, and the built-in simulation reports are recommended over advanced hunting | source: Microsoft Learn, "Attack simulation training deployment considerations and FAQ" (updated 2026-11-03), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
+          <tbody>
+            <tr><td>Clicks within seconds of delivery, from many users</td><td>Another security tool fetched the link to inspect it</td><td>Exempt the simulation URLs and domains in that tool. The messages come from no fixed list of IP addresses, so exempt by URL</td></tr>
+            <tr><td>Users assigned training after they reported the message</td><td>The reporting mailbox opened the reported copy: Safe Links or Safe Attachments detonated it</td><td>Give the reporting mailbox the exclusions Microsoft's prerequisites list</td></tr>
+            <tr><td>Reported messages missing from the report</td><td>A mail flow rule blocks delivery to Microsoft's reporting addresses</td><td>Let mail through to junk@, phish@ and not_junk@office365.microsoft.com and abuse@messaging.microsoft.com</td></tr>
+            <tr><td>Reports empty, training not assigned</td><td>Audit logging is off, or no active user holds an E5 license</td><td>Turn auditing back on: it is on by default</td></tr>
+            <tr><td>Chrome warns of a deceptive site</td><td>Google Safe Browsing flags some simulation URLs</td><td>Check each URL in your browsers before launch, and allow it in Chrome Enterprise</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The simulation report is the record, not advanced hunting.</strong> Safe Links
+          does not wrap simulation URLs, so a click may never reach <code>UrlClickEvents</code>, and Microsoft
+          recommends the built-in reports for anything about simulations. The real-phish half of the same
+          workflow, what to do when a user reports one, is
+          <span class="xref">A User Reported a Phishing Email — The First Ten Minutes</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Other vendors</div>
+      <div class="concept-title">A Third-Party Simulator Needs the Advanced Delivery Policy, Matched on Its Own Addresses</div>
+      <div class="concept-desc">
+        Microsoft 365 does not let anyone allowlist mail identified as malware or high-confidence phishing, so
+        another vendor's simulation is filtered like any other message unless it is named in the
+        <strong class="c-cyan">advanced delivery policy</strong>. An entry takes the vendor's sending domains,
+        the MAIL FROM or DKIM <span class="acro-exp">(DomainKeys Identified Mail)</span> domain, up to 50, and its sending IP addresses, up to 10, and a message must
+        match at least one of each. A match skips spam and phishing filtering, zero-hour auto purge for both,
+        Safe Links blocking and Safe Attachments detonation, and a user's report of one raises no alert or
+        investigation. Malware filtering still applies: only the policy's other use, a SecOps mailbox that
+        receives everything unfiltered for analysis, skips it.
+        <!-- fact: Microsoft 365 doesn't allow allowlists or filtering bypass for malware or high confidence phishing; the advanced delivery policy needs at least one domain (5321.MailFrom or DKIM, up to 50) and one sending IP (up to 10), matching at least one of each; filters take no action except malware filtering, bypassed for SecOps mailboxes only; ZAP for spam and phishing takes no action, ZAP for malware is bypassed for SecOps mailboxes only; Safe Links doesn't block or detonate the URLs, which are still wrapped; Safe Attachments doesn't detonate; user reports of simulation messages generate no alert, investigation or incident; adding the IPs of on-premises or non-Microsoft sending infrastructure bypasses spam filtering for any internet sender impersonating the simulation's domain | source: Microsoft Learn, "Configure the advanced delivery policy for non-Microsoft phishing simulations and email delivery to SecOps mailboxes" (updated 2026-07-03), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="concept-desc verdict">
+        <strong class="c-amber">Never add your own relay's addresses to make it match.</strong> When mail goes
+        from Microsoft 365 to an on-premises server or another filtering service and back, Microsoft 365 cannot
+        see the vendor's real IP address, and its documentation warns that listing the relay's addresses
+        instead turns off spam filtering for any sender on the internet who forges the simulation's domain.
+        When the MX record points at another service first, Enhanced Filtering for Connectors is what recovers
+        the real address. Why a sender gets through in general is
+        <span class="xref">Defender for Office in Depth — Policy Order &amp; Why a Message Got Through</span>.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: DEFENDER FOR CLOUD APPS ───────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🔭</span>
+    <span class="topic-name">Defender for Cloud Apps — App Connectors, Cloud Discovery &amp; Why Unsanctioned Is Not Blocked</span>
+    <span class="topic-badge">M365 • Defender for Cloud Apps</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Two doors</div>
+      <div class="concept-title">An App Connector Sees Inside the Apps You Own; Cloud Discovery Sees Which Apps People Use</div>
+      <div class="concept-desc">
+        Defender for Cloud Apps learns about cloud apps through two doors that see different things. An
+        <strong class="c-cyan">app connector</strong> uses the app's own API <span class="acro-exp">(Application Programming Interface)</span>: connect Microsoft 365 and it reads
+        the Microsoft 365 audit log, so it sees sign-ins, sharing, mailbox and admin activity inside the tenant,
+        from the week before you connected it onward. <strong class="c-cyan">Cloud Discovery</strong> reads
+        traffic instead, from Defender for Endpoint on devices, from a log collector that receives firewall and
+        proxy logs over syslog or FTP <span class="acro-exp">(File Transfer Protocol)</span>, or from an integrated secure web gateway, and matches it against a
+        catalog of more than 31,000 apps scored on more than 90 risk factors. The first says what happened
+        inside an app; the second, which apps are in use at all.
+        <!-- fact: Cloud discovery analyzes traffic logs against a catalog of over 31,000 cloud apps ranked on more than 90 risk factors; snapshot reports from uploaded logs and continuous reports from the Defender for Endpoint integration, a log collector receiving logs over Syslog or FTP, or an integrated secure web gateway (Zscaler, iboss, Corrata, Menlo Security); discovery data is analyzed and updated four times a day | source: Microsoft Learn, "Set up Cloud Discovery" (updated 2024-10-23), fetched and read | checked: 2026-11 -->
+        <!-- fact: Connecting Microsoft 365 needs auditing enabled in Microsoft Purview, Exchange mailbox audit logging, and at least one assigned Microsoft 365 license; Power BI and Dynamics 365 logs arrive 24 to 72 hours after their auditing is enabled; after connecting, data from the past week is shown; default components were added in January 2026 and a connector configured before then should have all defaults selected and be connected again, since some detections don't work without them; with on-premises sync, the Suspend user governance action is reverted by the on-premises settings | source: Microsoft Learn, "Connect Microsoft 365 to Microsoft Defender for Cloud Apps" (updated 2026-07-03), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Door</th><th>Fed by</th><th>Sees</th><th>Needs</th></tr></thead>
+          <tbody>
+            <tr><td>Microsoft 365 app connector</td><td>The Microsoft 365 audit log, through the API</td><td>Activity inside the tenant, and third-party apps calling its APIs</td><td>Auditing on in Purview, mailbox auditing on, and one Microsoft 365 license assigned</td></tr>
+            <tr><td>Discovery through Defender for Endpoint</td><td>Network events from onboarded devices, on the corporate network or off it</td><td>Which cloud apps each user and device reaches</td><td>Defender for Endpoint Plan 2 or Defender for Business, and one toggle; data within two hours</td></tr>
+            <tr><td>Discovery through a log collector</td><td>Firewall and proxy logs sent over syslog or FTP</td><td>Which apps the network sees, from the appliances whose formats it parses</td><td>A collector running on your network; data analyzed four times a day</td></tr>
+            <tr><td>Snapshot report</td><td>Logs you upload by hand</td><td>One picture, once</td><td>Nothing ongoing</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Connect both, and recheck an old connector.</strong> Microsoft added default
+          components to the Microsoft 365 connector in January 2026, and some detections do not work without
+          them, so a connector set up before then needs every default selected and <em>Connect</em> pressed
+          again. The vendor-neutral version of the same split, API mode against inline, is
+          <span class="xref">CASB &amp; Secure Web Gateway — Seeing SaaS Without Breaking It</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Policies</div>
+      <div class="concept-title">Most Detections Are Already On; the Policies You Write Match Whole Words</div>
+      <div class="concept-desc">
+        Anomaly detection policies are on from the start. They learn for seven days, during which not every
+        alert is raised, and then compare each session with the past month's activity. Since June 2025
+        Microsoft has been moving them to a dynamic model, and has disabled several older ones, renaming some
+        into new detections. The policies you write come from a template or from a search: filter the
+        activity log to what worries you, then choose <em>New policy from search</em>. A policy filter's
+        <em>Contains</em> matches whole words only, so <code>malware</code> finds
+        <code>virus_malware_file.exe</code> but not <code>malwarevirusfile.exe</code>.
+        <!-- fact: Anomaly detection policies are enabled by default with an initial learning period of seven days, after which sessions are compared to activity over the past month; from June 2025 they began transitioning to a dynamic threat detection model and several legacy policies were disabled, some renamed; impossible travel works at country/region level with no alerts for the same or bordering countries/regions, travel between two IP addresses considered safe (such as tagged corporate) is trusted unless sensitivity is High, and it doesn't apply to failed or non-interactive logins; tagging VPN addresses is recommended to avoid impossible travel alerts for staff on the corporate VPN | source: Microsoft Learn, "Create Defender for Cloud Apps anomaly detection policies" (updated 2026-08-07) and "Activities" (updated 2026-07-03), fetched and read | checked: 2026-11 -->
+        <!-- fact: Policy types: activity, anomaly detection, OAuth app (built in, can't be created), malware detection (built in), file, access and session (Conditional Access), and app discovery; file policies retire on January 6, 2027, with migration to Microsoft Purview DLP or auto-labeling; Contains searches only for full words separated by commas, dots, spaces or underscores | source: Microsoft Learn, "Control cloud apps with policies" (updated 2026-07-03), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Policy</th><th>What it does</th><th>Note</th></tr></thead>
+          <tbody>
+            <tr><td>Anomaly detection</td><td>Built-in behavior analytics: impossible travel, mass download, repeated failed sign-ins</td><td>On by default, after seven days of learning</td></tr>
+            <tr><td>Activity policy</td><td>Alerts on, or acts on, activities you define, or a rate of them</td><td>From a template, or from a search</td></tr>
+            <tr><td>OAuth <span class="acro-exp">(Open Authorization)</span> app policy</td><td>Reviews the permissions OAuth apps have requested</td><td>Built in, and can't be created</td></tr>
+            <tr><td>File policy</td><td>Scans files for sharing and sensitive content</td><td>Retires on 6 January 2027: move the rule to Purview DLP <span class="acro-exp">(Data Loss Prevention)</span> or auto-labeling</td></tr>
+            <tr><td>Access and session policies</td><td>Real-time control over sign-ins and what is done in a session</td><td>Work through Conditional Access</td></tr>
+            <tr><td>App discovery policy</td><td>Alerts when new apps appear in discovery</td><td>Needs Cloud Discovery data</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Tag your VPN <span class="acro-exp">(Virtual Private Network)</span> and office addresses before trusting impossible travel.</strong>
+          The detection works at the level of countries, ignores neighboring ones, and trusts travel between two
+          addresses tagged as safe, such as corporate, unless its sensitivity is set to High. Microsoft
+          recommends tagging the VPN's addresses so that staff connecting from home through it do not raise it.
+          A file policy written today needs a Purview home by January 2027, and
+          <span class="xref">Sensitivity Labels &amp; DLP — Classification That Survives Contact With Users</span>
+          is where that lives.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Governing apps</div>
+      <div class="concept-title">Unsanctioned Is a Label; Defender for Endpoint Is What Blocks</div>
+      <div class="concept-desc">
+        Marking an app <em>Unsanctioned</em> in Cloud Discovery does not block it. It makes the app easy to
+        find and watch, and the blocking happens somewhere else. With the Defender for Endpoint integration,
+        unsanctioned apps are blocked on onboarded devices automatically, can be scoped to device groups, and
+        can warn and educate users instead of blocking. A Zscaler, iboss, Corrata, Menlo or Open Systems
+        gateway blocks them too, without device groups or warnings. Anywhere else, Defender for Cloud Apps
+        generates a block script for your appliance, or exports the apps' domains. Apps connected through a
+        connector or the proxy are sanctioned automatically, and a few Microsoft services cannot be blocked at
+        all: the Defender portals, Purview and Intune among them.
+        <!-- fact: Unsanctioning an app doesn't block use; with Defender for Endpoint, unsanctioned apps are blocked automatically, scoping to device groups and warn-and-educate are available; Zscaler NSS, iboss, Corrata, Menlo and Open Systems also block, without device-group scoping or warn-and-educate; block scripts can be generated for on-premises appliances, or domains exported; apps onboarded to the inline proxy or connected by app connector are auto-sanctioned; services including Defender for Cloud Apps, Defender for Identity, Purview, Conditional Access App Control, Secure Score and Intune can't be blocked; blocking prerequisites are cloud protection and network protection in Defender for Endpoint and the Microsoft Defender Browser Protection add-on in non-Microsoft browsers; a conflict between a manual action and a discovery policy's action is settled by the last applied | source: Microsoft Learn, "Govern discovered apps" (updated 2026-08-11), fetched and read | checked: 2026-11 -->
+        <!-- fact: The Defender for Endpoint integration is turned on under Settings, Endpoints, General, Advanced features, data appears within two hours, and it needs Defender for Endpoint Plan 2 or Defender for Business | source: Microsoft Learn, "Microsoft Defender for Endpoint integration with Microsoft Defender for Cloud Apps" (updated 2026-07-03), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>What enforces it</th><th>Where the block happens</th><th>Scoping</th></tr></thead>
+          <tbody>
+            <tr><td>Defender for Endpoint</td><td>On onboarded devices, wherever they are</td><td>By device group, and can warn instead of block</td></tr>
+            <tr><td>An integrated gateway</td><td>At Zscaler, iboss, Corrata, Menlo or Open Systems</td><td>All or nothing, with no warning option</td></tr>
+            <tr><td>A block script</td><td>On your own appliance, imported by hand</td><td>A copy of today's list: unsanctioning another app means generating a new one</td></tr>
+            <tr><td>An exported domain list</td><td>On any other appliance</td><td>The same: a copy, not a connection</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Check the prerequisites before believing a block.</strong> Microsoft lists three
+          for Defender for Endpoint: cloud protection on, network protection on, and the Microsoft Defender
+          Browser Protection add-on in every non-Microsoft browser. When a manual sanction and a discovery
+          policy's action disagree, the one applied last wins. What to do with the list before blocking
+          anything is <span class="xref">Shadow IT — Finding It Without Making It Worse</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Investigating</div>
+      <div class="concept-title">The Activity Log Answers Who, From Where, and What Else That Address Did</div>
+      <div class="concept-desc">
+        The activity log lists what connected apps report, under each app's own names for its activities.
+        Selecting one opens a drawer with the policies it matched, the raw data, a panel for the user, with
+        their open alerts and their activities, countries, ISPs <span class="acro-exp">(Internet Service Provider)</span> and IP <span class="acro-exp">(Internet Protocol)</span> addresses over the past 30 days, and a
+        panel for the IP address, with its open alerts, locations and admin activity. From there one click
+        shows everything the same user did, everything from the same address, or everything in the same 48
+        hours, and the address panel tags the address as corporate, VPN or risky. For a user synced from
+        on-premises Active Directory, the <em>Suspend user</em> action is undone by the on-premises settings,
+        so the account has to be disabled there.
+        <!-- fact: The Activity drawer shows matched policies, raw data, and user and IP address tabs; the user tab counts open alerts, matches, and the activities, countries, ISPs and IP addresses of the past 30 days; the IP tab counts open alerts, activities, locations and admin activities of the past 30 days and can set the address as corporate, VPN or risky; icons view activities of the same type, user, IP address, location or 48-hour period; activity names come from each connected app's own API | source: Microsoft Learn, "Activities" (updated 2026-07-03), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="concept-desc verdict">
+        <strong class="c-amber">Pivot on the address, not only the user.</strong> A sign-in that looks wrong for
+        one account is a question about that account; the same address in the activity of several accounts is
+        an answer, and the IP address panel is one click from it. The same events are in advanced hunting's
+        <code>CloudAppEvents</code>, which is where
+        <span class="xref">Defender XDR Incidents &amp; Advanced Hunting — One Queue for Mail, Devices, Identities &amp; Apps</span>
+        joins them to mail and devices.
+      </div>
+    </div>
+  </div>
+</div>
+
           <!-- ── TOPIC: EXCHANGE HYBRID ──────────────────────────────── -->
           <div class="topic" data-reviewed="2026-09">
             <div class="topic-header">
@@ -3400,7 +4516,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
           <div class="topic" data-reviewed="2026-09">
             <div class="topic-header">
               <span class="topic-icon">📮</span>
-              <span class="topic-name">Exchange Server On-Prem — DAG <span class="acro-exp">(Directed Acyclic Graph)</span>, Transport &amp; the Server You Can't Quite Remove</span>
+              <span class="topic-name">Exchange Server On-Prem — DAG <span class="acro-exp">(Database Availability Group)</span>, Transport &amp; the Server You Can't Quite Remove</span>
               <span class="topic-badge">Exchange • Hybrid</span>
               <span class="topic-chev">▶</span>
             </div>

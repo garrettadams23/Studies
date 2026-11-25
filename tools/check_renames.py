@@ -112,9 +112,13 @@ def findings_in(text, registry, domain="-"):
                 # An allowed phrase means the old string is part of a name that
                 # is still correct — check the text actually there, not the
                 # registry's idea of it.
-                context = text[s: s + max(len(a) for a in entry["allow"]) + 4] if entry["allow"] else ""
+                longest = max((len(a) for a in entry["allow"]), default=0)
+                context = text[s: s + longest + 4] if entry["allow"] else ""
                 lowered = context.lower()
-                near = text[max(0, s - 12): e + 12].lower()
+                # Wide enough for an allowed phrase that *ends* in the old string:
+                # "Defender for Office 365" is the product's current name, and a
+                # fixed 12 characters stopped one short of its first letter.
+                near = text[max(0, s - longest): e + longest].lower()
                 if any(lowered.startswith(a.lower()) or a.lower() in near
                        for a in entry["allow"]):
                     continue
@@ -150,6 +154,8 @@ def self_test():
     reg = [
         {"old": "whitelist", "new": "allowlist", "since": "2020-06", "allow": [], "inflect": True},
         {"old": "Azure AD", "new": "Entra ID", "since": "2023-07", "allow": ["Azure AD Connect"]},
+        {"old": "Office 365", "new": "Microsoft 365", "since": "2020-04",
+         "allow": ["Defender for Office 365"]},
     ]
     cases = [
         ("lowercase, as the registry writes it", "use a whitelist for this", 1),
@@ -164,6 +170,9 @@ def self_test():
         ("a product name in the wrong case is still that product", "sign in with azure ad", 1),
         ("a non-inflecting entry does not inflect", "two Azure ADs walk into a bar", 0),
         ("substring of a longer word is not a match", "the whitelistings", 0),
+        ("an allowed phrase can end in the old string",
+         "Defender for Office 365 Plan 2 runs the simulations", 0),
+        ("the old name on its own is still caught", "licensed for Office 365 only", 1),
     ]
     bad = 0
     for name, text, expect in cases:

@@ -518,6 +518,50 @@ def build_paths():
     return payload.replace("</", "<\\/")
 
 
+_ERROR_CODE_RE = re.compile(r"(?:0x[0-9A-F]{8}|\d{1,5})")
+_ERROR_SYSTEMS = {
+    "Windows Installer", "Configuration Manager", "Windows",
+    "Windows Management Instrumentation", "Windows Update Agent",
+    "Intune · Windows", "Intune · iOS/iPadOS", "Intune · Android",
+}
+
+
+def build_error_codes(topic_ids):
+    """The rows behind the header's error-code lookup, from data/error-codes.json.
+
+    Every row was copied from a Microsoft page that was read, and names it by a
+    key in `sources`. The build refuses a row it cannot vouch for the shape of:
+    a code in neither printed form, a system the lookup has no label for, a
+    source nobody recorded, or a topic link that would lead nowhere. A malformed
+    row would otherwise ship as a lookup that silently finds nothing.
+    """
+    path = DATA / "error-codes.json"
+    if not path.exists():
+        return '{"codes":[]}'
+    doc = json.loads(path.read_text(encoding="utf-8"))
+    sources, codes = doc.get("sources", {}), doc.get("codes", [])
+    seen = set()
+    for row in codes:
+        where = f"data/error-codes.json: {row.get('code')!r} ({row.get('system')})"
+        if not _ERROR_CODE_RE.fullmatch(str(row.get("code", ""))):
+            raise SystemExit(f"{where}: a code is 0x plus eight upper-case hex digits, or a decimal")
+        if row.get("system") not in _ERROR_SYSTEMS:
+            raise SystemExit(f"{where}: unknown system")
+        if row.get("src") not in sources:
+            raise SystemExit(f"{where}: its source is not recorded under 'sources'")
+        if not str(row.get("meaning", "")).strip():
+            raise SystemExit(f"{where}: no meaning")
+        if row.get("topic") and row["topic"] not in topic_ids:
+            raise SystemExit(f"{where}: links to a topic that does not exist")
+        if (row["code"], row["system"]) in seen:
+            raise SystemExit(f"{where}: listed twice")
+        seen.add((row["code"], row["system"]))
+    payload = json.dumps({"sources": sources, "codes": codes},
+                         separators=(",", ":"), ensure_ascii=False)
+    print(f"  + error codes ({len(payload):,} chars, {len(codes)} codes)")
+    return payload.replace("</", "<\\/")
+
+
 _SW_VERSION_RE = re.compile(r'(const CACHE_VERSION = ")[^"]*(";)')
 
 
@@ -668,6 +712,8 @@ def main():
     output = output.replace("<!-- RELATED_TOPICS -->", build_related())
     output = output.replace("<!-- LEARNING_PATHS -->", build_paths())
     output = output.replace("<!-- CHANGELOG -->", build_changelog(changelog))
+    output = output.replace("<!-- ERROR_CODES -->", build_error_codes(
+        {tid for ids in topic_index.values() for tid in ids}))
 
     # The link-preview text quotes the site's size. Substituting it here is the
     # difference between a number that is right and a number that was right

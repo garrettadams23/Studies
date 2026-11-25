@@ -265,7 +265,7 @@
           </div>
 
           <!-- ── TOPIC: PKI ─────────────────────────────────────────────── -->
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🏛️</span>
               <span class="topic-name">PKI <span class="acro-exp">(Public Key Infrastructure)</span> &amp; Certificate Lifecycle</span>
@@ -282,7 +282,10 @@
                 <div class="concept-desc">
                   PKI enables digital trust through digitally signed
                   certificates. Root CAs are kept offline to protect the trust
-                  anchor. CRL <span class="acro-exp">(Certificate Revocation List)</span> and OCSP <span class="acro-exp">(Online Certificate Status Protocol)</span> enable real-time revocation checking.
+                  anchor. CRL <span class="acro-exp">(Certificate Revocation List)</span> and OCSP <span class="acro-exp">(Online Certificate Status Protocol)</span> publish which certificates are revoked, but clients check them
+                  unreliably, and Let's Encrypt turned its OCSP service off in August 2025 and publishes
+                  CRLs only. Short certificate lifetimes, in the next card, do the work revocation
+                  was meant to.<!-- fact: Let's Encrypt stopped including OCSP URLs in its certificates on 7 May 2025, turned off its OCSP responders on 6 August 2025, and publishes revocation exclusively through CRLs, citing OCSP's privacy cost: the responder learns which site is visited from which IP address | source: Let's Encrypt blog, "Ending OCSP Support in 2025" (5 December 2024) and "OCSP Service Has Reached End of Life" (6 August 2025), fetched and read | checked: 2026-11 -->
                 </div>
                 <div class="dw">
                   <div
@@ -408,6 +411,39 @@
                       ">
                       ❌ Revocation (CRL/OCSP)
                     </div>
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Lifetimes</div>
+                <div class="concept-title">Public TLS Certificates Are Shrinking From 398 Days to 47</div>
+                <div class="concept-desc">
+                  The CA/Browser Forum's Baseline Requirements, which every publicly trusted certificate authority follows, cap
+                  how long a TLS certificate, still often called an SSL <span class="acro-exp">(Secure Sockets Layer)</span> certificate, may be valid. The maximum lifetime was 398
+                  days until <strong class="c-cyan">15 March 2026</strong>,
+                  when it fell to 200; it falls to 100 on 15 March 2027 and to <strong class="c-cyan">47 days</strong> on 15 March
+                  2029. How long a CA may reuse a check that you control the domain falls with it, to 10 days by 2029, so
+                  renewing will mean proving control again almost every time. The browser makers proposed and backed the
+                  change, and no certificate authority voted against it.
+                  <!-- fact: CA/Browser Forum TLS Baseline Requirements version 2.3.1 (adopted by Ballot SC104), section 6.3.2: Subscriber Certificates issued before 2026-03-15 must not exceed 398 days of validity; from 2026-03-15, 200 days; from 2027-03-15, 100 days; from 2029-03-15, 47 days, and should not be issued for the maximum by default; domain name and IP address validation data may be reused for at most 200 days from 2026-03-15, 100 days from 2027-03-15 and 10 days from 2029-03-15; the schedule came from Ballot SC081v3 of April 2025, which all four browser makers voting (Apple, Google, Microsoft, Mozilla) supported and no certificate issuer opposed | source: CA/Browser Forum, TLS BR 2.3.1 PDF and the Ballot SC081v3 page, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Issued from</th><th>Longest validity</th><th>Domain validation reusable for</th></tr></thead>
+                    <tbody>
+                      <tr><td>Before 15 March 2026</td><td>398 days</td><td>398 days</td></tr>
+                      <tr><td>15 March 2026</td><td>200 days</td><td>200 days</td></tr>
+                      <tr><td>15 March 2027</td><td>100 days</td><td>100 days</td></tr>
+                      <tr><td>15 March 2029</td><td>47 days</td><td>10 days</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Automate renewal before 2027, because a calendar reminder will not survive 47 days.</strong>
+                    At 398 days a manual renewal was an annual chore; at 47 it is eight a year per certificate, each with a fresh
+                    domain check, and the failure mode is an outage on the morning one is missed. ACME <span class="acro-exp">(Automatic Certificate Management Environment)</span> clients renew on their own;
+                    the work is finding every certificate that is not yet issued that way. Internal certificate authorities are
+                    not bound by these rules, which is covered in
+                    <span class="xref">Certificate Lifecycle — Auto-Enrollment and the Expiry Nobody Scheduled</span>.
                   </div>
                 </div>
               </div>
@@ -954,7 +990,7 @@
 <!-- ═══════════════════════════════════════════════════
      TOPIC: Active Directory
 ═══════════════════════════════════════════════════ -->
-<div class="topic" data-reviewed="2026-09">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🏢</span>
     <span class="topic-name">Active Directory — Structure, Objects &amp; Attacks</span>
@@ -1105,9 +1141,9 @@
           <tr><th>Attack</th><th>What happens</th><th>Requires</th><th>Defense</th></tr>
           <tr>
             <td style="color:var(--red)">Kerberoasting</td>
-            <td>Request TGS <span class="acro-exp">(Ticket Granting Service)</span> for any SPN-registered account. Crack the RC4-encrypted ticket offline.</td>
+            <td>Request TGS <span class="acro-exp">(Ticket Granting Service)</span> for any SPN-registered account. Crack the ticket offline. RC4 <span class="acro-exp">(Rivest Cipher 4)</span> tickets were the easy case, and since Microsoft's April 2026 updates for CVE-2026-20833 a domain controller issues them only where RC4 is explicitly configured.</td>
             <td>Any domain user</td>
-            <td>Strong passwords on service accounts; use gMSA <span class="acro-exp">(group Managed Service Account)</span>; AES-only encryption</td>
+            <td>Strong passwords on service accounts; use gMSA <span class="acro-exp">(group Managed Service Account)</span>; AES-only encryption; find explicit RC4 settings, including a DefaultDomainSupportedEncTypes value that allows it, through the KDCSVC audit events<!-- fact: Microsoft KB5073381 (CVE-2026-20833): Windows updates from January 13, 2026 add protections and KDCSVC audit events 201 to 209 for Kerberos service tickets that might be issued with weak or legacy encryption such as RC4; updates from April 14, 2026 change the KDC default for DefaultDomainSupportedEncTypes so updated domain controllers in Enforcement mode assume only AES support when no explicit configuration exists; updates from July 2026 remove Audit mode; an explicit DefaultDomainSupportedEncTypes value is not changed, and an insecure one, such as one allowing RC4, logs KDCSVC event 205; Microsoft's Kerberos guidance notes RC4's default status enabled Kerberoasting | source: Microsoft Support, KB5073381, and Microsoft Learn, "Detect and remediate RC4 usage in Kerberos", fetched and read | checked: 2026-11 --></td>
           </tr>
           <tr>
             <td style="color:var(--red)">AS-REP Roasting</td>
@@ -1746,32 +1782,32 @@ sudo certbot renew --dry-run</pre>
 
 <!-- BEGINNER12-SEC v1 -->
 <!-- ── TOPIC: OWASP TOP 10 WEB VULNERABILITIES ───────────── -->
-<div class="topic" data-reviewed="2026-09">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🕸️</span>
-    <span class="topic-name">OWASP <span class="acro-exp">(Open Worldwide Application Security Project)</span> Top 10 — The Most Critical Web Security Risks</span>
+    <span class="topic-name">OWASP Top 10 — The Most Critical Web Security Risks</span>
     <span class="topic-badge">SEC • Essential</span>
     <span class="topic-chev">▶</span>
   </div>
   <div class="topic-body">
     <div class="concept-card">
       <div class="concept-label">WHAT IS OWASP</div>
-      <div class="concept-title">Open Web Application Security Project</div>
-      <div class="concept-desc">OWASP is a nonprofit foundation that publishes the Top 10 — a consensus list of the most critical web application security risks, updated every few years based on real-world data. Every web developer and security professional should know these by heart.</div>
+      <div class="concept-title">Open Worldwide Application Security Project</div>
+      <div class="concept-desc">OWASP is a nonprofit foundation that publishes the Top 10 — a consensus list of the most critical web application security risks, updated every few years based on real-world data. Every web developer and security professional should know these by heart. The current edition is the 2025 one, OWASP's eighth, and the table follows it.<!-- fact: The Open Worldwide Application Security Project (OWASP) is a 501(c)(3) nonprofit foundation; the OWASP project launched on 1 December 2001 | source: OWASP Foundation, About page, fetched and read | checked: 2026-11 --><!-- fact: OWASP Top 10:2025, the eighth installment: A01 Broken Access Control, A02 Security Misconfiguration, A03 Software Supply Chain Failures, A04 Cryptographic Failures, A05 Injection, A06 Insecure Design, A07 Authentication Failures, A08 Software or Data Integrity Failures, A09 Security Logging and Alerting Failures, A10 Mishandling of Exceptional Conditions; OWASP's project page calls 2025 the most current released version, with 2021 and 2017 as previous versions | source: OWASP Top 10:2025 site (top10.owasp.org/2025) and the OWASP Top 10 project page, fetched and read | checked: 2026-11 --></div>
     </div>
     <table class="ai-table">
       <thead><tr><th>#</th><th>Risk</th><th>Example Attack</th><th>Prevention</th></tr></thead>
       <tbody>
-        <tr><td>A01</td><td>Broken Access Control</td><td>Changing URL <span class="acro-exp">(Uniform Resource Locator)</span> param to access another user's data</td><td>Enforce authorization server-side for every request</td></tr>
-        <tr><td>A02</td><td>Cryptographic Failures</td><td>HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> instead of HTTPS <span class="acro-exp">(HyperText Transfer Protocol Secure)</span>; MD5 <span class="acro-exp">(Message Digest 5)</span> password hashes</td><td>TLS <span class="acro-exp">(Transport Layer Security)</span> everywhere; bcrypt for passwords; AES-256 for data</td></tr>
-        <tr><td>A03</td><td>Injection (SQLi, XSS, etc.)</td><td><code>' OR '1'='1</code> in login field</td><td>Parameterized queries; input validation; output encoding</td></tr>
-        <tr><td>A04</td><td>Insecure Design</td><td>No rate limiting; predictable reset tokens</td><td>Threat modeling; security requirements from day 1</td></tr>
-        <tr><td>A05</td><td>Security Misconfiguration</td><td>Default creds; debug mode in prod; open S3 <span class="acro-exp">(Simple Storage Service)</span> buckets</td><td>Hardening guides; IaC <span class="acro-exp">(Infrastructure as Code)</span> with security checks; scan configs</td></tr>
-        <tr><td>A06</td><td>Vulnerable Components</td><td>Log4Shell (the Log4j logging library); Heartbleed; npm package with malware</td><td>Inventory dependencies; Dependabot; SCA <span class="acro-exp">(Software Composition Analysis)</span> scanning</td></tr>
-        <tr><td>A07</td><td>Auth Failures</td><td>Brute force; credential stuffing; weak passwords</td><td>MFA <span class="acro-exp">(Multi-Factor Authentication)</span>; account lockout; breached password checks</td></tr>
-        <tr><td>A08</td><td>Software Integrity Failures</td><td>CI/CD <span class="acro-exp">(Continuous Integration / Continuous Delivery)</span> pipeline compromise; insecure deserialization</td><td>Code signing; trusted registries; verify checksums</td></tr>
-        <tr><td>A09</td><td>Logging &amp; Monitoring Failures</td><td>Attack goes undetected for months</td><td>Centralized logging; SIEM <span class="acro-exp">(Security Information and Event Management)</span> alerts; test detection</td></tr>
-        <tr><td>A10</td><td>SSRF <span class="acro-exp">(Server-Side Request Forgery)</span></td><td>User-supplied URL fetched by server → internal services exposed</td><td>Allowlist URLs; block RFC-1918 addresses</td></tr>
+        <tr><td>A01</td><td>Broken Access Control</td><td>Changing a URL <span class="acro-exp">(Uniform Resource Locator)</span> param to reach another user's data; making the server fetch an internal URL (SSRF, part of A01 since 2025)</td><td>Enforce authorization server-side for every request; allowlist the URLs a server may fetch</td></tr>
+        <tr><td>A02</td><td>Security Misconfiguration</td><td>Default creds; debug mode in prod; open S3 <span class="acro-exp">(Simple Storage Service)</span> buckets</td><td>Hardening guides; IaC <span class="acro-exp">(Infrastructure as Code)</span> with security checks; scan configs</td></tr>
+        <tr><td>A03</td><td>Software Supply Chain Failures</td><td>Log4Shell (the Log4j logging library); npm package with malware; a build pipeline weaker than what it deploys</td><td>Inventory dependencies; Dependabot; SCA <span class="acro-exp">(Software Composition Analysis)</span> scanning; no one person can push code to production alone</td></tr>
+        <tr><td>A04</td><td>Cryptographic Failures</td><td>HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> instead of HTTPS <span class="acro-exp">(HyperText Transfer Protocol Secure)</span>; MD5 <span class="acro-exp">(Message Digest 5)</span> password hashes</td><td>TLS <span class="acro-exp">(Transport Layer Security)</span> everywhere; bcrypt for passwords; AES-256 for data</td></tr>
+        <tr><td>A05</td><td>Injection (SQLi, XSS, etc.)</td><td><code>' OR '1'='1</code> in login field</td><td>Parameterized queries; input validation; output encoding</td></tr>
+        <tr><td>A06</td><td>Insecure Design</td><td>No rate limiting; predictable reset tokens</td><td>Threat modeling; security requirements from day 1</td></tr>
+        <tr><td>A07</td><td>Authentication Failures</td><td>Brute force; credential stuffing; weak passwords</td><td>MFA <span class="acro-exp">(Multi-Factor Authentication)</span>; account lockout; breached password checks</td></tr>
+        <tr><td>A08</td><td>Software or Data Integrity Failures</td><td>Unsigned updates; insecure deserialization</td><td>Code signing; trusted registries; verify checksums</td></tr>
+        <tr><td>A09</td><td>Security Logging and Alerting Failures</td><td>Attack goes undetected for months; a scanner runs and nothing alerts</td><td>Centralized logging; SIEM <span class="acro-exp">(Security Information and Event Management)</span> alerts; check that a scan raises one</td></tr>
+        <tr><td>A10</td><td>Mishandling of Exceptional Conditions</td><td>An error that leaves a transaction half done, or a check that fails open</td><td>Catch errors where they occur; roll back and fail closed; one global handler</td></tr>
       </tbody>
     </table>
     <div class="concept-desc verdict">
@@ -1781,7 +1817,7 @@ sudo certbot renew --dry-run</pre>
       particular thing to this particular object" — and it can only be caught by checking
       authorization server-side on every request, including the ones that only the front
       end was supposed to be able to make. Treat the list as a design checklist rather
-      than a test plan.
+      than a test plan.<!-- fact: A01:2025 lists CORS misconfiguration among access control failures and counts CWE-918, SSRF, among its CWEs; A03:2025 includes a CI/CD pipeline weaker than the systems it builds and the absence of separation of duty; A09:2025 lists DAST scans such as Burp or ZAP that trigger no alerts; A10:2025 recommends catching errors where they occur, a global exception handler, and rolling back a partial transaction, failing closed, and gives resources left locked after exceptions as a denial-of-service scenario | source: OWASP Top 10:2025 category pages A01, A03, A09 and A10, fetched and read | checked: 2026-11 -->
     </div>
     <div class="concept-card">
       <div class="concept-label">SQL <span class="acro-exp">(Structured Query Language)</span> INJECTION DEEP DIVE</div>
@@ -2794,7 +2830,7 @@ curl -s --request GET   --url <span class="str">"https://www.virustotal.com/api/
 
 <!-- BEGINNER34-SEC v1 -->
 <!-- ── TOPIC: Container Security Hardening ───────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">📦</span>
     <span class="topic-badge">Beginner</span>
@@ -2885,7 +2921,7 @@ trivy image --scanners secret myapp:<span class="num">1.2</span>.<span class="nu
 docker scout cves myapp:<span class="num">1.2</span>.<span class="num">3</span>
 
 <span class="com"># GitHub Actions: scan on every push</span>
-<span class="com"># - uses: aquasecurity/trivy-action@master</span>
+<span class="com"># - uses: aquasecurity/trivy-action@&lt;full commit SHA&gt;   # not @master: a branch runs whatever is pushed next</span>
 <span class="com">#   with:</span>
 <span class="com">#     image-ref: 'myapp:${{ github.sha }}'</span>
 <span class="com">#     severity: 'CRITICAL,HIGH'</span>
@@ -3049,7 +3085,7 @@ dig _dmarc.example.com TXT
 
 <!-- BEGINNER36-SEC v1 -->
 <!-- ── TOPIC: OWASP Top 10 Web App Security ──────────────────── -->
-<div class="topic" data-reviewed="2026-07">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🕸️</span>
     <span class="topic-badge">Beginner</span>
@@ -3080,60 +3116,64 @@ dig _dmarc.example.com TXT
 
     <div class="concept-card">
       <div class="concept-label">The List</div>
-      <div class="concept-title">OWASP Top 10 (2021 Edition) Explained Simply</div>
+      <div class="concept-title">OWASP Top 10 (2025 Edition) Explained Simply</div>
       <div class="concept-desc">
         Each entry below: what it is, in plain language, with an
-        everyday analogy.
+        everyday analogy. Material written before 2025 numbers some of these
+        differently; the mapping is in <span class="xref">OWASP Top 10 (2025)</span>.<!-- fact: OWASP Top 10:2025, the eighth installment: A01 Broken Access Control, A02 Security Misconfiguration, A03 Software Supply Chain Failures, A04 Cryptographic Failures, A05 Injection, A06 Insecure Design, A07 Authentication Failures, A08 Software or Data Integrity Failures, A09 Security Logging and Alerting Failures, A10 Mishandling of Exceptional Conditions; OWASP's project page calls 2025 the most current released version, with 2021 and 2017 as previous versions | source: OWASP Top 10:2025 site (top10.owasp.org/2025) and the OWASP Top 10 project page, fetched and read | checked: 2026-11 -->
       </div>
       <pre class="code-block">
 <span class="com">A01: Broken Access Control</span>
-  Users can do things they shouldn't (view others' data, admin pages).
+  Users can do things they shouldn't (view others' data, admin pages),
+  or make the server fetch things for them (SSRF, folded in for 2025).
   Analogy: A hotel keycard that opens every room, not just yours.
 
-<span class="com">A02: Cryptographic Failures</span>
+<span class="com">A02: Security Misconfiguration</span>
+  Default passwords, verbose error messages, unnecessary features enabled.
+  Analogy: Leaving the factory-set "admin/admin" login on a new router.
+
+<span class="com">A03: Software Supply Chain Failures</span>
+  Libraries with known holes, or ones tampered with somewhere between
+  their authors and you: dependencies, build systems, distribution.
+  Analogy: A car with a brake recall you never fixed, or with parts
+  swapped somewhere between the factory and your driveway.
+
+<span class="com">A04: Cryptographic Failures</span>
   Sensitive data stored or transmitted without proper encryption.
   Analogy: Writing your PIN on the back of your bank card.
 
-<span class="com">A03: Injection (SQL, NoSQL, Command, LDAP)</span>
+<span class="com">A05: Injection (SQL, NoSQL, Command, LDAP, XSS)</span>
   Untrusted input is executed as code/commands by the backend.
   Analogy: Writing "ignore my rent and give me $1,000,000" on a check
   — and the bank's system actually processing it as written.
 
-<span class="com">A04: Insecure Design</span>
+<span class="com">A06: Insecure Design</span>
   The flaw is in the blueprint, not the code — security wasn't designed in.
   Analogy: A bank vault with a sturdy door but no walls.
 
-<span class="com">A05: Security Misconfiguration</span>
-  Default passwords, verbose error messages, unnecessary features enabled.
-  Analogy: Leaving the factory-set "admin/admin" login on a new router.
-
-<span class="com">A06: Vulnerable and Outdated Components</span>
-  Using libraries/frameworks with known, unpatched vulnerabilities.
-  Analogy: Driving a car with a known faulty brake recall you never fixed.
-
-<span class="com">A07: Identification and Authentication Failures</span>
+<span class="com">A07: Authentication Failures</span>
   Weak password rules, no MFA, predictable session tokens.
   Analogy: A door that locks, but the key is "1234" for every customer.
 
-<span class="com">A08: Software and Data Integrity Failures</span>
-  Trusting code/updates from sources without verifying their integrity.
+<span class="com">A08: Software or Data Integrity Failures</span>
+  Trusting code, updates or data without verifying their integrity.
   Analogy: Accepting a "replacement" car part from a stranger in a parking lot.
 
-<span class="com">A09: Security Logging and Monitoring Failures</span>
-  Attacks go undetected because no one is watching the logs.
-  Analogy: A security camera that's recording but nobody ever reviews the tape.
+<span class="com">A09: Security Logging and Alerting Failures</span>
+  Attacks go unnoticed because nothing raises an alarm in time.
+  Analogy: A security camera that records, with no alarm wired to it
+  and nobody watching the tape.
 
-<span class="com">A10: Server-Side Request Forgery (SSRF)</span>
-  Attacker tricks the server into making requests on their behalf,
-  often reaching internal systems the attacker couldn't reach directly.
-  Analogy: Convincing the receptionist to walk into the vault and
-  read you what's inside, since you're not allowed in yourself.
+<span class="com">A10: Mishandling of Exceptional Conditions</span>
+  When something unexpected happens, the app fails unsafely: errors that
+  leak details, half-finished transactions, checks that "fail open".
+  Analogy: A door lock that springs open when the power cuts out.
       </pre>
     </div>
 
     <div class="concept-card">
       <div class="concept-label">Hands-On Example</div>
-      <div class="concept-title">SQL <span class="acro-exp">(Structured Query Language)</span> Injection — The Classic A03 Example</div>
+      <div class="concept-title">SQL <span class="acro-exp">(Structured Query Language)</span> Injection — The Classic A05 Example</div>
       <div class="concept-desc">
         This is the canonical example every security professional learns.
         <em>Only test against systems you own or have authorization to
@@ -3153,13 +3193,13 @@ admin' --
 <span class="com">SELECT * FROM users WHERE username='admin' -- ' AND password='whatever'</span>
 <span class="com"># The "--" comments out the password check entirely. Instant login bypass.</span>
 
-<span class="com">─── THE FIX: parameterised queries (always do this) ──────────</span>
+<span class="com">─── THE FIX: parameterized queries (always do this) ──────────</span>
 query = <span class="str">"SELECT * FROM users WHERE username = %s AND password = %s"</span>
 cursor.execute(query, (username, password))
 <span class="com"># The database driver treats username/password as DATA, never as CODE —</span>
 <span class="com"># no matter what characters the attacker includes.</span>
 
-<span class="com"># SQLAlchemy ORM (also safe — handles parameterisation for you)</span>
+<span class="com"># SQLAlchemy ORM (also safe — handles parameterization for you)</span>
 user = User.query.filter_by(username=username, password=password).first()
       </pre>
     </div>
@@ -4147,6 +4187,115 @@ eyJhbGciOiJIUzI1NiJ9  <span class="com"># header  → {"alg":"HS256","typ":"JWT"
           </div>
 
 
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: IAST & RASP ───────────────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🩺</span>
+    <span class="topic-name">IAST &amp; RASP — Testing and Defending an Application From Inside It While It Runs</span>
+    <span class="topic-badge">AppSec</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Inside the running app</div>
+      <div class="concept-title">Both Put Instrumentation Inside the Application: One to Find Flaws, One to Stop Their Exploitation</div>
+      <div class="concept-desc">
+        Static testing reads the code and dynamic testing attacks the running application from outside.
+        <strong class="c-cyan">Interactive application security testing</strong> and <strong
+        class="c-cyan">runtime application self-protection</strong> do something else: they load
+        instrumentation into the running application itself, so it can see what the code actually does with a
+        request, which libraries and frameworks are in play, what it sends to back-end systems and how it is
+        configured. IAST uses that view while the application is being tested, to report flaws. RASP uses the
+        same kind of view in production, to detect an attack and block it as it happens. NIST <span class="acro-exp">(National Institute of Standards and Technology)</span>'s control
+        catalog names both, IAST as a requirement on developers' testing and RASP as an integrity control.
+        <!-- fact: NIST SP 800-53 Rev 5 SA-11(9) Interactive Application Security Testing requires the developer to employ interactive application security testing tools to identify flaws and document the results; its guidance calls IAST instrumentation-based testing that detects vulnerabilities by observing applications as they run during testing, using access to the code, user interaction, libraries, frameworks, backend connections and configurations to directly measure control effectiveness, in real time and continuously through the life cycle; SI-7(17) Runtime Application Self-protection uses runtime instrumentation to detect and block exploitation of software vulnerabilities using information from the software in execution | source: NIST SP 800-53 Rev 5.2.0 catalog in OSCAL JSON (last modified 2026-10-22), from NIST's oscal-content repository, fetched and read | checked: 2026-11 -->
+        <!-- fact: CompTIA SecurityX (CAS-005) names RASP and IAST in its objectives, and the site had no prose on either before this topic | source: this site's plan, Content ideas §19, recording CompTIA's objectives document version 7.0 as read in the eleventh wave | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>IAST</th><th>RASP</th></tr></thead>
+          <tbody>
+            <tr><td>Runs</td><td>While the application is tested, in development, CI or QA <span class="acro-exp">(Quality Assurance)</span></td><td>In production, on live traffic</td></tr>
+            <tr><td>Sees</td><td>The code paths a test exercises, from inside</td><td>The inputs reaching the code, from inside</td></tr>
+            <tr><td>Produces</td><td>Findings, with the code path and the request behind each</td><td>Blocked attacks, alerts, and other responses</td></tr>
+            <tr><td>In NIST SP 800-53</td><td>SA-11(9), a developer testing requirement</td><td>SI-7(17), a software integrity control</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">IAST finds only what the tests reach.</strong> It watches the application while
+          something exercises it, so a code path no test, person or tool touches is never observed, and a clean
+          report from a thin test suite says more about the tests than the code. Pair it with the scans that do
+          not depend on coverage, which are
+          <span class="xref">SAST, DAST &amp; SCA — Automated Security Testing</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">IAST</div>
+      <div class="concept-title">IAST Reports a Flaw With the Code and the Request That Reached It</div>
+      <div class="concept-desc">
+        An IAST tool's core is its sensors, software libraries included with the application, which track its
+        behavior while automated tests, testers or any other activity drive it, and raise an alert when a
+        vulnerability shows. They see the code, the data flow and control flow through it, the configuration,
+        the web components and the back-end connections, and they report in the developer's IDE <span class="acro-exp">(Integrated Development Environment)</span>, in CI or in
+        QA as the tests run. OWASP <span class="acro-exp">(Open Worldwide Application Security Project)</span> sets it against the other two. Static analysis lacks the runtime view and
+        cannot see the countermeasures around a pattern, so it raises false positives; dynamic scanning sees
+        only the server's responses and nothing of the internals.
+        <!-- fact: IAST tests the application while it is run by an automated test, a human tester or any activity interacting with its functionality; the core is sensor modules, software libraries included in the application code, which track behavior during tests and alert on a detected vulnerability; feedback is real time in the IDE, CI, QA or production; sensors have access to the entire code, data flow and control flow, system configuration data, web components and back-end connection data; example findings are API keys hardcoded in cleartext, unsanitized user input and connections without SSL; SAST lacks runtime visibility and raises false positives because it can't account for other countermeasures; DAST sees only responses from outside with no visibility of internals | source: OWASP DevSecOps Guideline v0.2, "Interactive Application Security Testing", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>The sensors see</th><th>So a finding can say</th></tr></thead>
+          <tbody>
+            <tr><td>The request and the path it took through the code</td><td>Which input reached which unsafe use of it, without sanitizing on the way</td></tr>
+            <tr><td>Configuration and back-end connections</td><td>That a connection went out without encryption, or a key sits in the code in clear text</td></tr>
+            <tr><td>The libraries and frameworks loaded</td><td>What the application actually runs, not only what it declares</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Run it where the functional tests already run.</strong> IAST adds no test cases of
+          its own; it rides on the ones a team has, in CI or QA, and its findings arrive with the code path that
+          proves them, which is what makes developers act on them. A test suite written from the threat model
+          gives it the paths that matter, which is the case for
+          <span class="xref">Threat Modeling — Finding Flaws Before You Build Them</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">RASP</div>
+      <div class="concept-title">RASP Blocks the Exploit With Context From Inside the App, Which a Firewall Does Not Have</div>
+      <div class="concept-desc">
+        NIST describes runtime application self-protection as instrumentation that detects and blocks the
+        exploitation of software vulnerabilities using information from the software as it runs. It sets that
+        against perimeter protections such as guards and firewalls, which judge by network information without
+        the application's context. RASP monitors the inputs reaching the application and blocks the ones that
+        could allow an attack, and it can protect the runtime itself from unwanted changes and tampering. When
+        it detects a threat it can block the exploit, warn the user, end the user's session, stop the
+        application, or alert staff, and it can run in a monitoring mode or a protecting one.
+        <!-- fact: SI-7(17) guidance: RASP employs runtime instrumentation to detect and block exploitation using information from the software in execution; it differs from perimeter protections such as guards and firewalls, which detect and block using network information without contextual awareness; it monitors inputs and blocks those that could allow attacks, and can protect the runtime environment from unwanted changes and tampering; on detection it can prevent exploitation, send a warning to the user, terminate the user's session, terminate the application or alert organizational personnel; it can be deployed in monitor or protection mode | source: NIST SP 800-53 Rev 5.2.0 catalog in OSCAL JSON (last modified 2026-10-22), control SI-7(17), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Web application firewall</th><th>RASP</th></tr></thead>
+          <tbody>
+            <tr><td>Sits</td><td>In front of the application</td><td>Inside it, with the running code</td></tr>
+            <tr><td>Judges by</td><td>The traffic: what the request looks like</td><td>The software's own state as the input is used</td></tr>
+            <tr><td>Can respond by</td><td>Allowing or blocking the request</td><td>Blocking, warning the user, ending the session, stopping the application, or alerting</td></tr>
+            <tr><td>Also guards</td><td>Nothing past the request</td><td>The runtime itself, against tampering</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Start in monitor mode, and keep the firewall.</strong> One of RASP's documented
+          responses is stopping the application, which turns a false positive into an outage, so watch what it
+          would have blocked before letting it block. And it guards a flaw rather than fixing one: the
+          vulnerability is still in the code, waiting for the day the agent is off. The layer in front of it is
+          <span class="xref">Web Application Firewalls (WAF)</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ══════════════════════════════════════════════════════════════
      WAVE J1 — APPLICATION SECURITY (the three cards not already here)
      ══════════════════════════════════════════════════════════════ -->
@@ -4457,7 +4606,7 @@ factory.setXIncludeAware(<span class="kw">false</span>);</pre>
      ══════════════════════════════════════════════════════════════ -->
 
 <!-- ── TOPIC: POST-QUANTUM ────────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">⚛️</span>
     <span class="topic-name">Post-Quantum Cryptography — Harvest Now, Decrypt Later</span>
@@ -4474,13 +4623,16 @@ factory.setXIncludeAware(<span class="kw">false</span>);</pre>
         curve — the maths those rest on becomes tractable. Symmetric encryption and hashing are
         far less affected: Grover's algorithm roughly halves the effective key length, so AES-256
         stays comfortable and SHA-256 remains sound.
+        Is AES-128 quantum-safe? NIST <span class="acro-exp">(National Institute of Standards and Technology)</span>'s answer, in its 2026 transition report, is that every approved
+        symmetric primitive with at least 128 bits of classical strength meets its lowest post-quantum
+        category, AES-128 included, and its retirement list has no 128-bit symmetric algorithm on it.
       </div>
       <div class="dw">
         <table class="ref-table">
           <thead><tr><th>Primitive</th><th>Quantum impact</th><th>Action</th></tr></thead>
           <tbody>
             <tr><td>RSA, ECDSA <span class="acro-exp">(Elliptic Curve Digital Signature Algorithm)</span>, ECDH <span class="acro-exp">(Elliptic Curve Diffie-Hellman)</span>, Diffie-Hellman</td><td class="c-red">Broken by Shor</td><td>Migrate</td></tr>
-            <tr><td>AES-128</td><td class="c-amber">Effective 64-bit against Grover</td><td>Move to AES-256</td></tr>
+            <tr><td>AES-128</td><td class="c-green">NIST rates it as meeting Category 1, its lowest post-quantum level</td><td>Nothing required; AES-256 where a policy asks for margin</td></tr>
             <tr><td>AES-256, SHA-256, SHA-3</td><td class="c-green">Adequate</td><td>Nothing</td></tr>
           </tbody>
         </table>
@@ -4498,9 +4650,12 @@ factory.setXIncludeAware(<span class="kw">false</span>);</pre>
       <div class="concept-label">The standards</div>
       <div class="concept-title">ML-KEM <span class="acro-exp">(Module-Lattice Key Encapsulation Mechanism)</span> and ML-DSA <span class="acro-exp">(Module-Lattice Digital Signature Algorithm)</span>, and Why Deployments Are Hybrid</div>
       <div class="concept-desc">
-        NIST <span class="acro-exp">(National Institute of Standards and Technology)</span> standardized the first post-quantum algorithms in 2024: <strong>ML-KEM</strong>
+        NIST standardized the first post-quantum algorithms in 2024: <strong>ML-KEM</strong>
         (formerly Kyber) for key encapsulation and <strong>ML-DSA</strong> (formerly Dilithium)
         for signatures, with SLH-DSA <span class="acro-exp">(Stateless Hash-Based Digital Signature Algorithm)</span> as a conservative hash-based signature alternative.
+        In March 2025 NIST added <strong>HQC</strong>, built on different math from ML-KEM, as a backup
+        key-encapsulation algorithm in case a weakness turns up in ML-KEM; its final standard is expected
+        in 2027.<!-- fact: NIST selected HQC on 11 March 2025 as a backup for ML-KEM, based on different math, planning a draft standard in about a year and a final standard in 2027 | source: NIST news release, "NIST Selects HQC as Fifth Algorithm for Post-Quantum Encryption" (11 March 2025), fetched and read | checked: 2026-11 -->
       </div>
       <div class="concept-desc">
         Real deployments run <strong>hybrid</strong>: a classical key exchange and a
@@ -4530,6 +4685,38 @@ factory.setXIncludeAware(<span class="kw">false</span>);</pre>
         regardless of quantum timelines, because it is the same capability needed to retire any
         broken primitive, and every primitive eventually breaks. See
         <span class="xref">Cryptography Fundamentals — The Building Blocks of Security</span>.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">The dates</div>
+      <div class="concept-title">NIST Deprecates RSA and Elliptic Curves After 2030 and Disallows Them After 2035</div>
+      <div class="concept-desc">
+        NIST's transition report, IR <span class="acro-exp">(Incident Response)</span> 8547, went final in October 2026 with two dates for every quantum-vulnerable
+        public-key algorithm, RSA, ECDSA, EdDSA and Diffie-Hellman in both its forms: <strong>deprecated after
+        2030</strong>, which lets organizations keep using them while they migrate, and <strong>disallowed after
+        2035</strong> under NIST's standards. Federal systems that matter most move sooner: Executive Order 14412
+        and OMB Memorandum M-26-15 require high value assets and high impact systems to use post-quantum key
+        establishment by 31 December 2030 and post-quantum signatures by 31 December 2031.
+        <!-- fact: NIST IR 8547, Transition to Post-Quantum Cryptography Standards, final, October 2026: NIST will deprecate quantum-vulnerable public-key cryptography (ECDSA, EdDSA and RSA signatures; finite field and elliptic curve DH and MQV, and RSA key establishment) after 2030 and disallow it under NIST standards and guidelines after 2035; NIST's few symmetric standards at the 112-bit level will be disallowed in 2030; all NIST-approved symmetric primitives with at least 128 bits of classical security, AES-128 included, are believed to meet at least post-quantum security Category 1; Executive Order 14412 and OMB Memorandum M-26-15 require federal high value assets and high impact systems to adopt PQC for key establishment by December 31, 2030 and for digital signatures by December 31, 2031, and EO 14306 with M-26-15 requires federal support for TLS 1.3 no later than January 2, 2030; National Security Memorandum 10 set 2035 as the target for completing the federal migration | source: NIST IR 8547 (final) PDF from nvlpubs.nist.gov and its CSRC page, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>By</th><th>What</th><th>For whom</th></tr></thead>
+          <tbody>
+            <tr><td>2 January 2030</td><td>Support TLS 1.3</td><td>US federal agencies</td></tr>
+            <tr><td>31 December 2030</td><td>Post-quantum key establishment</td><td>Federal high value assets and high impact systems</td></tr>
+            <tr><td>After 2030</td><td>Quantum-vulnerable public-key algorithms deprecated; 112-bit symmetric standards disallowed</td><td>Anyone following NIST</td></tr>
+            <tr><td>31 December 2031</td><td>Post-quantum signatures</td><td>Federal high value assets and high impact systems</td></tr>
+            <tr><td>After 2035</td><td>Quantum-vulnerable public-key algorithms disallowed; the target for finishing the federal migration</td><td>Anyone following NIST</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Plan to 2030, and treat 2035 as the end of the grace period.</strong>
+          NIST built the window between the two dates for lower-risk systems with legacy constraints, and its report
+          says data with long-term confidentiality needs warrants the earliest move. Anything that must stay secret
+          past 2030 is the harvest-now case above, already exposed under classical key exchange today.
+        </div>
       </div>
     </div>
 
@@ -6649,7 +6836,7 @@ factory.setXIncludeAware(<span class="kw">false</span>);</pre>
 </div>
 
 <!-- ── TOPIC: OWASP API SECURITY TOP 10 ──────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🔌</span>
     <span class="topic-name">The OWASP <span class="acro-exp">(Open Worldwide Application Security Project)</span> API <span class="acro-exp">(Application Programming Interface)</span> Security Top 10 — Where the Web List Stops Being Enough</span>
@@ -6673,8 +6860,8 @@ factory.setXIncludeAware(<span class="kw">false</span>);</pre>
           The practical consequence: a scanner tuned for web applications finds very little in an
           API, and finding nothing is routinely misread as the API being sound. Most real API
           findings require knowing what the caller is <em>supposed</em> to be able to see, which is
-          business context a scanner does not have. The web list is in
-          <span class="xref">OWASP Top 10 (2021)</span> and remains correct for what it covers.
+          business context a scanner does not have. The web list, in its 2025 edition, is in
+          <span class="xref">OWASP Top 10 (2025)</span>.
         </div>
       </div>
     </div>

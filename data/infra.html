@@ -1674,7 +1674,7 @@ Start-ADSyncSyncCycle <span class="kw">-PolicyType</span> Delta</pre>
         decide whether a cloud user it finds is the same person, and it tries two matches in order. When
         neither succeeds it does the only other thing it can, and creates a second cloud user. A rehire does
         this, and so does a cloud-only account made before sync was switched on.
-        <!-- fact: Entra Connect tries a hard match of the on-premises sourceAnchor against the cloud ImmutableId first, then a soft match on userPrincipalName or the primary SMTP proxyAddress, only where the cloud user has no ImmutableId; the documented repair sets mS-DS-ConsistencyGuid to the cloud user's ImmutableId; from 1 July 2026 a hard match is blocked onto an account with onPremisesObjectIdentifier already set or a privileged role assigned or eligible | source: Microsoft Learn's pages on installing Connect against an existing tenant and on sync errors, as quoted in search results; the pages were not fetched | checked: 2026-11 -->
+        <!-- fact: Entra Connect tries a hard match of the on-premises sourceAnchor against the cloud ImmutableId first, then a soft match on userPrincipalName or the primary SMTP proxyAddress, only where the cloud user has no ImmutableId; the documented repair sets mS-DS-ConsistencyGuid to the cloud user's ImmutableId; from 1 July 2026 a hard match is blocked onto an account with onPremisesObjectIdentifier already set or a privileged role assigned or eligible | source: Microsoft Learn's pages on installing Connect against an existing tenant and on sync errors, as quoted in search results; the sync errors page, "Troubleshooting errors during synchronization", was fetched and read in the sixteenth wave and confirms the hard and soft match order and the July 2026 hard-match hardening, while the install page is still unfetched | checked: 2026-11 -->
       </div>
       <div class="dw">
         <table class="ref-table">
@@ -1723,6 +1723,115 @@ Start-ADSyncSyncCycle <span class="kw">-PolicyType</span> Delta</pre>
           back only as a new object with a new anchor, which is the duplicate again. The sync settings around all
           of this are in
           <span class="xref">Entra Connect &amp; Hybrid Identity — Choosing How Passwords Are Checked</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: PREPARING ACTIVE DIRECTORY FOR SYNC ───────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🧹</span>
+    <span class="topic-name">Preparing Active Directory for Sync — Duplicate Addresses, Bad Characters, UPN <span class="acro-exp">(User Principal Name)</span> Suffixes &amp; After IdFix</span>
+    <span class="topic-badge">Identity • Hybrid</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">What sync refuses</div>
+      <div class="concept-title">Sync Fails on the Data, Not the Configuration: Duplicates, Characters and Blank Values</div>
+      <div class="concept-desc">
+        Microsoft's preparation list for Entra Connect is almost entirely about attribute values. Remove
+        duplicate <code>proxyAddresses</code> and <code>userPrincipalName</code> values, fill in blank or invalid
+        UPNs, and take invalid characters out of the names, aliases and addresses that sync carries. An
+        unexpected character earns a warning; an invalid one or a duplicate stops the object. Microsoft's own
+        estimate of skipping this is days or weeks of syncing, reading errors and syncing again.
+        <!-- fact: Directory preparation means removing duplicate proxyAddress and userPrincipalName values, fixing blank and invalid UPNs, and removing invalid characters from givenName, sn, sAMAccountName, displayName, mail, proxyAddresses, mailNickname and userPrincipalName; skipping cleanup can cost days or weeks; UPN at most 113 characters, 64 before the @ and 48 after, listed invalid characters, no spaces, routable domains only, unique; proxyAddresses unique, no spaces, none of the listed bracket and punctuation characters after the type prefix, no diacritics, 256 characters per value; a duplicated mail value syncs only the first user; mailNickname can't begin with a period, and underscores in the synced value mark invalid characters; sAMAccountName at most 20 characters, and an invalid one with a valid UPN still creates the user; displayName, if present, not blank, 256 characters | source: Microsoft Learn, "Prepare for directory synchronization to Microsoft 365" (updated 2024-09-25), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Attribute</th><th>What stops the object</th></tr></thead>
+          <tbody>
+            <tr><td><code>userPrincipalName</code></td><td>Not in user@domain form, longer than 113 characters, a space or a character such as <code>\ % &amp; * + / = ? { } | ; , #</code>, a duplicate, or a domain that is not routable</td></tr>
+            <tr><td><code>proxyAddresses</code></td><td>A value another object already has, a space, an accented letter, or <code>&lt; &gt; ( ) ; , [ ] "</code> after the <code>SMTP:</code> prefix</td></tr>
+            <tr><td><code>mail</code></td><td>A duplicate: the first user with the value syncs, and the rest never appear in Microsoft 365</td></tr>
+            <tr><td><code>mailNickname</code></td><td>A leading period, or a duplicate; invalid characters arrive as underscores</td></tr>
+            <tr><td><code>sAMAccountName</code></td><td>More than 20 characters, or a duplicate. With a valid UPN the user is still created</td></tr>
+            <tr><td><code>displayName</code></td><td>Present but blank</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Duplicates cost the most, because a user can go missing without an
+          alarm.</strong> For a duplicated <code>mail</code> value Microsoft's page is blunt: the first user with
+          it syncs, and the others never appear in Microsoft 365. Duplicated addresses and UPNs raise sync
+          errors instead. Either way the fix is deciding which object keeps the value and removing it from the
+          other, in the directory the object comes from. What happens when two accounts already
+          exist for one person is
+          <span class="xref">One User, Two Accounts — How Sync Matches People, and Fixing the Duplicate</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">UPN suffix</div>
+      <div class="concept-title">A .local Domain Needs a Routable UPN Suffix Before Anyone Syncs</div>
+      <div class="concept-desc">
+        Entra ID creates each cloud user with the UPN the user has in Active Directory, and only a domain
+        verified in the tenant can be used. A user whose UPN ends in a non-routable domain such as
+        <code>contoso.local</code> is synced with an <code>onmicrosoft.com</code> name instead, which is not
+        the sign-in anyone expects. Microsoft's easier fix, short of renaming the domain, is to add the
+        verified domain as an alternative UPN suffix in <em>Active Directory Domains and Trusts</em>, then move
+        the users onto it. Aligning the UPN with the primary SMTP <span class="acro-exp">(Simple Mail Transfer Protocol)</span> address avoids a second kind of confusion,
+        two different names for one person.
+        <!-- fact: Only UPNs in a domain verified in Microsoft 365 are synchronized as they are; a UPN with a non-routable domain such as .local is synchronized to an .onmicrosoft.com domain; the recommended fix is an alternative UPN suffix added in Active Directory Domains and Trusts and the users' UPNs changed, by hand or with Get-ADUser and Set-ADUser | source: Microsoft Learn, "Prepare a non-routable domain for directory synchronization" (updated 2024-10-07), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># Users still on the non-routable suffix (needs the ActiveDirectory module)</span>
+<span class="fn">Get-ADUser</span> -Filter <span class="str">"UserPrincipalName -like '*@contoso.local'"</span> | <span class="fn">Measure-Object</span>
+
+<span class="com"># Every proxyAddresses value that more than one object holds, case ignored</span>
+<span class="fn">Get-ADObject</span> -LDAPFilter <span class="str">'(proxyAddresses=*)'</span> -Properties proxyAddresses |
+  <span class="fn">ForEach-Object</span> { <span class="kw">foreach</span> (<span class="var">$a</span> <span class="kw">in</span> <span class="var">$_</span>.proxyAddresses) {
+    [pscustomobject]@{ Address = <span class="var">$a</span>.ToLower(); Object = <span class="var">$_</span>.DistinguishedName } } } |
+  <span class="fn">Group-Object</span> Address | <span class="fn">Where-Object</span> Count -gt <span class="num">1</span> |
+  <span class="fn">ForEach-Object</span> { <span class="var">$_</span>.Group }</pre>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Change the suffix before the first sync, not after.</strong> A user who
+          syncs with the wrong suffix gets a cloud account under the wrong name, and every change afterwards is
+          a rename in two directories. The query above counts who is still on <code>.local</code>; the second
+          finds the duplicate addresses the first card is about. Where the domain itself was drawn is
+          <span class="xref">Cleaning Up a Legacy Directory — Stale Objects &amp; Over-Permissive ACLs</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Tools</div>
+      <div class="concept-title">IdFix Was Retired in June 2026; Sync's Own Error Report Is What Is Left</div>
+      <div class="concept-desc">
+        IdFix was Microsoft's tool for this list: it queried Active Directory for the invalid and duplicate
+        values and let an administrator fix them in a grid before the first sync. Its repository now says it
+        was deprecated and has been unsupported since 30 June 2026, with no fixes or security updates, and
+        Microsoft's page on running it now returns 404. MS-102's outline, with skills measured as of April
+        2026, still names it. After the first sync, the errors come from sync itself: Entra Connect Health's
+        synchronization error report, updated every 30 minutes, names the objects in each conflict.
+        <!-- fact: The IdFix repository README says the project is deprecated and no longer supported as of June 30, 2026, with no bug fixes, security updates or support, and the repository to be archived; Microsoft Learn's "install and run IdFix" page returned 404 when fetched in November 2026; the MS-102 study guide (skills measured as of 28 April 2026) lists "Prepare for identity synchronization, including IdFix" | source: github.com/microsoft/idfix README, fetched; learn.microsoft.com/microsoft-365/enterprise/install-and-run-idfix, 404; the MS-102 study guide, fetched | checked: 2026-11 -->
+        <!-- fact: Entra Connect Health for sync has a synchronization errors report, updated every 30 minutes with the latest sync attempt's errors; duplicate attribute resiliency has been on by default since 2016, letting new objects provision despite duplicated proxyAddresses or userPrincipalName values without fixing the data; InvalidSoftMatch is raised when a soft match finds an object already carrying a different immutableId, usually two objects sharing a proxyAddresses or UPN value | source: Microsoft Learn, "Troubleshooting errors during synchronization" (fetched and read, November 2026) | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Stage</th><th>What finds the problem</th></tr></thead>
+          <tbody>
+            <tr><td>Before the first sync</td><td>Queries against the rules in the first card, run by you. IdFix did this until it was retired</td></tr>
+            <tr><td>During sync</td><td>Export errors in the Connect Sync console, such as <code>InvalidSoftMatch</code> for two objects sharing an address</td></tr>
+            <tr><td>Ongoing</td><td>Connect Health's synchronization error report, refreshed every 30 minutes</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Do not install a retired tool against your directory.</strong> IdFix writes
+          to Active Directory, and since June 2026 nobody patches it. The rules it checked are published, so a
+          query that checks them is a script you own. An exam outline can trail the product by months, as
+          MS-102's does here. How sync chooses which passwords count once it
+          runs is <span class="xref">Entra Connect &amp; Hybrid Identity — Choosing How Passwords Are Checked</span>.
         </div>
       </div>
     </div>

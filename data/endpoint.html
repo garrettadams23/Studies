@@ -725,6 +725,113 @@ Get-WindowsAutopilotInfo <span class="var">-Online</span> <span class="var">-Gro
             </div>
           </div>
 
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: WINDOWS BACKUP FOR ORGANIZATIONS ──────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🧳</span>
+    <span class="topic-name">Windows Backup for Organizations — Settings Restore on a New PC, and What It Leaves Behind</span>
+    <span class="topic-badge">Intune • Provisioning</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">What it carries</div>
+      <div class="concept-title">It Brings Back Settings and the Store App List, Under a New Name</div>
+      <div class="concept-desc">
+        Windows Backup for Organizations, which Microsoft is renaming <em>Windows settings backup and
+        restore</em>, saves a user's Windows settings and preferences and the list of their Microsoft Store
+        apps to their Entra account, and offers them back on a new or reset device. Once a policy turns backup
+        on, a scheduled task runs it every eight days, and users can run it themselves from the Windows Backup
+        app. It needs an Entra joined or hybrid joined device on a recent build of Windows 10 22H2 or Windows
+        11. From Windows 11 version 26H2, backup is on by default, in most regions, wherever its policy is left
+        not configured,
+        and since July 2026 the same feature manages Enterprise State Roaming.
+        <!-- fact: Windows Backup for Organizations is now Windows settings backup and restore; it preserves user settings and Microsoft Store app configurations; the backup scheduled task runs every eight days after policy enables it, and users can back up manually from the Windows Backup app; backup needs Entra joined or hybrid joined devices on Windows 10 22H2 build 19045.6216 or later or Windows 11 22H2 22621.5768, 23H2 22631.5768 or 24H2 26100.4946 or later; starting with Windows 11 26H2, backup is enabled by default for eligible devices whose backup policy is Not Configured, outside privacy-sensitive regions and sovereign clouds, and explicit policies are honored; from July 2026 Enterprise State Roaming management is part of the feature; it isn't available in GCC High, sovereign clouds or China; the Intune setting is Administrative Templates, Windows Components, Sync your settings, Enable Windows Backup | source: Microsoft Learn, "Windows settings backup and restore overview" (updated 2026-10-29), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>On the new device</th><th>Comes back from</th></tr></thead>
+          <tbody>
+            <tr><td>Windows settings and preferences</td><td>This backup</td></tr>
+            <tr><td>Microsoft Store apps</td><td>This backup's list of them</td></tr>
+            <tr><td>Files in Desktop, Documents and Pictures</td><td>Not this backup: OneDrive, if Known Folder Move was on</td></tr>
+            <tr><td>Win32 and line-of-business apps</td><td>Not this backup: the Intune assignments, or whatever installed them the first time</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Pair it with Known Folder Move, or the user gets their wallpaper back and not
+          their documents.</strong> Microsoft describes what the backup holds as settings, preferences and the
+          Store app list, so a device swap that relies on it alone restores how Windows looked and loses
+          what the user was working on. Moving the known folders into OneDrive is
+          <span class="xref">OneDrive — Known Folder Move, Files On-Demand &amp; Sync Triage</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Restore</div>
+      <div class="concept-title">Restore Is Off Until You Turn It On, and the Tenant Switch Reaches Only New Enrollments</div>
+      <div class="concept-desc">
+        Backup and restore are separate policies, and restore is off by default. It is offered at two points.
+        During setup, the out-of-box experience, it needs an Entra joined device, and an Autopilot profile in
+        user-driven mode rather than self-deploying. At the user's first sign-in after enrollment, on Windows 11
+        24H2 or 25H2 with March 2026's builds, it also works on hybrid joined devices. Either way the user signs
+        in with the same work account that made the backup, picks a backup profile from a previous device or
+        chooses to start fresh, and a restore summary appears about an hour later, visible for seven days.
+        <!-- fact: Restore is disabled by default; restore during OOBE needs Windows 11 22H2 22621.3958, 23H2 22631.3958 or 24H2 26100.4770 or later, at least one backup profile, an Autopilot profile in user-driven not self-deploying mode, and an Entra joined device; restore at first sign-in after enrollment needs Windows 11 24H2 or 25H2 build 7922 or later, and an Entra or hybrid joined device; the user signs in with the same Entra account used for the backup and selects a backup profile or sets up as new; the Intune enrollment setting (Devices, Enrollment, Windows Backup and Restore, Show restore page) is tenant-wide, applies only at device enrollment, takes effect before standard MDM policy, doesn't apply to devices already enrolled, and needs Intune Service administrator or Global administrator; the settings catalog setting Enable Windows Restore applies after enrollment at the regular policy refresh; the restore summary appears about an hour after restore and is viewable for seven days | source: Microsoft Learn, "Windows settings backup and restore overview" (updated 2026-10-29) and "Windows Backup for Organizations in Microsoft Intune" (updated 2026-05-05), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Turned on by</th><th>Reaches</th><th>When</th></tr></thead>
+          <tbody>
+            <tr><td>The tenant-wide enrollment setting, <span class="volatile" data-checked="2026-11"><em>Devices &gt; Enrollment &gt; Windows Backup and Restore</em></span></td><td>Every device that enrolls from then on</td><td>At enrollment, ahead of other policy, in time for setup. Devices already enrolled never see a change to it</td></tr>
+            <tr><td>A settings catalog policy, <em>Enable Windows Restore</em></td><td>The groups you assign</td><td>After enrollment, at the next policy refresh</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A self-deploying device never shows the restore page.</strong> Restore during
+          setup needs a person signing in, so kiosks and shared devices provisioned in self-deploying mode skip
+          it by design, and the ticket that says the restore page never appeared on one is answered by the
+          profile, not by the backup. The profile types are in
+          <span class="xref">Windows Autopilot — Zero-Touch Provisioning</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">When it does not work</div>
+      <div class="concept-title">A Policy That Turns Off the Activity Feed Turns Off Backup Too</div>
+      <div class="concept-desc">
+        Microsoft lists five policies that must not be set to Disabled, or backup does not apply: the three
+        activity history settings, <code>EnableActivityFeed</code>, <code>PublishUserActivities</code> and
+        <code>UploadUserActivities</code>, plus <code>EnableCDP</code> for the Connected Devices Platform and
+        <code>AllowConnectedDevices</code>. Each looks like a privacy setting with nothing to do with backup.
+        Configure the feature through Group Policy or through MDM <span class="acro-exp">(Mobile Device Management)</span>, never both. And Conditional Access can stop
+        the restore itself: a user who sees <em>You can't get there from here</em> during setup is being
+        refused a token, which a policy allowing the restore service's app ID fixes.
+        <!-- fact: Windows Backup doesn't apply if EnableActivityFeed, PublishUserActivities or UploadUserActivities (System, OS Policies), EnableCDP or AllowConnectedDevices is set to Disabled; mixing GPO and CSP settings for the feature can give unexpected results; Conditional Access for cloud apps can stop the user obtaining a token, with errors such as You can't get there from here, fixed by a custom policy allowing the Microsoft service with app ID d32c68ad-72d2-4acb-a0c7-46bb2cf93873; a phishing-resistant MFA prompt for the restore app (74d197dc-b84d-4d43-a1b2-b5bf3bb91c11) appears during OOBE when an authentication strength policy excludes the Intune apps and the user enrolls without a strong method, and in Hyper-V VMs a Temporary Access Pass is suggested | source: Microsoft Learn, "Windows settings backup and restore overview" (updated 2026-10-29), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Symptom</th><th>Cause</th></tr></thead>
+          <tbody>
+            <tr><td>Backup never runs on the hardened devices</td><td>One of the five activity or connected-devices policies set to Disabled</td></tr>
+            <tr><td>The restore page never appears</td><td>Restore not turned on, a self-deploying profile, a device that is not Entra joined, or a build too old</td></tr>
+            <tr><td>Setup stops at <em>You can't get there from here</em></td><td>Conditional Access refusing the restore service, app ID <code>d32c68ad-72d2-4acb-a0c7-46bb2cf93873</code></td></tr>
+            <tr><td>A phishing-resistant MFA <span class="acro-exp">(Multi-Factor Authentication)</span> prompt in the middle of setup</td><td>An authentication strength policy that exempts Intune's apps but not the restore app. In a virtual machine, use a Temporary Access Pass</td></tr>
+            <tr><td>Settings behave differently on identical devices</td><td>Group Policy and MDM both configuring the feature</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Read the baseline before blaming the feature.</strong> Activity history and
+          the Connected Devices Platform are the kind of thing a privacy-minded hardening baseline switches off,
+          and nothing in either setting's name says backup depends on it. Find which baseline sets them, and
+          decide which matters more, as
+          <span class="xref">Security Baselines Without Breaking the Fleet</span> describes.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
           <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🔗</span>
@@ -2080,6 +2187,160 @@ PsExec64.exe -s -i cmd.exe</pre>
   </div>
 </div>
 
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: MICROSOFT 365 APPS DEPLOYMENT ─────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🗃️</span>
+    <span class="topic-name">Microsoft 365 Apps Deployment — The Office Deployment Tool, Intune's App Type &amp; Update Channels</span>
+    <span class="topic-badge">Intune • Apps</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The Office Deployment Tool</div>
+      <div class="concept-title">Office Installs From a Configuration File, Not an MSI <span class="acro-exp">(Microsoft Installer)</span></div>
+      <div class="concept-desc">
+        Microsoft 365 Apps is a Click-to-Run product: it installs and updates by streaming from Microsoft's
+        content delivery network, and it is not supported beside MSI-installed Office on the same device. The Office
+        Deployment Tool is two files, <code>setup.exe</code> and a <code>configuration.xml</code> naming the
+        products, languages, architecture and update channel, and whether the user sees anything.
+        <code>/download</code> copies the source files to a share, fetching only what the share lacks;
+        <code>/configure</code> installs, changes or removes, and needs local admin rights;
+        <code>/customize</code> applies application preferences to an existing install and changes nothing
+        else. Microsoft recommends building the file in the web-based Office Customization Tool, and the
+        logs are in <code>%temp%</code>.
+        <!-- fact: The ODT is setup.exe plus configuration.xml; download mode (setup.exe /download) fetches only files missing from the target folder; configure mode installs, removes and updates and needs local administrator permissions; customize mode applies only application preferences; Microsoft recommends the Office Customization Tool for building the file; logs are in %temp%; ExcludeApp removes an app from an install, or from an existing install; OneDrive installs with Microsoft 365 Apps unless excluded | source: Microsoft Learn, "Overview of the Office Deployment Tool" (updated 2026-07-19), fetched and read | checked: 2026-11 -->
+        <!-- fact: If Microsoft 365 Apps isn't installed, the Channel attribute defaults to Current; if it is installed and Channel isn't specified, the ODT matches the existing installation's channel; channel values are BetaChannel, CurrentPreview, Current, MonthlyEnterprise, SemiAnnualPreview and SemiAnnual; ExcludeApp IDs include Access, Excel, Groove, Lync, OneDrive, OneNote, Outlook, OutlookForWindows, PowerPoint, Publisher, Teams and Word; the 32-bit version isn't supported on Arm devices | source: Microsoft Learn, "Configuration options for the Office Deployment Tool" (updated 2026-09-28), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com">&lt;!-- install.xml: 64-bit, Monthly Enterprise Channel, no Access, silent --&gt;</span>
+&lt;Configuration&gt;
+  &lt;Add OfficeClientEdition=<span class="str">"64"</span> Channel=<span class="str">"MonthlyEnterprise"</span>&gt;
+    &lt;Product ID=<span class="str">"O365ProPlusRetail"</span>&gt;
+      &lt;Language ID=<span class="str">"en-us"</span> /&gt;
+      &lt;ExcludeApp ID=<span class="str">"Access"</span> /&gt;
+    &lt;/Product&gt;
+  &lt;/Add&gt;
+  &lt;Display Level=<span class="str">"None"</span> AcceptEULA=<span class="str">"TRUE"</span> /&gt;
+&lt;/Configuration&gt;
+
+<span class="com">REM To a share first, or skip this and install from the CDN</span>
+<span class="fn">setup.exe</span> /download install.xml
+<span class="com">REM On the client, as an administrator</span>
+<span class="fn">setup.exe</span> /configure install.xml</pre>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Always name the channel.</strong> Leave <code>Channel</code> out and a new
+          install lands on Current Channel, Microsoft's fastest; on a device that already has Office the tool
+          keeps whatever channel is there. Nothing in the file says which one you got, so a pilot group and the
+          fleet drift apart without anyone choosing it. How a Click-to-Run install differs from the MSI and EXE
+          packages beside it is in
+          <span class="xref">MSI, EXE &amp; .intunewin — What Each Package Is, and How It Installs</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Through Intune</div>
+      <div class="concept-title">Intune's Microsoft 365 Apps Type Is the Simple Route, Except During Autopilot</div>
+      <div class="concept-desc">
+        Intune has an app type for Microsoft 365 Apps: choose the apps, the architecture, the channel and the
+        version in a designer, or paste ODT XML <span class="acro-exp">(eXtensible Markup Language)</span>, and the device downloads from Microsoft's network through the
+        Office CSP <span class="acro-exp">(Configuration Service Provider)</span>. Its limits are worth knowing before the first ticket. MSI Office already on the device
+        makes it fail, unless <em>Remove other versions</em> is on, and that removes every MSI Office app, not
+        only the ones you chose. A device takes one Microsoft 365 Apps deployment, not two. Office apps left
+        open during the install can make it fail and lose unsaved work. And for a custom XML install the
+        status shows whether the install attempt worked, not whether Office is still there.
+        <!-- fact: Intune's Microsoft 365 Apps app type: preexisting MSI Office must be removed with Remove MSI or the install fails, and it removes all Office MSI apps; Windows Creators Update or later; not supported on Windows Home, Team or Holographic; open Office apps can make the install fail and lose unsaved data; multiple Microsoft 365 deployments aren't supported; for Autopilot with ESP tracking, Microsoft recommends deploying Microsoft 365 Apps as a Win32 app because the app type isn't installed by the IME and can start while a tracked Win32 app installs, failing the ESP; settings catalog settings for Office must not conflict with the deployment's channel and version or the app can reinstall; the device downloads from officecdn.microsoft.com via the Office CSP; for custom ODT XML installs the status reflects only the installation attempt; verbose Click-to-Run logging is enabled by the LogLevel value under HKLM\SOFTWARE\Microsoft\ClickToRun\OverRide | source: Microsoft Learn, "Add Microsoft 365 Apps to Windows devices with Microsoft Intune" (updated 2026-04-23), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Deploy Office as</th><th>When</th></tr></thead>
+          <tbody>
+            <tr><td>Intune's Microsoft 365 Apps app type</td><td>Devices already in use, assigned as Required or offered in the Company Portal</td></tr>
+            <tr><td>A Win32 app wrapping <code>setup.exe</code> and its XML</td><td>Autopilot, where the Enrollment Status Page tracks Office alongside other Win32 apps</td></tr>
+            <tr><td><code>setup.exe /configure</code> from a share</td><td>Configuration Manager, a script, or a machine nothing manages</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">For Autopilot, wrap it as Win32.</strong> The Microsoft 365 Apps type is not
+          installed by the Intune Management Extension, so during the Enrollment Status Page it can start while a
+          tracked Win32 app is still installing, and Microsoft says that collision fails the ESP. Packaged as a
+          Win32 app it waits its turn like the rest. Keep Office's channel and version out of settings catalog
+          profiles too: a conflict with the app's own settings can make Office reinstall. Wrapping is in
+          <span class="xref">Win32 App Packaging — .intunewin End to End</span>, and what the ESP waits for is in
+          <span class="xref">Enrollment Status Page (ESP)</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Update channels</div>
+      <div class="concept-title">The Semi-Annual Enterprise Channel Became Monthly in July 2026</div>
+      <div class="concept-desc">
+        A channel decides how often Office gets new features. Current Channel takes them as soon as they are
+        ready, Monthly Enterprise once a month on the second Tuesday, and Semi-Annual Enterprise took them
+        twice a year, for devices that needed long testing first. That last one ended with Version 2606 in
+        July 2026, when Microsoft unified it into Monthly Enterprise. Devices still configured for
+        Semi-Annual now get the same monthly features and security updates, and show <em>Monthly Enterprise
+        Channel</em> under <em>File &gt; Account</em>, though some management reports keep saying Semi-Annual;
+        a build above 20131.20000 has the change. The first update after the switch is larger than usual: from
+        version 2508 to 2606, about 1.6 GB.
+        <!-- fact: Beginning with Version 2606 in July 2026, Semi-Annual Enterprise Channel and Monthly Enterprise Channel are unified; devices configured for Semi-Annual receive the same feature and security updates as Monthly Enterprise and show as Monthly Enterprise in File, Account; some management tools and reports may still show Semi-Annual; builds higher than 20131.20000 have installed Version 2606; updating from 2508 to 2606 is roughly 1.6 GB; no admin action is required; Cloud Update takes precedence over other management tools and automatically onboards eligible devices after 2606; devices with Copilot-eligible users become eligible for Copilot; organizations can keep using other channels | source: Microsoft Learn, "Upcoming channel unification: Semi-Annual Enterprise Channel to Monthly Enterprise Channel" (updated 2026-07-15), fetched and read | checked: 2026-11 -->
+        <!-- fact: Current Channel gets features at least monthly on no set schedule and each version is supported until the next, about a month; Monthly Enterprise Channel gets features, security and non-security updates on the second Tuesday, versions supported three months, rollback three months; Semi-Annual Enterprise Channel took features in January and July, versions supported eight months from July 2025 (previously fourteen) | source: Microsoft Learn, "Overview of update channels for Microsoft 365 Apps" (updated 2026-05-27), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Channel</th><th>New features</th><th>A version is supported for</th></tr></thead>
+          <tbody>
+            <tr><td>Current</td><td>As soon as ready, on no set schedule</td><td>Until the next one, about a month</td></tr>
+            <tr><td>Monthly Enterprise</td><td>The second Tuesday of each month</td><td>Three months, with three months of rollback</td></tr>
+            <tr><td>Semi-Annual Enterprise</td><td>January and July, until Version 2606; monthly since, as Monthly Enterprise</td><td>Eight months, before the unification</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A test plan built on two feature releases a year needs rewriting.</strong>
+          The slow lane closed without anyone changing a policy, and dashboards or compliance checks that
+          count devices on Semi-Annual will report numbers that no longer mean that. One more thing changed
+          quietly: in a tenant that already uses Cloud Update in the Microsoft 365 Apps admin center for
+          Monthly Enterprise, Cloud Update takes precedence over Intune, Configuration Manager and Group Policy,
+          and onboards the converted devices itself unless an exclusion says otherwise. Rings for Windows itself, the model to copy, are in
+          <span class="xref">Windows Update for Business — Rings, Deferrals &amp; Deadlines</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Settings</div>
+      <div class="concept-title">Cloud Policy Follows the User to Any Device, and Outranks Group Policy</div>
+      <div class="concept-desc">
+        Office settings can come from Group Policy or Intune, which configure a device, or from the Cloud
+        Policy service in the <span class="volatile" data-checked="2026-11">Microsoft 365 Apps admin center</span>,
+        which configures a user. When someone signs into Microsoft 365 Apps on Windows, macOS, iOS or Android,
+        the settings for their Entra groups follow them, managed device or not. Office checks in at the first
+        sign-in and then on an interval, 90 minutes when a policy applies, and a setting takes effect when the
+        app restarts. Where groups conflict, the configuration with the higher priority wins, 0 being highest,
+        and Cloud Policy wins over Group Policy. It does not apply to volume-licensed Office such as LTSC <span class="acro-exp">(Long Term Servicing Channel)</span> 2021.
+        <!-- fact: Cloud Policy enforces settings for Microsoft 365 Apps for enterprise for the signed-in user even on unmanaged devices, on Windows, macOS, iOS and Android; scope is all users, specific groups or anonymous Office for the web users; check-in at first sign-in and then when the interval lapses, 90 minutes when the user has a policy, and on the next Office launch after an error; settings apply when the Office app restarts; only the primary account's policies apply; conflicting group configurations are resolved by priority, 0 the highest; Cloud Policy takes precedence over Group Policy and over preferences and local policy; volume licensed Click-to-Run Office (LTSC 2021, Standard 2019) can't receive a policy configuration, and Apps for business only privacy settings; retrieved settings are under HKCU\Software\Policies\Microsoft\Cloud\Office\16.0, check-in state under HKCU\Software\Microsoft\Office\16.0\Common\CloudPolicy, and deleting that key and restarting Office forces a check-in; Office Apps Administrator is the recommended role | source: Microsoft Learn, "Overview of Cloud Policy service for Microsoft 365" (updated 2026-07-16) and "Overview of the Microsoft 365 Apps admin center" (updated 2026-10-05), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>The ticket says</th><th>Check</th></tr></thead>
+          <tbody>
+            <tr><td>The setting never arrived</td><td>The user's group membership, and a configuration with higher priority overriding it</td></tr>
+            <tr><td>It works on one PC and not another</td><td>Which account is Office's primary one: only its policies apply</td></tr>
+            <tr><td>Changed an hour ago, still not showing</td><td>The check-in interval and an Office restart; deleting the <code>CloudPolicy</code> key under <code>HKCU\Software\Microsoft\Office\16.0\Common</code> and reopening Office forces one</td></tr>
+            <tr><td>Nothing applies at all</td><td>Volume-licensed Office, which Cloud Policy cannot configure</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Pick one home for each Office setting.</strong> A setting configured in Cloud
+          Policy and in a GPO <span class="acro-exp">(Group Policy Object)</span> is settled by Cloud Policy, so a GPO edit that seems to do nothing may be losing,
+          not failing. Cloud Policy also reaches devices nobody manages, where someone has simply signed into
+          Office with a work account, which neither a GPO nor a device configuration profile can. Proving which source won is
+          <span class="xref">Policy Conflicts — Proving Which One Won</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ── TOPIC: APP PROTECTION POLICIES ────────────────────────── -->
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
@@ -2361,6 +2622,123 @@ Restart-Service IntuneManagementExtension</pre>
   </div>
 </div>
 
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: DELIVERY OPTIMIZATION ─────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">📡</span>
+    <span class="topic-name">Delivery Optimization — Download Modes, Peer Groups &amp; Where Windows Gets Its Updates</span>
+    <span class="topic-badge">Intune • Servicing</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">What it is</div>
+      <div class="concept-title">Delivery Optimization Is Windows' Downloader, and Peers Are Only One of Its Sources</div>
+      <div class="concept-desc">
+        Delivery Optimization is the downloader Windows uses for its updates, Store apps, Defender
+        definitions, Intune Win32 apps, Microsoft 365 Apps, Edge and Teams. Besides the original servers it
+        can take pieces of a file from other devices on the network and from a Microsoft Connected Cache
+        server, all at once, and it falls back to the internet for whatever neither has. Peering needs the
+        Delivery Optimization cloud service, which tells each device who has what, and it is for large
+        files: under 50 MB, by default, nothing is shared. Where BranchCache is also turned on, Delivery
+        Optimization is used instead of it, and Windows Server 2019 and later default to no peering at all.
+        <!-- fact: Delivery Optimization is a cloud-managed HTTP downloader that can also download from peers and Microsoft Connected Cache, in parallel, falling back to the original HTTP source; peering and Connected Cache need internet access and the DO cloud services; it works with Windows Update, WSUS, Intune and Windows Update client policies, and Configuration Manager express updates; where BranchCache is enabled, DO is used instead; minimum Windows 10 1511 and Windows Server 2019, where the default download mode is 0 rather than the client default of 1; content types include Windows updates, Store apps, Defender definitions, Intune Win32 apps (peers and Connected Cache in public cloud), Microsoft 365 apps and updates, Edge, Configuration Manager express updates, dynamic updates and Teams updates (peering from version 25122.1415.3698.6812, Connected Cache over HTTPS only), while Windows 11 Win32 Store apps, Windows Package Manager and MSIX use the HTTP downloader only | source: Microsoft Learn, "What is Delivery Optimization?" (updated 2026-05-12), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Content</th><th>From peers</th><th>From Connected Cache</th></tr></thead>
+          <tbody>
+            <tr><td>Windows updates and drivers, Defender definitions</td><td>Yes</td><td>Yes</td></tr>
+            <tr><td>Microsoft 365 Apps and their updates, Edge updates</td><td>Yes</td><td>Yes</td></tr>
+            <tr><td>Intune Win32 apps</td><td>Yes, in the public cloud</td><td>Yes, in the public cloud</td></tr>
+            <tr><td>Teams updates</td><td>Yes, from version 25122.1415.3698.6812</td><td>Over HTTPS <span class="acro-exp">(HyperText Transfer Protocol Secure)</span> only</td></tr>
+            <tr><td>Win32 Store apps on Windows 11, Windows Package Manager, MSIX <span class="acro-exp">(Microsoft Installer for Windows Apps)</span></td><td>No</td><td>No</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A feature update to a whole office is where it pays.</strong> Every device
+          downloading the same several gigabytes over the same link is the case it was built for, and a
+          monthly quality update or a large Win32 app is the same shape. A small app is not: below the size
+          threshold each device fetches its own copy. What a feature update weighs against the others is in
+          <span class="xref">Feature vs Quality vs Driver Updates</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Download mode</div>
+      <div class="concept-title">The Download Mode Decides Who Counts as a Peer, and the Default Is the Same Public IP <span class="acro-exp">(Internet Protocol)</span></div>
+      <div class="concept-desc">
+        One setting, the download mode, decides where peers may come from. The default, LAN <span class="acro-exp">(Local Area Network)</span>, offers as peers
+        the devices that reach the internet through the same public IP address, which then connect to each
+        other over their private addresses. Group mode draws the line by group instead, across subnets and out
+        to remote offices: by default the device's Active Directory site, then its domain, then the Entra
+        tenant, unless a Group ID you set overrides it. HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> only turns peering off and keeps everything else.
+        In Intune the settings live in a configuration profile, in the settings catalog's format since April
+        2025, beside the cache's limits: by default, files kept three days in up to 20% of the drive's free space.
+        <!-- fact: Download Mode values: HTTP only (0) disables peer-to-peer but still downloads over HTTP from the source or Connected Cache, using the cloud service's metadata; LAN (1), the default, finds clients using the same public IP, which connect to peers on the same network by private subnet IP; Group (2) peers across internal subnets within a group, selected by AD DS site or authenticated domain, or a custom GroupID, and GroupIDSource from Windows 10 1803; when neither is set the group is the AD site, then the domain SID, then the Entra tenant ID; Internet (3) adds internet peers; Simple (99) disables the cloud services entirely, and DO switches to it automatically when the services are unreachable or the file is under 50 MB; Bypass (100) is deprecated from Windows 11 and can make content fail, use 0 to disable peering; group membership by tenant, site or domain isn't an authentication of device identity; max cache age defaults to 259,200 seconds (three days), max cache size to 20%, minimum peer caching file size to 50 MB; peering requires 4 GB of RAM and 32 GB of disk by default, isn't allowed on VPN by default, and uploads aren't allowed on battery by default | source: Microsoft Learn, "Delivery Optimization reference" (updated 2026-11-04), fetched and read | checked: 2026-11 -->
+        <!-- fact: In April 2025 the Intune Delivery Optimization template moved to the settings catalog's format, and new versions of the old profile can no longer be created | source: Microsoft Learn, "Delivery Optimization settings in Microsoft Intune" (updated 2026-04-14), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Mode</th><th>Peers are</th></tr></thead>
+          <tbody>
+            <tr><td>0, HTTP only</td><td>None. The original source or Connected Cache, still guided by the cloud service</td></tr>
+            <tr><td>1, LAN (the default)</td><td>Devices behind the same public IP address, reached on their private addresses</td></tr>
+            <tr><td>2, Group</td><td>Devices in the same group: AD <span class="acro-exp">(Active Directory)</span> site, then domain, then Entra tenant, unless you set a Group ID</td></tr>
+            <tr><td>3, Internet</td><td>Internet peers as well</td></tr>
+            <tr><td>99, Simple</td><td>None, and no cloud service. Also where a device lands by itself when the service is out of reach</td></tr>
+            <tr><td>100, Bypass</td><td>Deprecated in Windows 11, and some content fails under it. Use 0 to stop peering</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A device reporting 99 was probably not set to 99.</strong> Simple mode is also
+          what Delivery Optimization falls back to when it cannot reach its cloud service, so a fleet that
+          should be peering and reports 99 has a firewall or proxy question, not a policy one. Microsoft names
+          the host that matters most, <code>*.do.dsp.mp.microsoft.com</code>. And a group is a boundary for
+          sharing, not proof of anything: Microsoft says not to treat membership by site or tenant as
+          authenticating a device. The on-premises answer to the same bandwidth problem is
+          <span class="xref">MECM at Scale — Site Design, Boundary Groups &amp; Collections That Don't Melt the Server</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">No bytes from peers</div>
+      <div class="concept-title">Zero Bytes From Peers Has Four Causes, and Each Has a Test</div>
+      <div class="concept-desc">
+        Microsoft's troubleshooting page splits the failure four ways. The device cannot reach the cloud
+        service. The service sees no other peers. The peers it offers cannot be reached. Or nobody nearby has
+        the file yet. <code>Get-DeliveryOptimizationStatus</code>, run elevated, shows the download mode;
+        <code>Get-DeliveryOptimizationPerfSnap</code> on a second device shows how many peers it found; and
+        on Windows 10 2004 and later <code>Get-DeliveryOptimizationStatus -PeerInfo</code> lists each file's
+        peers and what each sent. Microsoft's <em>DeliveryOptimizationTroubleshooter</em> script, from the
+        PowerShell Gallery, runs the same checks with <code>-HealthCheck</code>, <code>-P2P</code> and
+        <code>-MCC</code>.
+        <!-- fact: With no bytes from peers the cause can be: clients can't reach the DO cloud services (download mode 99; allow *.do.dsp.mp.microsoft.com), the service sees no other peers (NumberOfPeers zero in Get-DeliveryOptimizationPerfSnap; in LAN mode devices must share a public IP, otherwise use Group mode with a custom GroupID), clients can't connect to the peers offered (test port 7680), or no computer is yet getting content from peers; Microsoft's test downloads a Store app over 50 MB on two devices 10 to 15 minutes apart; Get-DeliveryOptimizationStatus -PeerInfo exists from Windows 10 2004; the DeliveryOptimizationTroubleshooter script has -HealthCheck, -P2P, -MCC, -GenerateSupportBundle and -AsObjects switches and should be updated from the PowerShell Gallery with the BurntToast module removed | source: Microsoft Learn, "Troubleshoot Delivery Optimization" (updated 2026-11-07), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>What you see</th><th>Why</th><th>What fixes it</th></tr></thead>
+          <tbody>
+            <tr><td>Download mode reads 99</td><td>The device cannot reach the Delivery Optimization service</td><td>Allow <code>*.do.dsp.mp.microsoft.com</code> through the proxy and firewall</td></tr>
+            <tr><td>The peer count is 0 in LAN mode</td><td>The devices reach the internet through different public IPs</td><td>Group mode, with a Group ID they share</td></tr>
+            <tr><td>Peers are offered, nothing arrives</td><td>The devices cannot connect to each other</td><td>TCP <span class="acro-exp">(Transmission Control Protocol)</span> port 7680 open between them</td></tr>
+            <tr><td>One device never peers</td><td>Under 4 GB of RAM <span class="acro-exp">(Random Access Memory)</span> or 32 GB of disk, or on VPN <span class="acro-exp">(Virtual Private Network)</span>, which the defaults exclude</td><td>Expected, unless you change those settings</td></tr>
+            <tr><td>A 30 MB app never peers</td><td>Under the 50 MB minimum</td><td>Expected</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Test with something big, on two devices, minutes apart.</strong> Microsoft's
+          own test is a Store app over 50 MB downloaded on one device and then on another 10 to 15 minutes
+          later, because peering needs a device that already has the file and a file large enough to share.
+          Testing with a small app, or on both devices at once, shows zero from peers on a network that works.
+          Where these downloads sit in a Windows update deployment is
+          <span class="xref">Windows Autopatch — What It Takes Over</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ── TOPIC: DRIVER MANAGEMENT ──────────────────────────────── -->
 <div class="topic" data-reviewed="2026-09">
   <div class="topic-header">
@@ -2541,6 +2919,115 @@ pnputil /delete-driver oem42.inf /uninstall /force</pre>
           devices currently sit outside your standard rings, and why. If that list is
           short and boring, this is a straightforward win; if every entry has a story,
           the stories are the workload and Autopatch does not take them.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: HOTPATCH ──────────────────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">♨️</span>
+    <span class="topic-name">Hotpatch — Security Updates Without a Restart, and the Quarterly Baselines That Still Need One</span>
+    <span class="topic-badge">Intune • Servicing</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The calendar</div>
+      <div class="concept-title">Eight Months a Year the Security Update Needs No Restart; the Other Four It Does</div>
+      <div class="concept-desc">
+        A hotpatch is the monthly security release built to install and take effect without restarting the
+        device, and much smaller than the cumulative update it stands in for. It runs on a quarterly cycle.
+        January, April, July and October bring a <strong class="c-cyan">baseline</strong>, an ordinary
+        cumulative update with new features and a restart; the two months after each bring hotpatches. That
+        makes eight hotpatch months and four baseline months a year, the same calendar for every operating
+        system that supports it, with the occasional extra baseline when a security fix needs one. A device
+        that reaches a hotpatch month without the latest baseline gets both, and restarts for the baseline.
+        <!-- fact: Hotpatch updates are Monthly B release security updates that install and take effect without a restart; packages are significantly smaller than standard cumulative updates; baselines (restart required, latest security fixes and cumulative features) are released quarterly in January, April, July and October, with hotpatches in the other two months of each quarter; eight hotpatch and four baseline months a year, the same calendar for all hotpatch-supported operating systems; occasional unplanned baselines for security reasons don't shift the planned cadence; a device in a hotpatch month that isn't on the latest baseline receives both the baseline (restart) and the hotpatch; upgrading to a new Windows version in a baseline month keeps the device on the hotpatch cycle, while upgrading in a hotpatch month switches it to standard updates until the next baseline; hotpatch is also available for Windows Server 2025 Datacenter Azure Edition and Windows 365, managed through Azure Update Manager | source: Microsoft Learn, "Hotpatch updates" (Windows Autopatch, updated 2026-06-02), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Quarter</th><th>Baseline, restart needed</th><th>Hotpatch, no restart</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>January</td><td>February and March</td></tr>
+            <tr><td>2</td><td>April</td><td>May and June</td></tr>
+            <tr><td>3</td><td>July</td><td>August and September</td></tr>
+            <tr><td>4</td><td>October</td><td>November and December</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Upgrade Windows in a baseline month.</strong> A device moved to a new version of
+          Windows 11 in January, April, July or October stays on the hotpatch cycle. Moved in any other month,
+          it drops to ordinary restarting updates until the next baseline, so a feature update scheduled for a
+          hotpatch month costs the rest of that quarter's restart-free months. The service that runs the cycle is
+          <span class="xref">Windows Autopatch — What It Takes Over</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Eligibility</div>
+      <div class="concept-title">A Device That Misses Any Requirement Does Not Fail; It Quietly Restarts Instead</div>
+      <div class="concept-desc">
+        Hotpatch is turned on in Intune, in a Windows quality update policy, by setting <em>When available,
+        apply without restarting the device ("Hotpatch")</em> to Allow, and it reaches only devices that
+        meet every requirement: an eligible license such as Windows 11 Enterprise E3 or E5 or Microsoft 365
+        Business Premium, Windows 11 24H2 or later on the latest baseline, and virtualization-based security
+        running. Arm64 devices also need compiled hybrid binaries, CHPE, switched off, which can break 32-bit
+        programs such as Office macros that call Windows directly and 32-bit add-ins. A device that misses anything simply gets the
+        ordinary cumulative update and its restart. Update rings, deadlines and active hours all still apply.
+        <!-- fact: Hotpatch requires Windows Autopatch's quality update policy in Intune with "When available, apply without restarting the device (Hotpatch)" set to Allow; licenses: Windows 11 Enterprise E3 or E5, Microsoft 365 F3, Windows 11 Education A3 or A5, Microsoft 365 Business Premium or Windows 365 Enterprise; Windows 11 24H2 or later; the latest baseline; VBS turned on (also reported by the Autopatch alert Hotpatch – VBS not running); Arm64 devices must disable CHPE with the DisableCHPE policy or HotPatchRestrictions=1 under HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management and a restart, which can break 32-bit programs such as VBA with Declare statements or 32-bit COM add-ins; security updates for 32-bit Microsoft 365 Apps on Arm end in December 2026; ineligible devices receive the standard latest cumulative update with a restart; turning hotpatch on doesn't change existing deadlines, deferrals or active hours | source: Microsoft Learn, "Hotpatch updates" (Windows Autopatch, updated 2026-06-02), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Requirement</th><th>Check on the device</th></tr></thead>
+          <tbody>
+            <tr><td>Windows 11 24H2 or later, on the latest baseline</td><td>The build against Microsoft's hotpatch release notes</td></tr>
+            <tr><td>Virtualization-based security running</td><td><em>System Information</em>: <em>Virtualization-based security</em> reads <em>Running</em></td></tr>
+            <tr><td>The policy reached it</td><td><span class="volatile" data-checked="2026-11"><em>Settings &gt; Windows Update &gt; Advanced options &gt; Configured update policies</em></span> lists <em>Enable hotpatching when available</em></td></tr>
+            <tr><td>Arm64 only: CHPE off</td><td><code>HotPatchRestrictions</code> set to 1 under <code>HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management</code>, then a restart</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">"Hotpatch did not work" usually means "the device was not eligible".</strong>
+          Nothing fails loudly: a device without virtualization-based security, or a month behind on its
+          baseline, takes the ordinary update and restarts, and the user reports that the no-restart update
+          restarted their PC. Check virtualization-based security first: Autopatch raises an alert for exactly
+          this, named <em>Hotpatch – VBS not running</em>. The rings and deadlines that keep applying underneath are
+          <span class="xref">Windows Update for Business — Rings, Deferrals &amp; Deadlines</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">When it goes wrong</div>
+      <div class="concept-title">There Is No Automatic Rollback, and a Critical Error Falls Back to the Full Update</div>
+      <div class="concept-desc">
+        A hotpatch cannot be rolled back automatically. It can be uninstalled, which is quick but needs a
+        restart, and the device then takes the ordinary cumulative update. Windows also watches itself: a
+        built-in monitor checks the health of installed hotpatches, logs any error in the Application log,
+        and on a critical one installs the standard cumulative update so the device is not left unprotected.
+        Microsoft's troubleshooting runs in a fixed order, from eligibility to the event log.
+        <!-- fact: Automatic rollback of a hotpatch isn't supported, but it can be uninstalled, which requires a restart, followed by the LCU; an inbox monitor service checks hotpatch health and logs errors to the Windows Application log, installing the standard LCU on a critical error; Microsoft's troubleshooting steps are eligibility and baseline, VBS running in System Information, the policy and the Enable hotpatching when available entry, CHPE on Arm64, AllowRebootlessUpdates in Event Viewer, and hotpatch errors in Windows Logs | source: Microsoft Learn, "Hotpatch updates" (Windows Autopatch, updated 2026-06-02), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>Look at</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Eligibility, and whether the device is on the current baseline</td></tr>
+            <tr><td>2</td><td>Virtualization-based security reads <em>Running</em></td></tr>
+            <tr><td>3</td><td>The quality update policy targets the device with hotpatch set to Allow</td></tr>
+            <tr><td>4</td><td>On Arm64, CHPE switched off</td></tr>
+            <tr><td>5</td><td>Event Viewer shows <code>AllowRebootlessUpdates</code> set to true</td></tr>
+            <tr><td>6</td><td>The Application log, filtered for <em>hotpatch</em>, for the monitor's errors</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A restart you did not expect may be the safety net working.</strong> When the
+          monitor finds a critical hotpatch error it installs the full cumulative update, restart and all, so a
+          device that restarted in a hotpatch month may be one that protected itself. Read the Application log
+          before treating it as a policy fault. A security fix that cannot wait for any cycle is
+          <span class="xref">Emergency Patching — Advisory to Verified</span>.
         </div>
       </div>
     </div>
@@ -2821,7 +3308,7 @@ Remove-PSSession $s
           <thead><tr><th>Piece</th><th>What it is</th></tr></thead>
           <tbody>
             <tr><td>TPM <span class="acro-exp">(Trusted Platform Module)</span></td><td>The chip that seals the key to a known-good boot state; unlocks transparently at boot</td></tr>
-            <tr><td>Recovery key</td><td>The 48-digit fallback when the TPM refuses — the thing you must have escrowed</td></tr>
+            <tr><td>BitLocker recovery key</td><td>The 48-digit fallback when the TPM refuses — the thing you must have escrowed</td></tr>
             <tr><td>Escrow location</td><td>Entra ID for cloud-joined devices, AD <span class="acro-exp">(Active Directory)</span> for hybrid; MECM <span class="acro-exp">(Microsoft Endpoint Configuration Manager)</span> keeps its own recovery store too</td></tr>
             <tr><td>Encryption method</td><td>XTS-AES 128 or 256; used space only vs full disk on first encryption</td></tr>
           </tbody>
@@ -2969,6 +3456,135 @@ Remove-PSSession $s
   </div>
 </div>
 
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: DEFENDER VULNERABILITY MANAGEMENT ──────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🧯</span>
+    <span class="topic-name">Defender Vulnerability Management — Exposure Score, Recommendations &amp; Handing the Fix to Intune</span>
+    <span class="topic-badge">Endpoint • Security</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Two scores</div>
+      <div class="concept-title">Exposure Score Should Go Down; Secure Score for Devices Should Go Up</div>
+      <div class="concept-desc">
+        Defender Vulnerability Management uses the Defender for Endpoint sensor to inventory software and
+        configuration on every onboarded device and match them against known vulnerabilities. Its dashboard,
+        <span class="volatile" data-checked="2026-11">under <em>Exposure management</em> for tenants in Microsoft's preview and under <em>Endpoints</em> for
+        the rest</span>, leads with two numbers that move in opposite directions. The
+        <strong class="c-cyan">exposure score</strong>, from 0 to 100, is how exposed the devices are, so lower
+        is better. <strong class="c-cyan">Microsoft Secure Score for Devices</strong> is a percentage for how
+        well they are configured, so higher is better. Both count only devices seen in the last 30 days, which
+        is not Defender for Endpoint's rule: it calls a device inactive after seven days of silence.
+        <!-- fact: Vulnerability Management is under Exposure management for customers in the Defender XDR + Defender for Identity preview, and under Endpoints for existing customers; exposure score levels are 0-29 low, 30-69 medium and 70-100 high, a lower score meaning less vulnerable, recalculated daily with up to 24 hours for remediation to show; the updated exposure score model, rolling out during a transition, combines CVSS and EPSS, weighs internet-facing status and asset criticality, and averages asset scores for the organization; devices not active in the last 30 days are not factored in, while Defender for Endpoint marks a device Inactive after seven days without communicating; Secure Score for Devices covers application, operating system, network, accounts and security controls, and currently supports configuration set via Group Policy, with settings made through Intune possibly showing as misconfigured | source: Microsoft Learn, "Defender Vulnerability Management dashboard" (updated 2025-12-01), "Exposure score" (updated 2026-05-26), "Security recommendations" (updated 2026-06-04) and "Microsoft Secure Score for devices" (updated 2025-12-01), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Number</th><th>Direction</th><th>What moves it</th></tr></thead>
+          <tbody>
+            <tr><td>Exposure score</td><td>0 to 100, lower is better: 0–29 low, 30–69 medium, 70–100 high</td><td>The vulnerabilities on devices, weighted by how exploitable they are and what the devices are worth. Recalculated daily</td></tr>
+            <tr><td>Secure Score for Devices</td><td>A percentage, higher is better</td><td>Configuration of the operating system, applications, network, accounts and security controls</td></tr>
+            <tr><td>Exposed devices</td><td>A count on each recommendation</td><td>Devices still missing that fix. Its trend line turns red when the count rises and green when it falls</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Read the device secure score with Intune in mind.</strong> Microsoft's page says
+          it currently supports configuration set by Group Policy, and that settings applied through Intune may
+          show as misconfigured. On a fleet configured from Intune, check a configuration finding on the device
+          before believing it. The exposure score is mid-change too: an updated model that adds EPSS <span class="acro-exp">(Exploit Prediction Scoring System)</span> exploit
+          prediction and whether a device faces the internet is rolling out, and Microsoft warns that scores
+          and priorities may move with it while nothing in the environment has.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Recommendations</div>
+      <div class="concept-title">Each Recommendation Is Ranked by Threat, Breach Likelihood and the Device's Value</div>
+      <div class="concept-desc">
+        Weaknesses found on devices become security recommendations, usually <em>update this software</em>,
+        ranked by three things: the threat, meaning exploits that exist and alerts already raised; how likely
+        the device is to be breached; and its business value. Each one shows the CVEs <span class="acro-exp">(Common Vulnerabilities and Exposures)</span> behind it, the exposed
+        devices, and how much it would lower the exposure score and raise the secure score. A CVE with no fix
+        anywhere has no recommendation at all: the Weaknesses list shows it tagged <em>No security
+        update</em>, and the software it affects is left off the recommendations page.
+        <!-- fact: Devices are scored on threat, breach likelihood and business value; recommendations show the potential reduction in exposure score and increase in Secure Score for Devices; a CVE with no security update is tagged No security update and its software is excluded from the Security recommendations page, while Some updates available marks a partial fix; EPSS gives a probability between 0 and 1, values under 0.001 count as 0, and over 0.9 the Threats tooltip shows it; threat filters are Associated active alert, Exploit is available, Exploit is verified and Exploit is part of an exploit kit; vulnerabilities without a CVE ID are named in the format TVM-2020-002; 32-bit and 64-bit architectures are not distinguished when correlating CVEs, which can cause false positives; PowerShell Constrained Language Mode, AppLocker or WDAC can restrict Defender for Endpoint's collection scripts and affect accuracy | source: Microsoft Learn, "Security recommendations" (updated 2026-06-04) and "Vulnerabilities in my organization" (updated 2026-09-10), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Signal on a CVE</th><th>What it means</th></tr></thead>
+          <tbody>
+            <tr><td>Associated active alert</td><td>Something on your devices is already raising alerts about it</td></tr>
+            <tr><td>Exploit available, verified, or part of an exploit kit</td><td>Attack code exists for it, and the portal also marks when that code is verified and when it ships in an exploit kit</td></tr>
+            <tr><td>EPSS</td><td>The probability, from 0 to 1, that the CVE will be exploited in the wild. Above 0.9 the portal flags it; below 0.001 it counts as 0</td></tr>
+            <tr><td><em>Some updates available</em></td><td>Part of the affected software has a fix, and that part has a recommendation</td></tr>
+            <tr><td><em>No security update</em></td><td>Nothing to deploy: the answer is a mitigation, or an exception</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Two known causes of findings that are not real.</strong> The matching does not
+          tell 32-bit software from 64-bit, so a CVE that affects only one architecture can be flagged on both;
+          and AppLocker, WDAC <span class="acro-exp">(Windows Defender Application Control)</span> or PowerShell's Constrained Language Mode can stop the scripts Defender for
+          Endpoint collects with. Check both before arguing with the finding. How the ranking fits the general
+          process is in <span class="xref">Vulnerability Management — Finding and Fixing Weaknesses</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Handing the fix to IT</div>
+      <div class="concept-title">A Remediation Request Is a Ticket in Intune, Not a Deployment</div>
+      <div class="concept-desc">
+        From a recommendation, <em>Request remediation</em> creates a remediation activity that the security
+        team can track and, if the Microsoft Intune connection is turned on, a security task in Intune.
+        Submitting it changes nothing on any device. An Intune administrator accepts or rejects the task and
+        deploys the fix. The connection is a toggle under <span class="volatile" data-checked="2026-11"><em>Settings &gt; Endpoints &gt; General &gt;
+        Advanced features</em></span>, off by default, and without it there is no option to create the Intune task.
+        One request sends at most 10,000 devices to Intune, the <em>attention required</em> option creates
+        nothing that can be tracked, and completed activities are deleted after 180 days.
+        <!-- fact: Remediation requests need the Microsoft Intune connection toggle under Settings, Endpoints, General, Advanced features, off by default; submitting a request creates a remediation activity and doesn't trigger remediation or change devices, and the IT administrator approves or rejects it in Intune and starts the deployment; at most 10,000 devices are sent to Intune; the attention required option creates no remediation action to track; completed remediation activities are removed after 180 days; the Completed by column shows an email address, System confirmation, or N/A | source: Microsoft Learn, "Remediate vulnerabilities with Microsoft Defender Vulnerability Management" (updated 2026-08-08), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>Who</th><th>Where</th></tr></thead>
+          <tbody>
+            <tr><td>Request remediation, with a priority and a due date</td><td>Security</td><td>The Defender portal, from the recommendation</td></tr>
+            <tr><td>Accept or reject the security task</td><td>Endpoint administrator</td><td>Intune</td></tr>
+            <tr><td>Deploy the fix</td><td>Endpoint administrator</td><td>Intune: an update ring, an app update, or a configuration change</td></tr>
+            <tr><td>Track it, and mark it complete</td><td>Either</td><td>The Defender portal's <em>Remediation</em> page</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Exposure falls when Intune ships the fix, not when the request is filed.</strong>
+          The Remediation page shows who closed each activity: an email address for a person, <em>System
+          confirmation</em> when every device was fixed. The deployments that close most requests are
+          <span class="xref">Windows Update for Business — Rings, Deferrals &amp; Deadlines</span> for Windows
+          itself and <span class="xref">Win32 App Packaging — .intunewin End to End</span> for everything else.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Exceptions</div>
+      <div class="concept-title">An Exception Hides a Risk for a Fixed Time, and Cannot Be Extended</div>
+      <div class="concept-desc">
+        When a recommendation cannot be acted on, because there is no fix, a compensating control covers it, or
+        the update breaks an application, an exception takes it out of the work. It covers a whole
+        recommendation or a single CVE, globally or for chosen device groups, and needs a justification and a
+        duration. A duration cannot be extended: when it ends, the item comes back and a new exception is
+        needed. While one is in force, the threat analytics and alerts tied to the item are suppressed, and
+        the exposure score reflects it within an hour. Exceptions are made in the portal only, not through the API <span class="acro-exp">(Application Programming Interface)</span>.
+        <!-- fact: Exceptions are of two types, security recommendation and CVE, scoped globally or by device group, with a justification and duration; durations can't be extended and a new exception is needed after expiry; it can take up to one hour to affect exposed device counts and the exposure score; threat analytics and alerts related to the excluded item are suppressed; exceptions are supported only in the Defender portal, not the public API | source: Microsoft Learn, "Create and view exceptions for security recommendations and CVEs" (updated 2026-07-02), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="concept-desc verdict">
+        <strong class="c-amber">Treat the expiry as the review date.</strong> An exception that cannot be extended
+        forces the decision to be made again, which is what an exception is for. Who may accept the risk, and
+        for how long, is a governance question rather than a console one, and
+        <span class="xref">Exceptions &amp; Risk Acceptance — The Process That Decides Whether Policy Means Anything</span>
+        answers it.
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ── TOPIC: LOCAL ADMIN RIGHTS & EPM ───────────────────────── -->
 <div class="topic" data-reviewed="2026-08">
   <div class="topic-header">
@@ -3042,6 +3658,117 @@ Remove-PSSession $s
     </div>
   </div>
 </div>
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: APP CONTROL FOR BUSINESS ──────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🛂</span>
+    <span class="topic-name">App Control for Business — Managed Installers, Audit Mode &amp; the AppLocker Policy That Can Stop Sign-In</span>
+    <span class="topic-badge">Endpoint • Security</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">What it is</div>
+      <div class="concept-title">App Control Runs Only What a Policy Trusts; AppLocker Is the Older Tool Beside It</div>
+      <div class="concept-desc">
+        App Control for Business, which Microsoft called Windows Defender Application Control until its
+        rename, turns Windows from a place where anything runs unless antivirus objects into one where code
+        runs only if a policy trusts it. That covers executables and DLLs <span class="acro-exp">(Dynamic Link Library)</span>, drivers, scripts and MSI
+        installers, and interactive PowerShell, which drops into Constrained Language Mode. A rule can trust
+        a signing certificate, a file's attributes or hash, Microsoft's reputation service, the installer that
+        put the app there, or a path. AppLocker, from Windows 7, does a narrower version of the same job; it
+        still gets security fixes and no new features. Neither replaces antivirus.
+        <!-- fact: App Control for Business was previously called Windows Defender Application Control; with application control, code runs only if policy allows it; it covers scripts, MSI installers, batch files and interactive PowerShell in Constrained Language Mode; it isn't a replacement for antivirus; Smart App Control turns off within 48 hours on enterprise-managed devices unless the user turned it on; with Smart App Control or App Control using the ISG, Defender Antivirus runs in passive or hybrid mode where a non-Microsoft antivirus provides real-time protection, which is expected | source: Microsoft Learn, "Application Control for Windows" (updated 2026-11-17), fetched and read | checked: 2026-11 -->
+        <!-- fact: App Control policies apply to the whole device and can trust signing certificate attributes, file metadata or hash, Intelligent Security Graph reputation, the managed installer that installed the app, the path (from Windows 10 1903) and the launching process; it is a security feature under MSRC servicing criteria; it is deployed by MDM such as Intune, Configuration Manager or PowerShell, with Group Policy limited to single-policy format on Windows Server 2016 and 2019; AppLocker, from Windows 7, applies to all users or to individual users and groups, by certificate, file attributes, hash or path, doesn't meet the servicing criteria for a security feature, gets security fixes but no new features, and suits mixed older OS estates and per-user rules on shared computers, or complements App Control | source: Microsoft Learn, "App Control and AppLocker Overview" (updated 2026-03-29), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>App Control for Business</th><th>AppLocker</th></tr></thead>
+          <tbody>
+            <tr><td>Applies to</td><td>The whole device, every user</td><td>Every user, or chosen users and groups</td></tr>
+            <tr><td>Can trust by</td><td>Signer, file attributes or hash, reputation, managed installer, path, launching process</td><td>Signer, file attributes or hash, path</td></tr>
+            <tr><td>Microsoft treats it as</td><td>A security feature, serviced as one</td><td>Not a security feature by those criteria: fixes, but no new features</td></tr>
+            <tr><td>Deployed by</td><td>Intune, Configuration Manager or PowerShell; Group Policy only in a limited form</td><td>Group Policy or MDM <span class="acro-exp">(Mobile Device Management)</span></td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Use App Control unless you need rules per user.</strong> Microsoft's advice is
+          to enforce App Control as tightly as the organization can bear and add AppLocker only where shared
+          machines need different rules for different people. Allowlisting and removing local admin rights
+          close the same door from two sides, and the second is
+          <span class="xref">Local Admin Rights — Removing Them, and Endpoint Privilege Management</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Managed installer</div>
+      <div class="concept-title">Make Intune a Managed Installer, but Read the AppLocker Policies Already There First</div>
+      <div class="concept-desc">
+        Intune can make its management extension a managed installer: every app it installs from then on is
+        tagged as coming from a known source, and an App Control policy that trusts managed installers lets
+        those apps run without a rule each. The tag does nothing on its own, and it is not retroactive, so
+        apps installed before it was switched on carry no tag and need rules of their own. Turning the policy
+        off, or excluding a group, stops new tagging but removes nothing from devices that already have it.
+        Underneath, the managed installer is an AppLocker policy with a placeholder rule, merged into
+        whatever AppLocker policy the device already has, and that merge is where it can go badly wrong.
+        <!-- fact: The Intune Management Extension can be added as a managed installer through Endpoint security, App Control for Business; apps then deployed through Intune are tagged; the tag has no effect unless App Control policies use it; tagging isn't retroactive, so earlier apps need explicit rules; excluding groups or deleting the policy doesn't remove the managed installer from devices that added it; on 18 August 2025 the single tenant-wide policy was replaced by policies assignable to groups, existing ones converted to all devices; the policy applies to devices only, can take 10 minutes to appear and 30 to reach devices; enabling it deploys an AppLocker policy with a dummy rule merged with the existing AppLocker policy, and a RuleCollection defined as NotConfigured with an empty rule set becomes enforced with only the dummy rule, which can stop applications, boot or sign-in, so Microsoft recommends removing such collections first; managed installers can enable stopped or disabled AppLocker policies enforced from GPO; Log Analytics collecting AppLocker events will see more of them; CatCleanIMEOnly.ps1 removes the IME as a managed installer and CatCleanAll.ps1 removes all AppLocker policies | source: Microsoft Learn, "Manage approved apps for Windows devices with App Control for Business policy and Managed Installers for Microsoft Intune" (updated 2026-11-16), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Before switching it on, look for</th><th>Because</th></tr></thead>
+          <tbody>
+            <tr><td>An AppLocker rule collection set to <em>Not configured</em> with no rules in it</td><td>Merged with the placeholder rule it becomes enforced with one rule, and Windows can fail to run apps, to start, or to sign anyone in</td></tr>
+            <tr><td>AppLocker policies from Group Policy that are stopped or disabled</td><td>A managed installer can turn them back on</td></tr>
+            <tr><td>Apps already installed</td><td>They are not tagged, so an enforced policy blocks them unless a rule allows them</td></tr>
+            <tr><td>A Log Analytics workspace collecting AppLocker events</td><td>The event volume rises, and Microsoft suggests trimming what is collected</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">This is the setting that can lock a fleet out of Windows.</strong> Microsoft's
+          own warning is that an empty <em>Not configured</em> rule collection merged with the placeholder rule
+          blocks everything else, up to boot and sign-in. Export and read the AppLocker policy a sample of
+          devices already has before assigning the managed installer to anything, and pilot it on a group, which
+          it has been possible to do since August 2025. Apps reach devices through the extension by the route in
+          <span class="xref">Win32 App Packaging — .intunewin End to End</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Policies</div>
+      <div class="concept-title">Start With the Built-In Controls in Audit Mode, and Enforce Once the Log Is Quiet</div>
+      <div class="concept-desc">
+        An App Control policy in Intune is built from custom XML <span class="acro-exp">(eXtensible Markup Language)</span> or from built-in controls. The built-in
+        controls trust Windows components and Store apps, on by default, and optionally apps with a good
+        reputation and apps from managed installers. Everything else is blocked, or, in <em>Audit only</em>,
+        allowed and logged on the device. A supplemental policy, always XML, adds rules to one base policy and
+        must name that base's policy ID; a policy built from the built-in controls has one of four fixed IDs,
+        set by which options it uses. Policies apply to devices, not users. Trusting reputation brings a side
+        effect worth knowing in advance: on devices running another vendor's antivirus, Microsoft Defender
+        Antivirus moves to passive or hybrid mode to check reputation, which is expected and not a fault.
+        <!-- fact: App Control policies in Intune use the ApplicationControl CSP, which replaces the AppLocker CSP used by attack surface reduction application control profiles; a policy uses custom XML or built-in controls; built-in controls trust Windows components and Store apps (Enabled by default, or Audit only, which logs locally without blocking), and optionally apps with good reputation (ISG) and apps from managed installers; other apps are blocked when enabled; supplemental policies are XML, extend exactly one base policy and must reference its PolicyID; built-in base policies have one of four PolicyIDs set by their option combination; WDAC policies apply to the device scope only | source: Microsoft Learn, "Manage approved apps for Windows devices with App Control for Business policy and Managed Installers for Microsoft Intune" (updated 2026-11-16), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Built-in option</th><th>Lets run</th></tr></thead>
+          <tbody>
+            <tr><td>Trust Windows components and Store apps</td><td>Windows itself and Store apps. The rest is blocked, or only logged under <em>Audit only</em></td></tr>
+            <tr><td>Trust apps with a good reputation</td><td>What Microsoft's Intelligent Security Graph rates as reputable</td></tr>
+            <tr><td>Trust apps from managed installers</td><td>What Intune installed after the managed installer was switched on</td></tr>
+            <tr><td>A supplemental policy, in XML</td><td>Whatever its rules add, to the one base policy it names</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Audit until the log has nothing in it you need.</strong> In audit mode every app
+          still runs and each one the policy would have blocked is logged on the device, so the list of what
+          enforcement would break exists before anything breaks. It is usually the software installed before the
+          managed installer, and the old line-of-business app nobody packaged, which is
+          <span class="xref">Application Compatibility &amp; the Legacy App</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ── TOPIC: THE INTUNE SUITE ─────────────────────────────────── -->
 <div class="topic" data-reviewed="2026-09">
   <div class="topic-header">
@@ -4535,6 +5262,120 @@ Remove-PSSession $s
             </div>
           </div>
 
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: SECURITY COPILOT IN INTUNE ────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🤖</span>
+    <span class="topic-name">Security Copilot in Intune — Copilot, the Agents, and the Three That Retired in 2026</span>
+    <span class="topic-badge">Intune • AI</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Copilot in Intune</div>
+      <div class="concept-title">Copilot in Intune Is Security Copilot With Intune's Data and the Asker's Permissions</div>
+      <div class="concept-desc">
+        Copilot in Intune is Microsoft Security Copilot <span class="volatile" data-checked="2026-11">built into the Intune admin center,
+        behind the <em>Copilot</em> button in its top banner</span>. It answers
+        questions about the tenant's devices, users, apps, policies, updates and compliance in plain language,
+        and can turn an answer into a group or a custom report; it also summarizes devices and policies, helps
+        troubleshoot a device, and reviews Endpoint Privilege Management requests. There is no Intune license
+        for it: it runs on Security Copilot's capacity, paid in security compute units, once Security Copilot
+        is set up and its Intune plug-in is on. By default the Intune Administrator role inherits owner access
+        and every other Intune role contributor access, and Copilot sees only what the asking admin's roles and
+        scope tags allow.
+        <!-- fact: Copilot in Intune is Security Copilot embedded in the Intune admin center, for data exploration in natural language (devices, users, apps, policies, updates, compliance) with results usable to add users or devices to groups and create custom reports, policy and setting management, device details and troubleshooting, EPM request analysis, Surface troubleshooting and Windows 365 Cloud PC insights; it is included with Security Copilot and consumes security compute units, with no Intune-specific license; Security Copilot must be configured with its first-run tour done, and the Intune plug-in enabled in Sources; with Intune enabled as a data source, the Entra Intune Administrator role inherits Security Copilot owner access and other Intune RBAC roles inherit contributor access by default, removable in the Security Copilot portal; Copilot honors Intune RBAC permissions and scope tags | source: Microsoft Learn, "Microsoft Copilot in Intune" (updated 2026-05-28), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Ask it to</th><th>It works from</th></tr></thead>
+          <tbody>
+            <tr><td>Find the devices matching a description, then make a group of them</td><td>Intune's device, user, app, policy, update and compliance data</td></tr>
+            <tr><td>Summarize a policy or a device</td><td>The same data, for one object</td></tr>
+            <tr><td>Troubleshoot one device</td><td>That device's details and history</td></tr>
+            <tr><td>Weigh an elevation request</td><td>Endpoint Privilege Management's request and file details</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">It sees what the admin sees, and every prompt spends capacity.</strong> Because
+          Copilot honors roles and scope tags, a regional admin's answers cover their region, which is right;
+          because every Intune role inherits contributor access by default, every Intune admin can spend the
+          tenant's security compute units, which may not be. Removing the Intune role groups from Security
+          Copilot's contributor role is the switch. The requests it reviews are those of
+          <span class="xref">Local Admin Rights — Removing Them, and Endpoint Privilege Management</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The agents</div>
+      <div class="concept-title">Of the Four Intune Agents Microsoft Documented, Three Retired in 2026</div>
+      <div class="concept-desc">
+        An agent differs from Copilot's chat: it runs a task on its own, under an identity of its own, and
+        brings its findings back for an administrator to act on. Microsoft documented four for Intune, and its
+        own pages now retire three of them. The Device Offboarding Agent could not be set up after 30 April
+        2026 and was removed on 1 June. The Policy Configuration Agent and the Change Review Agent left the
+        admin center on 31 August. The Vulnerability Remediation Agent remains, in public preview. Microsoft's
+        overview of Copilot in Intune, last updated in May, still lists all four, and MD-102 <span class="acro-exp">(Microsoft Endpoint Administrator Associate)</span>'s outline, skills
+        measured as of 27 October 2026, still asks candidates to use the agents, including to analyze device
+        performance, which none of the four did.
+        <!-- fact: Starting June 1, 2026 the Device Offboarding Agent is no longer available, and from April 30, 2026 it couldn't be set up; starting August 31, 2026 the Policy Configuration Agent and Change Review Agent are no longer available in the Intune admin center; the Vulnerability Remediation Agent is in public preview; the Change Review Agent evaluated Multi Admin Approval requests for Windows PowerShell scripts; the Policy Configuration Agent turned uploaded documents and benchmarks such as STIGs and NIST guidance into settings catalog suggestions; the Device Offboarding Agent found stale or misaligned devices across Intune and Entra ID and needed approval before offboarding | source: Microsoft Learn, "Get started with the Device Offboarding Agent" (updated 2026-04-01), "Policy Configuration Agent in Microsoft Intune" and "Change Review Agent overview" (both updated 2026-08-19), and "Vulnerability Remediation Agent in Microsoft Intune" (updated 2026-05-28), fetched and read | checked: 2026-11 -->
+        <!-- fact: The Copilot in Intune overview (updated 2026-05-28) and the Security Copilot agents in Intune overview (updated 2026-04-01) list Change Review, Device Offboarding, Policy Configuration and Vulnerability Remediation agents; the MD-102 study guide, skills measured as of 27 October 2026, lists investigating threats identified by Security Copilot agents in Intune, analyzing device performance by using them, and reviewing and responding to their recommendations | source: Microsoft Learn, both overviews fetched and read; the MD-102 study guide, read in the fourteenth wave | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Agent</th><th>Did</th><th>In November 2026</th></tr></thead>
+          <tbody>
+            <tr><td>Device Offboarding</td><td>Found stale or misaligned devices across Intune and Entra, and offboarded them on approval</td><td>Removed 1 June 2026</td></tr>
+            <tr><td>Policy Configuration</td><td>Turned documents and benchmarks such as STIGs <span class="acro-exp">(Security Technical Implementation Guide)</span> into settings catalog policies</td><td>Removed 31 August 2026</td></tr>
+            <tr><td>Change Review</td><td>Assessed the risk of Multi Admin Approval requests for PowerShell scripts</td><td>Removed 31 August 2026</td></tr>
+            <tr><td>Vulnerability Remediation</td><td>Ranks Defender's vulnerability findings and gives Intune steps to fix them</td><td>Public preview</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Do not build a process on a preview agent.</strong> Three of the four were
+          withdrawn in 2026, and their retirement pages told customers to plan alternatives or go back to the
+          tools they had used before. Keep the human workflow working and treat an
+          agent as a second opinion inside it. The fourth agent's source data is
+          <span class="xref">Defender Vulnerability Management — Exposure Score, Recommendations &amp; Handing the Fix to Intune</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The agent that remains</div>
+      <div class="concept-title">The Vulnerability Remediation Agent Runs as Its Own Identity, Ignores Scope Tags, and Cannot Be Stopped Once Started</div>
+      <div class="concept-desc">
+        The Vulnerability Remediation Agent reads Defender Vulnerability Management's findings for managed
+        Windows devices, ranks them by severity, exposure and device count, and gives step-by-step fixes in
+        Intune that can be marked as applied and tracked. It needs Intune Plan 1, Security Copilot capacity and
+        Defender Vulnerability Management, in the public cloud only. It runs as an Entra agentic identity, a
+        user account of its own, and does nothing until that identity is given read permissions in Intune and
+        Defender and passes a readiness check. In preview it does not support scope tags, so any admin who can
+        open the Intune admin center can see its findings, and once an admin starts it, it cannot be stopped
+        or paused.
+        <!-- fact: The Vulnerability Remediation Agent uses Defender Vulnerability Management data to identify CVEs on managed devices, prioritizes by CVSS, exposure impact and device count, gives Intune remediation steps, and lets suggestions be marked applied and tracked; requires Intune Plan 1, Security Copilot with SCUs, and Defender Vulnerability Management (Defender for Endpoint P2 or standalone), the Intune and Defender plugins, public cloud only; it runs under a Microsoft Entra agentic identity and agentic user, with runs disabled until permissions (Intune Read Only Operator or equivalent, Defender Security Reader equivalent) are delegated and the Run Readiness Check passes; agents set up under a human identity must move to an agentic identity within 90 days of its release, permanently; an admin must start it manually and it can't be stopped or paused once started; CVE counts exclude Windows Server editions; scope tags aren't supported in preview and admins can see its data outside their assigned roles or scope | source: Microsoft Learn, "Vulnerability Remediation Agent in Microsoft Intune" (updated 2026-05-28), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Before switching it on</th><th>Because</th></tr></thead>
+          <tbody>
+            <tr><td>Decide who may see every device's vulnerabilities</td><td>It ignores scope tags in preview, so a regional admin sees the whole estate's findings</td></tr>
+            <tr><td>Give its agentic user the read roles in Intune and Defender</td><td>Until then every run is disabled</td></tr>
+            <tr><td>Expect Windows clients only</td><td>Windows Server editions are left out of its counts</td></tr>
+            <tr><td>Start it deliberately</td><td>A started run cannot be stopped or paused</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Its output is a ranked to-do list, not a decision.</strong> The ranking is
+          Defender's data reordered with Intune's fix beside each item, which saves the joining-up and changes
+          nothing about who approves the change. The scope-tag gap is the part to raise with whoever owns
+          delegation: it shows every admin the whole estate's vulnerabilities, past the limits set out in
+          <span class="xref">Intune RBAC &amp; Scope Tags — Delegating Without Handing Over the Fleet</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
           <!-- ── TOPIC: WINDOWS 365 & AVD ──────────────────────────────── -->
           <div class="topic" data-reviewed="2026-09">
             <div class="topic-header">
@@ -4623,6 +5464,231 @@ Remove-PSSession $s
               </div>
             </div>
           </div>
+
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: MSI, EXE & .INTUNEWIN ─────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">📦</span>
+    <span class="topic-name">MSI <span class="acro-exp">(Microsoft Installer)</span>, EXE &amp; .intunewin — What Each Package Is, and How It Installs</span>
+    <span class="topic-badge">Packaging • Formats</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Three different things</div>
+      <div class="concept-title">MSI vs EXE: a Database Windows Runs, a Program That Runs Itself — and a Box That Carries Either</div>
+      <div class="concept-desc">
+        The three file types an endpoint engineer packages are not three versions of one idea. An MSI is a
+        Windows Installer database: tables that describe the files, registry entries and shortcuts to put in
+        place, which the Windows Installer service applies through <code>msiexec</code>. An EXE is a program,
+        and what it does when run is up to whoever built it: it may be an installer made with Inno Setup, NSIS,
+        InstallShield or WiX, or a bootstrapper that unpacks an MSI and runs that. A .intunewin file is not an
+        installer at all. It is the whole setup folder, compressed by Microsoft's Win32 Content Prep Tool so
+        Intune can carry it, and the install command you give Intune runs whatever is inside.
+        <!-- fact: The Win32 Content Prep Tool (IntuneWinAppUtil.exe, parameters -c setup folder, -s setup file, -o output folder, -q quiet) zips every file and subfolder of the setup folder into the .intunewin file, reads the information Intune needs from an MSI setup file, caps a Windows app at 30 GB, and requires installers that run silently | source: Microsoft Learn, Prepare Win32 app content for upload, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Format</th><th>What runs</th><th>Silent install</th><th>What Windows records</th></tr></thead>
+          <tbody>
+            <tr><td>MSI</td><td>The Windows Installer service, reading the package's tables</td><td><code>msiexec /i "app.msi" /qn /norestart</code> — the same switches for every MSI</td><td>A product code, a GUID <span class="acro-exp">(Globally Unique Identifier)</span>, that identifies the installed product and is how it is repaired or removed: <code>msiexec /x {product-code} /qn</code></td></tr>
+            <tr><td>EXE</td><td>The program itself, with whatever logic its author wrote</td><td>Whatever its author built in: <code>/VERYSILENT</code> for Inno Setup, a case-sensitive <code>/S</code> for NSIS, other forms for others</td><td>Usually an uninstall entry in the registry, but nothing guarantees one</td></tr>
+            <tr><td>.intunewin</td><td>Nothing by itself: Intune unpacks it and runs the install command you configured</td><td>Whatever the installer inside needs</td><td>Nothing. Intune decides an app is installed with the detection rule you give it</td></tr>
+          </tbody>
+        </table>
+        <!-- fact: msiexec /i installs, /x uninstalls, /qn means no UI, /quiet no user interaction, /passive a progress bar only, /norestart suppresses the restart, and /L with flags such as *v writes a log | source: Microsoft Learn, msiexec (Windows commands), fetched and read | checked: 2026-11 -->
+        <!-- fact: Inno Setup's /SILENT and /VERYSILENT, with /SUPPRESSMSGBOXES and /NORESTART; a very silent setup that needs a restart reboots without asking unless /NORESTART is given | source: jrsoftware.org, Setup Command Line Parameters, fetched and read | checked: 2026-11 -->
+        <!-- fact: NSIS installers take /S for a silent install, and the switch is case sensitive, so /s does not work; an installer's author can disable it | source: the NSIS wiki and SilentInstall reference as quoted in search results; the NSIS manual's page refused the request and was not read | checked: 2026-11 -->
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Packaging into .intunewin changes nothing about how the installer behaves.</strong>
+          An EXE that shows a dialog box shows it inside a .intunewin too, and an MSI that needs a restart still
+          needs one. The wrapper decides how the files travel to the device; the command line decides whether
+          the install is silent. The upload steps are in
+          <span class="xref">Win32 App Packaging — .intunewin End to End</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">What the tool can know</div>
+      <div class="concept-title">An MSI Tells the Deployment Tool About Itself; an EXE Makes You Tell It</div>
+      <div class="concept-desc">
+        In MECM <span class="acro-exp">(Microsoft Endpoint Configuration Manager)</span>, a Windows Installer deployment type can read an MSI and fill in the application's details
+        and its detection rule from the file. A Script Installer deployment type, which is what an EXE needs,
+        knows only what you type. Intune works the same way: give the Content Prep Tool an MSI and it records
+        what Intune needs, give it an EXE and the commands and detection rule are yours to write.
+        <!-- fact: MECM can automatically detect application information from installation files; a Windows Installer (*.msi) application type imports the folder's files; a Windows Installer detection clause checks an MSI product code; File System and Registry clauses offer "associated with a 32-bit application on 64-bit systems"; Install for system installs once for all users | source: Microsoft Learn, Create applications in Configuration Manager, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>What the tool needs</th><th>From an MSI</th><th>From an EXE</th></tr></thead>
+          <tbody>
+            <tr><td>Name, version, publisher</td><td>Read from the package</td><td>Typed in by hand</td></tr>
+            <tr><td>Install and uninstall commands</td><td><code>msiexec</code> with the package and its product code</td><td>The vendor's switches, found by reading its documentation or by testing</td></tr>
+            <tr><td>Detection: is it installed?</td><td>The product code, checked with Windows Installer</td><td>A registry value, a file and its version, or a script, chosen and tested by you</td></tr>
+            <tr><td>Customization</td><td>Properties on the command line, <code>PROPERTY=value</code>, or a transform file, <code>TRANSFORMS=custom.mst</code></td><td>Whatever the vendor offers: arguments, an answer file, or a wrapper script</td></tr>
+            <tr><td>Exit codes</td><td>Windows Installer's own list, the same for every MSI</td><td>The vendor's, which you map to success, restart or failure</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Prefer the vendor's MSI, and when there is only an EXE, find out what built it.</strong>
+          Many EXEs are a known installer framework, with known switches, or a wrapper around an MSI that can be
+          deployed on its own. An EXE nobody can identify is the one that needs a wrapper script around it, so
+          that the deployment tool gets a silent command, a predictable exit code and something to detect.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Testing</div>
+      <div class="concept-title">Test It the Way the Client Runs It: as SYSTEM, With No One to Click</div>
+      <div class="concept-desc">
+        MECM's <em>Install for system</em> and Intune's <em>System</em> install behavior both run the command as
+        the local SYSTEM account, with no user to answer a prompt. A dialog box that appears there waits,
+        unseen, until the tool gives up: by default after 120 minutes in MECM, its maximum allowed run time, and
+        60 minutes in Intune, which allows up to 1,440. Microsoft's own advice is to test the exact command in
+        the system context first.
+        <!-- fact: MECM's Maximum allowed run time defaults to 120 minutes; Intune's Installation time required defaults to 60 minutes with a maximum of 1,440; Microsoft's general tip is to test the command with psexec -accepteula -s -i cmd and confirm with whoami; calling powershell.exe from an Intune Win32 app launches 32-bit PowerShell | source: Microsoft Learn, Create applications in Configuration Manager, Add and assign Win32 apps to Intune, and the Configuration Manager application installation error codes reference, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <pre class="code-block"><span class="com"># A command prompt running as SYSTEM, from an administrator prompt, with Sysinternals PsExec</span>
+psexec -accepteula -s -i cmd
+whoami                     <span class="com"># nt authority\system</span>
+<span class="com"># Run the exact command the deployment will run, with a verbose log, then read the exit code</span>
+msiexec /i "app.msi" /qn /norestart /l*v "%TEMP%\app-install.log"
+echo %ERRORLEVEL%</pre>
+        <table class="ref-table">
+          <thead><tr><th>Trap</th><th>What happens</th><th>Fix</th></tr></thead>
+          <tbody>
+            <tr><td>A missing or wrong silent switch</td><td>A prompt nobody can see holds the install until the time limit, and it fails</td><td>Run the command as SYSTEM first and watch for any window</td></tr>
+            <tr><td>A bootstrapper that exits early</td><td>The EXE starts the real installer and exits, the tool checks detection too soon, and reports a failure that was not one</td><td>Deploy the MSI it unpacks, or wrap it in a script that waits for the real installer to finish</td></tr>
+            <tr><td>32-bit and 64-bit locations</td><td>A 32-bit app writes under <code>WOW6432Node</code> and <code>Program Files (x86)</code>, and a detection rule looking in the 64-bit place never finds it</td><td>Tick the rule's 32-bit option in MECM or Intune, or point the rule at the right path</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A command tested only as yourself has not been tested.</strong> Your session
+          has a desktop, your profile, mapped drives and a 64-bit shell, and the client has none of those. When
+          the install works and the tool still reports failure, the fault is usually the detection rule, which
+          is the subject of
+          <span class="xref">App Deployment Error Codes — Intune and MECM Side by Side, by What Raised Them</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: APP DEPLOYMENT ERROR CODES ─────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🧾</span>
+    <span class="topic-name">App Deployment Error Codes — Intune and MECM <span class="acro-exp">(Microsoft Endpoint Configuration Manager)</span> Side by Side, by What Raised Them</span>
+    <span class="topic-badge">Deployment • Error Codes</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Read the layer first</div>
+      <div class="concept-title">Three Layers Raise Codes, and the Form of the Number Says Which</div>
+      <div class="concept-desc">
+        Comparing Intune with MECM is the wrong place to start for most codes, because most of them belong to
+        neither. A deployment has three layers that can fail, and each reports in its own form. The
+        installer returns a small decimal exit code, and both tools pass it on unchanged. The management agent,
+        MECM's client or Intune's management extension, raises codes that start <code>0x87D</code>. Windows
+        itself raises codes that start <code>0x8007</code> or <code>0x8000</code>. Both consoles may also show
+        the same code as a negative decimal: 0x87D00324 is -2016410844.
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Layer</th><th>Looks like</th><th>Examples</th><th>Where the answer is</th></tr></thead>
+          <tbody>
+            <tr><td>The installer</td><td>Decimal: 0, 1603, 3010</td><td>The same codes from any MSI <span class="acro-exp">(Microsoft Installer)</span>, in either tool</td><td>The installer's own log. For an MSI, a verbose log written with <code>/l*v</code></td></tr>
+            <tr><td>The management agent</td><td><code>0x87D…</code></td><td>0x87D00324 in MECM, 0x87D1041C in Intune</td><td>The agent's logs: <code>AppEnforce.log</code> and <code>AppDiscovery.log</code> for MECM, the IME <span class="acro-exp">(Intune Management Extension)</span> logs for Intune</td></tr>
+            <tr><td>Windows</td><td><code>0x8007…</code>, <code>0x8000…</code></td><td>Access denied, a bad hash, a missing class</td><td>Usually a Windows error number underneath, decoded below</td></tr>
+          </tbody>
+        </table>
+        <pre class="code-block"><span class="com"># 0x8007 followed by four hex digits is a Windows error number in disguise. Drop 0x8007, convert the rest:</span>
+0x80070643   <span class="com"># 0x643 = 1603  the MSI fatal error, as Windows reports it</span>
+0x80070652   <span class="com"># 0x652 = 1618  another installation is already in progress</span>
+0x80070BC2   <span class="com"># 0xBC2 = 3010  success, but a restart is required</span>
+0x80070005   <span class="com"># 0x005 = 5     access denied</span></pre>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">An installer code and an agent code point at different places.</strong> A
+          1603 means the installer itself failed, so its log has the answer. A 0x87D code often means the
+          installer did its job and the agent disagrees, usually about detection, so the answer is in the
+          agent's logs and the detection rule. Reading the logs is covered in
+          <span class="xref">Application Troubleshooting — Reading the IME Log</span> and
+          <span class="xref">MECM Deployment &amp; Content Troubleshooting</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The common ones</div>
+      <div class="concept-title">Intune vs MECM Error Codes: the Ones Both Consoles Show, and Their Pairs</div>
+      <div class="concept-desc">
+        Error 1603 and exit code 3010 mean the same thing in both tools, because both come from Windows
+        Installer. The agent codes differ by tool, but several are pairs: the same failure, numbered twice.
+        <!-- fact: Windows Installer: 0 success; 1602 user canceled; 1603 fatal error during installation; 1605 only valid for installed products; 1618 another installation in progress; 1619 package could not be opened; 1625 forbidden by system policy; 1633 not supported on this platform; 1638 another version already installed; 1641 the installer has initiated a restart, success; 3010 a restart is required to complete the install, success | source: Microsoft Learn, MsiExec.exe and InstMsi.exe error messages, fetched and read | checked: 2026-11 -->
+        <!-- fact: Configuration Manager: 0x87D00324 the application was not detected after installation completed; 0x87D00325 application was still detected after uninstall completed; 0x87D00327 script is not signed; 0x87D00607 content not found; 0x87D00667 no current or future service window; 0x87D01106 failed to verify the executable file or construct the command line; 0x87D01201 not enough space in cache; 0x87D103E8 error unknown; 0x80091007 the hash value is not correct | source: Microsoft Learn, Application installation common error codes reference (Configuration Manager), fetched and read | checked: 2026-11 -->
+        <!-- fact: Intune: 0x87D1041C (-2016345060) the application was not detected after installation completed successfully; 0x87D103E8 unknown error | source: Microsoft Learn, Intune app installation error reference, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Code</th><th>Raised by</th><th>Means</th><th>First check</th></tr></thead>
+          <tbody>
+            <tr><td>0, 3010, 1641</td><td>Windows Installer</td><td class="c-green">Success. 3010 asks for a restart; 1641 says the installer started one</td><td>Nothing, unless the restart behavior is wrong for the user</td></tr>
+            <tr><td>1603</td><td>Windows Installer</td><td class="c-red">A fatal error during installation</td><td>The verbose log: search for the first <em>Return value 3</em></td></tr>
+            <tr><td>1618</td><td>Windows Installer</td><td class="c-amber">Another installation is already in progress</td><td>Usually clears by itself. Map it as a retry: Intune's Retry and MECM's Fast Retry run on different schedules</td></tr>
+            <tr><td>1638, 1605</td><td>Windows Installer</td><td>Another version is already installed; or the product to remove is not installed</td><td>The upgrade path, and whether detection matches what is really there</td></tr>
+            <tr><td>1625, 1633</td><td>Windows Installer</td><td>Forbidden by system policy; not for this platform</td><td>Policy, and whether a 32-bit or 64-bit package reached the wrong device</td></tr>
+            <tr><td>0x87D00324 · 0x87D1041C</td><td>MECM · Intune</td><td class="c-red">Not detected after installation completed</td><td>The detection rule: the wrong registry view, the wrong version, or a bootstrapper that exited early</td></tr>
+            <tr><td>0x87D00325</td><td>MECM</td><td>Still detected after uninstall completed</td><td>Whether the uninstall command really removes what detection looks for</td></tr>
+            <tr><td>0x87D01106</td><td>MECM</td><td>Could not verify the executable or build the command line</td><td>The program name and path, and that the program exists on the client</td></tr>
+            <tr><td>0x87D00607, 0x87D01201</td><td>MECM</td><td>Content not found; not enough space in the client cache</td><td>Distribution of the content, and the client cache size</td></tr>
+            <tr><td>0x87D00667</td><td>MECM</td><td>No current or future service window, MECM's name for a maintenance window</td><td>The collection's maintenance windows against the maximum run time</td></tr>
+            <tr><td>0x80091007</td><td>Windows</td><td>The hash value is not correct</td><td>Content that changed after it was distributed</td></tr>
+            <tr><td>0x87D103E8</td><td>MECM and Intune</td><td>Unknown error</td><td>The logs, since the code itself says nothing</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">The pair that costs the most time is "installed but not detected".</strong>
+          0x87D00324 in MECM and 0x87D1041C in Intune both mean the installer finished and the rule that
+          checks for it found nothing: the software installed, but it does not appear. Reinstalling will not help, because the next attempt ends the same way.
+          The fix is the rule, which is why the testing steps in
+          <span class="xref">MSI, EXE &amp; .intunewin — What Each Package Is, and How It Installs</span>
+          end with detection.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Return codes</div>
+      <div class="concept-title">Return Codes Are a Contract You Configure, and the Two Tools Read It Differently</div>
+      <div class="concept-desc">
+        Neither tool knows what an exit code means until it is told. Both keep a table of return codes on each
+        app, with a type for each code, and an exit code nobody mapped is a failure. An MSI's codes are known in
+        advance, and a vendor's EXE may return anything, so its codes have to be found and added before the
+        first deployment.
+        <!-- fact: Intune Win32 return code types are Failed, Hard reboot, Soft reboot, Retry and Success; Retry makes three attempts five minutes apart; Installation time required defaults to 60 minutes, maximum 1,440. MECM return code types are Success (no reboot), Failure (no reboot), Hard Reboot, Soft Reboot and Fast Retry, which retries every two hours for a total of 10 times; Maximum allowed run time defaults to 120 minutes | source: Microsoft Learn, Add and assign Win32 apps to Intune, and Create applications in Configuration Manager, fetched and read | checked: 2026-11 -->
+        <!-- fact: Intune's default return codes on a new Win32 app are 0 and 1707 success, 3010 soft reboot, 1641 hard reboot and 1618 retry | source: AdminStudio and Patch My PC documentation and a PowerShell Gallery module, as quoted in search results; Microsoft's page says defaults are added but was not found listing them | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Behavior</th><th>Intune</th><th>MECM</th></tr></thead>
+          <tbody>
+            <tr><td>Success</td><td>Success</td><td>Success (no reboot)</td></tr>
+            <tr><td>Installed, restart wanted</td><td>Soft reboot: the next app may install first</td><td>Soft Reboot: other installations can run first</td></tr>
+            <tr><td>Installed, restart required</td><td>Hard reboot: no further Win32 app installs until it restarts</td><td>Hard Reboot: nothing else installs until it restarts</td></tr>
+            <tr><td>Try again later</td><td>Retry: three attempts, five minutes apart</td><td>Fast Retry: every two hours, ten times in all</td></tr>
+            <tr><td>Failure</td><td>Failed</td><td>Failure (no reboot)</td></tr>
+            <tr><td>Time limit before it is failed</td><td>Installation time required: 60 minutes by default, 1,440 at most</td><td>Maximum allowed run time: 120 minutes by default</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Map a vendor's codes before the first deployment, not after the first ticket.</strong>
+          Run the EXE's install, its uninstall and a run on a machine that already has it, as SYSTEM, and write
+          down what each returns. An EXE that returns 3010 for success with a restart is a failure to a tool that
+          was never told, and a 1618 that should have been retried is a failure too.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- /domain-body endpoint -->
 
@@ -4857,6 +5923,118 @@ Remove-PSSession $s
           standing exception — and standing exceptions are how a service desk ends up holding an
           administrator role. Grant it, log it, and review the log; that is a smaller risk than the
           workaround it prevents.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: MULTI ADMIN APPROVAL ──────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">👥</span>
+    <span class="topic-name">Multi Admin Approval — A Second Administrator Before a Wipe, a Script or a Role Change</span>
+    <span class="topic-badge">Intune • Delegation</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">What it protects</div>
+      <div class="concept-title">An Access Policy Holds a Change Until a Different Administrator Approves It</div>
+      <div class="concept-desc">
+        Multi Admin Approval answers one question: what can a single stolen Intune admin account do? With an
+        access policy in place for a kind of resource, any change to it waits until a different
+        administrator, from the policy's approver group, approves it. Nobody can approve their own request,
+        and that includes Global and Intune Administrators. It covers changes made in the portal and calls
+        that applications make to Microsoft Graph with their own credentials. Changing an access policy
+        always needs a second administrator, with no policy needed, and the tenant must have at least two
+        administrators before any of it works.
+        <!-- fact: Multi Admin Approval access policies require a second administrative account to approve a change before it's applied; only members of the policy's approval group can approve; an admin can't approve their own request, including Global Administrator and Intune Administrator; enforcement covers interactive delegated actions and app-authenticated Microsoft Graph calls, and only in tenants that already have access policies; protected resources are Apps (app deployments, not app protection policies), Compliance policies, Configuration policies (settings catalog), Device actions (wipe, retire, delete), Role-based access control (roles, permissions, admin and member group assignments), Scripts (scripts deployed to Windows devices) and Tenant Configuration (device categories); changes to access policies themselves always need a second administrator's approval; the tenant needs at least two administrator accounts | source: Microsoft Learn, "Use access policies to require multi admin approval" (updated 2026-07-31), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Access policy type</th><th>Holds for approval</th></tr></thead>
+          <tbody>
+            <tr><td>Device actions</td><td>Wipe, retire and delete</td></tr>
+            <tr><td>Scripts</td><td>Scripts deployed to Windows devices</td></tr>
+            <tr><td>Role-based access control</td><td>Changes to roles, their permissions, and who is assigned them</td></tr>
+            <tr><td>Apps</td><td>App deployments, though not app protection policies</td></tr>
+            <tr><td>Compliance and configuration policies</td><td>Compliance policies, and settings catalog policies</td></tr>
+            <tr><td>Tenant configuration</td><td>Device categories</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Protect what an intruder with one admin account would reach for first.</strong>
+          A mass wipe, a script pushed to every Windows device, and a role assignment that makes the intruder
+          harder to remove are the three high-damage moves, and they are the first three rows.
+          The policy does not make an account harder to take; that is the job of
+          <span class="xref">Intune RBAC &amp; Scope Tags — Delegating Without Handing Over the Fleet</span>,
+          which keeps each account's reach small to begin with.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The workflow</div>
+      <div class="concept-title">Request, Approve, Then the Requestor Completes It, Within Three Days</div>
+      <div class="concept-desc">
+        A protected change starts the ordinary way, and on its last page the administrator writes a business
+        justification and submits it. Approvers see it under <span class="volatile" data-checked="2026-11"><em>Tenant administration &gt; Multi
+        Admin Approval</em></span> or in <em>Admin Tasks</em>, read the justification, add notes, and approve or
+        reject. Approval does not apply the change: the original requestor has to open the request and select
+        <em>Complete</em>. A request nobody acts on for three days is marked <em>Expired</em> and has to be submitted again, and
+        only one request can be pending for any one object at a time.
+        <!-- fact: The requestor enters a business justification on the Save and Review surface and tracks it under Tenant administration, Multi Admin Approval, My requests; approvers use All requests or Tenant administration, Admin Tasks, add approver notes and approve or reject; after approval the original requestor must select Complete to apply the change; a request not processed within 3 days expires and must be resubmitted; status changes stay visible 30 days; a new request can't be submitted for an object that already has one pending; creating an access policy also goes through approval and completion | source: Microsoft Learn, "Use access policies to require multi admin approval" (updated 2026-07-31), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Step</th><th>Who</th><th>Where</th></tr></thead>
+          <tbody>
+            <tr><td>Submit, with a business justification</td><td>The requestor</td><td>The usual create or edit page, at its end</td></tr>
+            <tr><td>Approve or reject, with notes</td><td>Another member of the approver group</td><td><em>All requests</em>, or <em>Admin Tasks</em></td></tr>
+            <tr><td>Complete</td><td>The original requestor, again</td><td><em>My requests</em></td></tr>
+            <tr><td>Expire</td><td>Nobody, after three days without action</td><td>Submit again</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Approved is not done.</strong> The change sits approved until its requestor comes
+          back and completes it, so an urgent wipe approved at midnight waits for the person who asked. For
+          urgent work Microsoft's advice is to contact the approvers directly; a runbook should also say who
+          completes the change, and how fast. The same two-person shape on the process side is
+          <span class="xref">Change Management – The Process That Prevents Self-Inflicted Outages</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Approvers and automation</div>
+      <div class="concept-title">The Approver Group Has to Be a Security Group Assigned to an Intune Role, or It Quietly Fails</div>
+      <div class="concept-desc">
+        The approver group is where this breaks without saying so. It must be a security group, because a
+        distribution list, a Microsoft 365 group or a mail-enabled security group silently fails to resolve
+        its members. It must be assigned directly to an Intune role as a member group, or Intune removes its
+        members from it from time to time. Its members should be direct members, since nesting is unreliable,
+        and each needs read permission for the kind of resource they approve. Automation is the other edge:
+        an application calling Graph with its own credentials is held like a person, unless the policy
+        excludes it, and an excluded app can change the protected resource with no approval at all.
+        <!-- fact: An approver must be in the approver group assigned to the access policy and have the resource's Read permission; the approver group must be a security group (distribution lists, Microsoft 365 groups and mail-enabled security groups silently fail to resolve membership), must be directly assigned to an Intune RBAC role as a member group or its members are removed periodically, and members should be direct members because nesting may be unreliable; administrators need an Intune license unless Allow access to unlicensed admins is enabled, which is irreversible; requestors need the normal RBAC permission for the action; enterprise applications using app-auth tokens can be excluded per policy, up to 50, with additions and removals needing approval and recorded in the audit log, while delegated calls stay subject to MAA even for an excluded app; the Change Review Agent could add suggestions for Windows PowerShell script requests | source: Microsoft Learn, "Use access policies to require multi admin approval" (updated 2026-07-31), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Get this wrong</th><th>And this happens</th></tr></thead>
+          <tbody>
+            <tr><td>The approver group is a distribution list or a Microsoft 365 group</td><td>Its members are never resolved, without an error</td></tr>
+            <tr><td>The group is not assigned to an Intune role as a member group</td><td>Intune removes its members periodically</td></tr>
+            <tr><td>Approvers are members through a nested group</td><td>Approval rights come and go unreliably</td></tr>
+            <tr><td>An automation app is excluded from the policy</td><td>That app changes protected resources with no second person, so its credentials become the soft spot</td></tr>
+            <tr><td><em>Allow access to unlicensed admins</em> is switched on</td><td>It stays on: Microsoft documents it as irreversible</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Test the approval path before the day it matters.</strong> Submit a harmless
+          change and have a second administrator approve it while nothing is on fire: a group that fails
+          silently is only discovered when a real request waits for approvers who were never there. And
+          review every excluded application as if it held an admin account, because for that resource it
+          does. Scripts that call Graph this way are
+          <span class="xref">Microsoft Graph From PowerShell — The Modern Admin API</span>.
         </div>
       </div>
     </div>

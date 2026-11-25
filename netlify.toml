@@ -9,6 +9,15 @@
 [build.environment]
   PYTHON_VERSION = "3.12"
 
+# ── Functions ───────────────────────────────────────────────────────────────
+# Netlify Functions live in netlify/functions (Netlify's default, stated here
+# so it is not a surprise). health.mts serves /.netlify/functions/health, a
+# read-only status check that makes no outbound requests. Because the publish
+# directory is the repository root, the function's source is also reachable as
+# a static file; it holds no secrets, and secrets must never be put there.
+[functions]
+  directory = "netlify/functions"
+
 # ── Security headers ────────────────────────────────────────────────────────
 # The site makes ZERO external requests, so the CSP is locked down hard.
 # script-src is strict ('self', no unsafe-inline) — all handlers are wired in
