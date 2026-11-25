@@ -2128,6 +2128,112 @@ gcloud compute instances list --project my-prod-project</pre>
               </div>
             </div>
           </div>
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: COMPUTE ENGINE IN OPERATION ───────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🖥️</span>
+    <span class="topic-name">Compute Engine in Operation — OS <span class="acro-exp">(Operating System)</span> Login, VM <span class="acro-exp">(Virtual Machine)</span> Manager, Spot VMs, Hyperdisk &amp; Regional Disks</span>
+    <span class="topic-badge">GCP • Compute</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Access and patching</div>
+      <div class="concept-title">OS Login Puts SSH <span class="acro-exp">(Secure Shell)</span> Behind IAM <span class="acro-exp">(Identity and Access Management)</span>, and VM Manager Patches the Fleet on a Schedule</div>
+      <div class="concept-desc">
+        <strong class="c-cyan">OS Login</strong> replaces individual SSH keys with IAM: a user's Linux account is
+        tied to their Google identity and stays the same on every instance, administrators grant access at the
+        instance or project level, a user can be allowed to log in without being allowed <code>sudo</code>, and
+        removing the IAM permission removes the access, with no keys to hunt down. Google recommends it for many
+        users across many instances or projects. <strong class="c-cyan">VM Manager</strong> is the suite for
+        running large Windows and Linux fleets: Patch applies patches on demand or on a schedule and reports
+        compliance, OS inventory management collects what each instance runs, and OS policies install, remove and
+        update software packages.
+        <!-- fact: OS Login manages SSH access to instances using IAM without individual SSH keys, keeping a consistent Linux user identity across instances, and is the recommended way to manage many users across instances or projects; IAM can grant login without the ability to run sudo; permissions update automatically when IAM changes; a user connected to a VM can use all IAM permissions granted to the service account attached to it | source: Google Cloud documentation, "About OS Login", fetched and read | checked: 2026-11 -->
+        <!-- fact: VM Manager is a suite for managing operating systems for large Windows and Linux VM fleets on Compute Engine: Patch for on-demand and scheduled patching and patch compliance reporting, OS inventory management to collect operating system information, and OS policies to install, remove and auto-update software packages; it supports projects in VPC Service Controls perimeters | source: Google Cloud documentation, "VM Manager overview", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Need</th><th>Use</th></tr></thead>
+          <tbody>
+            <tr><td>Who may SSH in, and as whom</td><td>OS Login, with IAM roles</td></tr>
+            <tr><td>Who may become root once in</td><td>OS Login's administrator role, granted separately</td></tr>
+            <tr><td>Patches on a schedule, with a compliance report</td><td>VM Manager Patch</td></tr>
+            <tr><td>What is installed, fleet-wide</td><td>VM Manager OS inventory</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">SSH access to a VM is access to its service account.</strong> Google's own
+          note: anyone who connects can use every IAM permission granted to the service account attached to that
+          VM. Give a VM a service account with only what its workload needs, and grant login to people as
+          carefully as you would grant that account. Service accounts themselves are in
+          <span class="xref">GCP Service Accounts &amp; Workload Identity</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Spot VMs</div>
+      <div class="concept-title">Spot VMs Cost Up to 91% Less and Can Be Taken Back at Any Moment</div>
+      <div class="concept-desc">
+        <strong class="c-cyan">Spot VMs</strong> run on Compute Engine's spare capacity, at discounts of up to 91%
+        for many machine types, GPUs <span class="acro-exp">(Graphics Processing Unit)</span>, TPUs <span class="acro-exp">(Tensor Processing Unit)</span> and Local SSDs <span class="acro-exp">(Solid State Drive)</span>, and they are the current form of what were preemptible
+        VMs. Compute Engine can reclaim one at any time, and then stops it by default or deletes it, as you chose
+        at creation. There is no minimum or maximum runtime unless you set one. A preemption notice can be given
+        in advance: by default there is none, and Google recommends 120 seconds for any workload that needs more
+        than 30 seconds to wind down.
+        <!-- fact: Spot VMs are excess Compute Engine capacity at discounts of up to 91% for many machine types, GPUs, TPUs and Local SSDs, and are the latest version of preemptible VMs; Compute Engine may preempt them at any time, stopping (default) or deleting them per the termination action; they have no minimum or maximum runtime unless you limit it; the preemption notice duration is 0 seconds by default, and 120 seconds is recommended for workloads needing a dedicated duration or longer than 30 seconds to handle preemption; they suit fault-tolerant workloads such as batch jobs and stateless applications | source: Google Cloud documentation, "Spot VMs", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Workload</th><th>On Spot VMs?</th></tr></thead>
+          <tbody>
+            <tr><td>Batch jobs that checkpoint and retry</td><td>Yes: the discount is the point</td></tr>
+            <tr><td>Stateless web tier behind a managed instance group</td><td>Yes, mixed with standard VMs</td></tr>
+            <tr><td>A single database instance</td><td>No: preemption is an outage</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Set the 120-second notice and handle it.</strong> With the default of none, a
+          Spot VM can be shut down with no warning a workload can use; with notice, it can finish a unit of work
+          or checkpoint first. Spare capacity also varies, so a design that needs Spot capacity to exist at a
+          given hour needs a fallback. Instance groups that replace lost VMs are in
+          <span class="xref">GCP Compute — Compute Engine &amp; MIGs</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Disks</div>
+      <div class="concept-title">Hyperdisk Is Google's Recommended Disk; a Regional Disk Survives the Loss of One Zone</div>
+      <div class="concept-desc">
+        For boot and data disks, Google now recommends <strong class="c-cyan">Hyperdisk</strong>, its fastest
+        durable disk, which offers more IOPS <span class="acro-exp">(Input/Output Operations Per Second)</span> and throughput than Persistent Disk by offloading storage work to
+        Google's Titanium hardware; like Persistent Disk, it is reached over the network and used like a
+        physical disk. For high availability, <strong class="c-cyan">regional Persistent Disk</strong> and
+        Hyperdisk Balanced High Availability replicate every write synchronously between two zones of a region,
+        so a disk survives one zone failing. Google's condition is that the application, file system and
+        operating system tolerate a crash, since a failover is, to them, a sudden stop.
+        <!-- fact: Hyperdisk is the fastest and most efficient durable disk for Compute Engine, and Google recommends it for boot or data disks; it offers higher IOPS and throughput than Persistent Disk using Titanium storage offload, with data transmitted over the network | source: Google Cloud documentation, "About Hyperdisk", fetched and read | checked: 2026-11 -->
+        <!-- fact: Regional Persistent Disk and Hyperdisk Balanced High Availability synchronously replicate data between two zones in the same region, ensuring high availability for disk data through one zonal failure; if the application, file system or operating system is not crash tolerant, they may not be an option | source: Google Cloud documentation, "About regional Persistent Disk and Hyperdisk Balanced High Availability", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Disk</th><th>Copies</th><th>Survives</th></tr></thead>
+          <tbody>
+            <tr><td>Zonal Persistent Disk or Hyperdisk</td><td>Within one zone</td><td>A failed host, not a failed zone</td></tr>
+            <tr><td>Regional Persistent Disk, Hyperdisk Balanced High Availability</td><td>Two zones, written synchronously</td><td>One zone failing</td></tr>
+            <tr><td>Snapshots</td><td>Kept apart from the disk</td><td>Mistakes and deletions, at the snapshot's age</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Synchronous replication copies mistakes as faithfully as data.</strong> A
+          regional disk protects against a zone going away, not against a bad write, a dropped table or
+          ransomware, which reach both zones at once; those need snapshots or backups. The general case is in
+          <span class="xref">Backup Strategy — 3-2-1-1-0 and the Schemes That Make Restores Possible</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="topic" data-reviewed="2026-09">
             <div class="topic-header">
               <span class="topic-icon">🏃</span>
@@ -3522,6 +3628,112 @@ gcloud compute instances list --project my-prod-project</pre>
               </div>
             </div>
           </div>
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: GOOGLE CLOUD DATA PRODUCTS ────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🗄️</span>
+    <span class="topic-name">Google Cloud Data Products — AlloyDB, Bigtable, Memorystore, Pub/Sub &amp; Dataflow</span>
+    <span class="topic-badge">GCP • Data</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">AlloyDB and Bigtable</div>
+      <div class="concept-title">AlloyDB Is PostgreSQL With Google's Engine Underneath; Bigtable Is One Enormous Table Read by Key</div>
+      <div class="concept-desc">
+        Two of Google's databases sit at opposite ends of the shelf. <strong class="c-cyan">AlloyDB for
+        PostgreSQL</strong> is a managed database compatible with PostgreSQL, built on a Google engine and a
+        multi-node architecture, offered as an alternative to running standard PostgreSQL yourself; Google aims it
+        at demanding workloads, among them running analytical queries against live transactional data without
+        disturbing it. <strong class="c-cyan">Bigtable</strong> is a sparsely populated table that scales to
+        billions of rows and thousands of columns, terabytes to petabytes, built for large amounts of data
+        looked up by a single key at low latency and high throughput. Its client libraries include an extension
+        of the Apache HBase API <span class="acro-exp">(Application Programming Interface)</span>, and it scales in proportion to the nodes in its cluster.
+        <!-- fact: AlloyDB for PostgreSQL is a fully managed, PostgreSQL-compatible database service pairing a Google-built engine with a multi-node architecture, a scalable alternative to self-managed standard PostgreSQL, designed for demanding workloads including hybrid transactional and analytical processing on live transactional data; AlloyDB Express, in preview, offers fast provisioning and scale-to-zero compute for prototyping | source: Google Cloud documentation, "AlloyDB overview", fetched and read | checked: 2026-11 -->
+        <!-- fact: Bigtable is a sparsely populated table scaling to billions of rows and thousands of columns, terabytes or petabytes, ideal for large amounts of single-keyed data with low latency and high read and write throughput; client libraries include a supported extension to the Apache HBase library for Java; it scales in direct proportion to the number of machines in the cluster | source: Google Cloud documentation, "Bigtable overview", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>The data</th><th>Fits</th></tr></thead>
+          <tbody>
+            <tr><td>Relational, an ordinary PostgreSQL, MySQL or SQL <span class="acro-exp">(Structured Query Language)</span> Server application</td><td>Cloud SQL</td></tr>
+            <tr><td>Relational and PostgreSQL, under heavy load or with analytics on live data</td><td>AlloyDB</td></tr>
+            <tr><td>Relational, spread across regions, consistent everywhere</td><td>Spanner</td></tr>
+            <tr><td>Huge volumes read and written by one key: time series, telemetry, profiles</td><td>Bigtable</td></tr>
+            <tr><td>Documents for a mobile or web application</td><td>Firestore</td></tr>
+            <tr><td>Analytical queries over everything</td><td>BigQuery</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Choose Bigtable by its key, or not at all.</strong> It answers lookups and
+          scans by row key at enormous scale and little else; a workload that needs joins or ad hoc queries
+          belongs in a relational database or BigQuery. The relational three are compared in
+          <span class="xref">GCP Databases — Cloud SQL, Spanner &amp; Firestore</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Memorystore</div>
+      <div class="concept-title">Memorystore for Valkey Shards the Keys, and Replicas Spread a Shard Across Zones</div>
+      <div class="concept-desc">
+        <strong class="c-cyan">Memorystore for Valkey</strong> is Google's managed Valkey, the in-memory data store.
+        An instance runs with cluster mode enabled, holding one or more shards, or disabled, holding one. Each
+        shard holds part of the key space and has one primary node and up to five replicas, and when replicas are
+        added Memorystore spreads a shard's nodes across zones for availability and read throughput.
+        <!-- fact: Memorystore for Valkey is a fully managed Valkey service supporting Cluster Mode Enabled instances, with one or more shards, and Cluster Mode Disabled instances, with a single shard; each shard holds a subset of the key space and has one primary node and optionally up to five replicas; when replicas are added, Memorystore distributes a shard's nodes across zones for availability and throughput | source: Google Cloud documentation, "Memorystore for Valkey overview", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Mode</th><th>Shards</th><th>Suits</th></tr></thead>
+          <tbody>
+            <tr><td>Cluster mode disabled</td><td>One</td><td>A cache that fits on one primary, with replicas for reads and failover</td></tr>
+            <tr><td>Cluster mode enabled</td><td>One or more</td><td>A key space larger than one node, or write load to spread</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Add replicas before calling a cache highly available.</strong> A shard with no
+          replica is one node in one zone; the cross-zone spread Google describes happens only once replicas
+          exist. And a cache still holds copies, so an expiry on every key bounds how stale a read can be, which
+          is in
+          <span class="xref">Caching Strategies — From App to CDN</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Pub/Sub and Dataflow</div>
+      <div class="concept-title">Pub/Sub Carries the Messages; Dataflow Processes Them, Exactly Once Unless You Choose Otherwise</div>
+      <div class="concept-desc">
+        <strong class="c-cyan">Pub/Sub</strong> is Google's asynchronous messaging service: publishers send events
+        without regard to who processes them or when, Pub/Sub delivers them to every subscriber that reacts, and
+        latencies are typically around 100 milliseconds. It serves as service-to-service middleware, as a queue to
+        spread tasks, and as the entry point to streaming pipelines. <strong class="c-cyan">Dataflow</strong> runs
+        those pipelines: one programming model for batch and streaming, reading from sources, transforming and
+        writing out, for ingestion, ETL <span class="acro-exp">(Extract, Transform, Load)</span> into BigQuery, and processing logs or sensor data at scale. By default it
+        processes every record exactly once; a streaming pipeline that can tolerate duplicates can switch to
+        at-least-once mode for lower cost and latency.
+        <!-- fact: Pub/Sub is an asynchronous, scalable messaging service that decouples services producing messages from those processing them, with latencies typically around 100 milliseconds; it is used for streaming analytics and data integration pipelines, as messaging middleware and as a queue to parallelize tasks; publishers send events without regard to how or when they are processed and Pub/Sub delivers them to all services that react to them | source: Google Cloud documentation, "What is Pub/Sub?", fetched and read | checked: 2026-11 -->
+        <!-- fact: Dataflow provides unified stream and batch data processing at scale, with pipelines reading from sources, transforming data and writing to destinations, for uses such as data movement, ETL into BigQuery and log or sensor processing; it uses the same programming model for batch and streaming; by default it provides exactly-once processing of every record, and streaming pipelines that tolerate duplicates can enable at-least-once mode to reduce cost and improve latency | source: Google Cloud documentation, "Dataflow overview", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Need</th><th>Use</th><th>AWS <span class="acro-exp">(Amazon Web Services)</span> counterpart</th></tr></thead>
+          <tbody>
+            <tr><td>Decouple a producer from its consumers</td><td>Pub/Sub</td><td>SNS <span class="acro-exp">(Simple Notification Service)</span> with SQS <span class="acro-exp">(Simple Queue Service)</span></td></tr>
+            <tr><td>Transform a stream or a batch on its way to storage</td><td>Dataflow</td><td>Kinesis with Glue, or Firehose</td></tr>
+            <tr><td>Answer questions over the result</td><td>BigQuery</td><td>Athena or Redshift</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Exactly-once inside the pipeline is not exactly-once everywhere.</strong> It
+          holds for what Dataflow does to each record; a system outside it that the pipeline calls can still see a
+          call twice. Choose at-least-once where duplicates are harmless and the saving matters. Why delivery
+          guarantees are harder than they sound is in
+          <span class="xref">Streaming &amp; Event Pipelines — Delivery Guarantees and the Lies About Time</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">📊</span>
@@ -4313,10 +4525,10 @@ gcloud compute instances list --project my-prod-project</pre>
               </div>
             </div>
           </div>
-<div class="topic" data-reviewed="2026-09">
+<div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">📦</span>
-              <span class="topic-name">GCP-Native IaC <span class="acro-exp">(Infrastructure as Code)</span> — Deployment Manager &amp; Config Controller</span>
+              <span class="topic-name">GCP-Native IaC <span class="acro-exp">(Infrastructure as Code)</span> — Infrastructure Manager, Config Controller &amp; Deployment Manager's End</span>
               <span class="topic-badge">GCP · IaC</span>
               <span class="topic-chev">▶</span>
             </div>
@@ -4335,12 +4547,13 @@ gcloud compute instances list --project my-prod-project</pre>
                     <tr><th>Option</th><th>Notes</th></tr>
                     <tr><td>Config Connector</td><td>Manage GCP resources as K8s <span class="acro-exp">(Kubernetes)</span> CRDs <span class="acro-exp">(Custom Resource Definition)</span> (GitOps-friendly)</td></tr>
                     <tr><td>Config Controller</td><td>Managed KRM stack: Connector + Policy Controller + sync</td></tr>
-                    <tr><td>Deployment Manager</td><td>The older Jinja/Python template engine (legacy; being retired)</td></tr>
+                    <tr><td>Infrastructure Manager</td><td>Google's managed Terraform: deploys configurations from Cloud Storage, Git or a local directory, with previews and revisions</td></tr>
+                    <tr><td>Deployment Manager</td><td>The older Jinja/Python template engine, now retired: support ended in March 2026 and the service shuts down after 30 June 2027</td></tr>
                     <tr><td>Terraform (+ Blueprints)</td><td>Google's actual recommended default for most teams</td></tr>
                   </table>
                   <div class="concept-desc verdict">
                     <strong class="c-amber">Takeaway:</strong> for greenfield GCP IaC, reach for
-                    Terraform or Config Controller, not Deployment Manager. The KRM model unifies app
+                    Terraform, run yourself or by Infrastructure Manager, or Config Controller. Deployment Manager is retired. The KRM model unifies app
                     and infra config under one reconciliation loop (ties to GitOps in ops).
                   </div>
                 </div>
@@ -4374,6 +4587,42 @@ gcloud compute instances list --project my-prod-project</pre>
                     managing a handful of resources gets a controller that reverts their fixes. That
                     is the same trade GitOps <span class="acro-exp">(Git Operations)</span> makes everywhere, which is why Google's own default
                     recommendation for most teams is still Terraform.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Deployment Manager</div>
+                <div class="concept-title">Deployment Manager's Support Ended in March 2026, and the Service Shuts Down After June 2027</div>
+                <div class="concept-desc">
+                  Google has retired its own template engine. Support for <strong class="c-cyan">Deployment Manager</strong>
+                  ended on 31 March 2026: support cases are now rejected unless they block a migration, and there will be no
+                  new features or routine fixes. Since 30 June 2026 new users cannot enable it or create a first deployment,
+                  and are sent to Infrastructure Manager instead. Existing users can keep using it, at their own risk, until
+                  30 June 2027, when it is turned down. Resources it created keep working after that and can be managed with
+                  Google Cloud's ordinary tools, but no longer as Deployment Manager deployments. Google's replacement,
+                  <strong class="c-cyan">Infrastructure Manager</strong>, runs Terraform configurations for you, from Cloud
+                  Storage, a Git repository or a local directory, with previews before changes and a revision for each one.
+                  It deploys infrastructure, not applications onto it.
+                  
+                  <!-- fact: Cloud Deployment Manager reached end of support on 31 March 2026, with support discontinued from 1 April 2026; support tickets are rejected unless they are blockers or migration issues; there are no new features or non-critical bug fixes; as of 30 June 2026 new users are blocked from enabling the Deployment Manager V2 API or creating a first deployment and are redirected to Infrastructure Manager; existing customers can keep using it at their own risk until 30 June 2027, after which it is turned down; resources it created continue to function and can be managed with standard tools, but not with Deployment Manager; Google advises migrating to Infrastructure Manager or another deployment technology | source: Google Cloud documentation, "Deployment Manager deprecation", fetched and read | checked: 2026-11 -->
+                  <!-- fact: Infrastructure Manager is a managed service that deploys and manages Google Cloud infrastructure from Terraform configurations (blueprints) stored in Cloud Storage, Git repositories or local directories, with deployments and revisions, preview deployments and Cloud Build integration; it does not deploy applications onto resources | source: Google Cloud documentation, "Infrastructure Manager overview", fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Date</th><th>What changed</th></tr></thead>
+                    <tbody>
+                      <tr><td>31 March 2026</td><td>Support ended; no new features or routine fixes</td></tr>
+                      <tr><td>30 June 2026</td><td>New users refused, and sent to Infrastructure Manager</td></tr>
+                      <tr><td>30 June 2027</td><td>The service is turned down; its resources keep running, managed by nothing as a set</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Translate the templates while the service can still read them.</strong>
+                    After June 2027 a Deployment Manager deployment becomes a collection of resources with no record of which
+                    belong together. Rewriting each template as Terraform before then, and bringing the existing resources
+                    under it, keeps that record; Infrastructure Manager can then run it. Terraform itself, across clouds, is in
+                    <span class="xref">Terraform on AWS &amp; GCP</span>.
+                    
                   </div>
                 </div>
               </div>

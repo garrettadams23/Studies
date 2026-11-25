@@ -1291,6 +1291,22 @@ const READERS = [
     ["eventarc", "", "cloud/cloud-run-in-operation-revisions-traffic-splitting-eventarc-"],
     ["cloud run functions", "", "cloud/cloud-run-in-operation-revisions-traffic-splitting-eventarc-"],
     ["rollback cloud run revision", "", "cloud/cloud-run-in-operation-revisions-traffic-splitting-eventarc-"],
+    // ── twenty-eighth wave: Deployment Manager's retirement and two more ACE gaps, added before the topics ──
+    // Opened at 0 of 12: five zeros, `hyperdisk`, `alloydb` and `memorystore valkey` among words the site had never
+    // written, and seven that found other cards. The site's IaC topic called Deployment Manager "being retired";
+    // Google's page says support ended on 31 March 2026.
+    ["deployment manager end of support", "", "cloud/gcp-native-iac-infrastructure-manager-config-controller-depl"],
+    ["infrastructure manager terraform", "", "cloud/gcp-native-iac-infrastructure-manager-config-controller-depl"],
+    ["os login ssh keys", "", "cloud/compute-engine-in-operation-os-login-vm-manager-spot-vms-hyp"],
+    ["vm manager patch", "", "cloud/compute-engine-in-operation-os-login-vm-manager-spot-vms-hyp"],
+    ["spot vm preemption", "", "cloud/compute-engine-in-operation-os-login-vm-manager-spot-vms-hyp"],
+    ["hyperdisk", "", "cloud/compute-engine-in-operation-os-login-vm-manager-spot-vms-hyp"],
+    ["regional persistent disk", "", "cloud/compute-engine-in-operation-os-login-vm-manager-spot-vms-hyp"],
+    ["alloydb", "", "cloud/google-cloud-data-products-alloydb-bigtable-memorystore-pubs"],
+    ["bigtable", "", "cloud/google-cloud-data-products-alloydb-bigtable-memorystore-pubs"],
+    ["memorystore valkey", "", "cloud/google-cloud-data-products-alloydb-bigtable-memorystore-pubs"],
+    ["dataflow exactly once", "", "cloud/google-cloud-data-products-alloydb-bigtable-memorystore-pubs"],
+    ["pub/sub topic", "", "cloud/google-cloud-data-products-alloydb-bigtable-memorystore-pubs"],
   ]],
   ["somebody looking for a job", [
     ["writing a cv", "", "career/your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r"],
