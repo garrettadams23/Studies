@@ -1490,6 +1490,10 @@ const READERS = [
     ["what are the nist csf functions", "", "grc/frameworks-without-the-jargon"],
     ["csf 2.0 govern", "", "grc/nist-csf-the-common-language-of-cybersecurity"],
     ["technology infrastructure resilience", "", "grc/nist-cybersecurity-framework-20"],
+    // ── thirty-ninth wave: the EU Cyber Resilience Act, read from the Commission's pages, added before the card ──
+    ["cyber resilience act", "", "grc/the-regulatory-landscape-dora-nis2-cyber-disclosure-rules"],
+    ["actively exploited vulnerability reporting", "", "grc/the-regulatory-landscape-dora-nis2-cyber-disclosure-rules"],
+    ["eu single reporting platform", "", "grc/the-regulatory-landscape-dora-nis2-cyber-disclosure-rules"],
   ]],
 ];
 
