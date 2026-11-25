@@ -906,6 +906,11 @@ const READERS = [
     ["response orchestration", "", "ops/soar-security-orchestration-automation-response"],
     ["polymorphic malware", "", "threat/malware-types-reference"],
     ["ai lifecycle", "", "ai/ai-ethics-responsible-ai-nist-ai-rmf"],
+    // ── thirty-seventh wave: NIST IR 8547, final in October 2026, and HQC, read from NIST, added before the cards ──
+    ["nist ir 8547", "", "sec/post-quantum-cryptography-harvest-now-decrypt-later"],
+    ["post-quantum migration deadline", "", "sec/post-quantum-cryptography-harvest-now-decrypt-later"],
+    ["hqc", "", "sec/post-quantum-cryptography-harvest-now-decrypt-later"],
+    ["is aes-128 quantum safe", "", "sec/post-quantum-cryptography-harvest-now-decrypt-later"],
   ]],
   ["a Linux or platform engineer", [
     ["permission denied", "", "linux/linux-file-permissions-model"],

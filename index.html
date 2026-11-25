@@ -12763,12 +12763,12 @@ key lives.
 WAVES J3–J5 — the four cards the site did not already have
 ══════════════════════════════════════════════════════════════ -->
 <!-- ── TOPIC: POST-QUANTUM ────────────────────────────────────── -->
-<div class="topic" id="post-quantum-cryptography-harvest-now-decrypt-later" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="post-quantum-cryptography-harvest-now-decrypt-later" data-reviewed="2026-11" data-read="6" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">⚛️</span>
 <span class="topic-name">Post-Quantum Cryptography — Harvest Now, Decrypt Later</span>
 <span class="topic-badge">SEC • Cryptography</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -12780,13 +12780,16 @@ A sufficiently large quantum computer running Shor's algorithm breaks RSA <span 
 curve — the maths those rest on becomes tractable. Symmetric encryption and hashing are
 far less affected: Grover's algorithm roughly halves the effective key length, so AES-256
 stays comfortable and SHA-256 remains sound.
+Is AES-128 quantum-safe? NIST <span class="acro-exp">(National Institute of Standards and Technology)</span>'s answer, in its 2026 transition report, is that every approved
+symmetric primitive with at least 128 bits of classical strength meets its lowest post-quantum
+category, AES-128 included, and its retirement list has no 128-bit symmetric algorithm on it.
 </div>
 <div class="dw">
 <table class="ref-table">
 <thead><tr><th>Primitive</th><th>Quantum impact</th><th>Action</th></tr></thead>
 <tbody>
 <tr><td>RSA, ECDSA <span class="acro-exp">(Elliptic Curve Digital Signature Algorithm)</span>, ECDH <span class="acro-exp">(Elliptic Curve Diffie-Hellman)</span>, Diffie-Hellman</td><td class="c-red">Broken by Shor</td><td>Migrate</td></tr>
-<tr><td>AES-128</td><td class="c-amber">Effective 64-bit against Grover</td><td>Move to AES-256</td></tr>
+<tr><td>AES-128</td><td class="c-green">NIST rates it as meeting Category 1, its lowest post-quantum level</td><td>Nothing required; AES-256 where a policy asks for margin</td></tr>
 <tr><td>AES-256, SHA-256, SHA-3</td><td class="c-green">Adequate</td><td>Nothing</td></tr>
 </tbody>
 </table>
@@ -12803,9 +12806,12 @@ key exchange.
 <div class="concept-label">The standards</div>
 <div class="concept-title">ML-KEM <span class="acro-exp">(Module-Lattice Key Encapsulation Mechanism)</span> and ML-DSA <span class="acro-exp">(Module-Lattice Digital Signature Algorithm)</span>, and Why Deployments Are Hybrid</div>
 <div class="concept-desc">
-NIST <span class="acro-exp">(National Institute of Standards and Technology)</span> standardized the first post-quantum algorithms in 2024: <strong>ML-KEM</strong>
+NIST standardized the first post-quantum algorithms in 2024: <strong>ML-KEM</strong>
 (formerly Kyber) for key encapsulation and <strong>ML-DSA</strong> (formerly Dilithium)
 for signatures, with SLH-DSA <span class="acro-exp">(Stateless Hash-Based Digital Signature Algorithm)</span> as a conservative hash-based signature alternative.
+In March 2025 NIST added <strong>HQC</strong>, built on different math from ML-KEM, as a backup
+key-encapsulation algorithm in case a weakness turns up in ML-KEM; its final standard is expected
+in 2027.<!-- fact: NIST selected HQC on 11 March 2025 as a backup for ML-KEM, based on different math, planning a draft standard in about a year and a final standard in 2027 | source: NIST news release, "NIST Selects HQC as Fifth Algorithm for Post-Quantum Encryption" (11 March 2025), fetched and read | checked: 2026-11 -->
 </div>
 <div class="concept-desc">
 Real deployments run <strong>hybrid</strong>: a classical key exchange and a
@@ -12834,6 +12840,37 @@ algorithm as configuration rather than a compile-time constant. That work pays o
 regardless of quantum timelines, because it is the same capability needed to retire any
 broken primitive, and every primitive eventually breaks. See
 <span class="xref" data-xref="cryptography-fundamentals-the-building-blocks-of-security" role="link" tabindex="0">Cryptography Fundamentals — The Building Blocks of Security</span>.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The dates</div>
+<div class="concept-title">NIST Deprecates RSA and Elliptic Curves After 2030 and Disallows Them After 2035</div>
+<div class="concept-desc">
+NIST's transition report, IR <span class="acro-exp">(Incident Response)</span> 8547, went final in October 2026 with two dates for every quantum-vulnerable
+public-key algorithm, RSA, ECDSA, EdDSA and Diffie-Hellman in both its forms: <strong>deprecated after
+2030</strong>, which lets organizations keep using them while they migrate, and <strong>disallowed after
+2035</strong> under NIST's standards. Federal systems that matter most move sooner: Executive Order 14412
+and OMB Memorandum M-26-15 require high value assets and high impact systems to use post-quantum key
+establishment by 31 December 2030 and post-quantum signatures by 31 December 2031.
+<!-- fact: NIST IR 8547, Transition to Post-Quantum Cryptography Standards, final, October 2026: NIST will deprecate quantum-vulnerable public-key cryptography (ECDSA, EdDSA and RSA signatures; finite field and elliptic curve DH and MQV, and RSA key establishment) after 2030 and disallow it under NIST standards and guidelines after 2035; NIST's few symmetric standards at the 112-bit level will be disallowed in 2030; all NIST-approved symmetric primitives with at least 128 bits of classical security, AES-128 included, are believed to meet at least post-quantum security Category 1; Executive Order 14412 and OMB Memorandum M-26-15 require federal high value assets and high impact systems to adopt PQC for key establishment by December 31, 2030 and for digital signatures by December 31, 2031, and EO 14306 with M-26-15 requires federal support for TLS 1.3 no later than January 2, 2030; National Security Memorandum 10 set 2035 as the target for completing the federal migration | source: NIST IR 8547 (final) PDF from nvlpubs.nist.gov and its CSRC page, fetched and read | checked: 2026-11 -->
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>By</th><th>What</th><th>For whom</th></tr></thead>
+<tbody>
+<tr><td>2 January 2030</td><td>Support TLS 1.3</td><td>US federal agencies</td></tr>
+<tr><td>31 December 2030</td><td>Post-quantum key establishment</td><td>Federal high value assets and high impact systems</td></tr>
+<tr><td>After 2030</td><td>Quantum-vulnerable public-key algorithms deprecated; 112-bit symmetric standards disallowed</td><td>Anyone following NIST</td></tr>
+<tr><td>31 December 2031</td><td>Post-quantum signatures</td><td>Federal high value assets and high impact systems</td></tr>
+<tr><td>After 2035</td><td>Quantum-vulnerable public-key algorithms disallowed; the target for finishing the federal migration</td><td>Anyone following NIST</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-amber">Plan to 2030, and treat 2035 as the end of the grace period.</strong>
+NIST built the window between the two dates for lower-risk systems with legacy constraints, and its report
+says data with long-term confidentiality needs warrants the earliest move. Anything that must stay secret
+past 2030 is the harvest-now case above, already exposed under classical key exchange today.
+</div>
 </div>
 </div>
 </div>
