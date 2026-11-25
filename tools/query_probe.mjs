@@ -1465,6 +1465,10 @@ const READERS = [
     ["ai omnibus", "", "ai/ai-governance-frameworks"],
     ["ai act prohibited practices", "", "ai/ai-governance-frameworks"],
     ["general purpose ai obligations", "", "ai/ai-governance-frameworks"],
+    // ── thirty-fourth wave: NIST CSF 2.0, read from NIST's CSWP 29, added before the fixes ──
+    ["what are the nist csf functions", "", "grc/frameworks-without-the-jargon"],
+    ["csf 2.0 govern", "", "grc/nist-csf-the-common-language-of-cybersecurity"],
+    ["technology infrastructure resilience", "", "grc/nist-cybersecurity-framework-20"],
   ]],
 ];
 
