@@ -33,7 +33,7 @@ What is left here is what a session actually reads.
 | **Knowledge integration** | Seven items of incoming study notes mapped onto the domains — the first queue in a while that arrived as a list, and three of its seven destinations moved when they were checked. Conducted: one moved again, one of the five concepts §2 called absent was written behind a hyphen, and nine of the reader's sixteen misses found the wrong sense of a word | ✅ **shipped** — see its §6 |
 | **csvistool** | An outbound link to [csvistool.com](https://csvistool.com/), Georgia Tech's data-structures visualizer, and its 41 concepts checked against the site. Half already have a card to hang a link on, 12 of 40 searches return nothing, and one cluster (minimum spanning trees and union-find) is a real gap. Conducted: 39 deep links on the cards that already teach each concept, the gap and both candidates written, and a reader that opened at 0 of 16 closed at 16 of 16 | ✅ **shipped** — see its §5 |
 | **Study notes, batch two** | Study notes on databases, SQL, regex, pandas and Java, checked against the site. The notes are in SQL Server and Java, and the site is in Postgres and Python, so most of the concepts are written and most of the words are not. UML is now asked for by both batches, twelve claims should not reach a card as written, and two regex examples were broken by the spelling sweep | ✅ **shipped** — see its §8 |
-| **Content ideas** | A request for more content to add, in the same clean look. 839 candidate phrases in 17 reader groups, each checked against the content and against the built page's search: 81 are owned by a title, 452 are mentioned in passing and 306 are absent. The largest finding was not on the list: the page is headed *Cycles, Concepts &amp; Diagrams* and 58 of 1,503 hand-written topics carry a shape. Twenty diagrams from components that already exist, about thirty-five candidate cards, exam paths that need no new content, and a look contract with one hole in it. First wave conducted: the hole fixed and gated, the exam reader at 16 of 16, the UML lines drawn, six cards and a topic. Second wave conducted: twelve cards over ten rows, the reader's second batch at 23 of 23, and three tools fixed at their own edges. Third wave conducted: a topic and ten cards over five rows, twelve connectors drawn, the reader's third batch at 16 of 16, and two census answers that were coincidences. Fourth wave conducted: seven theory cards, the theory reader at 15 of 15, and a spelling gate taught a suffix. Fifth wave conducted: three topics and eight cards in the human domains, each under its row's condition, at 17 of 17. Sixth wave conducted: three quotes topics, every line read at its source, two lines moved to Misattributed, at 10 of 10. Seventh wave conducted: the nineteen remaining pictures of §2 in fourteen domains, eight of them drawn with another component than their row named, and two numbers corrected by drawing them. Eighth wave conducted: four exam paths over topics that exist, a path as a deck, the two gaps the census carried, search that no longer reads acronym expansions, and a spelling gate that knows prefixes. Ninth wave conducted: §16's list emptied, five topics for the A+ objectives the paths skipped and a Security+ SY0-801 path read from CompTIA's own objectives. Tenth wave conducted: four more exam paths, PenTest+, CySA+, Linux+ and CISSP, each read from the exam body's own document, and six topics for the objectives they found with nothing to point at. Eleventh wave conducted: a SecurityX path read from CompTIA's own document, and the two CISSP objectives the tenth left, one of which SecurityX needed too. Fourteenth wave conducted: MD-102 and MS-102 paths read from Microsoft's study guides, AZ-800 found retired and its tag corrected, and the gaps both outlines found listed as the next queue. Fifteenth wave conducted: four topics for MS-102's Defender XDR area, each read from Microsoft's own pages first, at 13 of 13. Sixteenth wave conducted: MS-102's identity and Purview gaps, four topics at 13 of 13, and IdFix found retired. Seventeenth wave conducted: MS-102's last three Defender objectives, three topics at 13 of 13, and the standalone Defender Threat Intelligence portal found retired. Eighteenth wave conducted: four of MD-102's seven gaps at 13 of 13, the Semi-Annual Enterprise Channel found merged into Monthly Enterprise and Windows Backup for Organizations found renamed. Nineteenth wave conducted: MD-102's last three gaps at 13 of 13, and three of the four Security Copilot agents in Intune found retired. Twentieth wave conducted: RASP and IAST from NIST's catalog, and a CKA path read from the Linux Foundation's outline with its three gaps, at 15 of 15, and Ingress NGINX found retired. Twenty-first wave conducted: a GCIH path read from GIAC's objectives and a topic for SANS's DAIR, at 5 of 5, and two statements about NIST SP 800-61 corrected | ✅ **shipped** — see its §9 to §27 |
+| **Content ideas** | A request for more content to add, in the same clean look. 839 candidate phrases in 17 reader groups, each checked against the content and against the built page's search: 81 are owned by a title, 452 are mentioned in passing and 306 are absent. The largest finding was not on the list: the page is headed *Cycles, Concepts &amp; Diagrams* and 58 of 1,503 hand-written topics carry a shape. Twenty diagrams from components that already exist, about thirty-five candidate cards, exam paths that need no new content, and a look contract with one hole in it. First wave conducted: the hole fixed and gated, the exam reader at 16 of 16, the UML lines drawn, six cards and a topic. Second wave conducted: twelve cards over ten rows, the reader's second batch at 23 of 23, and three tools fixed at their own edges. Third wave conducted: a topic and ten cards over five rows, twelve connectors drawn, the reader's third batch at 16 of 16, and two census answers that were coincidences. Fourth wave conducted: seven theory cards, the theory reader at 15 of 15, and a spelling gate taught a suffix. Fifth wave conducted: three topics and eight cards in the human domains, each under its row's condition, at 17 of 17. Sixth wave conducted: three quotes topics, every line read at its source, two lines moved to Misattributed, at 10 of 10. Seventh wave conducted: the nineteen remaining pictures of §2 in fourteen domains, eight of them drawn with another component than their row named, and two numbers corrected by drawing them. Eighth wave conducted: four exam paths over topics that exist, a path as a deck, the two gaps the census carried, search that no longer reads acronym expansions, and a spelling gate that knows prefixes. Ninth wave conducted: §16's list emptied, five topics for the A+ objectives the paths skipped and a Security+ SY0-801 path read from CompTIA's own objectives. Tenth wave conducted: four more exam paths, PenTest+, CySA+, Linux+ and CISSP, each read from the exam body's own document, and six topics for the objectives they found with nothing to point at. Eleventh wave conducted: a SecurityX path read from CompTIA's own document, and the two CISSP objectives the tenth left, one of which SecurityX needed too. Fourteenth wave conducted: MD-102 and MS-102 paths read from Microsoft's study guides, AZ-800 found retired and its tag corrected, and the gaps both outlines found listed as the next queue. Fifteenth wave conducted: four topics for MS-102's Defender XDR area, each read from Microsoft's own pages first, at 13 of 13. Sixteenth wave conducted: MS-102's identity and Purview gaps, four topics at 13 of 13, and IdFix found retired. Seventeenth wave conducted: MS-102's last three Defender objectives, three topics at 13 of 13, and the standalone Defender Threat Intelligence portal found retired. Eighteenth wave conducted: four of MD-102's seven gaps at 13 of 13, the Semi-Annual Enterprise Channel found merged into Monthly Enterprise and Windows Backup for Organizations found renamed. Nineteenth wave conducted: MD-102's last three gaps at 13 of 13, and three of the four Security Copilot agents in Intune found retired. Twentieth wave conducted: RASP and IAST from NIST's catalog, and a CKA path read from the Linux Foundation's outline with its three gaps, at 15 of 15, and Ingress NGINX found retired. Twenty-first wave conducted: a GCIH path read from GIAC's objectives and a topic for SANS's DAIR, at 5 of 5, and two statements about NIST SP 800-61 corrected. Twenty-second wave conducted: an AWS SAA-C03 path read from AWS's exam guide, topics for its three gaps, and two AWS services found closed to new customers. Twenty-third wave conducted: seven services the guide gives as examples and the site had never mentioned, at 15 of 15. Twenty-fourth wave conducted: the guide's remaining examples and in-scope services, at 17 of 17, and a discovery service found closed. Twenty-fifth wave conducted: cards inside the AWS topics that already owned each subject, and purpose-built databases, at 15 of 15. Twenty-sixth wave conducted: the NAT instance and AWS's regional NAT gateway, after which every service the SAA-C03 task statements name is on the site. Twenty-seventh wave conducted: a Google Cloud Associate Cloud Engineer path read from Google's exam guide, three gap topics, and Cloud Functions found renamed. Twenty-eighth wave conducted: Deployment Manager's retirement written as a retirement, and two more groups of the guide's items, at 12 of 12. Twenty-ninth wave conducted: the guide's operations and storage items, as cards in the topics that owned them, at 10 of 10. Thirtieth wave conducted: the AI+ tag found to name no CompTIA exam, replaced with SecAI+ and a 30-step path. Thirty-first wave conducted: OWASP's 2026 lists for LLM applications and for agents, and the EU AI Act's dates after the AI Omnibus. Thirty-second wave conducted: NIST AI RMF's seven characteristics and its Generative AI Profile, and a card that had put NIST's name on somebody else's list. Thirty-third wave conducted: OWASP Top 10:2025 in the three topics that teach it, with a map from 2021. Thirty-fourth wave conducted: NIST CSF 2.0's six functions wherever `grc` named five, in NIST's own colors. Thirty-fifth wave conducted: SecAI+'s words for what two `blueteam` topics already taught, and a PenTest+ badge two exams old. Thirty-sixth wave conducted: ATT&amp;CK version 19's fifteen tactics. Thirty-seventh wave conducted: NIST IR 8547's post-quantum dates, HQC, and AES-128 as NIST rates it. Thirty-eighth wave conducted: public TLS certificate lifetimes falling to 47 days, and revocation after Let's Encrypt ended OCSP. Thirty-ninth wave conducted: the EU Cyber Resilience Act, a regulation the site had never named. Fortieth wave conducted: the CIS Controls named at version 8.1, and Kerberos RC4 against Microsoft's current defaults. Forty-first wave conducted: how a package repository is trusted, in the thinnest topic on the site, and Netlify Functions at the owner's request. Forty-second wave conducted: three thin topics deepened from FM 6-0, NVD and GitHub's documentation, and the visual baseline's failure traced to a Playwright version | ✅ **shipped** — see its §9 to §48 |
 | **Error codes and packaging** | Three items from the owner, added as written: an error-code lookup in the header's row of buttons, the Intune and MECM codes compared, and MSI, .intunewin and EXE explained. Each checked against the site first, with the owner's guide to MSI against EXE in MECM kept beside them as written | ✅ **shipped** — see its §5 |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
 | Session records | The recent ones. The rest are in `plan-archive.md`, oldest first — **the counts are the *Session records* row of the measured-state table**, and were a second copy here that had been wrong by five since the split | 📘 living |
@@ -73,7 +73,7 @@ the row needs was already running. Three are left, and all three want a stopwatc
 | Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **167** · search **59** · resilience **64** · axe 33/33 · mobile 16/16 · visual 2/2 · backup 3/3. The error-code lookup added one check to each of smoke, mobile and axe's two themes, and the expand switch one to smoke. Visual is 0/2 in the container that ran the last session, and that is not a regression: its Playwright is 1.63.0, whose Chromium 153 draws the chip labels about 10% wider than the 1.56.0 CI pins (Chromium 141), and CI matched the same baselines 2/2 on 2026-10-11. `visual_test.mjs` names both versions now, and refuses `--update` under any Playwright but the pinned one | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **53** here, **332** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **54** here, **332** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract — and it held a claim it could not keep.** *If it passes, CI
 passes* was written when `check_gates.py` was added, because the workflow had been red on
@@ -2990,6 +2990,44 @@ reaches `main`. Function metrics then fill as the endpoint is called; nothing on
 
 **The queue.** The six thin topics left, two military lookup cards first. The visual baseline stays left alone,
 the ACE guide's AI tooling waits for a reader who asks, and OSCP stays off the queue.
+
+## 48. What shipped — the forty-second wave, three thin topics and the visual baseline's cause
+
+Recorded below as *Session — the forty-second wave, the officers with no number*. §47's queue: the six thin topics,
+two military lookup cards first, and the visual baseline.
+
+| § | Item | Where it went |
+|---|---|---|
+| 47 | The visual baseline | `tools/visual_test.mjs` names the Playwright that drew the baselines and the one running, and refuses `--update` under another |
+| 47 | *Staff Functions 1–9* | `military`: a card on FM 6-0's three kinds of staff officer, and the verdict's claims corrected to the manual |
+| 47 | *Common Codes Decoded* | `military`: a card on the executive officer and the chief of staff, and on the hyphen in S-3 |
+| 47 | *Software Supply Chain Security* | `devops`: a card on the pipeline's own dependencies, CVE-2025-30066 and GitHub's workflow lockfile |
+| — | An action pinned to a branch | `sec` *Container Security 101*: the Trivy example's `@master` is a commit SHA |
+
+**The visual baseline, closed.** It failed in this container on every wave of this session, at exactly 10.335% and
+10.106%, and was carried as font rendering. It is not fonts: Share Tech Mono and Outfit both load here, and blocking
+them moves the diff to 13.15%. It is the browser. CI pins Playwright 1.56.0, whose Chromium 141 drew the baselines,
+and CI's last run to reach the step, on 11 October 2026, matched them 2/2; this container has Playwright 1.63.0 and
+Chromium 153, which draws the chip labels about 10% wider. The two runs since, on 23 November, stopped before the
+step, because `ubuntu-latest` had become 26.04, which the pinned Playwright cannot install on; the job has been
+pinned to 24.04 since the next day and has not run, because no pull request has been opened. So the baseline is
+right where it is, and the test now says why it fails here and refuses to accept this container's rendering, which
+would turn CI red on every push.
+
+**Three thin topics, and two claims the sources did not support.** *Staff Functions 1–9*'s verdict said one through
+six appear at every level and seven and eight start at division. FM 6-0 lists S-1 to S-6 and S-9 but says most
+battalions and brigades plan inside the S-3 rather than in an S-5, and it lists no 7 at any echelon. *Common Codes*
+called the XO the deputy commander; the manual makes the executive officer the principal staff officer, and second in
+command only usually, only below division. The `devops` overview named every control for what you ship and none for
+what builds it, and GitHub's advice there had moved: a workflow lockfile now comes before SHA pinning.
+
+**Closed as decisions, not as work.** Two items have sat at the end of every queue since the twenty-ninth wave, and
+they leave it here as decisions. The ACE guide's AI tooling is written when a reader asks for it, read from Google's
+pages on the day, because those products change faster than anything else in the guide and a card on them would need
+a date on every sentence. OSCP stays off the queue; *Cert Roadmaps* names it in the red-team track and needs nothing
+more.
+
+**The queue.** The three thin topics left, in `data`, `web` and `eng`.
 
 # Error codes and packaging — three items from the owner
 
@@ -6233,4 +6271,39 @@ topics 1,629 · thin 7 -> 6 · dated claims 403 -> 406
 45 gates green · smoke 167 · search 59 · axe 33/33 · resilience 64/64 · mobile 16/16 · backup 3/3
 service worker over HTTP: old worker cached the function's answer, new worker does not
 visual 0/2 in this container, unchanged at 10.335% and 10.106%
+```
+
+## Session — the forty-second wave, the officers with no number
+
+§47's queue: the visual baseline, then the thin topics, two military lookup cards first. *Content ideas* §48 is the
+table.
+
+### Read first
+
+FM 6-0, *Commander and Staff Organization and Operations* (May 2022), from the Army Publishing Directorate, read as
+its PDF; the Joint Staff's J-7 page, which refused the fetch and is cited from search results; NVD's record for
+CVE-2025-30066, read through NVD's API; and GitHub's *Secure use reference*, *Workflow dependency lockfiles* and
+*Enforcing lockfiles* pages. Six queries went into *a learner meeting a subject* and four into *a Linux or platform
+engineer* before the cards. For the baseline, CI's own job logs for its last three runs.
+
+### What the sources said that the cards had wrong
+
+The *Staff Functions* verdict made two claims nobody had checked. Its account of which numbers exist where was
+right in outline and wrong in detail: no S-5 at most battalions and brigades, and no 7 at all. Its reason for the
+missing S8, that a battalion holds no budget of its own, is not in the manual; the card now gives the one that is, the
+G-8 setting the funding allocated below it. *Common Codes* called the XO the deputy commander, which FM 6-0 says is
+true only usually and only below division. And the first draft of the `devops` card said the attack touched no
+victim's repository, which is true of how it reached them and not of what the stolen secrets could do next; it now says
+the attacker needed no access to any victim's repository.
+
+### The census
+
+The batches opened at 0 of 10, six zeros and four that found other cards, and closed at 10 of 10, five alone. The
+census as a whole is 775 of 798 with nothing unexplained.
+
+```
+3 commits · 3 new cards in 3 topics · 1 verdict, 2 table rows and 1 example corrected · 1 test tool change
+10 census queries, 0 of 10 -> 10 of 10 · topics 1,629 · thin 6 -> 3 · dated claims 406 -> 411
+45 gates green · smoke 167 · search 59 · axe 33/33 · resilience 64/64 · mobile 16/16 · backup 3/3
+visual 0/2 in this container, unchanged at 10.335% and 10.106%: Playwright 1.63.0 here, 1.56.0 in CI
 ```
