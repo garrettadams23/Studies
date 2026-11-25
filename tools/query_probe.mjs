@@ -380,6 +380,11 @@ const READERS = [
     ["policy configuration agent", "", "endpoint/security-copilot-in-intune-copilot-the-agents-and-the-three-"],
     ["copilot in intune", "", "endpoint/security-copilot-in-intune-copilot-the-agents-and-the-three-"],
     ["security compute units", "", "endpoint/security-copilot-in-intune-copilot-the-agents-and-the-three-"],
+    // ── forty-fourth wave: the oldest dated claims, re-checked against Microsoft's current pages ──
+    ["shared mailbox size limit", "", "m365/mailbox-types-delegation-user-shared-room-equipment"],
+    ["message trace 90 days", "", "m365/message-trace-header-analysis-proving-where-a-message-died"],
+    ["litigation hold business premium", "", "m365/retention-litigation-hold-archiving-legals-requirements-in-m"],
+    ["gmsa password length", "", "infra/service-accounts-gmsa-and-retiring-the-shared-password"],
   ]],
   ["a SOC analyst or defender", [
     ["phishing email reported", "", "blueteam/a-user-reported-a-phishing-email-the-first-ten-minutes"],
@@ -1474,6 +1479,8 @@ const READERS = [
     ["second highest salary", "", "data/the-data-interview"],
     ["nth highest salary", "", "data/the-data-interview"],
     ["postgres nulls first", "", "data/the-data-interview"],
+    // ── forty-fourth wave: a price the memory shortage moved, from Raspberry Pi's own posts ──
+    ["raspberry pi cluster cost", "", "career/home-lab-practicing-it-skills-without-breaking-production"],
   ]],
   ["somebody answerable to an auditor", [
     ["do we need iso 27001", "", "grc/nist-csf-iso-27001-grc-frameworks-explained"],

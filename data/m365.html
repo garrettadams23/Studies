@@ -686,7 +686,7 @@
 </div>
 
 <!-- ── TOPIC: MAILBOX TYPES ──────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">📮</span>
     <span class="topic-name">Mailbox Types &amp; Delegation — User, Shared, Room &amp; Equipment</span>
@@ -713,9 +713,11 @@
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          Shared mailboxes are free up to a size ceiling and <span class="volatile" data-checked="2026-08">need a
-          license once they exceed it or are placed on hold</span>; check the current limit before
-          promising finance that a growing archive costs nothing.
+          Shared mailboxes are free up to a size limit of <span class="volatile" data-checked="2026-11">50 GB,
+          and need a license past it or on hold: Exchange Online Plan 2 to grow to 100 GB, and Plan 2, or
+          Plan 1 with the Exchange Online Archiving add-on, for litigation hold</span>. Check the current
+          limit before promising finance that a growing archive costs nothing.
+          <!-- fact: a shared mailbox can store up to 50 GB without a license; more than 50 GB, up to 100 GB, needs an Exchange Online Plan 2 license; litigation hold on a shared mailbox needs Exchange Online Plan 2, or Plan 1 with the Exchange Online Archiving add-on | source: Microsoft Learn, "About shared mailboxes" (updated 13 March 2026), fetched and read | checked: 2026-11 -->
         </div>
       </div>
     </div>
@@ -856,7 +858,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
 </div>
 
 <!-- ── TOPIC: MESSAGE TRACE ──────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🔎</span>
     <span class="topic-name">Message Trace &amp; Header Analysis — Proving Where a Message Died</span>
@@ -885,9 +887,10 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
           </tbody>
         </table>
         <div class="concept-desc verdict">
-          Trace data is retained for a limited window — <span class="volatile" data-checked="2026-08">on
-          the order of days for the detailed real-time view and months for summary search</span> — so
-          a three-month-old dispute may simply be unanswerable. Pull the trace early.
+          Trace data has a limited window — <span class="volatile" data-checked="2026-11">90 days back at
+          most, any 10 days of it answered at once and a longer range only as a downloadable report</span> —
+          so a three-month-old dispute may simply be unanswerable. Pull the trace early.
+          <!-- fact: message trace in the modern Exchange admin center defaults to 2 days and accepts ranges up to 90 days; 10 days or less returns a Summary report at once; up to 90 days of historical data can be queried near real-time 10 days at a time; a range even slightly longer than 10 days returns only a downloadable CSV, an Enhanced summary or Extended report | source: Microsoft Learn, "Message trace in the modern Exchange admin center" (updated 16 September 2026), fetched and read | checked: 2026-11 -->
         </div>
       </div>
     </div>
@@ -1567,7 +1570,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
 </div>
 
 <!-- ── TOPIC: EDISCOVERY & AUDIT ─────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🔦</span>
     <span class="topic-name">eDiscovery, Content Search &amp; the Audit Log — Answering Legal Without Guessing</span>
@@ -1597,9 +1600,11 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
         </table>
         <div class="concept-desc verdict">
           Litigation hold and the advanced case features are license-gated —
-          <span class="volatile" data-checked="2026-08">holds generally require the enterprise tier
-          and the richer review tooling sits above that</span>. Find out which you have before
-          promising counsel a capability.
+          <span class="volatile" data-checked="2026-11">holds come with E3, E5, Business Premium and
+          Exchange Online Plan 2, the other plans need the Exchange Online Archiving add-on, and eDiscovery's
+          premium features need a license both for each custodian and for the admin running them</span>. Find out
+          which you have before promising counsel a capability.
+          <!-- fact: Exchange Online service description, feature table (updated 9 November 2026): In-Place Hold and Litigation Hold are available in Microsoft 365 Business Premium, Microsoft 365 and Office 365 E3 and E5, and Exchange Online Plan 2, and not in Business Basic, Business Standard, Office 365 E1, F3, Exchange Online Plan 1 or Kiosk; Exchange Online Archiving service description: archiving and in-place hold are an add-on for Exchange Online Plan 1, Kiosk, Business Basic, Business Standard, Office 365 E1 and F3, and Business Premium, E3 and E5 already include archiving; Microsoft Purview service description (updated 18 November 2026): when eDiscovery (premium) features are used, both the user whose data is analyzed and the administrator performing the analysis need the license or add-on | source: learn.microsoft.com, the three service descriptions named, fetched and read | checked: 2026-11 -->
         </div>
       </div>
     </div>
@@ -2086,7 +2091,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
 </div>
 
 <!-- ── TOPIC: RETENTION, HOLD & ARCHIVING ────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">📦</span>
     <span class="topic-name">Retention, Litigation Hold &amp; Archiving — Legal's Requirements in Mailbox Terms</span>
@@ -2138,7 +2143,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
           <tbody>
             <tr><td>Recoverable Items grows without bound</td><td>Monitor its quota; a full one blocks the user from deleting anything</td></tr>
             <tr><td>Held mailboxes cannot be truly deleted</td><td>A leaver's mailbox becomes inactive rather than gone — that is the point</td></tr>
-            <tr><td>License implications</td><td><span class="volatile" data-checked="2026-08">Holds are gated to the enterprise tiers</span>; verify before promising counsel</td></tr>
+            <tr><td>License implications</td><td><span class="volatile" data-checked="2026-11">Holds come with E3, E5, Business Premium and Exchange Online Plan 2; Business Basic, Business Standard, E1 and Plan 1 need the Exchange Online Archiving add-on</span>; verify before promising counsel<!-- fact: Exchange Online service description, feature table (updated 9 November 2026): In-Place Hold and Litigation Hold are available in Microsoft 365 Business Premium, Microsoft 365 and Office 365 E3 and E5, and Exchange Online Plan 2, and not in Business Basic, Business Standard, Office 365 E1, F3, Exchange Online Plan 1 or Kiosk; Exchange Online Archiving service description: archiving and in-place hold are an add-on for Exchange Online Plan 1, Kiosk, Business Basic, Business Standard, Office 365 E1 and F3, and Business Premium, E3 and E5 already include archiving; Microsoft Purview service description (updated 18 November 2026): when eDiscovery (premium) features are used, both the user whose data is analyzed and the administrator performing the analysis need the license or add-on | source: learn.microsoft.com, the three service descriptions named, fetched and read | checked: 2026-11 --></td></tr>
             <tr><td>Releasing a hold is irreversible</td><td>Purged content ages out for real once the hold lifts</td></tr>
           </tbody>
         </table>

@@ -1472,7 +1472,7 @@ Get-ADUser <span class="kw">-Filter</span> * <span class="kw">-Properties</span>
 </div>
 
 <!-- ── TOPIC: SERVICE ACCOUNTS ────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🤖</span>
     <span class="topic-name">Service Accounts — gMSA <span class="acro-exp">(group Managed Service Account)</span> and Retiring the Shared Password</span>
@@ -1502,9 +1502,10 @@ Get-ADUser <span class="kw">-Filter</span> * <span class="kw">-Properties</span>
       </div>
       <div class="concept-desc verdict">
         <strong>The verdict:</strong> gMSA is the default answer for a domain service. AD <span class="acro-exp">(Active Directory)</span>
-        <!-- fact: gMSA password 240 characters, 30-day rotation | source: Active Directory group managed service account defaults | checked: 2026-08 -->
-        generates a 240-character password, rotates it every 30 days, and the servers authorized
-        to use it retrieve it themselves. Nobody ever knows it, so nobody can leak it.
+        <!-- fact: gMSAs use 240-byte, randomly generated passwords that Windows changes every 30 days; the interval defaults to 30 days when none is given and can only be set when the gMSA is created | source: Microsoft Learn, "Secure group managed service accounts" and "Get started with group managed service accounts", fetched and read | checked: 2026-11 -->
+        generates a random 240-byte password, rotates it every 30 days unless the account was created
+        with another interval, and the servers authorized to use it retrieve it themselves. Nobody ever
+        knows it, so nobody can leak it.
       </div>
     </div>
     <div class="concept-card">
