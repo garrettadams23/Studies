@@ -342,7 +342,7 @@ gcloud compute instances list --project my-prod-project</pre>
                     <tr><th>Concept</th><th>AWS</th><th>GCP</th><th>Azure</th></tr>
                     <tr><td>Virtual machines</td><td>EC2 <span class="acro-exp">(Elastic Compute Cloud)</span></td><td>Compute Engine</td><td>Virtual Machines</td></tr>
                     <tr><td>Object storage</td><td>S3 <span class="acro-exp">(Simple Storage Service)</span></td><td>Cloud Storage</td><td>Blob Storage</td></tr>
-                    <tr><td>Serverless functions</td><td>Lambda</td><td>Cloud Functions</td><td>Functions</td></tr>
+                    <tr><td>Serverless functions</td><td>Lambda</td><td>Cloud Run functions</td><td>Functions</td></tr>
                     <tr><td>Containers (managed K8s)</td><td>EKS <span class="acro-exp">(Elastic Kubernetes Service)</span></td><td>GKE <span class="acro-exp">(Google Kubernetes Engine)</span></td><td>AKS <span class="acro-exp">(Azure Kubernetes Service)</span></td></tr>
                     <tr><td>Run a container</td><td>Fargate / App Runner</td><td>Cloud Run</td><td>Container Apps</td></tr>
                     <tr><td>Relational DB <span class="acro-exp">(Database)</span></td><td>RDS <span class="acro-exp">(Relational Database Service)</span></td><td>Cloud SQL <span class="acro-exp">(Structured Query Language)</span></td><td>Azure SQL</td></tr>
@@ -689,6 +689,115 @@ gcloud compute instances list --project my-prod-project</pre>
               </div>
             </div>
           </div>
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: GOOGLE CLOUD ORGANIZATION SETUP ───────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🏢</span>
+    <span class="topic-name">Google Cloud Organization Setup — Organization Policies, Cloud Identity, Workforce Federation &amp; Billing Export</span>
+    <span class="topic-badge">GCP • Setup</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Organization policies</div>
+      <div class="concept-title">IAM Decides Who May Act; an Organization Policy Decides What May Be Configured at All</div>
+      <div class="concept-desc">
+        Google draws the line plainly: Identity and Access Management is about <em>who</em> can take an action,
+        and the <strong class="c-cyan">Organization Policy Service</strong> is about <em>what</em>, restricting how
+        resources may be configured whoever is configuring them. Each organization policy enforces one
+        <strong class="c-cyan">constraint</strong>, such as limiting resource sharing to your own domains,
+        limiting the use of service accounts, or restricting where new resources may be created. A policy is
+        set on the organization, a folder or a project, and everything beneath inherits it; its rules can apply
+        conditionally, for example only to resources tagged as development. A policy can run in dry-run mode,
+        active mode, or both.
+        <!-- fact: The Organization Policy Service gives centralized, programmatic control over an organization's resources; IAM focuses on who can take action, Organization Policy on what, restricting how resources can be configured; an organization policy configures a single constraint and is set on an organization, folder or project, inherited by descendants; rules can apply conditionally, such as only to resources tagged environment=development; each policy enforces exactly one constraint in active mode, dry-run mode or both; common uses include limiting resource sharing by domain, limiting IAM service account usage and restricting the physical location of new resources; managed constraints are designed to replace legacy managed constraints | source: Google Cloud documentation, "Introduction to the Organization Policy Service" (last updated 10 November 2026), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>IAM</th><th>Organization Policy</th></tr></thead>
+          <tbody>
+            <tr><td>Answers</td><td>Who may do this?</td><td>May this be configured at all?</td></tr>
+            <tr><td>Example</td><td>Alice may create VMs <span class="acro-exp">(Virtual Machine)</span> in this project</td><td>Nothing in this folder may be created outside approved locations</td></tr>
+            <tr><td>Set by</td><td>Whoever manages access to the resource</td><td>The organization policy administrator, across the hierarchy</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Run a new constraint in dry-run first.</strong> A constraint set at the
+          organization reaches every project at once, including the ones nobody remembered; dry-run shows what
+          it would have blocked before it blocks anything. The other half, roles and the hierarchy they inherit
+          through, is in
+          <span class="xref">GCP IAM — Members, Roles &amp; Hierarchy</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Identities</div>
+      <div class="concept-title">Cloud Identity Holds Your Users as Google Accounts; Workforce Identity Federation Leaves Them in Your IdP <span class="acro-exp">(Identity Provider)</span></div>
+      <div class="concept-desc">
+        People reach Google Cloud in one of two ways. <strong class="c-cyan">Cloud Identity</strong> is Google's
+        identity-as-a-service: it manages users and groups as accounts your organization controls, instead of
+        developers' personal Gmail accounts, and it can federate with Active Directory or Microsoft Entra ID.
+        <strong class="c-cyan">Workforce Identity Federation</strong> keeps no user accounts in Google Cloud at all:
+        employees, partners and contractors sign in through your own identity provider with single sign-on, the
+        provider's credential is exchanged at Google's Security Token Service for a short-lived access token, and
+        nothing needs synchronizing. It is built for human sign-in rates, with a default quota of 1,000 token
+        exchanges a minute per organization. It is not Workload Identity Federation, which federates software,
+        not people.
+        <!-- fact: Cloud Identity is an Identity as a Service solution that centrally manages users and groups, can federate identities with providers such as Active Directory and Microsoft Entra ID, and brings accounts that developers would otherwise create as personal Gmail accounts under the organization's control | source: Google Cloud documentation, "Overview of Cloud Identity", fetched and read | checked: 2026-11 -->
+        <!-- fact: Workforce Identity Federation lets users in an external IdP, such as employees, partners and contractors, use single sign-on to Google Cloud; it federates rather than stores user accounts, so it is sync-less and needs no Google Cloud Directory Sync; it follows the OAuth 2.0 Token Exchange specification (RFC 8693), the Security Token Service returning a short-lived Google Cloud access token; it is capacity-modeled for human sign-in rates, with token exchange limited by default to 1,000 requests per minute per organization; Workforce Identity Federation federates user identities and Workload Identity Federation workload identities | source: Google Cloud documentation, "Workforce Identity Federation", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Cloud Identity</th><th>Workforce Identity Federation</th></tr></thead>
+          <tbody>
+            <tr><td>User accounts live in</td><td>Google, as managed accounts</td><td>Your identity provider only</td></tr>
+            <tr><td>Synchronization</td><td>From your directory, for example with Directory Sync</td><td>None</td></tr>
+            <tr><td>Signs in with</td><td>A Google identity, federated or not</td><td>Your IdP's single sign-on, exchanged for a short-lived token</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Either way, end personal accounts in the organization.</strong> A developer's
+          Gmail account with a role on a production project is an identity nobody can disable when they leave.
+          Choose one managed source of identities and grant roles only to it, to groups rather than individuals.
+          Identities for software, which this card is not about, are in
+          <span class="xref">GCP Service Accounts &amp; Workload Identity</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Billing export and inventory</div>
+      <div class="concept-title">Turn On the Billing Export When the Billing Account Is Created, Because It Does Not Look Back</div>
+      <div class="concept-desc">
+        Two exports give an organization a record of itself. <strong class="c-cyan">Cloud Billing export to
+        BigQuery</strong> sends detailed billing data, usage, cost estimates and pricing, to a BigQuery dataset
+        automatically throughout the day, where it can be queried like any other table. Google's advice is about
+        timing: enable it at the same moment the billing account is created, to get the most complete data.
+        <strong class="c-cyan">Cloud Asset Inventory</strong> is the other: a global inventory of resource metadata
+        to search, export, monitor and analyze, for compliance tracking, audits and finding resources that are
+        over-permissioned, public or unused. It keeps create, update and delete history for 35 days, and Google
+        warns it is not built for real-time queries that production availability or security depends on.
+        <!-- fact: Cloud Billing export to BigQuery exports detailed billing data such as usage, cost estimates and pricing data automatically throughout the day to a BigQuery dataset; Google recommends enabling it at the same time as creating the Cloud Billing account to access a more comprehensive set of billing data | source: Google Cloud documentation, "Export Cloud Billing data to BigQuery", fetched and read | checked: 2026-11 -->
+        <!-- fact: Cloud Asset Inventory is a global metadata inventory service to view, search, export, monitor and analyze asset metadata, for compliance tracking, scheduled audits and analytics, including finding over-permissioned, publicly exposed or unused resources; create, update and delete history is kept for up to 35 days; it is not designed for real-time querying where stale data could break production availability or security enforcement | source: Google Cloud documentation, "Cloud Asset Inventory overview", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Turn on</th><th>When</th><th>Because</th></tr></thead>
+          <tbody>
+            <tr><td>Billing export to BigQuery</td><td>With the billing account</td><td>Google recommends it then for the most complete data</td></tr>
+            <tr><td>Budgets and alerts</td><td>Before the first workload</td><td>An alert after the spend is a record, not a warning</td></tr>
+            <tr><td>Asset Inventory exports</td><td>Before the first audit</td><td>Its own history reaches back only 35 days</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Exports are the history you will wish you had kept.</strong> Both answer
+          questions about the past, which month's bill grew and which resource changed, and both start answering
+          only from when they were turned on. Budgets, tags and the rest of cost control are in
+          <span class="xref">Cloud Cost Control — Budgets, Tags &amp; Rightsizing</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🤖</span>
@@ -1264,6 +1373,116 @@ gcloud compute instances list --project my-prod-project</pre>
               </div>
             </div>
           </div>
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: GOOGLE CLOUD NETWORK DESIGN ───────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🕸️</span>
+    <span class="topic-name">Google Cloud Network Design — Shared VPC <span class="acro-exp">(Virtual Private Cloud)</span>, Cloud NGFW <span class="acro-exp">(Next-Generation Firewall)</span> Policies, Secure Tags &amp; Network Tiers</span>
+    <span class="topic-badge">GCP • Networking</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Shared VPC</div>
+      <div class="concept-title">Shared VPC Gives One Team the Network and Every Other Team Its Own Project on It</div>
+      <div class="concept-desc">
+        With <strong class="c-cyan">Shared VPC</strong>, one <strong class="c-cyan">host project</strong> owns
+        the VPC networks, and other <strong class="c-cyan">service projects</strong> in the same organization are
+        attached to it; their resources use the host's subnets and reach each other on internal addresses. The
+        split is the point: network and security administrators keep central control of subnets, routes and
+        firewalls, while service project administrators create and manage instances on approved subnets and
+        cannot make changes that affect the network. Each service project can still carry its own budget and
+        cost center. In the API <span class="acro-exp">(Application Programming Interface)</span> it is called XPN.
+        <!-- fact: Shared VPC connects resources from multiple projects in an organization to a common VPC network using internal IP addresses; a host project's VPC networks are Shared VPC networks and attached service projects use their subnets; administration is delegated to Service Project Admins, who create and manage instances using the Shared VPC network, while centralized control over subnets, routes and firewalls remains, so they cannot make network-impacting changes; service projects can separate budgeting or cost centers; Shared VPC connects projects within the same organization and is called XPN in the API | source: Google Cloud documentation, "Shared VPC", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Role</th><th>Owns</th><th>Can do</th></tr></thead>
+          <tbody>
+            <tr><td>Shared VPC Admin</td><td>The host project's networks</td><td>Attach service projects, delegate subnets to them</td></tr>
+            <tr><td>Network and Security Admins</td><td>Subnets, routes, firewalls</td><td>Change the network for every attached project</td></tr>
+            <tr><td>Service Project Admin</td><td>Their own project</td><td>Create instances on the subnets they were given, and nothing to the network</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Use Shared VPC when one team should own the network for many.</strong> It
+          stops each team building a network of its own and peering it to the others, and it puts the firewall in
+          one set of hands. The cost is a dependency: every attached project waits on the network team for a
+          subnet. The network model underneath, global VPCs with regional subnets, is in
+          <span class="xref">GCP VPC — Global Networks &amp; Firewall Rules</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Cloud NGFW</div>
+      <div class="concept-title">Cloud NGFW Policies Apply Across Networks and the Hierarchy, and Secure Tags Make Rules Follow Workloads</div>
+      <div class="concept-desc">
+        <strong class="c-cyan">Cloud Next Generation Firewall</strong> is Google Cloud's distributed firewall,
+        applied to VMs <span class="acro-exp">(Virtual Machine)</span> and supported load balancers for traffic entering and leaving a VPC and moving inside it.
+        Rules can be grouped into <strong class="c-cyan">network firewall policies</strong>, global or regional,
+        that apply across several VPC networks, and into <strong class="c-cyan">hierarchical firewall
+        policies</strong> applied to the whole organization or to folders. Rules select their sources and targets
+        by tags instead of addresses, and there are two kinds: <strong class="c-cyan">secure tags</strong>,
+        created in Resource Manager and governed by IAM <span class="acro-exp">(Identity and Access Management)</span>, usable in every kind of policy; and the older network
+        tags, plain strings with no access control, usable only in VPC firewall rules. The service comes in three
+        tiers: Essentials, at no cost, for rules on addresses, ports and protocols; Standard, adding
+        fully qualified domain names and threat intelligence; and Enterprise, adding URL <span class="acro-exp">(Uniform Resource Locator)</span> filtering, a malware
+        sandbox and intrusion detection and prevention.
+        <!-- fact: Cloud NGFW is a distributed cloud firewall providing stateful inspection and Layer 7 application control for north-south and east-west traffic, applying rules to VM instances, VM-based resources and supported load balancers; global and regional network firewall policies group rules applied across multiple VPC networks, and hierarchical firewall policies apply across the organization or to folders; tiers are Essentials, at no cost, with rules on IP ranges, ports and protocols, Standard, adding FQDN objects and threat intelligence, and Enterprise, adding URL filtering, an advanced malware sandbox and intrusion detection and prevention | source: Google Cloud documentation, "Cloud NGFW overview", fetched and read | checked: 2026-11 -->
+        <!-- fact: Cloud NGFW rules use tags to specify sources and targets; secure tags are IAM-governed tags created in Resource Manager as tag keys and values, usable in hierarchical, global network and regional network firewall policies; network tags are character strings without access controls added to VMs or instance templates, usable in VPC firewall rules but not in firewall policies | source: Google Cloud documentation, "Tags for firewalls", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Secure tags</th><th>Network tags</th></tr></thead>
+          <tbody>
+            <tr><td>What they are</td><td>Resource Manager tag keys and values</td><td>Plain strings on a VM or template</td></tr>
+            <tr><td>Who can attach them</td><td>Only those IAM allows</td><td>Anyone who can edit the VM</td></tr>
+            <tr><td>Usable in</td><td>Hierarchical and network firewall policies</td><td>VPC firewall rules only</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Use secure tags for any rule that matters.</strong> A network tag can be added
+          by anyone who can edit the VM, so a rule allowing traffic to <code>db-servers</code> lets that person
+          put any VM behind it; a secure tag can be attached only by those IAM allows. Put the rules every project
+          must obey in a hierarchical policy, where no project can remove them. How rule order and the implicit
+          deny behave, in any firewall, is in
+          <span class="xref">Firewall Policy Design — Zones, Rule Order &amp; What the Implicit Deny Really Does</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Network Service Tiers</div>
+      <div class="concept-title">Premium Tier Carries Traffic on Google's Backbone; Standard Tier Hands It to the Internet Sooner and Costs Less</div>
+      <div class="concept-desc">
+        Google Cloud lets you choose how traffic between the internet and your resources travels.
+        <strong class="c-cyan">Premium Tier</strong> keeps it on Google's own backbone until the last mile, supports
+        every Google Cloud networking feature, and carries a 99.99% uptime SLA <span class="acro-exp">(Service Level Agreement)</span>. <strong class="c-cyan">Standard
+        Tier</strong> uses peering, ISP <span class="acro-exp">(Internet Service Provider)</span> and transit networks, supports a foundational set of features, among them
+        Cloud NAT <span class="acro-exp">(Network Address Translation)</span> and the regional external Application and passthrough Network Load Balancers, carries a 99.9%
+        SLA, and is priced to save money. Google's own summary: Premium for performance, Standard for cost.
+        <!-- fact: Network Service Tiers: Premium Tier delivers traffic on Google's premium backbone, Standard Tier uses regular ISP networks; use Premium to optimize for performance and Standard for cost; Premium supports all Google Cloud networking features and Standard a foundational set including Cloud NAT, the regional external Application Load Balancer and the regional external passthrough Network Load Balancer; SLAs are 99.99% for Premium and 99.9% for Standard; outbound data transfer pricing differs by tier | source: Google Cloud documentation, "Network Service Tiers overview", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Premium Tier</th><th>Standard Tier</th></tr></thead>
+          <tbody>
+            <tr><td>Route to users</td><td>Google's backbone, to the last mile</td><td>Peering, ISP and transit networks</td></tr>
+            <tr><td>Features</td><td>All Google Cloud networking features</td><td>A foundational set, regional load balancers among them</td></tr>
+            <tr><td>Uptime SLA</td><td>99.99%</td><td>99.9%</td></tr>
+            <tr><td>Optimize for</td><td>Performance</td><td>Cost</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Standard Tier suits regional services whose users are near the region.</strong>
+          A global application behind a global load balancer needs Premium; a regional service, or a batch job
+          sending data out, gives up little by traveling on the public internet for most of the way, and its
+          egress costs less. The load balancers each tier allows are in
+          <span class="xref">GCP Load Balancing &amp; DNS</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🔀</span>
@@ -1930,13 +2149,13 @@ gcloud compute instances list --project my-prod-project</pre>
                   <table class="ref-table">
                     <tr><th>Service</th><th>What</th></tr>
                     <tr><td>Cloud Run</td><td>Serverless containers (scale-to-zero, per-request)</td></tr>
-                    <tr><td>Cloud Functions</td><td>Event-driven functions (like Lambda)</td></tr>
+                    <tr><td>Cloud Run functions</td><td>Event-driven functions (like Lambda), formerly Cloud Functions</td></tr>
                     <tr><td>GKE</td><td>Managed Kubernetes — the reference K8s experience (Google created K8s)</td></tr>
                     <tr><td>GKE Autopilot</td><td>K8s where Google manages the nodes for you</td></tr>
                   </table>
                   <div class="concept-desc verdict">
                     <strong class="c-green">Rule of thumb:</strong> a stateless web service or API <span class="acro-exp">(Application Programming Interface)</span> →
-                    Cloud Run. Event glue → Cloud Functions. You genuinely need Kubernetes (complex
+                    Cloud Run. Event glue → Cloud Run functions. You genuinely need Kubernetes (complex
                     microservices, existing K8s manifests) → GKE.
                   </div>
                 </div>
@@ -1977,6 +2196,111 @@ gcloud compute instances list --project my-prod-project</pre>
             </div>
           </div>
 
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: CLOUD RUN IN OPERATION ────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🏃</span>
+    <span class="topic-name">Cloud Run in Operation — Revisions, Traffic Splitting, Eventarc &amp; Cloud Run Functions</span>
+    <span class="topic-badge">GCP • Serverless</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Revisions and traffic</div>
+      <div class="concept-title">Once You Split Traffic or Roll Back, New Deployments Stop Taking All of It</div>
+      <div class="concept-desc">
+        Every deployment to a Cloud Run service creates a new <strong class="c-cyan">revision</strong>, and the
+        service decides which revisions receive traffic and in what percentages. That one setting does three
+        jobs: <strong class="c-cyan">roll back</strong> by sending traffic to an earlier revision, roll out
+        gradually by giving a new one a small share, and split traffic between revisions on purpose. Changes are
+        not instantaneous; requests already in progress finish, and during the change a request may reach either
+        revision. The behavior that catches people: once traffic has been split, or pointed at an earlier
+        revision, every later deployment keeps that pattern, so a new revision gets none of the traffic until
+        someone sends all of it to the latest again.
+        <!-- fact: Cloud Run lets you specify which revisions receive traffic and in what percentages, to roll back to a previous revision, deploy a revision gradually or split traffic between revisions; traffic changes are not instantaneous, in-flight requests complete and may reach either revision during the transition; after splitting traffic or assigning it to a previous revision, all subsequent deployments use that pattern until all traffic is sent to the latest revision | source: Google Cloud documentation, "Rollbacks, gradual rollouts, and traffic migration" (Cloud Run), fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Goal</th><th>Set traffic to</th></tr></thead>
+          <tbody>
+            <tr><td>Roll back a bad release</td><td>100% on the last good revision</td></tr>
+            <tr><td>Try a release on a few users</td><td>A small percentage on the new revision, the rest on the old</td></tr>
+            <tr><td>Go back to normal deployments</td><td>100% on the latest revision, so each new one takes over</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">After a rollback, point traffic back at the latest revision on purpose.</strong>
+          Otherwise the next fix deploys, passes its checks, and serves nobody, while the old revision goes on
+          answering. Canary releases and their alternatives, in general, are in
+          <span class="xref">Deployment Strategies — Blue-Green, Canary &amp; Rolling</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Eventarc</div>
+      <div class="concept-title">Eventarc Delivers Events to Services; Standard Routes Them by Trigger, Advanced Through a Bus</div>
+      <div class="concept-desc">
+        <strong class="c-cyan">Eventarc</strong> routes events, state changes such as an object arriving in a
+        bucket, from sources to targets without infrastructure to run, handling delivery, security,
+        authorization, observability and errors. It comes in two editions on the same data model.
+        <strong class="c-cyan">Eventarc Standard</strong> is for simply delivering events: a trigger filters
+        inbound events by source, type and other attributes and routes them to one destination.
+        <strong class="c-cyan">Eventarc Advanced</strong> publishes events to a central bus that services subscribe
+        to through enrollments, can transform events before delivery, and suits organizations juggling many
+        Pub/Sub topics, Kafka queues or other messaging across teams and projects. A design can start on Standard
+        and move to Advanced as it grows.
+        <!-- fact: Eventarc lets you build event-driven architectures without maintaining infrastructure, asynchronously routing messages from sources to targets and managing delivery, security, authorization, observability and error handling; it comes in Eventarc Advanced and Eventarc Standard with the same data model, and a use case can move from Standard to Advanced; Advanced publishes events to a central bus with subscriptions through enrollments, can transform events before delivery, and suits organizations managing numerous Pub/Sub topics, Kafka queues or other messaging systems across teams and projects; Standard is recommended for simply delivering events, with triggers filtering by source, type and other attributes and routing to a destination | source: Google Cloud documentation, "Eventarc overview", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Eventarc Standard</th><th>Eventarc Advanced</th></tr></thead>
+          <tbody>
+            <tr><td>Shape</td><td>A trigger from a source to one destination</td><td>A central bus, with enrollments for each subscriber</td></tr>
+            <tr><td>Suits</td><td>A service reacting to a new object in a bucket, or a Pub/Sub message</td><td>Many teams publishing and subscribing across projects, with events transformed on the way</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Make every handler safe to run twice.</strong> Delivery that retries on
+          failure can hand a handler the same event a second time, and a handler that charges a card or sends an
+          email on each delivery will then do it twice. The ideas behind routing events at all are in
+          <span class="xref">Event-Driven Architecture</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Cloud Run functions</div>
+      <div class="concept-title">Cloud Functions Became Cloud Run Functions in August 2024, and a Function Is Now a Cloud Run Service</div>
+      <div class="concept-desc">
+        On 21 August 2024 Google renamed Cloud Functions <strong class="c-cyan">Cloud Run functions</strong>, folding
+        its event-driven model into Cloud Run. A function is now built automatically into a container and
+        deployed as a Cloud Run service. Google recommends creating functions through the Cloud Run Admin API <span class="acro-exp">(Application Programming Interface)</span>,
+        with the console, <code>gcloud run</code> or Terraform; functions created through the older Cloud
+        Functions v2 API can be managed through either API. The original generation is now called Cloud Run
+        functions (1st gen), with fewer event triggers, runtimes and settings, and Google publishes how to
+        upgrade from it.
+        <!-- fact: Google announced on 21 August 2024 that Cloud Functions is now Cloud Run functions, unifying its event-driven programming model with Cloud Run | source: Google Cloud Blog, "Cloud Functions is now Cloud Run functions" (21 August 2024), fetched and read | checked: 2026-11 -->
+        <!-- fact: Cloud Run functions are deployed as services on Cloud Run, automatically built as containers; functions created with the Cloud Run Admin API (recommended; console, gcloud run, REST or Terraform) are managed only with it, and functions created with the Cloud Functions v2 API can be managed with either API; Cloud Run functions (1st gen), formerly Cloud Functions (1st gen), is the original version with limited event triggers, runtimes and configurability, with an upgrade path to Cloud Run | source: Google Cloud documentation, "Compare Cloud Run functions", fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>You may see</th><th>Means</th></tr></thead>
+          <tbody>
+            <tr><td>Cloud Functions, in older material</td><td>The same product before the rename of 21 August 2024</td></tr>
+            <tr><td>Cloud Run functions, created with the Cloud Run Admin API</td><td>The recommended way now, managed only through that API</td></tr>
+            <tr><td>Cloud Run functions (1st gen)</td><td>The original generation, which Google offers a path off</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A function is a Cloud Run service now, so operate it like one.</strong>
+          Revisions, traffic splitting and service settings apply to it as to any service, which is why the first
+          card here matters to function authors too. Choosing between functions, containers and GKE <span class="acro-exp">(Google Kubernetes Engine)</span> in the first
+          place is in
+          <span class="xref">GCP Serverless &amp; Containers — Cloud Run, Functions, GKE</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
           <div class="topic" data-reviewed="2026-08">
             <div class="topic-header">
               <span class="topic-icon">🧭</span>

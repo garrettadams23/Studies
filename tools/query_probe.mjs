@@ -1275,6 +1275,22 @@ const READERS = [
     ["nat instance vs nat gateway", "", "cloud/aws-vpc-subnets-security-groups-nacls"],
     ["regional nat gateway", "", "cloud/aws-vpc-subnets-security-groups-nacls"],
     ["nat gateway in each availability zone", "", "cloud/aws-vpc-subnets-security-groups-nacls"],
+    // ── twenty-seventh wave: Google's ACE guide's gaps, added before their topics ──
+    // Opened at 0 of 12: five zeros, `eventarc` and `workforce identity federation` among words the site had
+    // never written, and seven that found other cards. `cloud run functions` reached 30, none about the product,
+    // which the site still called by its name before August 2024, Cloud Functions.
+    ["organization policy constraint", "", "cloud/google-cloud-organization-setup-organization-policies-cloud-"],
+    ["workforce identity federation", "", "cloud/google-cloud-organization-setup-organization-policies-cloud-"],
+    ["billing export to bigquery", "", "cloud/google-cloud-organization-setup-organization-policies-cloud-"],
+    ["cloud asset inventory", "", "cloud/google-cloud-organization-setup-organization-policies-cloud-"],
+    ["shared vpc host project", "", "cloud/google-cloud-network-design-shared-vpc-cloud-ngfw-policies-s"],
+    ["cloud ngfw", "", "cloud/google-cloud-network-design-shared-vpc-cloud-ngfw-policies-s"],
+    ["secure tags firewall", "", "cloud/google-cloud-network-design-shared-vpc-cloud-ngfw-policies-s"],
+    ["premium tier vs standard tier", "", "cloud/google-cloud-network-design-shared-vpc-cloud-ngfw-policies-s"],
+    ["cloud run traffic splitting", "", "cloud/cloud-run-in-operation-revisions-traffic-splitting-eventarc-"],
+    ["eventarc", "", "cloud/cloud-run-in-operation-revisions-traffic-splitting-eventarc-"],
+    ["cloud run functions", "", "cloud/cloud-run-in-operation-revisions-traffic-splitting-eventarc-"],
+    ["rollback cloud run revision", "", "cloud/cloud-run-in-operation-revisions-traffic-splitting-eventarc-"],
   ]],
   ["somebody looking for a job", [
     ["writing a cv", "", "career/your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r"],
