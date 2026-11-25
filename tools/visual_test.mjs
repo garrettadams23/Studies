@@ -24,6 +24,7 @@
  */
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
+import { createRequire } from "node:module";
 import { resolve } from "node:path";
 
 const ROOT = resolve(new URL("..", import.meta.url).pathname);
@@ -48,20 +49,49 @@ const CHANNEL_TOLERANCE = 12;
 // ignored check is worse than no check.
 const MAX_DIFF_FRACTION = 0.0005;
 
-const chromium = await (async () => {
+/** The playwright module and its version, wherever it is installed. */
+const { chromium, version } = await (async () => {
   try {
-    return (await import("playwright")).chromium;
+    const mod = await import("playwright");
+    let v = null;
+    try { v = createRequire(import.meta.url)("playwright/package.json").version; } catch { /* unknown */ }
+    return { chromium: mod.chromium, version: v };
   } catch {
     for (const base of ["/opt/node22/lib/node_modules", "/usr/lib/node_modules",
                         "/usr/local/lib/node_modules"]) {
       try {
-        return (await import(`${base}/playwright/index.mjs`)).chromium;
+        const mod = await import(`${base}/playwright/index.mjs`);
+        let v = null;
+        try { v = JSON.parse(readFileSync(`${base}/playwright/package.json`, "utf8")).version; } catch { /* unknown */ }
+        return { chromium: mod.chromium, version: v };
       } catch { /* try the next one */ }
     }
     console.error("error: playwright not found. Run: npm install playwright");
     process.exit(1);
   }
 })();
+
+// The baselines are CI's rendering, and CI pins Playwright in its workflow.
+// Each Playwright release brings its own Chromium, and text rendering moves
+// between them: under Playwright 1.63.0 (Chromium 153) the chip labels draw
+// about 10% wider than under the pinned 1.56.0 (Chromium 141), and 10% of the
+// bar's pixels differ with nothing on the page changed. CI's own run on
+// 2026-10-11 matched these baselines 2/2. So a run under another Playwright
+// says so, and --update refuses to accept its rendering: a baseline taken
+// there would make CI fail on every push until someone took it back.
+const PINNED = (() => {
+  try {
+    return readFileSync(`${ROOT}/.github/workflows/build-check.yml`, "utf8")
+      .match(/npm install playwright@(\d+\.\d+\.\d+)/)?.[1] ?? null;
+  } catch { return null; }
+})();
+const FOREIGN = Boolean(PINNED && version && version !== PINNED);
+if (UPDATE && FOREIGN && !process.argv.includes("--any-playwright")) {
+  console.error(`error: this is Playwright ${version}; the baselines belong to ${PINNED}, the version ` +
+                `.github/workflows/build-check.yml pins. Update them under ${PINNED}, or pass ` +
+                `--any-playwright and change the pin in the same commit.`);
+  process.exit(2);
+}
 
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
@@ -130,11 +160,16 @@ for (const theme of ["dark", "light"]) {
   }
 }
 
+const engine = `Playwright ${version ?? "(version unknown)"}, Chromium ${browser.version()}`;
 await browser.close();
 
 const failed = results.filter(r => !r.ok);
-console.log(`\n${results.length - failed.length}/${results.length} shots match.`);
-if (failed.length) {
+console.log(`\n${results.length - failed.length}/${results.length} shots match (${engine}).`);
+if (failed.length && FOREIGN) {
+  console.log(`These baselines are CI's rendering under Playwright ${PINNED}, the version its workflow pins.\n` +
+              `This run used ${version}, whose Chromium draws text differently, so a mismatch here is not\n` +
+              `by itself a regression. Read the .actual.png files, then let CI decide.`);
+} else if (failed.length) {
   console.log("If the change was intended, run: node tools/visual_test.mjs --update");
 }
 process.exit(failed.length ? 1 : 0);
