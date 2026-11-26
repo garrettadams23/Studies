@@ -58,7 +58,8 @@ ACRO_EXP_RE = re.compile(r'<span class="acro-exp">\([^<]*?\)</span\s*>')
 HISTORICAL = re.compile(
     r"formerly|renamed|used to be|previously|was called|once called|"
     r"old name|until \d{4}|before the rename|historic|"
-    r"retired|retirement|closed|shut down|shuts down|discontinued|end of support|support ended",
+    r"retired|retirement|retires|retiring|closed|shut down|shuts down|discontinued|end of support|"
+    r"support ended",
     re.I)
 
 # How far either side of the old name to look for the new one, or for a word
@@ -200,6 +201,8 @@ def self_test():
          "Facebook Workplace, now Workplace from Meta", 2),
         ("a closed product written as history", "Workplace from Meta, which closed in May 2026", 0),
         ("a retirement is history", "the retired Azure AD Graph API", 0),
+        ("a retirement announced is said, not hidden",
+         "the outline for an exam retiring on 30 November 2026, still naming Azure AD", 0),
     ]
     bad = 0
     for name, text, expect in cases:
