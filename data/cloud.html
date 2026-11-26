@@ -5735,7 +5735,7 @@ az role definition list --custom-role-only <span class="kw">false</span> --query
           </div>
 
           <!-- ── TOPIC: AZURE NETWORKING ──────────────────────────────────── -->
-          <div class="topic" data-reviewed="2026-08">
+          <div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🕸️</span>
               <span class="topic-name">Azure Networking — VNet <span class="acro-exp">(Virtual Network)</span>, NSG <span class="acro-exp">(Network Security Group)</span> &amp; the Load-Balancer Family</span>
@@ -5798,6 +5798,43 @@ az role definition list --custom-role-only <span class="kw">false</span> --query
                     <strong class="c-amber">Traffic Manager hands out an answer, not a connection.</strong>
                     Clients cache DNS, so failover is only as fast as the record's TTL <span class="acro-exp">(Time To Live)</span> — if you need
                     instant failover at the HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> layer, that is Front Door's job.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Reaching the VMs <span class="acro-exp">(Virtual Machine)</span></div>
+                <div class="concept-title">No Management Port Facing the Internet: Open It Just in Time, or Go Through Bastion</div>
+                <div class="concept-desc">
+                  Attackers hunt for machines with RDP <span class="acro-exp">(Remote Desktop Protocol)</span> or SSH <span class="acro-exp">(Secure Shell)</span> open, and Azure has two ways to stop offering them one. JIT VM
+                  access, part of Defender for Servers Plan 2, makes sure the NSG and Azure Firewall deny the chosen
+                  management ports; when someone with Azure RBAC <span class="acro-exp">(Role-Based Access Control)</span> rights on the VM asks and is approved, it opens those ports
+                  to their IP address for the time approved, then puts the rules back, leaving connections already made
+                  alone. Azure Bastion removes the open port altogether: a managed service in the virtual network that
+                  reaches each VM there by its private IP address, over TLS on port 443, from the portal in a browser or, on
+                  Standard and Premium, from the RDP or SSH client already on the admin's machine. The VM needs no public IP
+                  address, agent or client software. Every SKU <span class="acro-exp">(Stock Keeping Unit)</span> but Developer needs a subnet of its own named
+                  AzureBastionSubnet, at least a /26 for anything deployed since 2 November 2021.
+                  <!-- fact: Just-in-time machine access is a feature of Defender for Servers Plan 2; in Azure it ensures deny-all inbound rules exist for the selected ports in the NSG and Azure Firewall, with existing rules on those ports taking priority; when a user with Azure RBAC permissions for the VM requests access and is approved, it allows inbound traffic to the selected ports from the relevant IP address or range for the specified time, then restores the NSGs to their previous states, without interrupting established connections; it doesn't support VMs protected by Azure Firewalls controlled by Azure Firewall Manager, which must be configured with Rules (Classic) | source: Microsoft Learn, "Understand Just-in-time Virtual Machine Access", updated 2026-07-03, fetched and read | checked: 2026-11 -->
+                  <!-- fact: Azure Bastion is a fully managed PaaS service deployed in a virtual network that provides RDP and SSH to the network's VMs by private IP address over TLS on port 443, from the portal's HTML5 web client or, on Standard and Premium, the native client; VMs need no public IP address, agent or special client software; its SKUs are Developer (free, shared infrastructure, one VM at a time, select regions), Basic (dedicated, fixed capacity), Standard (scalability, native client, shareable links, IP-based connections, custom ports, file transfer) and Premium (session recording, private-only deployment); Basic, Standard and Premium need a dedicated AzureBastionSubnet and a public IP address, except Premium's private-only deployment; one deployment can serve multiple networks through peering; billing starts when Bastion is deployed, regardless of usage | source: Microsoft Learn, "What is Azure Bastion?", updated 2026-02-04, fetched and read | checked: 2026-11 -->
+                  <!-- fact: For Azure Bastion resources deployed on or after November 2, 2021, the minimum AzureBastionSubnet size is /26; the Basic SKU creates two instances, and Standard or higher lets you set the number of instances, which is host scaling; custom ports need Standard or higher | source: Microsoft Learn, "About Azure Bastion configuration settings", updated 2026-11-03, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Azure Bastion SKU</th><th>What it adds</th></tr></thead>
+                    <tbody>
+                      <tr><td>Developer</td><td>Free, on shared infrastructure, one VM at a time, for development and testing, in select regions</td></tr>
+                      <tr><td>Basic</td><td>A dedicated deployment in your virtual network with fixed capacity: two instances</td></tr>
+                      <tr><td>Standard</td><td>Host scaling, the native client, shareable links, connecting by IP address, custom ports and file transfer</td></tr>
+                      <tr><td>Premium</td><td>Session recording, and a private-only deployment with no public IP address</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Bastion bills from the hour it is deployed, used or not.</strong> It suits the
+                    networks people administer every day, and one deployment can serve peered networks too. JIT suits the VM
+                    whose port still has to open now and then, and it does not work behind an Azure Firewall managed with
+                    Firewall Manager's policies. The same idea applied to people rather than ports is
+                    <span class="xref">Privileged Access Management — Vaulting, Just-in-Time &amp; Session Recording</span>.
                   </div>
                 </div>
               </div>

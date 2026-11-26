@@ -454,6 +454,10 @@ const READERS = [
     ["data collection rule association", "", "infra/monitoring-windows-server-performance-monitor-data-collector"],
     ["vm insights", "", "infra/monitoring-windows-server-performance-monitor-data-collector"],
     ["smartscreen warn and prevent bypass", "", "infra/hardening-windows-server-credential-guard-protected-users-th"],
+    // ── sixty-eighth wave: AZ-802's access to Azure VMs, as a card, added before it ──
+    ["jit vm access", "", "cloud/azure-networking-vnet-nsg-the-load-balancer-family"],
+    ["azure bastion sku", "", "cloud/azure-networking-vnet-nsg-the-load-balancer-family"],
+    ["azurebastionsubnet", "", "cloud/azure-networking-vnet-nsg-the-load-balancer-family"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],
