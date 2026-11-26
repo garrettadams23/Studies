@@ -433,6 +433,11 @@ const READERS = [
     ["azure file sync cloud tiering", "", "infra/file-services-share-vs-ntfs-permissions-dfs-quotas"],
     ["sync group cloud endpoint server endpoint", "", "infra/file-services-share-vs-ntfs-permissions-dfs-quotas"],
     ["replace a file server with azure files", "", "infra/file-services-share-vs-ntfs-permissions-dfs-quotas"],
+    // ── sixty-fourth wave: AZ-802's Hyper-V features, as a card, added before it ──
+    ["powershell direct", "", "infra/hyper-v-vsphere-the-open-source-stack-the-vocabulary-that-tr"],
+    ["hyper-v replica vs failover cluster", "", "infra/hyper-v-vsphere-the-open-source-stack-the-vocabulary-that-tr"],
+    ["production checkpoint vs standard checkpoint", "", "infra/hyper-v-vsphere-the-open-source-stack-the-vocabulary-that-tr"],
+    ["nested virtualization hyper-v", "", "infra/hyper-v-vsphere-the-open-source-stack-the-vocabulary-that-tr"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],

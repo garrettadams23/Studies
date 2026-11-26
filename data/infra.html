@@ -2597,7 +2597,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="str">'objectClass -eq 
 </div>
 
 <!-- ── TOPIC: HYPER-V & VSPHERE ───────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🖥️</span>
     <span class="topic-name">Hyper-V, vSphere &amp; the Open-Source Stack — The Vocabulary That Transfers</span>
@@ -2652,6 +2652,42 @@ Get-ADObject <span class="kw">-Filter</span> <span class="str">'objectClass -eq 
           Gen 2 in place — it is a rebuild. Choose correctly when you create the template, in
           <span class="xref">Windows Server Editions &amp; Licensing — What You Are Actually Buying</span>'s
           licensing context.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Hyper-V's own features</div>
+      <div class="concept-title">Hyper-V's Shortcuts: PowerShell Without a Network, Hyper-V Inside a VM, Two Kinds of Checkpoint, and Replica</div>
+      <div class="concept-desc">
+        PowerShell Direct runs PowerShell inside a Windows VM from its Hyper-V host whatever the VM's network or remoting
+        settings, with <code>Enter-PSSession -VMName</code> or <code>Invoke-Command -VMName</code>, as long as the VM runs
+        on that host and you have its credentials. Nested virtualization runs Hyper-V inside a VM, turned on from the
+        host while the VM is off, on Intel from Windows Server 2016 and on AMD <span class="acro-exp">(Advanced Micro Devices)</span> from Windows Server 2022. Checkpoints come
+        in two kinds: a production checkpoint uses VSS <span class="acro-exp">(Volume Shadow Copy Service)</span> inside the guest and saves no memory, and is the default; a
+        standard checkpoint saves memory state too, and Microsoft warns it can cause consistency problems for systems
+        that replicate, Active Directory among them. Hyper-V Replica keeps an asynchronous copy of a VM on another host,
+        often at another site, for a failover someone starts by hand; it needs no shared storage, and it is on Windows
+        Server only.
+        <!-- fact: PowerShell Direct runs PowerShell in a Windows 10 or Windows Server 2016 or later VM from the Hyper-V host regardless of network configuration or remote management settings, through Enter-PSSession, Invoke-Command or New-PSSession with -VMName; the VM must run locally on the host and be running, and valid VM credentials and Hyper-V administrator rights on the host are required | source: Microsoft Learn, "Manage Windows Virtual Machines with PowerShell Direct", fetched and read | checked: 2026-11 -->
+        <!-- fact: Nested virtualization runs Hyper-V inside a VM; Intel hosts need VT-x and EPT, Windows Server 2016 or Windows 10 or later and VM configuration version 8.0; AMD EPYC or Ryzen hosts need Windows Server 2022 or Windows 11 or later and configuration version 9.3; it is enabled from the host while the VM is off | source: Microsoft Learn, "Run Hyper-V in a Virtual Machine with Nested Virtualization", updated 2025-06-10, fetched and read | checked: 2026-11 -->
+        <!-- fact: Standard checkpoints capture the VM and its memory state and are not a full backup, and can cause data consistency issues for systems that replicate between nodes such as Active Directory; production checkpoints use VSS, or file system freeze on Linux, to make a data-consistent backup without memory state, and are selected by default | source: Microsoft Learn, "Using checkpoints", updated 2024-07-31, fetched and read | checked: 2026-11 -->
+        <!-- fact: Hyper-V Replica replicates VMs between Hyper-V hosts for disaster recovery, keeping an asynchronous offline copy on a secondary host and optionally a third, with failover initiated manually; it needs no shared storage, has a recovery point objective of up to the replication interval, complements failover clustering, which provides local high availability on shared storage, and is not available on Windows client | source: Microsoft Learn, "Hyper-V Replica overview", updated 2025-11-10, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Need</th><th>Hyper-V answer</th><th>What it is not</th></tr></thead>
+          <tbody>
+            <tr><td>Fix a VM whose network is broken</td><td>PowerShell Direct, from its own host</td><td>Remote management: it works only from the host the VM runs on</td></tr>
+            <tr><td>A lab of hosts on one machine</td><td>Nested virtualization</td><td>A production design</td></tr>
+            <tr><td>Undo a change</td><td>A production checkpoint, the default</td><td>A backup, and a standard checkpoint of a DC <span class="acro-exp">(Domain Controller)</span> is a risk</td></tr>
+            <tr><td>Survive losing the site</td><td>Hyper-V Replica to another host</td><td>High availability: failover is manual, and data since the last replication is lost</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Clustering keeps a VM running; Replica gets it back somewhere else.</strong> A
+          failover cluster restarts a VM on another node from shared storage with little or no loss; Replica copies it
+          to a host that shares nothing, which is why the two are used together, one inside a site and one between
+          sites. Why a checkpoint is not a backup is the next topic.
         </div>
       </div>
     </div>
