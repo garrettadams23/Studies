@@ -3192,7 +3192,7 @@ Get-ADObject <span class="kw">-Filter</span> <span class="str">'objectClass -eq 
 </div>
 
 <!-- ── TOPIC: SAN & FABRIC ───────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🔗</span>
     <span class="topic-name">SAN <span class="acro-exp">(Storage Area Network)</span> &amp; Fabric — LUNs <span class="acro-exp">(Logical Unit Number)</span>, Zoning, Multipathing &amp; iSCSI <span class="acro-exp">(Internet Small Computer Systems Interface)</span> vs Fibre Channel</span>
@@ -3291,11 +3291,40 @@ Get-ADObject <span class="kw">-Filter</span> <span class="str">'objectClass -eq 
         </div>
       </div>
     </div>
+    <div class="concept-card">
+      <div class="concept-label">Windows Server's own storage</div>
+      <div class="concept-title">Storage Spaces Direct Pools Servers' Own Drives, and Storage Replica Copies Volumes to Another Site</div>
+      <div class="concept-desc">
+        Storage Spaces Direct is Windows Server's alternative to a SAN: it pools the internal drives of a cluster of
+        two to sixteen physical servers into software-defined storage, with caching on the fastest media, tiers and
+        resiliency managed automatically, and grows by adding drives or servers. Storage Replica copies volumes between
+        servers or clusters, block by block, for disaster recovery. Synchronous replication, within a low-latency site,
+        loses nothing at the file system level when one side fails; asynchronous replication reaches further, over
+        slower links, and the two copies may differ at the moment of failure.
+        <!-- fact: Storage Spaces Direct, a feature of Azure Local and Windows Server, combines internal drives on a cluster of 2 to 16 physical servers into a software-defined pool with cache, tiers, resiliency and erasure coding configured automatically, scaled out by adding drives or servers, with the fastest media used as cache | source: Microsoft Learn, "Storage Spaces Direct overview", updated 2025-02-11, fetched and read | checked: 2026-11 -->
+        <!-- fact: Storage Replica replicates volumes between servers or clusters for disaster recovery, synchronously within a low-latency site with crash-consistent volumes and zero data loss at the file system level, or asynchronously across sites over higher-latency links without a guarantee that both copies are identical at failure, and supports stretch failover clusters | source: Microsoft Learn, "Storage Replica Overview", updated 2025-08-22, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Replication</th><th>Distance</th><th>At failure</th></tr></thead>
+          <tbody>
+            <tr><td>Synchronous</td><td>Within a low-latency site or metro</td><td>Nothing lost at the file system level</td></tr>
+            <tr><td>Asynchronous</td><td>Beyond metro distances, over slower links</td><td>The copies may differ: the latest writes can be lost</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Synchronous replication costs every write a round trip, so distance decides the
+          mode.</strong> Each write waits for the far copy, which is why synchronous belongs within a campus or a
+          city and asynchronous beyond it; choosing synchronous across a long link turns a disaster-recovery feature
+          into a performance problem. Replication is also not backup: a deletion replicates as faithfully as a write.
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- ── TOPIC: SMB & NFS AT SCALE ─────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">📂</span>
     <span class="topic-name">SMB <span class="acro-exp">(Server Message Block)</span> &amp; NFS <span class="acro-exp">(Network File System)</span> at Scale — Protocol Behavior, Versions &amp; Why File Workloads Feel Slow</span>
@@ -3375,6 +3404,26 @@ Get-ADObject <span class="kw">-Filter</span> <span class="str">'objectClass -eq 
           <span class="xref">File Services — Share vs NTFS Permissions, DFS &amp; Quotas</span>.
           This card is deliberately the protocol half, because the two produce the same complaint
           from users and have nothing else in common.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">SMB over QUIC <span class="acro-exp">(Quick UDP Internet Connections)</span></div>
+      <div class="concept-title">SMB Over QUIC Puts a File Share on UDP <span class="acro-exp">(User Datagram Protocol)</span> 443 Inside TLS <span class="acro-exp">(Transport Layer Security)</span> 1.3, but Only When the Server Opts In</div>
+      <div class="concept-desc">
+        SMB over QUIC carries SMB inside a QUIC connection, encrypted with TLS 1.3 on UDP port 443, so a user away from
+        the office can reach a file server over the internet without a VPN <span class="acro-exp">(Virtual Private Network)</span> and without exposing TCP <span class="acro-exp">(Transmission Control Protocol)</span> 445; authentication
+        and everything else happen inside the tunnel, and SMB's features work as usual. The server needs Windows Server
+        2022 Datacenter: Azure Edition or any edition of Windows Server 2025, and a certificate. It is off until a file
+        server administrator turns it on, and Windows clients still try TCP first, using QUIC only when TCP fails or when
+        told to, with <code>NET USE /TRANSPORT:QUIC</code> or <code>New-SmbMapping -TransportType QUIC</code>.
+        <!-- fact: SMB over QUIC uses QUIC with TLS 1.3 over UDP port 443 instead of TCP port 445, all SMB traffic including authentication inside the tunnel, with SMB features working normally; servers need Windows Server 2022 Datacenter: Azure Edition or later or any edition of Windows Server 2025 or later, or Windows 11, and a certificate; it is opt-in on the server; Windows clients use TCP by default and try QUIC only when TCP fails or when required with NET USE /TRANSPORT:QUIC or New-SmbMapping -TransportType QUIC; internal DFS namespace names are not recommended for external QUIC clients | source: Microsoft Learn, "SMB over QUIC", updated 2025-07-24, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Publish the server's own name to remote clients, not a DFS path.</strong> A DFS
+          namespace refers clients to internal server names they cannot reach from outside, so Microsoft advises against
+          it for QUIC clients; map remote users straight to the edge server's name in its certificate.
         </div>
       </div>
     </div>

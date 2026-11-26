@@ -438,6 +438,10 @@ const READERS = [
     ["hyper-v replica vs failover cluster", "", "infra/hyper-v-vsphere-the-open-source-stack-the-vocabulary-that-tr"],
     ["production checkpoint vs standard checkpoint", "", "infra/hyper-v-vsphere-the-open-source-stack-the-vocabulary-that-tr"],
     ["nested virtualization hyper-v", "", "infra/hyper-v-vsphere-the-open-source-stack-the-vocabulary-that-tr"],
+    // ── sixty-fifth wave: AZ-802's Windows Server storage, as cards, added before them ──
+    ["smb over quic", "", "infra/smb-nfs-at-scale-protocol-behavior-versions-why-file-workloa"],
+    ["storage spaces direct", "", "infra/san-fabric-luns-zoning-multipathing-iscsi-vs-fibre-channel"],
+    ["storage replica synchronous", "", "infra/san-fabric-luns-zoning-multipathing-iscsi-vs-fibre-channel"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],
