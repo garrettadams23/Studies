@@ -38,7 +38,7 @@ Usage:
   python3 tools/check_renames.py
   python3 tools/check_renames.py --domain endpoint
   python3 tools/check_renames.py --self-test   # the matching rules, on fixtures
-  python3 tools/check_renames.py --list        # the registry, oldest rename first
+  python3 tools/check_renames.py --list        # the registry, least recently checked first
 """
 
 import json
@@ -217,9 +217,11 @@ def main():
         return 1 if self_test() else 0
     if "--list" in args:
         registry = json.loads((DATA / "renames.json").read_text(encoding="utf-8"))["renames"]
-        for e in sorted(registry, key=lambda x: x["since"]):
+        # Oldest check first: each `new` is a claim about the present, and this
+        # is the order to re-read them in. An entry nobody has checked sorts first.
+        for e in sorted(registry, key=lambda x: (x.get("checked", ""), x["since"])):
             closed = f"  (closed {e['closed']})" if e.get("closed") else ""
-            print(f"{e['since']}  {e['old']:<40} -> {e['new']}{closed}")
+            print(f"checked {e.get('checked', 'never'):<7}  {e['since']}  {e['old']:<40} -> {e['new']}{closed}")
         print(f"\n{len(registry)} renames on record.")
         return 0
 
