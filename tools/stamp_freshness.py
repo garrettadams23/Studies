@@ -420,6 +420,19 @@ def stamp(check_only=False, only=None, current_only=False):
     return 1 if (check_only and changed) else 0
 
 
+def own_text(block):
+    """A topic's span up to its own closing tag, without what follows it.
+
+    A span runs to the next topic, so it also carries whatever sits between
+    the two: the comment that heads the next topic, or the comment that ends
+    the domain. Appending a topic after the last one moves that comment out of
+    the last topic's span, and the sixty-second wave's first run counted the
+    move as an edit. A topic's own text ends at its last closing div.
+    """
+    end = block.rfind("</div>")
+    return block[:end + len("</div>")] if end >= 0 else block
+
+
 def touched(only=None):
     """Stamp this month on every topic whose text differs from HEAD, and only those.
 
@@ -435,12 +448,12 @@ def touched(only=None):
         rel = f"data/{path.name}"
         head = git("show", f"HEAD:{rel}")
         head_lines = head.stdout.splitlines(keepends=True) if head.returncode == 0 else []
-        before = {normalise("".join(head_lines[a - 1:b])) for a, b in topic_spans(head_lines)}
+        before = {normalise(own_text("".join(head_lines[a - 1:b]))) for a, b in topic_spans(head_lines)}
         original = path.read_text(encoding="utf-8")
         out = original.splitlines(keepends=True)
         names = []
         for start, end in topic_spans(out):
-            if normalise("".join(out[start - 1:end])) in before:
+            if normalise(own_text("".join(out[start - 1:end]))) in before:
                 continue
             line = REVIEWED_ATTR_RE.sub("", out[start - 1])
             out[start - 1] = TOPIC_OPEN_RE.sub(

@@ -4723,4 +4723,71 @@ Get-ADObject <span class="kw">-Filter</span> <span class="str">'objectClass -eq 
             </div>
           </div>
 
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: RODCS AND DOMAIN CONTROLLERS IN AZURE ─────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🏢</span>
+    <span class="topic-name">Read-Only Domain Controllers &amp; Domain Controllers in Azure — The Branch Office and the Cloud as Sites</span>
+    <span class="topic-badge">AD DS</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Read-only domain controllers</div>
+      <div class="concept-title">An RODC Holds Everything Except Passwords, and Two Groups Decide Whose It May Keep</div>
+      <div class="concept-desc">
+        A read-only domain controller holds every object and attribute a writable one holds except account passwords,
+        and nothing can be changed on it: changes are made on a writable DC and replicate in. It is meant for branch
+        offices that need a DC nearby but lack the physical security, bandwidth or local expertise for a writable one.
+        Which passwords it may cache is its password replication policy, built from two groups. The Allowed RODC
+        Password Replication group starts empty, so a new RODC caches no one's credentials; the Denied group holds the
+        high-privilege accounts and groups, and wins whenever an account is in both. An RODC can also be staged: an
+        administrator creates its account first and names who may install and run it, which Microsoft calls
+        administrator role separation, so a branch technician who is not a domain admin can finish the job.
+        <!-- fact: Except for account passwords, an RODC holds all the Active Directory objects and attributes a writable domain controller holds, and changes cannot be made on it but are made on a writable DC and replicated; RODCs address branch offices lacking a DC or lacking the physical security, network bandwidth or local expertise to support a writable one; the Allowed RODC Password Replication group has no members by default, so new RODCs do not cache user credentials; the Denied RODC Password Replication group contains high-privilege accounts and groups and supersedes the Allowed group | source: Microsoft Learn, "Active Directory security groups", updated 2025-07-02, fetched and read | checked: 2026-11 -->
+        <!-- fact: An RODC computer account can be staged in Active Directory Administrative Center and a server attached to it during installation, with a delegated administrator account named for it and allowed and denied password replication accounts specified, including the default denied groups Administrators, Server Operators, Backup Operators, Account Operators and the Denied RODC Password Replication Group | source: Microsoft Learn, "Install a Windows Server Active Directory Read-Only Domain Controller (RODC) (Level 200)", applies to Windows Server 2016 to 2025, updated 2025-05-12, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Group</th><th>Starts as</th><th>Means</th></tr></thead>
+          <tbody>
+            <tr><td>Allowed RODC Password Replication</td><td>Empty</td><td>Accounts whose passwords an RODC may cache, so the branch can sign in when the WAN <span class="acro-exp">(Wide Area Network)</span> is down</td></tr>
+            <tr><td>Denied RODC Password Replication</td><td>The high-privilege accounts and groups</td><td>Accounts whose passwords no RODC may cache, whatever the Allowed group says</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Allow the branch's own people and computers, and never empty the Denied
+          group.</strong> An RODC is deployed where it can be stolen, and what it has cached is what a thief takes:
+          Microsoft's own health check flags a Denied group stripped of its default members. Which DC a branch client
+          actually uses is decided by sites, in
+          <span class="xref">Sites &amp; Subnets — Why Clients Authenticate Against the Wrong DC</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Domain controllers in Azure</div>
+      <div class="concept-title">A DC in Azure Is a Site of Its Own, Built for Zones, With Its Database Off the OS <span class="acro-exp">(Operating System)</span> Disk</div>
+      <div class="concept-desc">
+        Extending a domain into Azure means running domain controllers on VMs <span class="acro-exp">(Virtual Machine)</span>, and Microsoft's architecture guidance
+        reads like a checklist. Run at least two, in different availability zones. Give each a static private IP <span class="acro-exp">(Internet Protocol)</span> and no
+        public one, and reach them through Azure Bastion rather than a jump box with a public address. Put the
+        database, its logs and SYSVOL <span class="acro-exp">(System Volume)</span> on a separate persistent data disk, turn on encryption at host, and back AD <span class="acro-exp">(Active Directory)</span> up
+        properly, because a copied VHD <span class="acro-exp">(Virtual Hard Disk)</span> can hold a database that will not start. Set the DCs as the virtual network's
+        DNS <span class="acro-exp">(Domain Name System)</span> servers, and create an AD DS <span class="acro-exp">(Active Directory Domain Services)</span> site for the Azure subnets with a site link to the ones on premises, so
+        replication and sign-in follow the network.
+        <!-- fact: Deploy at least two domain controller VMs in different availability zones; give each NIC a static private IP address instead of DHCP; use Azure Bastion rather than a jump box with a public IP for administrative access; store the AD DS database (NTDS.dit), logs and SYSVOL on a separate persistent data disk; enable encryption at host on supported sizes; do not copy domain controllers' VHD files as backup because the database may be inconsistent; configure DNS-server DCs as custom DNS servers at the virtual network level; create an AD DS site including the Azure subnets and a site link to the on-premises sites | source: Azure Architecture Center, "Deploy AD DS in an Azure Virtual Network", updated 2026-06-16, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Treat the Azure region as a branch office with better locks.</strong> It needs a
+          site, a subnet mapping and a site link like any other location, or clients there authenticate across the WAN
+          against a DC on premises. And a VM snapshot is not an AD backup, for the same reason an image of a running
+          DC never was: the restore that works is in
+          <span class="xref">Domain Controller Recovery — Authoritative vs Non-Authoritative Restore</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- /domain-body infra -->

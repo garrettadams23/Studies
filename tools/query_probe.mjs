@@ -424,6 +424,11 @@ const READERS = [
     ["microsoft 365 backup restore points", "", "m365/backup-for-m365-why-native-retention-is-not-a-backup"],
     ["copilot only during the meeting", "", "m365/teams-policies-meeting-messaging-app-the-assignment-preceden"],
     ["network connectivity insights", "", "m365/teams-call-quality-cqd-the-network-requirements-the-real-cul"],
+    // ── sixty-second wave: AZ-802's read-only and Azure domain controllers, added before the topic ──
+    ["rodc password replication policy", "", "infra/read-only-domain-controllers-domain-controllers-in-azure-the"],
+    ["denied rodc password replication group", "", "infra/read-only-domain-controllers-domain-controllers-in-azure-the"],
+    ["domain controller in azure", "", "infra/read-only-domain-controllers-domain-controllers-in-azure-the"],
+    ["rodc administrator role separation", "", "infra/read-only-domain-controllers-domain-controllers-in-azure-the"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],
