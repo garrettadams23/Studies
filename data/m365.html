@@ -138,6 +138,7 @@
             <tr><td>Business Premium</td><td>Includes Business Standard's services plus device management, protection against phishing, ransomware and data loss, and litigation hold, for up to 300 users</td><td>A business under that size that needs security and managed devices</td></tr>
             <tr><td>E3</td><td>Full enterprise services, baseline compliance, litigation hold, and since summer 2026 Intune Plan 2, Remote Help and Defender for Office 365 Plan 1<!-- fact: Microsoft 365 Business Premium is designed for small and medium-sized businesses of up to 300 users and includes device management and protection against phishing, ransomware and data loss (Microsoft Learn, Business Premium overview, updated 14 August 2025); Litigation Hold is available in Business Premium, E3 and E5 and not in Business Basic or Standard (Exchange Online service description, updated 9 November 2026); the packaging rolled out in summer 2026 adds Defender for Office 365 Plan 1, Intune Remote Help, Intune Advanced Analytics and Intune Plan 2 to Microsoft 365 E3, and to E5 also Security Copilot, Intune Endpoint Privilege Management, Cloud PKI and Enterprise Application Management, with list prices from 1 July 2026 of $39 for E3, $60 for E5 and $22, unchanged, for Business Premium | source: the three Microsoft pages named, and Microsoft's 2026 Microsoft 365 packaging and pricing update page, fetched and read | checked: 2026-11 --></td><td>The default enterprise floor</td></tr>
             <tr><td>E5</td><td>Advanced security and compliance, analytics, voice options, and since summer 2026 Security Copilot and the rest of the Intune Suite</td><td>When security or compliance features are the requirement</td></tr>
+            <tr><td>E7</td><td>Everything in E5, plus Microsoft Copilot, the Microsoft Entra Suite and Agent 365, in one license<!-- fact: Microsoft 365 E7 includes the capabilities of Microsoft 365 E5 and adds Microsoft Copilot, the Microsoft Entra Suite and Microsoft Agent 365 in a single license; Copilot is an add-on for E3 and E5 and included in E7; Agent 365 is included only in E7 | source: Microsoft Learn, "Compare Copilot in E3, E5, and E7", updated 2026-10-28, fetched and read | checked: 2026-11 --></td><td>An organization that would otherwise add Copilot and Agent 365 to E5</td></tr>
             <tr><td>Add-ons</td><td>Individual capabilities bolted onto a lower tier</td><td>When a handful of people need one E5 feature</td></tr>
           </tbody>
         </table>
@@ -5098,6 +5099,107 @@ Get-MgContext | Select-Object Account, Scopes</pre>
           agent authenticates before writing its policy, because an agent that acts for users is governed by the users'
           policies, and one that acts as itself by policies that name agent identities. The rest of the engine is
           unchanged: <span class="xref">Entra ID Protection — Conditional Access That Reacts to Risk, Not Just Rules</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: RUNNING COPILOT ──────────────────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">📈</span>
+    <span class="topic-name">Running Copilot — Copilot Credits, Spending Policies, the Usage Report &amp; When Features Arrive</span>
+    <span class="topic-badge">M365 • Copilot</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Paying for use</div>
+      <div class="concept-title">Copilot Credits Bill What a License Does Not Cover, and a Spending Policy Decides Who May Spend Them</div>
+      <div class="concept-desc">
+        Beside per-user licenses, Microsoft bills a growing list of AI <span class="acro-exp">(Artificial Intelligence)</span> services by use, measured in Copilot Credits:
+        Cowork, advanced work in SharePoint and OneDrive, Copilot Studio and more. The credits can come from a
+        pre-purchase plan, P3, from prepaid capacity packs, or from pay-as-you-go, and the controls are the Cost
+        Management dashboard under <span class="volatile" data-checked="2026-11">Copilot ▸ Cost Management</span>. A
+        spending policy names who it covers, which agents and services, the limits and email alerts, and the billing
+        method. An identity-based policy covers all users unless narrowed to security groups, the only way to name
+        particular people; a resource-based policy follows an agent or an environment instead. Each policy starts with
+        <em>Auto-apply new services</em> turned on, so a service Microsoft adds later is covered without anyone deciding
+        it should be.
+        <!-- fact: Usage-based billing is measured in Copilot Credits; billing methods include fixed licensing, the Copilot Credit Pre-purchase Plan (P3), pay-as-you-go and prepaid capacity packs, alone or in supported combinations; administrators use the Cost management dashboard in the Microsoft 365 admin center; services managed this way include Cowork, advanced work in SharePoint and OneDrive, Microsoft Copilot Studio and others; the Auto-apply new services setting is enabled by default on spending policies and can be turned off where new services should be reviewed first | source: Microsoft Learn, "Usage-Based Billing and Cost Management for Copilot Credits", updated 2026-10-30, fetched and read | checked: 2026-11 -->
+        <!-- fact: Spending policies are added under Copilot, Cost Management, Configuration, with scope, agents and services, limits and alerts, billing method, and review; identity-based policies cover users, groups or the tenant, with All users selected by default, and specific users or resource accounts only through security groups; email notifications go to chosen administrators when usage reaches a threshold; resource-based policies follow agents or environments | source: Microsoft Learn, "Managing AI experiences enabled by usage-based billing", updated 2026-10-30, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Turn off auto-apply on any policy whose services someone should review
+          first.</strong> Otherwise each new service Microsoft brings under usage-based billing becomes spendable by
+          everyone the policy covers on the day it arrives. And a spending policy is an access control as well as a
+          budget: for Cowork, it is the only one, as
+          <span class="xref">Microsoft 365 Copilot Settings — Where Each Control Lives, Web Search &amp; the AI Providers That See Your Data</span>
+          explains.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Watching spend and use</div>
+      <div class="concept-title">The Cost Dashboard Is Four Hours Behind, and the Usage Report Two Days</div>
+      <div class="concept-desc">
+        The Cost Management dashboard's Overview tab refreshes every four hours. It shows total credit use, splits it
+        by funding source, and lists the policies and users nearing their limits, while the Consumption tab breaks use
+        down by user, group, agent and service; a Cowork user can type <code>/cost</code> to see a task's approximate
+        credits so far. Adoption is a different report, under Reports ▸ Usage ▸ Microsoft Copilot, which counts
+        licensed users and the share who tried Copilot over 7, 28, 90 or 180 days, and fills in a day's activity within
+        48 hours of that day's end in UTC <span class="acro-exp">(Coordinated Universal Time)</span>.
+        <!-- fact: The Overview tab of the Cost Management dashboard refreshes every 4 hours and shows total Copilot Credit consumption, funding sources such as P3, pay-as-you-go and prepaid capacity packs, and policies or users approaching their limits; the Consumption tab covers usage by policy, users, groups, agents and services; Cowork users can enter /cost to see a task's approximate credit cost | source: Microsoft Learn, "Monitor Copilot Credit spending", updated 2026-11-17, fetched and read | checked: 2026-11 -->
+        <!-- fact: The Microsoft Copilot usage report is under Reports, Usage, Microsoft Copilot, Copilot in the Microsoft 365 admin center; a day's activity is typically available within 48 hours of the end of that day in UTC; it covers the last 7, 28, 90 or 180 days; Enabled Users counts unique licensed users, Active Users those who tried a user-initiated Copilot feature, and the active users rate divides the two | source: Microsoft Learn, "Microsoft Copilot Usage Report", updated 2026-07-14, fetched and read | checked: 2026-11 -->
+        <!-- fact: Copilot controls have three pillars, security and governance, management controls, and measurement and reporting; operational reports in the Microsoft 365 admin center monitor licenses, agents and deployments, strategic reports are in the Copilot Dashboard, and customizable reports in Viva Insights, together called Copilot Analytics | source: Microsoft Learn, "Copilot controls measurement and reporting", updated 2026-02-25, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Question</th><th>Where it is answered</th><th>How fresh</th></tr></thead>
+          <tbody>
+            <tr><td>What is being spent, and by whom?</td><td>Cost Management, Overview and Consumption</td><td>Every four hours</td></tr>
+            <tr><td>Who has a license, and who uses it?</td><td>The Microsoft Copilot usage report</td><td>About two days behind</td></tr>
+            <tr><td>Which apps and features, and is it worth it?</td><td>The Copilot Dashboard in Viva Insights, Microsoft's strategic report</td><td>Its own schedule</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Read a licensed user who never tries Copilot as a training or fit problem, not a
+          license to reclaim on the spot.</strong> The usage report's active-user rate counts anyone who tried a feature
+          once, so it measures reach rather than value; the questions a report should answer before anyone runs it are
+          in <span class="xref">Reporting &amp; Usage Analytics — Adoption Data That Answers a Real Question</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Telling users, and pacing change</div>
+      <div class="concept-title">An AI Disclaimer in Six Apps, and a Release Model With Three Audiences</div>
+      <div class="concept-desc">
+        The Copilot AI disclaimer, set by an AI Administrator under Copilot ▸ Settings ▸ View all, puts
+        <em>AI-generated content may be inaccurate</em> in Word, Excel, PowerPoint, Outlook, OneNote and the Copilot
+        app, with an optional link to the organization's own AI policy; it does not appear in SharePoint, OneDrive,
+        Whiteboard or Forms, and turning it on writes a tenant-level Cloud Policy. Separately, Microsoft 365 now ships
+        to three audiences: Frontier, opt-in previews; Standard release, the default; and Deferred release, the same
+        features about thirty days later for major updates. Targeted release is going: commercial tenants cannot change
+        its membership from November 2026, and it will be retired in January 2027. Copilot's own general-availability updates
+        follow the same Standard or Deferred choice, set on the Copilot settings page.
+        <!-- fact: The Copilot AI disclaimer, turned on by an AI Administrator at Copilot, Settings, View all, Copilot AI disclaimer, displays "AI-generated content may be inaccurate" in Word, Excel, PowerPoint, Outlook, OneNote and the Microsoft Copilot app, not in SharePoint, OneDrive, Whiteboard or Forms; admins choose a Standard or Bold font and may add a URL to an internal AI policy; turning it on creates a tenant-level policy named Copilot AI Disclaimer in the Microsoft 365 Apps admin center | source: Microsoft Learn, "Turn on AI Disclaimers in Microsoft Copilot", updated 2025-12-10, fetched and read | checked: 2026-11 -->
+        <!-- fact: Microsoft 365 has a three-tier release model, Frontier (opt-in, pre-GA), Standard release (the default GA rollout) and Deferred release (the same features delayed about 30 days after Standard for major updates); it applies to new Outlook, Outlook on the web, OneDrive, SharePoint Online, Office for the web, Teams and the Microsoft 365 admin center, not to Microsoft 365 Apps, which use update channels; in November 2026 commercial clouds can no longer add, remove or modify Targeted release enrollment, and Targeted release retires in January 2027; Copilot's GA release preference is under Copilot, Settings, View all, Copilot Release Preferences: General Availability, with Standard as the default | source: Microsoft Learn, "Configure new Standard and Deferred release options for Microsoft 365", updated 2026-11-16, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Audience</th><th>Gets</th><th>Use it for</th></tr></thead>
+          <tbody>
+            <tr><td>Frontier</td><td>Previews, before general availability, not covered by its service levels</td><td>The people who should try what is coming</td></tr>
+            <tr><td>Standard release</td><td>General availability as Microsoft rolls it out; the default</td><td>Most of the organization</td></tr>
+            <tr><td>Deferred release</td><td>The same features about thirty days later, for major updates</td><td>Groups that need time to validate and prepare</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Move any Targeted release pilot before January 2027.</strong> The pilot group that
+          saw features first under Targeted release has no successor of the same shape: early previews are Frontier,
+          and buying time is Deferred release, so decide which of the two each pilot user was really for. None of it
+          governs Microsoft 365 Apps, whose pace is still set by update channels.
         </div>
       </div>
     </div>

@@ -407,6 +407,13 @@ const READERS = [
     ["entra agent id sponsor", "", "m365/agents-in-microsoft-365-the-agent-registry-entra-agent-id-wh"],
     ["conditional access for agents", "", "m365/agents-in-microsoft-365-the-agent-registry-entra-agent-id-wh"],
     ["agent 365 license", "", "m365/agents-in-microsoft-365-the-agent-registry-entra-agent-id-wh"],
+    // ── fifty-eighth wave: AB-650's monitoring of AI services, read on Microsoft's pages, added before the topic ──
+    ["copilot credits spending policy", "", "m365/running-copilot-copilot-credits-spending-policies-the-usage-"],
+    ["copilot usage report active users", "", "m365/running-copilot-copilot-credits-spending-policies-the-usage-"],
+    ["copilot ai disclaimer", "", "m365/running-copilot-copilot-credits-spending-policies-the-usage-"],
+    ["deferred release", "", "m365/running-copilot-copilot-credits-spending-policies-the-usage-"],
+    ["targeted release retired", "", "m365/running-copilot-copilot-credits-spending-policies-the-usage-"],
+    ["what is in microsoft 365 e7", "", "m365/licensing-without-tears-e3-e5-business-group-based-assignmen"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],
