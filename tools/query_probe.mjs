@@ -395,6 +395,10 @@ const READERS = [
     // ── forty-ninth wave: Phase 11's tier-gating pass, redone against Microsoft's pages ──
     ["what does business premium include", "", "m365/licensing-without-tears-e3-e5-business-group-based-assignmen"],
     ["remediations license requirement", "", "endpoint/endpoint-analytics-proactive-remediations-measuring-and-self"],
+    // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
+    ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
+    ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],
+    ["msonline retired", "", "script/microsoft-graph-from-powershell-the-modern-admin-api"],
   ]],
   ["a SOC analyst or defender", [
     ["phishing email reported", "", "blueteam/a-user-reported-a-phishing-email-the-first-ten-minutes"],
@@ -1040,6 +1044,8 @@ const READERS = [
     ["tj-actions changed-files", "", "devops/software-supply-chain-security-sbom-slsa-sigstore"],
     ["github actions lockfile", "", "devops/software-supply-chain-security-sbom-slsa-sigstore"],
     ["cve-2025-30066", "", "devops/software-supply-chain-security-sbom-slsa-sigstore"],
+    // ── fiftieth wave: the product-names class ──
+    ["hcp terraform", "", "devops/terraform-infrastructure-as-code-in-practice"],
   ]],
   ["somebody handed a process nobody chose", [
     ["agile",              "", "eng/agile-the-four-trade-offs-and-what-gets-sold-as-agile"],
@@ -1421,6 +1427,10 @@ const READERS = [
     ["managed kafka google cloud", "", "cloud/google-cloud-data-products-alloydb-bigtable-memorystore-pubs"],
     // ── forty-seventh wave: September's last claims, re-checked ──
     ["how long do instance role credentials last", "", "redteam/cloud-credential-attacks-the-purple-team-bridge"],
+    // ── fiftieth wave: the product-names class ──
+    ["google secops", "", "cloud/gcp-security-cloud-audit-logs-security-command-center"],
+    ["google cloud observability", "", "cloud/gcp-observability-cloud-monitoring-logging-trace"],
+    ["security hub cspm", "", "cloud/aws-security-stack-cloudtrail-guardduty-security-hub"],
   ]],
   ["somebody looking for a job", [
     ["writing a cv", "", "career/your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r"],

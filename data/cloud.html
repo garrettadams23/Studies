@@ -321,7 +321,7 @@ gcloud compute instances list --project my-prod-project</pre>
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-07">
+          <div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🔄</span>
               <span class="topic-name">Cloud Rosetta Stone — AWS <span class="acro-exp">(Amazon Web Services)</span> ↔ GCP <span class="acro-exp">(Google Cloud Platform)</span> ↔ Azure</span>
@@ -353,7 +353,7 @@ gcloud compute instances list --project my-prod-project</pre>
                     <tr><td>Secrets</td><td>Secrets Manager</td><td>Secret Manager</td><td>Key Vault</td></tr>
                     <tr><td>Managed keys</td><td>KMS <span class="acro-exp">(Key Management Service)</span></td><td>Cloud KMS</td><td>Key Vault</td></tr>
                     <tr><td>CDN <span class="acro-exp">(Content Delivery Network)</span></td><td>CloudFront</td><td>Cloud CDN</td><td>Front Door / CDN</td></tr>
-                    <tr><td>Infra as Code</td><td>CloudFormation</td><td>Deployment Manager</td><td>ARM <span class="acro-exp">(Azure Resource Manager)</span> / Bicep</td></tr>
+                    <tr><td>Infra as Code</td><td>CloudFormation</td><td>Infrastructure Manager (managed Terraform)<!-- fact: Google's Deployment Manager reached end of support on 31 March 2026, and Google directs its users to Infrastructure Manager, which deploys Terraform configurations; this cell named Deployment Manager until the fiftieth wave | source: Google Cloud documentation, "Deployment Manager deprecation", fetched and read | checked: 2026-11 --></td><td>ARM <span class="acro-exp">(Azure Resource Manager)</span> / Bicep</td></tr>
                     <tr><td>Monitoring</td><td>CloudWatch</td><td>Cloud Monitoring</td><td>Monitor</td></tr>
                   </table>
                   <div class="concept-desc verdict">
@@ -3863,7 +3863,7 @@ gcloud compute instances list --project my-prod-project</pre>
               </div>
             </div>
           </div>
-<div class="topic" data-reviewed="2026-09">
+<div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🛡️</span>
               <span class="topic-name">AWS <span class="acro-exp">(Amazon Web Services)</span> Security Stack — CloudTrail, GuardDuty &amp; Security Hub</span>
@@ -3885,7 +3885,8 @@ gcloud compute instances list --project my-prod-project</pre>
                     <tr><td>CloudTrail</td><td>Records every API <span class="acro-exp">(Application Programming Interface)</span> call — the audit log of who did what</td></tr>
                     <tr><td>Config</td><td>Tracks resource configuration over time + rules for compliance</td></tr>
                     <tr><td>GuardDuty</td><td>ML/threat-intel detection on logs (crypto-mining, recon, exfil)</td></tr>
-                    <tr><td>Security Hub</td><td>Aggregates findings from all of them + CIS/AWS benchmarks</td></tr>
+                    <tr><td>Security Hub CSPM <span class="acro-exp">(Cloud Security Posture Management)</span></td><td>The original Security Hub under its current name: aggregates findings from all of them and checks accounts against AWS Foundational Security Best Practices, CIS <span class="acro-exp">(Center for Internet Security)</span>, PCI DSS <span class="acro-exp">(Payment Card Industry Data Security Standard)</span> and NIST <span class="acro-exp">(National Institute of Standards and Technology)</span></td></tr>
+                    <tr><td>Security Hub</td><td>The newer service that took the name, generally available since December 2025: correlates GuardDuty, Inspector, Macie and Security Hub CSPM findings into exposures and ranks them by risk<!-- fact: AWS's user guide titles the original service AWS Security Hub CSPM, which runs checks against FSBP, CIS, PCI DSS and NIST standards and receives findings from GuardDuty, Inspector and Macie; AWS announced the new Security Hub as generally available on 2 December 2025, correlating signals from GuardDuty, Inspector, Security Hub CSPM and Macie into threats and exposures | source: AWS Security Hub user guide, "Introduction to AWS Security Hub CSPM", and the AWS News Blog post of 2 December 2025, both fetched and read | checked: 2026-11 --></td></tr>
                     <tr><td>Inspector</td><td>Automated vuln scanning of EC2/ECR/Lambda</td></tr>
                     <tr><td>Macie</td><td>Finds sensitive data (PII) in S3 <span class="acro-exp">(Simple Storage Service)</span></td></tr>
                   </table>
@@ -4105,7 +4106,7 @@ gcloud compute instances list --project my-prod-project</pre>
               </div>
             </div>
           </div>
-<div class="topic" data-reviewed="2026-09">
+<div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🛡️</span>
               <span class="topic-name">GCP <span class="acro-exp">(Google Cloud Platform)</span> Security — Cloud Audit Logs &amp; Security Command Center</span>
@@ -4122,7 +4123,7 @@ gcloud compute instances list --project my-prod-project</pre>
                     <tr><td>Cloud Audit Logs</td><td>Admin/data-access API <span class="acro-exp">(Application Programming Interface)</span> audit trail</td><td>CloudTrail</td></tr>
                     <tr><td>Security Command Center</td><td>Central posture + threat findings dashboard</td><td>Security Hub + GuardDuty</td></tr>
                     <tr><td>Cloud Logging / Monitoring</td><td>Logs, metrics, alerting</td><td>CloudWatch</td></tr>
-                    <tr><td>Chronicle</td><td>Google's SIEM <span class="acro-exp">(Security Information and Event Management)</span> at scale</td><td>—</td></tr>
+                    <tr><td>Google Security Operations (Google SecOps), formerly Chronicle</td><td>Google's SIEM <span class="acro-exp">(Security Information and Event Management)</span> at scale<!-- fact: Chronicle Security Operations was rebranded Google Security Operations (Google SecOps) on 25 April 2024, with no change to what the platform does; Google's documentation still calls its API the Chronicle API | source: Google staff announcement on the Google Cloud Community, 25 April 2024, and Google's SecOps overview page, both fetched and read | checked: 2026-11 --></td><td>—</td></tr>
                   </table>
                   <div class="concept-desc verdict">
                     <strong class="c-green">SCC</strong> is the single pane for GCP security posture —
@@ -4225,7 +4226,7 @@ gcloud compute instances list --project my-prod-project</pre>
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-08">
+          <div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🔎</span>
               <span class="topic-name">CSPM <span class="acro-exp">(Cloud Security Posture Management)</span> — Prowler, ScoutSuite &amp; Steampipe</span>
@@ -4249,7 +4250,7 @@ gcloud compute instances list --project my-prod-project</pre>
                     <tr><td>Prowler</td><td>Open-source AWS/GCP/Azure security assessments (CIS, NIST, etc.)</td></tr>
                     <tr><td>ScoutSuite</td><td>Multi-cloud config auditing → HTML <span class="acro-exp">(HyperText Markup Language)</span> report</td></tr>
                     <tr><td>Steampipe</td><td>Query your cloud with SQL <span class="acro-exp">(Structured Query Language)</span> (find issues with a SELECT)</td></tr>
-                    <tr><td>Cloud-native</td><td>Security Hub / SCC do continuous CSPM too</td></tr>
+                    <tr><td>Cloud-native</td><td>AWS <span class="acro-exp">(Amazon Web Services)</span> Security Hub CSPM and Google's SCC run these checks continuously too</td></tr>
                   </table>
                   <div class="concept-desc verdict">
                     <strong>Run one of the open-source scanners this week
@@ -4684,7 +4685,7 @@ gcloud compute instances list --project my-prod-project</pre>
                   </table>
                   <div class="concept-desc verdict">
                     <strong class="c-amber">Translate the templates while the service can still read them.</strong>
-                    After June 2027 a Deployment Manager deployment becomes a collection of resources with no record of which
+                    Once the service shuts down after June 2027, a Deployment Manager deployment becomes a collection of resources with no record of which
                     belong together. Rewriting each template as Terraform before then, and bringing the existing resources
                     under it, keeps that record; Infrastructure Manager can then run it. Terraform itself, across clouds, is in
                     <span class="xref">Terraform on AWS &amp; GCP</span>.
@@ -4929,9 +4930,10 @@ aws ec2 get-console-output --instance-id i-0abc --output text</pre>
             <div class="topic-body">
               <div class="concept-card">
                 <div class="concept-label">Reference</div>
-                <div class="concept-title">The Operations Suite (formerly Stackdriver)</div>
+                <div class="concept-title">Google Cloud Observability — Once the Operations Suite, and Stackdriver Before That</div>
                 <div class="concept-desc">
-                  Google's operations suite mirrors CloudWatch/X-Ray with metrics, logs, and traces —
+                  Google Cloud Observability mirrors CloudWatch/X-Ray with metrics, logs, and traces —
+                  <!-- fact: Google's documentation names the suite Google Cloud Observability, covering Cloud Monitoring, Cloud Logging and Cloud Trace, and its overview no longer uses the names operations suite or Stackdriver; no dated notice of the rename was found | source: Google Cloud documentation, "Observability in Google Cloud", fetched and read | checked: 2026-11 -->
                   and leans on the SRE <span class="acro-exp">(Site Reliability Engineering)</span> practices Google literally wrote the book on (SLOs, error
                   budgets are first-class in Cloud Monitoring).
                 </div>
@@ -5423,7 +5425,7 @@ az account set <span class="var">--subscription</span> <span class="str">"Prod"<
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-09">
+          <div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🛡️</span>
               <span class="topic-name">Azure Security — Defender, Key Vault &amp; Sentinel</span>
@@ -5442,8 +5444,8 @@ az account set <span class="var">--subscription</span> <span class="str">"Prod"<
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Service</th><th>Role</th><th>Analog</th></tr>
-                    <tr><td>Defender for Cloud</td><td>Posture (CSPM) + workload protection + secure score</td><td>Security Hub / SCC</td></tr>
-                    <tr><td>Microsoft Sentinel</td><td>Cloud SIEM <span class="acro-exp">(Security Information and Event Management)</span> + SOAR <span class="acro-exp">(Security Orchestration, Automation, and Response)</span> (KQL hunting)</td><td>Splunk / Chronicle</td></tr>
+                    <tr><td>Defender for Cloud</td><td>Posture (CSPM) + workload protection + secure score</td><td>Security Hub CSPM / SCC</td></tr>
+                    <tr><td>Microsoft Sentinel</td><td>Cloud SIEM <span class="acro-exp">(Security Information and Event Management)</span> + SOAR <span class="acro-exp">(Security Orchestration, Automation, and Response)</span> (KQL hunting)</td><td>Splunk / Google SecOps</td></tr>
                     <tr><td>Key Vault</td><td>Secrets, keys &amp; certificates</td><td>Secrets Manager / Secret Manager</td></tr>
                     <tr><td>Conditional Access</td><td>Risk/device-based access policy (ties to ITDR)</td><td>—</td></tr>
                   </table>

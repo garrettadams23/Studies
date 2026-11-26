@@ -1079,7 +1079,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
               </div>
             </div>
           </div>
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🔓</span>
               <span class="topic-name">Mimikatz — Credential Extraction</span>
@@ -1129,7 +1129,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                     <tr><td>Local administrator on the host</td><td>Least privilege, and separate admin accounts per tier &mdash; the single biggest lever</td></tr>
                     <tr><td><code>SeDebugPrivilege</code></td><td>Restrict the privilege by policy; it is not needed by ordinary applications</td></tr>
                     <tr><td>LSASS readable</td><td><strong>Credential Guard</strong> moves secrets into VBS <span class="acro-exp">(Virtualization-Based Security)</span>; <strong>RunAsPPL</strong> makes LSASS protected</td></tr>
-                    <tr><td>The binary or its technique runs</td><td>Application control (WDAC / AppLocker). Note that the technique outlives the binary</td></tr>
+                    <tr><td>The binary or its technique runs</td><td>Application control (App Control for Business, formerly WDAC, or AppLocker). Note that the technique outlives the binary</td></tr>
                     <tr><td>Cached credentials worth taking</td><td>Reduce <code>CachedLogonsCount</code>; do not log domain admins into workstations</td></tr>
                   </table>
                   <div class="concept-desc verdict">
@@ -1362,7 +1362,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-09">
+          <div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">⚔️</span>
               <span class="topic-name">Cobalt Strike — The Commercial Standard</span>
@@ -1404,7 +1404,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                   that already runs — a phish payload, an exploited service, a stolen credential
                   used for remote execution — and then it has to get out. Both halves can be denied
                   separately, which is why they are worth separating. Application control
-                  (WDAC or AppLocker in enforce mode) denies the loader without knowing
+                  (App Control for Business, formerly WDAC, or AppLocker in enforce mode) denies the loader without knowing
                   anything about Beacon; an authenticated egress proxy with category allowlisting
                   denies the channel without inspecting a single packet, because a stock profile
                   makes a direct outbound connection that simply has nowhere to go.
@@ -2139,7 +2139,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-09">
+          <div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🪛</span>
               <span class="topic-name">Living off the Land — LOLBAS &amp; GTFOBins</span>
@@ -2188,7 +2188,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Why the usual controls miss</th><th>What works instead</th></tr>
-                    <tr><td>The binary is signed by the vendor</td><td>Application control by <em>policy</em> &mdash; WDAC <span class="acro-exp">(Windows Defender Application Control)</span> or AppLocker rules that allow a binary only where it belongs</td></tr>
+                    <tr><td>The binary is signed by the vendor</td><td>Application control by <em>policy</em> &mdash; App Control for Business (formerly WDAC) or AppLocker rules that allow a binary only where it belongs</td></tr>
                     <tr><td>It is legitimately used elsewhere</td><td>Behavioral detection: the parent process and the arguments, not the image name</td></tr>
                     <tr><td>Nothing is written to disk</td><td>Command-line auditing (4688) and script block logging (4104). Without those there is no evidence</td></tr>
                     <tr><td>On Linux, it is a <code>sudo</code> rule</td><td>GTFOBins is a list of what your <code>sudoers</code> file actually grants. Read it against your own file</td></tr>
@@ -2206,7 +2206,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
               </div>
             </div>
           </div>
-<div class="topic" data-reviewed="2026-09">
+<div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🧗</span>
               <span class="topic-name">Privilege Escalation Scanners — PEAS &amp; PowerUp</span>
@@ -2246,7 +2246,7 @@ msf&gt; sessions -i <span class="num">1</span>              <span class="com"># 
                   makes these scanners the first thing run after a foothold. The second half is
                   where it can be denied: PEAS is an unsigned binary or script that has to be
                   written to disk and executed. Application control in enforce mode
-                  (WDAC or
+                  (App Control for Business, formerly WDAC, or
                   AppLocker with a script rule) refuses it outright, and PowerShell constrained
                   language mode removes PowerUp's ability to do anything useful even when it runs.
                   On Linux the equivalents are a <code>noexec</code> mount on the writable paths

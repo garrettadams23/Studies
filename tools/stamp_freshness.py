@@ -22,7 +22,9 @@ commit classifies itself as mechanical on the next run, with no SHA list to
 maintain by hand.
 
 Usage:
-    python3 tools/stamp_freshness.py --only m365   # stamp one domain — the usual case
+    python3 tools/stamp_freshness.py --touched     # this month on what you edited, nothing else
+    python3 tools/stamp_freshness.py --touched --only cloud   # the same, one domain
+    python3 tools/stamp_freshness.py --only m365   # re-derive one domain from git blame
     python3 tools/stamp_freshness.py --current-only   # whole tree, safely: see below
     python3 tools/stamp_freshness.py            # stamp everything; see the warning below
     python3 tools/stamp_freshness.py --verify   # CI gate: are the stamps valid?
@@ -42,6 +44,15 @@ that produced it: 453 moves, 158 into the current month — real content work no
 had re-stamped — and 295 shuffling between two earlier months where the content had
 not changed and only the derivation had. The second kind is what `--only` exists to
 avoid, and this is how to avoid it without knowing in advance which files to name.
+
+**Or `--touched`, after a content wave.** It uses no blame at all: a topic whose
+text, with the mechanical markup normalised away, differs from the same file at
+HEAD gets this month, and every other stamp is left exactly as it is. The
+fiftieth wave needed it. `--only` across the six domains it had edited moved 381
+stamps, most of them into September, on topics nobody had touched: the branch
+had merged `main` back in, and blame's answer for those lines moved with the
+merge while their text did not. Seventeen topics had changed, and seventeen is
+what `--touched` stamps.
 
 --verify and --check are not the same question. --verify asks whether every
 topic carries a plausible stamp, using no git at all, so its answer does not
@@ -409,6 +420,47 @@ def stamp(check_only=False, only=None, current_only=False):
     return 1 if (check_only and changed) else 0
 
 
+def touched(only=None):
+    """Stamp this month on every topic whose text differs from HEAD, and only those.
+
+    "Differs" is decided on normalise()d text, so a pass that only adds acronym
+    expansions or rewraps a title stamps nothing, and a topic that moved without
+    changing is found unchanged wherever it now sits. A new topic and a retitled
+    one are both edits, and both are stamped. A file git has never seen counts
+    as all new.
+    """
+    this_month = datetime.now(timezone.utc).strftime("%Y-%m")
+    total = 0
+    for path in domain_files(only):
+        rel = f"data/{path.name}"
+        head = git("show", f"HEAD:{rel}")
+        head_lines = head.stdout.splitlines(keepends=True) if head.returncode == 0 else []
+        before = {normalise("".join(head_lines[a - 1:b])) for a, b in topic_spans(head_lines)}
+        original = path.read_text(encoding="utf-8")
+        out = original.splitlines(keepends=True)
+        names = []
+        for start, end in topic_spans(out):
+            if normalise("".join(out[start - 1:end])) in before:
+                continue
+            line = REVIEWED_ATTR_RE.sub("", out[start - 1])
+            out[start - 1] = TOPIC_OPEN_RE.sub(
+                lambda m: f'<div class="topic" data-reviewed="{this_month}"{m.group(1)}>',
+                line, count=1,
+            )
+            # Expansions out first: the name's own </span> is not the first one in it.
+            m = TOPIC_NAME_RE.search(ACRO_SPAN_RE.sub("", "".join(out[start - 1:end])))
+            title = re.sub(r"<[^>]+>", "", m.group(1)) if m else "?"
+            names.append(re.sub(r"\s+", " ", unescape(title)).strip())
+        result = "".join(out)
+        if result != original:
+            path.write_text(result, encoding="utf-8")
+        for name in names:
+            print(f"  {path.name:<36} {name}")
+        total += len(names)
+    print(f"\n{total} edited topic(s) stamped {this_month}; every other stamp left as it was.")
+    return 0
+
+
 def months_since(stamp):
     y, m = int(stamp[:4]), int(stamp[5:7])
     now = datetime.now(timezone.utc)
@@ -512,7 +564,8 @@ def parse_only(argv):
     return names
 
 
-KNOWN_FLAGS = {"--verify", "--report", "--candidates", "--check", "--only", "--current-only"}
+KNOWN_FLAGS = {"--verify", "--report", "--candidates", "--check", "--only", "--current-only",
+               "--touched"}
 
 
 def refuse_unknown(argv):
@@ -545,6 +598,8 @@ if __name__ == "__main__":
         sys.exit(verify())
     if "--report" in sys.argv:
         sys.exit(report())
+    if "--touched" in sys.argv:
+        sys.exit(touched(only=parse_only(sys.argv)))
     if "--candidates" in sys.argv:
         sys.exit(candidates())
     sys.exit(stamp(check_only="--check" in sys.argv, only=parse_only(sys.argv),

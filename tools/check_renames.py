@@ -22,6 +22,12 @@ Two mentions are always fine and are not reported:
 
 Everything else is a use of the old name as though it were the current one.
 
+An entry can also carry `closed`, the month its product shut down. Workplace
+from Meta closed in May 2026, so it has no current name at all: both names are
+then old, and only a historical mention of either one passes. A retirement is
+history too, so "retired", "closed", "shut down" and "end of support" excuse a
+mention the way "formerly" does.
+
 Scope is deliberately narrow. It reads prose only — no code blocks, no
 attributes, no generated acronym domain — because a name inside a command or a
 URL is usually still correct and always noisy.
@@ -51,7 +57,8 @@ ACRO_EXP_RE = re.compile(r'<span class="acro-exp">\([^<]*?\)</span\s*>')
 # Words that mark a mention as deliberately historical.
 HISTORICAL = re.compile(
     r"formerly|renamed|used to be|previously|was called|once called|"
-    r"old name|until \d{4}|before the rename|historic",
+    r"old name|until \d{4}|before the rename|historic|"
+    r"retired|retirement|closed|shut down|shuts down|discontinued|end of support|support ended",
     re.I)
 
 # How far either side of the old name to look for the new one, or for a word
@@ -93,8 +100,22 @@ def pattern_for(entry):
 
 
 def explained(text, start, end, new):
+    """Historical, or beside the current name. `new` is None for a product
+    that has closed, which has no current name to sit beside."""
     window = text[max(0, start - WINDOW): end + WINDOW]
-    return bool(HISTORICAL.search(window)) or new.lower() in window.lower()
+    return bool(HISTORICAL.search(window)) or (new is not None and new.lower() in window.lower())
+
+
+def names_to_check(entry):
+    """(name, current name, advice) for each name an entry makes old.
+
+    A rename makes one name old. A closure makes both old, and the advice says
+    so: nothing is current, so the fix is to write the mention as history.
+    """
+    if entry.get("closed"):
+        advice = f"names a product that closed in {entry['closed']}; write it as history"
+        return [(entry["old"], None, advice), (entry["new"], None, advice)]
+    return [(entry["old"], entry["new"], f"should be '{entry['new']}'")]
 
 
 def findings_in(text, registry, domain="-"):
@@ -104,10 +125,9 @@ def findings_in(text, registry, domain="-"):
     logic below is the whole check; scan() is the file walk around it.
     """
     findings = []
-    if True:
-        for entry in registry:
-            old, new = entry["old"], entry["new"]
-            for m in re.finditer(pattern_for(entry), text, re.I):
+    for entry in registry:
+        for old, new, advice in names_to_check(entry):
+            for m in re.finditer(pattern_for({**entry, "old": old}), text, re.I):
                 s, e = m.start(), m.end()
                 # An allowed phrase means the old string is part of a name that
                 # is still correct — check the text actually there, not the
@@ -126,7 +146,7 @@ def findings_in(text, registry, domain="-"):
                     continue
                 line = text[: s].count("\n") + 1
                 snippet = re.sub(r"\s+", " ", text[max(0, s - 40): e + 40]).strip()
-                findings.append((domain, line, old, new, snippet))
+                findings.append((domain, line, old, advice, snippet))
     return findings
 
 
@@ -156,6 +176,8 @@ def self_test():
         {"old": "Azure AD", "new": "Entra ID", "since": "2023-07", "allow": ["Azure AD Connect"]},
         {"old": "Office 365", "new": "Microsoft 365", "since": "2020-04",
          "allow": ["Defender for Office 365"]},
+        {"old": "Facebook Workplace", "new": "Workplace from Meta", "since": "2021-10",
+         "allow": [], "closed": "2026-05"},
     ]
     cases = [
         ("lowercase, as the registry writes it", "use a whitelist for this", 1),
@@ -173,6 +195,11 @@ def self_test():
         ("an allowed phrase can end in the old string",
          "Defender for Office 365 Plan 2 runs the simulations", 0),
         ("the old name on its own is still caught", "licensed for Office 365 only", 1),
+        ("a closed product's last name is old too", "post the notice on Workplace from Meta", 1),
+        ("a closed product's names do not excuse each other",
+         "Facebook Workplace, now Workplace from Meta", 2),
+        ("a closed product written as history", "Workplace from Meta, which closed in May 2026", 0),
+        ("a retirement is history", "the retired Azure AD Graph API", 0),
     ]
     bad = 0
     for name, text, expect in cases:
@@ -191,14 +218,15 @@ def main():
     if "--list" in args:
         registry = json.loads((DATA / "renames.json").read_text(encoding="utf-8"))["renames"]
         for e in sorted(registry, key=lambda x: x["since"]):
-            print(f"{e['since']}  {e['old']:<38} -> {e['new']}")
+            closed = f"  (closed {e['closed']})" if e.get("closed") else ""
+            print(f"{e['since']}  {e['old']:<40} -> {e['new']}{closed}")
         print(f"\n{len(registry)} renames on record.")
         return 0
 
     only = args[args.index("--domain") + 1] if "--domain" in args else None
     findings = scan(only)
-    for domain, line, old, new, snippet in findings:
-        print(f"{domain}.html:~{line}: '{old}' should be '{new}'")
+    for domain, line, old, advice, snippet in findings:
+        print(f"{domain}.html:~{line}: '{old}' {advice}")
         print(f"    …{snippet}…")
     print(f"\n{len(findings)} unexplained use(s) of a renamed product.")
     return 1 if findings else 0

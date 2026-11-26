@@ -1,21 +1,27 @@
-          <div class="topic" data-reviewed="2026-08">
+          <div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🏢</span>
-              <span class="topic-name">Microsoft Endpoint Configuration Manager (MECM)</span>
+              <span class="topic-name">Microsoft Configuration Manager (MECM)</span>
               <span class="topic-badge">On-Prem</span>
               <span class="topic-chev">▶</span>
             </div>
             <div class="topic-body">
               <div class="concept-card">
                 <div class="concept-label">Reference</div>
-                <div class="concept-title">ConfigMgr / SCCM <span class="acro-exp">(System Center Configuration Manager)</span> — What It Is &amp; Where It Fits</div>
+                <div class="concept-title">Configuration Manager (ConfigMgr, SCCM) — What It Is &amp; Where It Fits</div>
                 <div class="concept-desc">
-                  <strong class="c-cyan">MECM</strong> (formerly SCCM, universally called
-                  <em>ConfigMgr</em>) is Microsoft's on-premises platform for managing Windows (and
-                  some Linux/macOS/servers) at scale: application deployment, patching, OS <span class="acro-exp">(Operating System)</span> imaging,
-                  hardware/software inventory, and compliance. It ships in the
-                  <strong>Current Branch</strong> model — a new feature release roughly three times a
-                  year (e.g. <code>2403</code> = 2024, March), applied in-console.
+                  <strong class="c-cyan">MECM</strong> — Microsoft Endpoint Configuration Manager, formerly
+                  SCCM <span class="acro-exp">(System Center Configuration Manager)</span> and universally called <em>ConfigMgr</em> — is Microsoft's on-premises platform for
+                  managing Windows (and some Linux/macOS/servers) at scale: application deployment, patching,
+                  OS <span class="acro-exp">(Operating System)</span> imaging, hardware/software inventory, and compliance. Since October 2022
+                  Microsoft has called it <strong>Microsoft Configuration Manager</strong>, one of the Intune
+                  family, and its documentation says <em>Configuration Manager</em> or <em>ConfigMgr</em>;
+                  MECM is the name most admins still use, and the one this site uses. It ships in the
+                  <strong>Current Branch</strong> model: a new version twice a year since 2023, three a year
+                  before that, each supported for 18 months and named for the year and month it was built,
+                  which is not when it ships. <code>2509</code> reached customers in November 2025. Each one
+                  installs from inside the console.
+                  <!-- fact: Microsoft's Configuration Manager FAQ says the product is part of the Microsoft Intune family of products and is to be called Microsoft Configuration Manager on first reference, Configuration Manager in general use and ConfigMgr where space is short; Microsoft's table of current branch versions lists 2203, 2207 and 2211 in 2022, then two versions a year from 2303 to 2609, which became available on 28 September 2026; 2509 became available on 12 November 2025; each version is supported for 18 months | source: Microsoft Learn, "Microsoft Configuration Manager FAQ" and "Updates and servicing", fetched and read; the Intune family's announcement in October 2022 is from search results | checked: 2026-11 -->
                 </div>
                 <div class="dw">
                   <table class="ref-table">
@@ -3524,7 +3530,7 @@ Remove-PSSession $s
         <div class="concept-desc verdict">
           <strong class="c-amber">Two known causes of findings that are not real.</strong> The matching does not
           tell 32-bit software from 64-bit, so a CVE that affects only one architecture can be flagged on both;
-          and AppLocker, WDAC <span class="acro-exp">(Windows Defender Application Control)</span> or PowerShell's Constrained Language Mode can stop the scripts Defender for
+          and AppLocker, App Control for Business (formerly WDAC) or PowerShell's Constrained Language Mode can stop the scripts Defender for
           Endpoint collects with. Check both before arguing with the finding. How the ranking fits the general
           process is in <span class="xref">Vulnerability Management — Finding and Fixing Weaknesses</span>.
         </div>
@@ -3671,7 +3677,7 @@ Remove-PSSession $s
       <div class="concept-label">What it is</div>
       <div class="concept-title">App Control Runs Only What a Policy Trusts; AppLocker Is the Older Tool Beside It</div>
       <div class="concept-desc">
-        App Control for Business, which Microsoft called Windows Defender Application Control until its
+        App Control for Business, which Microsoft called Windows Defender Application Control (WDAC) until its
         rename, turns Windows from a place where anything runs unless antivirus objects into one where code
         runs only if a policy trusts it. That covers executables and DLLs <span class="acro-exp">(Dynamic Link Library)</span>, drivers, scripts and MSI
         installers, and interactive PowerShell, which drops into Constrained Language Mode. A rule can trust
