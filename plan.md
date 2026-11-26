@@ -73,7 +73,7 @@ the row needs was already running. Three are left, and all three want a stopwatc
 | Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **167** · search **59** · resilience **64** · axe 33/33 · mobile 16/16 · visual 2/2 · backup 3/3. The error-code lookup added one check to each of smoke, mobile and axe's two themes, and the expand switch one to smoke. Visual is 0/2 in the container that ran the last session, and that is not a regression: its Playwright is 1.63.0, whose Chromium 153 draws the chip labels about 10% wider than the 1.56.0 CI pins (Chromium 141), and CI matched the same baselines 2/2 on 2026-10-11. `visual_test.mjs` names both versions now, and refuses `--update` under any Playwright but the pinned one | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **64** here, **332** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **65** here, **332** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract — and it held a claim it could not keep.** *If it passes, CI
 passes* was written when `check_gates.py` was added, because the workflow had been red on
@@ -558,6 +558,21 @@ So the class gets its wave after all, and it is §9's discipline turned on the g
 re-check the registry's current names against their owners' pages, and give the registry every rename a wave finds in
 the same commit as the card that records it. The registry can now hold a closure as well as a rename, which is what
 most of the waves' findings were.
+
+## 11. Claims that announce their own expiry
+
+§3 found no property that marks an ageing claim. There is a narrower one that can be required: a sentence in the
+future tense about a year already reached, a deadline (*until*, *through*, *by*) in such a year, or a state that ends,
+a preview, a *coming soon*, a *latest*. `check_volatility.py --expiry` reports those sentences, and the fifty-third
+wave read every one. Fourteen came back. Ten were real claims, among them Deployment Manager's end, Ingress NGINX's
+last maintenance, three agents in preview, the DSM's next edition and the TLS lifetime schedule, and all ten were right
+and carried fact anchors checked this month. The other four were examples, a rhetorical *don't judge it by 2005*, and
+a generic *latest version of an app*.
+
+So the class a pattern can find is the class a careful writer already dates: a sentence that names its own deadline
+invites the date beside it. The report is cheap and worth running with each dated-claims pass, because a claim of this
+shape written undated would be the easiest error on the site to catch. It is not where the errors were. §9's fourteen
+were defaults, limits, menu paths and overstatements, and none of them announced when it would expire.
 
 
 ---
@@ -6899,4 +6914,19 @@ thing: a query the fiftieth wave's last rewording had broken, after the census t
 2 commits · 2 comparison-table cells corrected · 1 census query restored · 2 anchors added
 2 census queries, 2 of 2 -> 2 of 2 · census 807 of 830 · topics 1,629 · dated claims 450 -> 452
 45 gates green · smoke 167 · search 59 · the other suites not rerun: three cells of text, no markup
+```
+
+## Session — the fifty-third wave, a census that came back right
+
+§58's queue was empty, so the wave tried the one ageing-claim shape a pattern can require. Phase 11 §11 is the result.
+
+### What was built and read
+
+`check_volatility.py --expiry`: sentences in the future tense about a reached year, deadlines in reached years, and
+preview or *latest* states, reported and never failed, with six fixtures in the self-test. Its fourteen sentences were
+read one by one, and each of the ten real claims was matched to its fact anchor.
+
+```
+2 commits · check_volatility.py --expiry, self-test 11 -> 17 fixtures · 14 sentences read: 10 dated and right, 4 noise
+45 gates green · the browser suites not rerun: a tool's report mode and the plan, not the page
 ```
