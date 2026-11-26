@@ -1508,6 +1508,10 @@ const READERS = [
     ["postgres nulls first", "", "data/the-data-interview"],
     // ── forty-fourth wave: a price the memory shortage moved, from Raspberry Pi's own posts ──
     ["raspberry pi cluster cost", "", "career/home-lab-practicing-it-skills-without-breaking-production"],
+    // ── fifty-fourth wave: Microsoft's 2026 certification retirements, read on Microsoft's own pages ──
+    ["az-500 retired", "", "eng/cert-roadmaps-choosing-a-path"],
+    ["sc-500 certification", "", "eng/cert-roadmaps-choosing-a-path"],
+    ["what replaces ms-102", "", "eng/cert-roadmaps-choosing-a-path"],
   ]],
   ["somebody answerable to an auditor", [
     ["do we need iso 27001", "", "grc/nist-csf-iso-27001-grc-frameworks-explained"],
