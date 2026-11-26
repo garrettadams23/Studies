@@ -39,6 +39,15 @@ Usage:
   python3 tools/check_volatility.py
   python3 tools/check_volatility.py --candidates   # just the work queue
   python3 tools/check_volatility.py --self-test    # the console regex, on fixtures
+  python3 tools/check_volatility.py --expiry       # sentences that announce their own expiry
+
+**--expiry** prints the one kind of ageing claim a pattern can find: a sentence
+in the future tense about a year already reached, a deadline (*until*, *through*,
+*by*) in such a year, or a preview, a *coming soon*, a *latest*. Phase 11 §3
+found no property that marks ageing claims in general; this is the narrow class
+that announces when it will be wrong. Reported, never failed: the fifty-third
+wave ran it, and every real claim it found was right and dated; the rest were
+examples and idioms, which a person dismisses in a second.
 """
 
 import collections
@@ -50,6 +59,8 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent
 DATA = ROOT / "data"
 sys.path.insert(0, str(ROOT / "tools"))
+
+from html import unescape  # noqa: E402
 
 from lint_content import domain_of, topic_label  # noqa: E402
 
@@ -115,6 +126,56 @@ def context(block, match, width=62):
     start, end = max(0, at - width), min(len(plain), at + len(match.group(0)) + width)
     return (("…" if start else "") + plain[start:end]
             + ("…" if end < len(plain) else ""))
+
+
+PRE_RE = re.compile(r"<(pre|code)\b.*?</\1>", re.S | re.I)
+ACRO_EXP_RE = re.compile(r'<span class="acro-exp">\([^<]*?\)</span\s*>')
+TAG_RE = re.compile(r"<[^>]+>")
+COMMENT_RE = re.compile(r"<!--.*?-->", re.S)
+REACHED_YEAR = r"20(?:1[5-9]|2[0-9])"
+# "at will" is an idiom, not a tense: Server 2012 let you add and remove the GUI at will.
+FUTURE_RE = re.compile(r"\b(?:(?<!at )will|is set to|are set to|is scheduled|are scheduled|is planned|"
+                       r"are planned|plans to|is expected|are expected|upcoming|is due to|are due to)\b",
+                       re.I)
+DEADLINE_RE = re.compile(r"\b(?:until|through|by)\s+(?:(?:early|mid|late)[- ])?(?:(?:January|February|"
+                         r"March|April|May|June|July|August|September|October|November|December)\s+)?"
+                         r"(\d{4})\b")
+# Not "is coming": the site uses it for what a reader should expect next, never for a release.
+STATE_RE = re.compile(r"\b(?:in (?:public |private )?preview|coming soon|in beta|"
+                      r"recently (?:added|introduced|released|announced|launched)|"
+                      r"the (?:latest|newest) (?:version|release))\b", re.I)
+
+
+def expiring(text, year):
+    """Sentences of one domain's prose that announce their own expiry."""
+    prose = TAG_RE.sub(" ", ACRO_EXP_RE.sub(" ", COMMENT_RE.sub(" ", PRE_RE.sub(" ", text))))
+    prose = re.sub(r"\s+", " ", unescape(prose))
+    found = []
+    for sentence in re.split(r"(?<=[.!?])\s+", prose):
+        years = [int(y) for y in re.findall(r"\b(20\d\d)\b", sentence)]
+        reached = [y for y in years if y <= year]
+        if reached and FUTURE_RE.search(sentence):
+            found.append(("future tense", sentence))
+        elif any(int(m.group(1)) <= year for m in DEADLINE_RE.finditer(sentence)):
+            found.append(("deadline", sentence))
+        elif STATE_RE.search(sentence):
+            found.append(("state", sentence))
+    return found
+
+
+def expiry_report():
+    year = datetime.now(timezone.utc).year
+    rows = []
+    for path in sorted(DATA.glob("*.html")):
+        if path.name == "acronym.html":
+            continue
+        for kind, sentence in expiring(path.read_text(encoding="utf-8"), year):
+            rows.append((domain_of(path), kind, sentence))
+    for domain, kind, sentence in rows:
+        print(f"  {domain:12} {kind:12} {sentence[:200]}")
+    print(f"\n{len(rows)} sentence(s) announce their own expiry, against {year}. Read each: "
+          "a dated one is a claim somebody owns, and an undated one is the queue.")
+    return 0
 
 
 def topics(text):
@@ -228,19 +289,37 @@ CONSOLE_FIXTURES = [
 ]
 
 
+# (text, should be reported, why), judged against 2026.
+EXPIRY_FIXTURES = [
+    ("Support will end in 2025.", True, "the future tense about a year already reached"),
+    ("It will ship in 2030.", False, "a year still ahead is not yet a claim that expired"),
+    ("You could add and remove the GUI at will in Windows Server 2012.", False, "'at will' is an idiom"),
+    ("Maintenance continued until March 2026 and stopped.", True, "a deadline in a reached year"),
+    ("The agent remains in public preview.", True, "a preview state, which ends"),
+    ("Ports 1024 and up are ephemeral.", False, "a number, not a year or a state"),
+]
+
+
 def self_test():
     failures = 0
+    for text, want, why in EXPIRY_FIXTURES:
+        got = bool(expiring(f"<p>{text}</p>", 2026))
+        if got != want:
+            failures += 1
+            print(f"FAIL  expected {'a report' if want else 'none'} ({why}): {text!r}")
     for text, want, why in CONSOLE_FIXTURES:
         got = bool(CONSOLE_RE.search(text))
         if got != want:
             failures += 1
             print(f"FAIL  expected {'a match' if want else 'no match'} "
                   f"({why}): {text!r}")
-    print(f"self-test: {len(CONSOLE_FIXTURES)} fixtures, {failures} failure(s).")
+    print(f"self-test: {len(CONSOLE_FIXTURES) + len(EXPIRY_FIXTURES)} fixtures, {failures} failure(s).")
     return 1 if failures else 0
 
 
 if __name__ == "__main__":
     if "--self-test" in sys.argv:
         sys.exit(self_test())
+    if "--expiry" in sys.argv:
+        sys.exit(expiry_report())
     sys.exit(main())
