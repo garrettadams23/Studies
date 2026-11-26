@@ -310,6 +310,12 @@ Every `.topic` carries `data-reviewed="YYYY-MM"`, written by
 `tools/stamp_freshness.py` from git history. Never edit it by hand — run the
 script, or let CI tell you it is stale.
 
+**After a content change, run it with `--touched`.** That stamps this month on
+exactly the topics whose text differs from HEAD, with mechanical markup ignored,
+and leaves every other stamp alone. The blame-derived modes re-derive every
+topic in a file, and when history has been merged their answers move: the run
+that prompted `--touched` moved 381 stamps on topics nobody had edited.
+
 **The convention it depends on: run mechanical passes as their own commit.**
 The stamper works out which commits were purely mechanical by normalising the
 annotator's `.acro-exp` spans and its own `data-reviewed` attributes away and

@@ -33,7 +33,7 @@ What is left here is what a session actually reads.
 | **Knowledge integration** | Seven items of incoming study notes mapped onto the domains — the first queue in a while that arrived as a list, and three of its seven destinations moved when they were checked. Conducted: one moved again, one of the five concepts §2 called absent was written behind a hyphen, and nine of the reader's sixteen misses found the wrong sense of a word | ✅ **shipped** — see its §6 |
 | **csvistool** | An outbound link to [csvistool.com](https://csvistool.com/), Georgia Tech's data-structures visualizer, and its 41 concepts checked against the site. Half already have a card to hang a link on, 12 of 40 searches return nothing, and one cluster (minimum spanning trees and union-find) is a real gap. Conducted: 39 deep links on the cards that already teach each concept, the gap and both candidates written, and a reader that opened at 0 of 16 closed at 16 of 16 | ✅ **shipped** — see its §5 |
 | **Study notes, batch two** | Study notes on databases, SQL, regex, pandas and Java, checked against the site. The notes are in SQL Server and Java, and the site is in Postgres and Python, so most of the concepts are written and most of the words are not. UML is now asked for by both batches, twelve claims should not reach a card as written, and two regex examples were broken by the spelling sweep | ✅ **shipped** — see its §8 |
-| **Content ideas** | A request for more content to add, in the same clean look. 839 candidate phrases in 17 reader groups, each checked against the content and against the built page's search: 81 are owned by a title, 452 are mentioned in passing and 306 are absent. The largest finding was not on the list: the page is headed *Cycles, Concepts &amp; Diagrams* and 58 of 1,503 hand-written topics carry a shape. Twenty diagrams from components that already exist, about thirty-five candidate cards, exam paths that need no new content, and a look contract with one hole in it. First wave conducted: the hole fixed and gated, the exam reader at 16 of 16, the UML lines drawn, six cards and a topic. Second wave conducted: twelve cards over ten rows, the reader's second batch at 23 of 23, and three tools fixed at their own edges. Third wave conducted: a topic and ten cards over five rows, twelve connectors drawn, the reader's third batch at 16 of 16, and two census answers that were coincidences. Fourth wave conducted: seven theory cards, the theory reader at 15 of 15, and a spelling gate taught a suffix. Fifth wave conducted: three topics and eight cards in the human domains, each under its row's condition, at 17 of 17. Sixth wave conducted: three quotes topics, every line read at its source, two lines moved to Misattributed, at 10 of 10. Seventh wave conducted: the nineteen remaining pictures of §2 in fourteen domains, eight of them drawn with another component than their row named, and two numbers corrected by drawing them. Eighth wave conducted: four exam paths over topics that exist, a path as a deck, the two gaps the census carried, search that no longer reads acronym expansions, and a spelling gate that knows prefixes. Ninth wave conducted: §16's list emptied, five topics for the A+ objectives the paths skipped and a Security+ SY0-801 path read from CompTIA's own objectives. Tenth wave conducted: four more exam paths, PenTest+, CySA+, Linux+ and CISSP, each read from the exam body's own document, and six topics for the objectives they found with nothing to point at. Eleventh wave conducted: a SecurityX path read from CompTIA's own document, and the two CISSP objectives the tenth left, one of which SecurityX needed too. Fourteenth wave conducted: MD-102 and MS-102 paths read from Microsoft's study guides, AZ-800 found retired and its tag corrected, and the gaps both outlines found listed as the next queue. Fifteenth wave conducted: four topics for MS-102's Defender XDR area, each read from Microsoft's own pages first, at 13 of 13. Sixteenth wave conducted: MS-102's identity and Purview gaps, four topics at 13 of 13, and IdFix found retired. Seventeenth wave conducted: MS-102's last three Defender objectives, three topics at 13 of 13, and the standalone Defender Threat Intelligence portal found retired. Eighteenth wave conducted: four of MD-102's seven gaps at 13 of 13, the Semi-Annual Enterprise Channel found merged into Monthly Enterprise and Windows Backup for Organizations found renamed. Nineteenth wave conducted: MD-102's last three gaps at 13 of 13, and three of the four Security Copilot agents in Intune found retired. Twentieth wave conducted: RASP and IAST from NIST's catalog, and a CKA path read from the Linux Foundation's outline with its three gaps, at 15 of 15, and Ingress NGINX found retired. Twenty-first wave conducted: a GCIH path read from GIAC's objectives and a topic for SANS's DAIR, at 5 of 5, and two statements about NIST SP 800-61 corrected. Twenty-second wave conducted: an AWS SAA-C03 path read from AWS's exam guide, topics for its three gaps, and two AWS services found closed to new customers. Twenty-third wave conducted: seven services the guide gives as examples and the site had never mentioned, at 15 of 15. Twenty-fourth wave conducted: the guide's remaining examples and in-scope services, at 17 of 17, and a discovery service found closed. Twenty-fifth wave conducted: cards inside the AWS topics that already owned each subject, and purpose-built databases, at 15 of 15. Twenty-sixth wave conducted: the NAT instance and AWS's regional NAT gateway, after which every service the SAA-C03 task statements name is on the site. Twenty-seventh wave conducted: a Google Cloud Associate Cloud Engineer path read from Google's exam guide, three gap topics, and Cloud Functions found renamed. Twenty-eighth wave conducted: Deployment Manager's retirement written as a retirement, and two more groups of the guide's items, at 12 of 12. Twenty-ninth wave conducted: the guide's operations and storage items, as cards in the topics that owned them, at 10 of 10. Thirtieth wave conducted: the AI+ tag found to name no CompTIA exam, replaced with SecAI+ and a 30-step path. Thirty-first wave conducted: OWASP's 2026 lists for LLM applications and for agents, and the EU AI Act's dates after the AI Omnibus. Thirty-second wave conducted: NIST AI RMF's seven characteristics and its Generative AI Profile, and a card that had put NIST's name on somebody else's list. Thirty-third wave conducted: OWASP Top 10:2025 in the three topics that teach it, with a map from 2021. Thirty-fourth wave conducted: NIST CSF 2.0's six functions wherever `grc` named five, in NIST's own colors. Thirty-fifth wave conducted: SecAI+'s words for what two `blueteam` topics already taught, and a PenTest+ badge two exams old. Thirty-sixth wave conducted: ATT&amp;CK version 19's fifteen tactics. Thirty-seventh wave conducted: NIST IR 8547's post-quantum dates, HQC, and AES-128 as NIST rates it. Thirty-eighth wave conducted: public TLS certificate lifetimes falling to 47 days, and revocation after Let's Encrypt ended OCSP. Thirty-ninth wave conducted: the EU Cyber Resilience Act, a regulation the site had never named. Fortieth wave conducted: the CIS Controls named at version 8.1, and Kerberos RC4 against Microsoft's current defaults. Forty-first wave conducted: how a package repository is trusted, in the thinnest topic on the site, and Netlify Functions at the owner's request. Forty-second wave conducted: three thin topics deepened from FM 6-0, NVD and GitHub's documentation, and the visual baseline's failure traced to a Playwright version. Forty-third wave conducted: the last three thin topics, a SQL puzzle run on PostgreSQL 16, HTTP errors read by the layer that sends them and what certifications cost to keep, and a gate taught to check a row's headline. Forty-fourth wave conducted: the twelve oldest dated claims re-checked against their owners' current pages, seven corrected, and CI green on the first pull request since the runner pin. Forty-fifth wave conducted: the twenty-two `m365` claims from September re-checked, four corrected. Forty-sixth wave conducted: the seventeen `endpoint`, `infra` and `cloud` claims from September, two corrected and six given their owners' pages in place of secondhand sources. Forty-seventh wave conducted: September's last twenty-six claims, the csvistool routes confirmed against the live site, and no dated claim left older than October. Forty-eighth wave conducted: the October claim's page read at last, and every dated claim on the site checked this month. Forty-ninth wave conducted: Phase 11's tier-gating pass redone against Microsoft's pages, two of three claims corrected | ✅ **shipped** — see its §9 to §55 |
+| **Content ideas** | A request for more content to add, in the same clean look. 839 candidate phrases in 17 reader groups, each checked against the content and against the built page's search: 81 are owned by a title, 452 are mentioned in passing and 306 are absent. The largest finding was not on the list: the page is headed *Cycles, Concepts &amp; Diagrams* and 58 of 1,503 hand-written topics carry a shape. Twenty diagrams from components that already exist, about thirty-five candidate cards, exam paths that need no new content, and a look contract with one hole in it. First wave conducted: the hole fixed and gated, the exam reader at 16 of 16, the UML lines drawn, six cards and a topic. Second wave conducted: twelve cards over ten rows, the reader's second batch at 23 of 23, and three tools fixed at their own edges. Third wave conducted: a topic and ten cards over five rows, twelve connectors drawn, the reader's third batch at 16 of 16, and two census answers that were coincidences. Fourth wave conducted: seven theory cards, the theory reader at 15 of 15, and a spelling gate taught a suffix. Fifth wave conducted: three topics and eight cards in the human domains, each under its row's condition, at 17 of 17. Sixth wave conducted: three quotes topics, every line read at its source, two lines moved to Misattributed, at 10 of 10. Seventh wave conducted: the nineteen remaining pictures of §2 in fourteen domains, eight of them drawn with another component than their row named, and two numbers corrected by drawing them. Eighth wave conducted: four exam paths over topics that exist, a path as a deck, the two gaps the census carried, search that no longer reads acronym expansions, and a spelling gate that knows prefixes. Ninth wave conducted: §16's list emptied, five topics for the A+ objectives the paths skipped and a Security+ SY0-801 path read from CompTIA's own objectives. Tenth wave conducted: four more exam paths, PenTest+, CySA+, Linux+ and CISSP, each read from the exam body's own document, and six topics for the objectives they found with nothing to point at. Eleventh wave conducted: a SecurityX path read from CompTIA's own document, and the two CISSP objectives the tenth left, one of which SecurityX needed too. Fourteenth wave conducted: MD-102 and MS-102 paths read from Microsoft's study guides, AZ-800 found retired and its tag corrected, and the gaps both outlines found listed as the next queue. Fifteenth wave conducted: four topics for MS-102's Defender XDR area, each read from Microsoft's own pages first, at 13 of 13. Sixteenth wave conducted: MS-102's identity and Purview gaps, four topics at 13 of 13, and IdFix found retired. Seventeenth wave conducted: MS-102's last three Defender objectives, three topics at 13 of 13, and the standalone Defender Threat Intelligence portal found retired. Eighteenth wave conducted: four of MD-102's seven gaps at 13 of 13, the Semi-Annual Enterprise Channel found merged into Monthly Enterprise and Windows Backup for Organizations found renamed. Nineteenth wave conducted: MD-102's last three gaps at 13 of 13, and three of the four Security Copilot agents in Intune found retired. Twentieth wave conducted: RASP and IAST from NIST's catalog, and a CKA path read from the Linux Foundation's outline with its three gaps, at 15 of 15, and Ingress NGINX found retired. Twenty-first wave conducted: a GCIH path read from GIAC's objectives and a topic for SANS's DAIR, at 5 of 5, and two statements about NIST SP 800-61 corrected. Twenty-second wave conducted: an AWS SAA-C03 path read from AWS's exam guide, topics for its three gaps, and two AWS services found closed to new customers. Twenty-third wave conducted: seven services the guide gives as examples and the site had never mentioned, at 15 of 15. Twenty-fourth wave conducted: the guide's remaining examples and in-scope services, at 17 of 17, and a discovery service found closed. Twenty-fifth wave conducted: cards inside the AWS topics that already owned each subject, and purpose-built databases, at 15 of 15. Twenty-sixth wave conducted: the NAT instance and AWS's regional NAT gateway, after which every service the SAA-C03 task statements name is on the site. Twenty-seventh wave conducted: a Google Cloud Associate Cloud Engineer path read from Google's exam guide, three gap topics, and Cloud Functions found renamed. Twenty-eighth wave conducted: Deployment Manager's retirement written as a retirement, and two more groups of the guide's items, at 12 of 12. Twenty-ninth wave conducted: the guide's operations and storage items, as cards in the topics that owned them, at 10 of 10. Thirtieth wave conducted: the AI+ tag found to name no CompTIA exam, replaced with SecAI+ and a 30-step path. Thirty-first wave conducted: OWASP's 2026 lists for LLM applications and for agents, and the EU AI Act's dates after the AI Omnibus. Thirty-second wave conducted: NIST AI RMF's seven characteristics and its Generative AI Profile, and a card that had put NIST's name on somebody else's list. Thirty-third wave conducted: OWASP Top 10:2025 in the three topics that teach it, with a map from 2021. Thirty-fourth wave conducted: NIST CSF 2.0's six functions wherever `grc` named five, in NIST's own colors. Thirty-fifth wave conducted: SecAI+'s words for what two `blueteam` topics already taught, and a PenTest+ badge two exams old. Thirty-sixth wave conducted: ATT&amp;CK version 19's fifteen tactics. Thirty-seventh wave conducted: NIST IR 8547's post-quantum dates, HQC, and AES-128 as NIST rates it. Thirty-eighth wave conducted: public TLS certificate lifetimes falling to 47 days, and revocation after Let's Encrypt ended OCSP. Thirty-ninth wave conducted: the EU Cyber Resilience Act, a regulation the site had never named. Fortieth wave conducted: the CIS Controls named at version 8.1, and Kerberos RC4 against Microsoft's current defaults. Forty-first wave conducted: how a package repository is trusted, in the thinnest topic on the site, and Netlify Functions at the owner's request. Forty-second wave conducted: three thin topics deepened from FM 6-0, NVD and GitHub's documentation, and the visual baseline's failure traced to a Playwright version. Forty-third wave conducted: the last three thin topics, a SQL puzzle run on PostgreSQL 16, HTTP errors read by the layer that sends them and what certifications cost to keep, and a gate taught to check a row's headline. Forty-fourth wave conducted: the twelve oldest dated claims re-checked against their owners' current pages, seven corrected, and CI green on the first pull request since the runner pin. Forty-fifth wave conducted: the twenty-two `m365` claims from September re-checked, four corrected. Forty-sixth wave conducted: the seventeen `endpoint`, `infra` and `cloud` claims from September, two corrected and six given their owners' pages in place of secondhand sources. Forty-seventh wave conducted: September's last twenty-six claims, the csvistool routes confirmed against the live site, and no dated claim left older than October. Forty-eighth wave conducted: the October claim's page read at last, and every dated claim on the site checked this month. Forty-ninth wave conducted: Phase 11's tier-gating pass redone against Microsoft's pages, two of three claims corrected. Fiftieth wave conducted: the product-names class, eight stale names corrected in seventeen topics from their owners' pages, and the rename guard's own current names found aged | ✅ **shipped** — see its §9 to §56 |
 | **Error codes and packaging** | Three items from the owner, added as written: an error-code lookup in the header's row of buttons, the Intune and MECM codes compared, and MSI, .intunewin and EXE explained. Each checked against the site first, with the owner's guide to MSI against EXE in MECM kept beside them as written | ✅ **shipped** — see its §5 |
 | Domain shape | The connectivity graph: hubs, broadcasters, islands. Both navigation layers complete — 0 hand-written orphans, 0 hand-written topics off a path, and **both halves now derived**: the second was prose for weeks while three topics were off one | 📘 reference |
 | Session records | The recent ones. The rest are in `plan-archive.md`, oldest first — **the counts are the *Session records* row of the measured-state table**, and were a second copy here that had been wrong by five since the split | 📘 living |
@@ -73,7 +73,7 @@ the row needs was already running. Three are left, and all three want a stopwatc
 | Gates | **45**, and the same 45 in `make all` and in CI | `check_gates.py` |
 | Gate results | check · smoke **167** · search **59** · resilience **64** · axe 33/33 · mobile 16/16 · visual 2/2 · backup 3/3. The error-code lookup added one check to each of smoke, mobile and axe's two themes, and the expand switch one to smoke. Visual is 0/2 in the container that ran the last session, and that is not a regression: its Playwright is 1.63.0, whose Chromium 153 draws the chip labels about 10% wider than the 1.56.0 CI pins (Chromium 141), and CI matched the same baselines 2/2 on 2026-10-11. `visual_test.mjs` names both versions now, and refuses `--update` under any Playwright but the pinned one | `make all` |
 | Cards ending on a table with no verdict | **10**, all deliberate lookup tables in `military` — two of the original twelve turned out to have a judgement their table was carrying silently | `lint_content.py` |
-| Session records | **61** here, **332** in `plan-archive.md` | `check_plan_numbers.py` |
+| Session records | **62** here, **332** in `plan-archive.md` | `check_plan_numbers.py` |
 
 **`make all` is the contract — and it held a claim it could not keep.** *If it passes, CI
 passes* was written when `check_gates.py` was added, because the workflow had been red on
@@ -387,7 +387,7 @@ those kinds are enumerable by hand in a way the instances are not.
 | **Tier gating** | "Requires E5" is a licensing decision, not a technical fact | `m365` especially, and it is the class most likely to be quietly wrong |
 | **Prices and ranges** | Obviously | `career` (salary and rates), `hw` (build budgets), `cloud` (commitment discounts) |
 | **Default retention** | Changed by vendors without announcement | `m365`, `cloud`, `blueteam` |
-| **Product names** | Rebranded — `check_renames.py` already guards a list of these | Everywhere; the guard exists and catches the ones it knows |
+| **Product names** | Rebranded — `check_renames.py` already guards a list of these | Everywhere; the guard exists and catches the ones it knows, and §10 is what the fiftieth wave found it knew |
 
 **The work is a pass per class, not a pass per domain.** Searching the site for "requires E5"
 finds every tier-gating claim in one query, and each either gets a dated span or gets
@@ -421,6 +421,7 @@ near-matches in §2 are that second kind.
 | **V3** | Prices | `career`, `hw`, `cloud`. Almost all should be rewritten rather than dated |
 | **V4** | Default retention | Cross-check `m365`, `cloud` and `blueteam` against each other first — §9's contradiction pass applies here |
 | **V5** | Re-audit console paths | `check_volatility.py` already reports this, and the count is the *Dated claims* row. It grows with each `m365` or `cloud` wave — it has, from 2 to 3 |
+| **V6** | Product names | Added by §10. Read the site for old names, re-check `data/renames.json`'s current names against their owners' pages, and register every rename or closure a wave finds in the commit that records it |
 
 **And the counter-discipline:** every wave should *reduce* the number of dated claims where
 it can, by rewriting. A rising volatile-span count is not automatically progress — it can
@@ -531,6 +532,31 @@ whole mechanism*. A vague claim is harder to falsify, which is not the same as m
 
 So the standing discipline gains a step. Reading a class finds the claims; re-checking each against its owner's page
 is what finds the wrong ones, and `check_volatility.py`'s oldest-first list is the order to do it in.
+
+## 10. The guard's own names were dated claims
+
+§4 listed product names, and §6 never gave them a wave, because `check_renames.py` already guarded the class. The
+fiftieth wave read it anyway, then re-checked what it read the way §9 says, and found the guard was two things that age.
+
+**Its list had stopped growing.** Twenty-seven renames were on record, the newest from October 2025. A census of 330
+candidate names and version strings, written from memory and matched in prose with the guard's own rule for what counts
+as explained, found eight still used as though current, in seventeen topics. Two of them the site had already recorded
+as changed somewhere else: Deployment Manager's retirement had its own topic from the twenty-eighth wave, and the App
+Control topic of the eighteenth said what WDAC is called now. The tables that named them in passing never heard. A
+rename written into one topic does not travel. The registry is what makes it travel, and the waves that found renames
+had stopped adding them to it.
+
+**Its current names had aged.** Each entry's `new` is a claim that a name is current, and nothing re-checked those
+claims. The wave checked four, and all four were wrong, though each was checked because something had flagged it. Two
+gave MECM's generation of names as current, four years after Microsoft moved on. Facebook Workplace's pointed at a
+product that closed in May 2026. Docker Swarm mode's ran backwards, from the name Docker uses to the one it retired, and
+could never fire, because the old name contains the new one. A guard with wrong data does worse than a missing one: it
+offers the stale name as the fix.
+
+So the class gets its wave after all, and it is §9's discipline turned on the guard: read the site for old names,
+re-check the registry's current names against their owners' pages, and give the registry every rename a wave finds in
+the same commit as the card that records it. The registry can now hold a closure as well as a rename, which is what
+most of the waves' findings were.
 
 
 ---
@@ -3212,6 +3238,44 @@ records what that means for the phase's advice.
 
 **The queue.** None from Phase 11's classes; each was read, and V1 was re-checked. The next dated claims fall due in
 February.
+
+## 56. What shipped — the fiftieth wave, the product-names class
+
+Recorded below as *Session — the fiftieth wave, a guard that thought MECM was current*. §55's queue was empty. The
+work came from the one class Phase 11 §4 listed and §6 never queued, because `check_renames.py` already guarded it.
+
+| Topic | The name | What the owner's page said |
+|---|---|---|
+| `cloud` *Cloud Rosetta Stone* | GCP's infrastructure as code: Deployment Manager | Support ended on 31 March 2026, and Google points its users to Infrastructure Manager, which runs Terraform. The domain's own IaC topic had said so since the twenty-eighth wave |
+| `cloud` *GCP Security*, *Azure Security* | Chronicle | Rebranded Google Security Operations on 25 April 2024; the API kept the old name |
+| `cloud` *GCP Observability* | The operations suite, formerly Stackdriver | Google Cloud Observability; no dated notice of that rename was found |
+| `cloud` *AWS Security Stack*, *CSPM*, *Azure Security* | Security Hub, aggregating findings and checking benchmarks | That service is Security Hub CSPM now. The name Security Hub belongs to a newer service, generally available since 2 December 2025, that correlates findings into exposures |
+| `devops` *Terraform* | Terraform Cloud | HCP Terraform since 22 April 2024 |
+| `endpoint` *Microsoft Configuration Manager (MECM)* | Titled Microsoft Endpoint Configuration Manager, with a release roughly three times a year | Microsoft Configuration Manager since October 2022, one of the Intune family; three versions a year until 2022 and two a year since, 2609 the latest |
+| `endpoint`, `sec`, `redteam`: six mentions in six topics | WDAC | App Control for Business, previously called Windows Defender Application Control |
+| `script` *Microsoft Graph From PowerShell* | MSOnline and AzureAD "retired or retiring" | Microsoft scheduled MSOnline to stop working between April and May 2025, and Q&amp;A answers since report it refusing even Global Admins; AzureAD was scheduled to stop from mid-October 2025. No notice confirms either, and the card now says what was scheduled |
+
+**The registry.** Its 27 entries became 33. Seven were added, among them Chronicle, Terraform Cloud, WDAC and
+Deployment Manager. One was removed: Docker Swarm mode, whose direction Docker's own page reverses. Three current names
+were corrected, SCCM's, System Center Configuration Manager's and Facebook Workplace's, the last now marked closed. An
+entry can record a closure as well as a rename: `closed` holds the month a product shut down, and after it neither of
+its names is current. Phase 11 §10 is what this says about the guard.
+
+**MECM stays the site's word.** The owner's own reference names MECM, and so do most of the admins the site is written
+for. The topic took Microsoft's name in its title and says once which name is which; its 49 other mentions keep the
+word, and the guard does not list MECM, by decision.
+
+**The stamps.** `stamp_freshness.py --only` re-derived 381 untouched stamps in the six domains this wave edited, most
+of them into September: blame's answer moved when the branch merged `main`, and the text did not. They were restored,
+and a new mode, `--touched`, stamps only what differs from HEAD, which here was seventeen topics.
+
+**The queue.** The registry's other twenty-three current names, each re-checked against its owner's page: this wave
+checked four and all four were wrong, though each was checked because something had already flagged it. Then the
+comparison tables as a class of their own, the Rosetta table and the analog columns in `cloud`'s security topics,
+because a table naming other vendors' products in passing is where two of this wave's names hid after their own topics
+had been corrected. Stackdriver joins the registry once a dated source for its renames is found. CrackMapExec's two
+mentions in `pentest` were left: its successor is a fork, not a rename, and no page about it was read. The next dated
+claims fall due in February.
 
 # Error codes and packaging — three items from the owner
 
@@ -6699,6 +6763,43 @@ nothing unexplained.
 ```
 2 commits · 3 tier claims re-checked: 2 corrected, 1 confirmed · 3 anchors added · Phase 11 §9 written
 2 census queries, 0 of 2 -> 2 of 2 · topics 1,629 · dated claims 439 -> 442
+45 gates green · smoke 167 · search 59 · axe 33/33 · resilience 64/64 · mobile 16/16 · backup 3/3
+visual 0/2 in this container, unchanged at 10.335% and 10.106%: Playwright 1.63.0 here, 1.56.0 in CI
+```
+
+## Session — the fiftieth wave, a guard that thought MECM was current
+
+§55's queue was empty, so the wave took the class Phase 11 §6 never queued. *Content ideas* §56 is the table.
+
+### Read first
+
+Google's pages for Deployment Manager's deprecation, Google Security Operations and Google Cloud Observability, and
+Google staff's notice of the SecOps rebrand on the Google Cloud Community; AWS's Security Hub CSPM guide and its News Blog
+post of 2 December 2025; HashiCorp's *What is HCP Terraform?*, after its blog refused the fetch with 429; Microsoft
+Learn's App Control for Business page and the Windows 11 IoT Enterprise 24H2 notes, the Configuration Manager FAQ and
+the version table in *Updates and servicing*, and the Entra blog's two posts and archive on the PowerShell modules;
+Docker's swarm mode page; and Meta's Workplace page. Seven census queries went in before any edit.
+
+### What the census of names found
+
+330 candidate names and version strings returned eight stale names in seventeen topics, and the over-match §8 predicted:
+Bard was a druid grade, Pinpoint a verb, Container Registry a phrase describing Harbor. WSUS, OpenVAS and Windows 10
+were current names in true sentences, and the other 49 mentions of MECM are the site's word by decision. Re-checking
+the Configuration Manager card against Microsoft's version table found a claim the census was not looking for: a
+release *roughly three times a year*, true until 2022. And one sentence the wave itself wrote went past its sources:
+the PowerShell card said Microsoft *retired* MSOnline, where the pages read give Microsoft's schedule. It says
+*scheduled* now, which is §9's rule applied to the wave's own words.
+
+### The census
+
+The batch opened at 3 of 7 and closed at 7 of 7 with no wording fix. The census as a whole is 805 of 828 with nothing
+unexplained.
+
+```
+2 commits · 8 product names corrected in 17 topics · 1 release cadence corrected · 8 anchors added
+registry 27 -> 33: 7 added, 1 removed, 3 current names corrected · check_renames self-test 14 -> 18 fixtures
+stamp_freshness.py --touched: 17 topics stamped, where --only had moved 381
+7 census queries, 3 of 7 -> 7 of 7 · topics 1,629 · dated claims 442 -> 450
 45 gates green · smoke 167 · search 59 · axe 33/33 · resilience 64/64 · mobile 16/16 · backup 3/3
 visual 0/2 in this container, unchanged at 10.335% and 10.106%: Playwright 1.63.0 here, 1.56.0 in CI
 ```
