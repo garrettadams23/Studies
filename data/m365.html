@@ -4819,3 +4819,165 @@ Get-MgContext | Select-Object Account, Scopes</pre>
               </div>
             </div>
           </div>
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: MICROSOFT 365 COPILOT SETTINGS ───────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🤖</span>
+    <span class="topic-name">Microsoft 365 Copilot Settings — Where Each Control Lives, Web Search &amp; the AI <span class="acro-exp">(Artificial Intelligence)</span> Providers That See Your Data</span>
+    <span class="topic-badge">M365 • Copilot</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Where the controls live</div>
+      <div class="concept-title">One Settings Page, and Half Its Entries Are Shortcuts to Somewhere Else</div>
+      <div class="concept-desc">
+        Copilot's tenant controls are under <span class="volatile" data-checked="2026-11">Copilot ▸ Settings</span> in the
+        Microsoft 365 admin center, in four groups: user access, data access, Copilot actions and other settings.
+        Many entries only point at the service that holds the real control, so the change is made there and not on
+        the settings page. The role Microsoft names for the work is AI Administrator; a Global Reader can see the
+        settings and change none of them. What appears depends on the tenant's licenses, its rollout and its region,
+        so a setting missing from one tenant's page is not proof it does not exist.
+        <!-- fact: Copilot settings are in Copilot, Settings in the Microsoft 365 admin center, grouped as user access, data access, Copilot actions and other settings; some are configured there and others link to another admin center or policy service where the change is made; the AI Administrator role is the example role given, and Global Reader can view but not change settings; settings vary by license, enabled features, rollout status, tenant and location | source: Microsoft Learn, "Configure Microsoft Copilot settings in the Microsoft 365 admin center", last updated 3 November 2026, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Setting</th><th>What it decides</th><th>Where the change is made</th></tr></thead>
+          <tbody>
+            <tr><td>Self-service purchases</td><td>Allow trials or purchases, allow trials only, or prevent them</td><td>The settings page</td></tr>
+            <tr><td>Copilot Frontier</td><td>Which users or groups get eligible preview features</td><td>The settings page</td></tr>
+            <tr><td>Copilot in admin centers</td><td>Whether eligible admins can use the Microsoft 365 Admin agent</td><td>The settings page</td></tr>
+            <tr><td>Pay-as-you-go billing</td><td>A billing policy for eligible Copilot Chat usage</td><td>Billing &amp; usage ▸ Pay-as-you-go services</td></tr>
+            <tr><td>Agents</td><td>Which agents users can install or use</td><td>The settings page, then the full agent inventory</td></tr>
+            <tr><td>AI providers</td><td>Which third-party models users can reach, by the terms they process data under</td><td>The settings page</td></tr>
+            <tr><td>Web search</td><td>Whether Copilot can ground answers in public web content</td><td>A Cloud Policy, <em>Allow web search in Copilot</em>, in the Microsoft 365 Apps admin center</td></tr>
+            <tr><td>Data security and compliance</td><td>DLP <span class="acro-exp">(Data Loss Prevention)</span>, labels and the other protections for AI interactions</td><td>The Microsoft Purview portal</td></tr>
+            <tr><td>Image generation, screen and camera sharing</td><td>Two Copilot actions, each on or off</td><td>The settings page</td></tr>
+            <tr><td>Copilot in Teams meetings</td><td>Copilot's behavior in meetings and calls</td><td>The Teams admin center</td></tr>
+            <tr><td>Custom dictionary, diagnostics logs</td><td>Organization vocabulary for Teams, and logs sent to Microsoft for users who cannot send feedback</td><td>The settings page</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Change a shortcut setting where it lives, or it does not change.</strong> Web search,
+          Pages and Notebooks are Cloud Policy settings, meeting behavior is a Teams policy, and the protections are
+          Purview's, so each needs that service's own admin role as well. Who may buy Copilot at all is the setting to
+          decide first, because a trial a user starts is a license nobody planned. The licensing side is in
+          <span class="xref">Deploying AI Assistants — Copilot, Licensing &amp; Data Boundaries</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Web search</div>
+      <div class="concept-title">Copilot Sends Bing a Few Words, Not the Prompt, and One Policy Decides Whether It May</div>
+      <div class="concept-desc">
+        With web search on, Copilot picks out the terms the web would help with and sends Bing a generated query of a
+        few words. It does not send the whole prompt unless the prompt is very short, nor whole files, nor anything that
+        identifies the user or tenant; it does send the client IP <span class="acro-exp">(Internet Protocol)</span> address, which Bing uses to localize results. The
+        prompt and the answer stay inside the Microsoft 365 service boundary, and the user sees the exact queries
+        among the answer's citations. Admins can see them too, beside the prompt, in Purview's DSPM for AI.
+        <!-- fact: With web search enabled, Copilot generates a search query of a few words from the prompt and sends it to the Bing search service; the query excludes the entire prompt unless it is very short, entire Microsoft 365 files or uploads, and identifying information from the user's Entra ID such as username, domain or tenant ID; the client IP address is sent for localization; prompts and responses are stored within Microsoft 365 and never leave the service boundary without customer direction; web search query citations show users the exact queries; admins can view the search terms in DSPM for AI's activity explorer; the Allow web search in Copilot policy exists only in Cloud Policy service and offers enabled in both, disabled in both, or disabled in Work mode and enabled in Web mode and Copilot Chat; when enabled, the user's Web content toggle is on by default and the user can turn it off; when disabled the toggle is dimmed; if the policy is not configured web search is available unless the optional connected experiences policy is disabled; in GCC and DoD it is off by default | source: Microsoft Learn, "Data, privacy, and security for web search in Microsoft Copilot and Microsoft Copilot Chat", updated 2026-10-29, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th><em>Allow web search in Copilot</em></th><th>What users get</th></tr></thead>
+          <tbody>
+            <tr><td>Enabled in Copilot and Copilot Chat</td><td>Web grounding, with a Web content toggle that starts on and that each user can turn off</td></tr>
+            <tr><td>Disabled in both</td><td>No web grounding; the toggle is dimmed and cannot be turned on</td></tr>
+            <tr><td>Disabled in Work mode, enabled in Web mode and Copilot Chat</td><td>Web grounding only where work data is not in play, and none in Researcher or Cowork</td></tr>
+            <tr><td>Not configured</td><td>Web search is on, unless the policy for optional connected experiences is set to Disabled, which turns off far more than web search</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Leaving the policy unset is a decision to allow web search.</strong> In commercial
+          tenants an unconfigured policy means on, while in GCC and DoD <span class="acro-exp">(Department of Defense)</span> it means off, so read the policy rather than
+          assume. The privacy question is narrower than it sounds: what reaches Bing is a few generated words and an
+          IP address, so the real question is whether those words can carry something sensitive, a code name or a
+          person's name, which the activity explorer lets you check against actual traffic.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Third-party models</div>
+      <div class="concept-title">The AI Provider Switch Is a Contract Switch: Subprocessor or Independent Processor</div>
+      <div class="concept-desc">
+        Copilot can use models from three kinds of provider, and the kind decides whose terms cover the data. Models
+        Microsoft hosts and operates, Azure OpenAI among them, run under Microsoft's Data Protection Addendum and the
+        data does not leave Microsoft. An AI subprocessor is a third party that handles data on Microsoft's behalf and
+        under the same addendum and Product Terms. An AI independent processor handles data under its own terms,
+        outside the addendum and Microsoft's enterprise safeguards. Admins turn each provider's models on or off in the
+        Microsoft 365 admin center or the Power Platform admin center, and an independent processor nobody turned on
+        is used by no Microsoft service.
+        <!-- fact: AI models in Microsoft Online Services are hosted and operated by Microsoft (such as Azure OpenAI or Black Forest Labs FLUX) under the DPA and Product Terms with data not leaving Microsoft, provided by AI subprocessors that handle data on Microsoft's behalf under the DPA, Product Terms and enterprise safeguards, or provided by AI independent processors that process data under their own commitments and terms, outside the DPA, Product Terms and enterprise safeguards; admins turn models on or off in the Microsoft 365 admin center or Power Platform admin center; if an independent processor is not enabled by an admin, third-party AI functionalities are not used by any Microsoft Online Services; the Copilot settings page lists AI providers operating as independent processors and as Microsoft subprocessors as separate settings | source: Microsoft Learn, "Understanding AI functionality and models in Microsoft Online Services", updated 2026-09-10, and the Copilot settings page, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Provider</th><th>Data handled under</th><th>Before turning it on</th></tr></thead>
+          <tbody>
+            <tr><td>Hosted and operated by Microsoft</td><td>Microsoft's addendum and Product Terms; data stays with Microsoft</td><td>Nothing beyond Copilot's own review</td></tr>
+            <tr><td>AI subprocessor</td><td>Microsoft's addendum, on Microsoft's behalf</td><td>Check the subprocessor against the organization's approved list</td></tr>
+            <tr><td>AI independent processor</td><td>The provider's own terms, outside Microsoft's</td><td>Legal and privacy review of that provider's terms, as for any new vendor</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Ask which kind before asking which model is better.</strong> Turning on an
+          independent processor is signing up a new data processor for every user in scope, which in most organizations
+          is a procurement and privacy decision and not an admin preference. The same question for tools users bring
+          themselves is <span class="xref">Shadow AI — Finding It, and Offering a Sanctioned Path Instead</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Copilot Cowork</div>
+      <div class="concept-title">Cowork Access Is Granted by a Spending Policy, Not by the Agent Entry It Still Shows</div>
+      <div class="concept-desc">
+        Cowork, Copilot's agentic system for carrying out work, is generally available, and its access control changed
+        when it left preview. A user can use Cowork when a spending policy that selects Cowork covers them; the Cowork
+        entry still listed under Agents ▸ All Agents controls nothing. A spending policy is therefore an access control
+        and not only a budget: a low credit limit does not block anyone, and removing a user means taking them out of
+        every policy that selects Cowork. An organization that allow-listed users in preview re-creates the list as a
+        security group scoped by a spending policy, under
+        <span class="volatile" data-checked="2026-11">Copilot ▸ Cost Management ▸ Configuration</span>. Admins also
+        decide which plugins Cowork may use, and whether users can discover it and ask for access.
+        <!-- fact: Cowork is an agentic system and is generally available; access requires usage-based billing and is granted by a spending policy that selects Cowork; a spending policy is an access control, not only a budget; a low credit limit does not block access; to remove access, remove the user from every spending policy that includes Cowork; the agent-based access control from Frontier and preview is deprecated and the Cowork entry under Agents, All Agents has no effect on who can use it; a preview allow list is re-expressed as a security group in a spending policy added under Copilot, Cost Management, Configuration; admins control plugins and Cowork's discoverability, and users can request access | source: Microsoft Learn, "Manage Copilot Cowork for your organization", updated 2026-11-17, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Audit Cowork by its spending policies.</strong> Anyone who set Cowork up during
+          preview has an agent entry that looks like the control and is not one, so the question <em>who can use
+          Cowork</em> is answered only by listing every spending policy that selects it, and the groups each one
+          scopes. Agents in general, and the registry that governs them, are a separate control.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Search and connectors</div>
+      <div class="concept-title">Copilot Search Needs No Setup; What It Can Reach Is Decided by the Connectors</div>
+      <div class="concept-desc">
+        Microsoft Copilot Search needs no admin setup: users licensed for Microsoft Copilot find it in the Copilot app's
+        Search module, and users without the app get Microsoft Search. What it can search beyond Microsoft 365 comes
+        from Microsoft 365 Copilot connectors, which come in two kinds. Synced connectors index external data into
+        Microsoft Graph, configured by admins for the whole organization or by users for their own content. Federated
+        connectors fetch data live through the Model Context Protocol and index nothing.
+        <!-- fact: No admin action is required to set up Microsoft Copilot Search; users with a Microsoft Copilot license reach it from the Search module in the Microsoft Copilot app, and users without the app get Microsoft Search; Copilot Search reaches third-party systems through Microsoft 365 Copilot connectors | source: Microsoft Learn, "Manage Microsoft Copilot Search", updated 2025-12-15, fetched and read | checked: 2026-11 -->
+        <!-- fact: Synced connectors index data into Microsoft Graph, with tenant configuration by admins at organization level or self-serve configuration enabled by admins and authenticated by users at user level; federated connectors use the Model Context Protocol to fetch data in real time without indexing it into Microsoft 365, enabled by admins with users authenticating; custom connectors are available only as synced tenant-configured connectors | source: Microsoft Learn, "Microsoft 365 Copilot connectors overview", updated 2026-10-06, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Connector</th><th>Data</th><th>Access</th><th>Set up by</th></tr></thead>
+          <tbody>
+            <tr><td>Synced, tenant configuration</td><td>Indexed into Microsoft 365</td><td>Organization-level</td><td>An admin; custom connectors are built this way only</td></tr>
+            <tr><td>Synced, self-serve</td><td>Indexed into Microsoft 365</td><td>The user's own</td><td>An admin enables it, and each user authenticates</td></tr>
+            <tr><td>Federated</td><td>Fetched live, never indexed</td><td>The user's own</td><td>An admin enables it, and each user authenticates</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A synced connector copies data into the tenant; a federated one reads it in
+          place.</strong> Choose federated for live or sensitive sources whose own permissions should stay in charge,
+          and synced for broad content everyone should find. Either way Copilot answers only from what each user may
+          already open, which is why oversharing inside the tenant, not the connector, is the usual surprise:
+          <span class="xref">Data Governance for AI — Oversharing at the Speed of Search</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -395,6 +395,12 @@ const READERS = [
     // ── forty-ninth wave: Phase 11's tier-gating pass, redone against Microsoft's pages ──
     ["what does business premium include", "", "m365/licensing-without-tears-e3-e5-business-group-based-assignmen"],
     ["remediations license requirement", "", "endpoint/endpoint-analytics-proactive-remediations-measuring-and-self"],
+    // ── fifty-sixth wave: AB-650's Copilot settings, read on Microsoft's pages, added before the topic ──
+    ["turn off web search in copilot", "", "m365/microsoft-365-copilot-settings-where-each-control-lives-web-"],
+    ["copilot ai providers subprocessor", "", "m365/microsoft-365-copilot-settings-where-each-control-lives-web-"],
+    ["block copilot self-service purchase", "", "m365/microsoft-365-copilot-settings-where-each-control-lives-web-"],
+    ["who can use copilot cowork", "", "m365/microsoft-365-copilot-settings-where-each-control-lives-web-"],
+    ["copilot connectors synced vs federated", "", "m365/microsoft-365-copilot-settings-where-each-control-lives-web-"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],
