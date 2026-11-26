@@ -1431,6 +1431,9 @@ const READERS = [
     ["google secops", "", "cloud/gcp-security-cloud-audit-logs-security-command-center"],
     ["google cloud observability", "", "cloud/gcp-observability-cloud-monitoring-logging-trace"],
     ["security hub cspm", "", "cloud/aws-security-stack-cloudtrail-guardduty-security-hub"],
+    // ── fifty-second wave: the comparison tables, their at-risk cells read on the owners' pages ──
+    ["gcp cost anomaly detection", "", "cloud/cloud-cost-control-budgets-tags-rightsizing"],
+    ["azure front door cdn", "", "cloud/cloud-rosetta-stone-aws-gcp-azure"],
   ]],
   ["somebody looking for a job", [
     ["writing a cv", "", "career/your-cv-the-six-second-scan-the-ats-and-what-actually-gets-r"],
