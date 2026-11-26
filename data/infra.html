@@ -4994,6 +4994,161 @@ Get-ADObject <span class="kw">-Filter</span> <span class="str">'objectClass -eq 
         </div>
       </div>
     </div>
+    <div class="concept-card">
+      <div class="concept-label">SmartScreen</div>
+      <div class="concept-title">SmartScreen Warns by Default, and the Warning Can Be Clicked Through Unless You Say Otherwise</div>
+      <div class="concept-desc">
+        Microsoft Defender SmartScreen judges web addresses, downloads and apps by reputation: lists of reported phishing
+        and malware sites and of known unsafe programs, a list of files downloaded often enough to be well known, and
+        the signature on a file. Something with no reputation gets a warning. By default the user can bypass it and go
+        on to the site or run the file anyway, so Microsoft recommends blocking instead: Group Policy's
+        <em>Configure Windows Defender SmartScreen</em> enabled with <em>Warn and prevent bypass</em>, and Edge's two
+        <em>Prevent bypassing</em> policies, one for sites and one for downloads. It covers files from the internet, not
+        files on internal shares reached by a UNC <span class="acro-exp">(Universal Naming Convention)</span> path.
+        <!-- fact: Microsoft Defender SmartScreen protects against phishing and malware websites and applications and the download of potentially malicious files, checking visited sites against a dynamic list of reported phishing and malicious software sites, and downloaded files against lists of reported malicious programs and of well-known files, with reputation checks on URLs, apps and the digital signature used to sign a file; it is managed with Group Policy and Intune; it doesn't protect against malicious files on internal locations or network shares, such as UNC paths or SMB shares; the page applies to Windows 11, Windows 10 and Microsoft Edge | source: Microsoft Learn, "Microsoft Defender SmartScreen", updated 2026-11-03, fetched and read | checked: 2026-11 -->
+        <!-- fact: By default SmartScreen lets users bypass warnings; Microsoft recommends enabling Configure Windows Defender SmartScreen with the Warn and prevent bypass option, and enabling the Edge policies Configure Microsoft Defender SmartScreen, Prevent bypassing Windows Defender SmartScreen prompts for sites, and Prevent bypassing of Microsoft Defender SmartScreen warnings about downloads | source: Microsoft Learn, "Available Microsoft Defender SmartScreen settings", updated 2026-05-27, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <div class="concept-desc verdict">
+          <strong class="c-amber">On a server, the first control is not browsing at all.</strong> AZ-802 lists
+          SmartScreen under the server's operating system, while Microsoft's SmartScreen pages list Windows 10, Windows
+          11 and Edge as what they apply to. Set <em>Warn and prevent bypass</em> wherever it applies, and keep the
+          cheaper rule from <span class="xref">Server Hardening Baseline — The Short List That Removes Most Risk</span>:
+          never browse or read mail from a server.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: MONITORING WINDOWS SERVER ──────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">📈</span>
+    <span class="topic-name">Monitoring Windows Server — Performance Monitor, Data Collector Sets, System Insights &amp; Azure Monitor</span>
+    <span class="topic-badge">Server • Monitoring</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Performance Monitor and data collector sets</div>
+      <div class="concept-title">Record the Counters Before the Problem Comes Back</div>
+      <div class="concept-desc">
+        Performance Monitor shows a server's counters as they move, which helps only while the problem is happening. For
+        one that comes and goes, record them in a data collector set, the saved definition of what to log and for how
+        long. logman builds the same thing from the command line, which is how one definition reaches every server: it
+        creates counter, trace and configuration data collectors, starts and stops them, and imports or exports a data
+        collector set as an XML <span class="acro-exp">(eXtensible Markup Language)</span> file. A counter collector, made with logman create counter, takes the counters, a sample
+        interval, a log format and limits on size and time; a CSV <span class="acro-exp">(Comma-Separated Values)</span> log stops at 2 GB.
+        <span class="volatile" data-checked="2026-11">Windows Admin Center</span> has a Performance Monitor tool of its
+        own, for reading counters from a browser.
+        <!-- fact: logman creates and manages Event Trace Session and Performance logs and supports many functions of Performance Monitor from the command line; logman create makes a counter, trace, configuration data collector or API; logman start and stop start or stop data collection; logman import and export move a data collector set from or to an XML file | source: Microsoft Learn, "logman", updated 2017-10-16, fetched and read | checked: 2026-11 -->
+        <!-- fact: logman create counter takes -c for counters or -cf for a file listing one counter per line, -si for the sample interval, -f for the log format (bin, bincirc, csv, tsv or sql, with a csv log limited to 2 GB), -max for the maximum log size in MB, -cnf to start a new file, -b and -e for begin and end times, -rf to run for a period, -r to repeat daily and -s for a remote computer; its example is logman create counter perf_log -c \Processor(_Total)\% Processor time -max 10 -rf 01:00 | source: Microsoft Learn, "logman create counter", updated 2017-10-16, fetched and read | checked: 2026-11 -->
+        <!-- fact: Windows Admin Center's tools for a server connection include Performance Monitor, to view performance counters and reports, Events, and Azure Monitor, to monitor servers and configure alerts | source: Microsoft Learn, "Manage Servers with Windows Admin Center", updated 2019-11-21, fetched and read | checked: 2026-11 -->
+      </div>
+      <pre class="code-block"><span class="com"># A counter log: total CPU every 15 seconds, at most 200 MB, for four hours</span>
+logman create counter perf_log -c "\Processor(_Total)\% Processor Time" -si 15 -max 200 -rf 04:00:00
+logman start perf_log
+
+<span class="com"># Every collector defined on this server, and whether it is running</span>
+logman query</pre>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>logman create counter option</th><th>What it sets</th></tr></thead>
+          <tbody>
+            <tr><td><code>-c</code>, <code>-cf</code></td><td>The counters, listed, or read from a file with one per line</td></tr>
+            <tr><td><code>-si</code></td><td>The sample interval</td></tr>
+            <tr><td><code>-f</code></td><td>The format: <code>bin</code>, <code>bincirc</code>, <code>csv</code>, <code>tsv</code> or <code>sql</code>; a CSV log is capped at 2 GB</td></tr>
+            <tr><td><code>-max</code>, <code>-cnf</code></td><td>The largest file, in MB, and when to start a new one</td></tr>
+            <tr><td><code>-b</code>, <code>-e</code>, <code>-rf</code>, <code>-r</code></td><td>When to begin and end, how long to run, and whether to repeat daily</td></tr>
+            <tr><td><code>-s</code></td><td>Another computer to run it on</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Build the set once, export it, import it everywhere.</strong> The counter log started
+          after the second slowdown is the one that catches the third, and an imported set logs the same counters at the
+          same interval on the next server, so the two logs can be compared. Which resource a counter points at is in
+          <span class="xref">Performance &amp; Capacity — Finding and Fixing Bottlenecks</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">System Insights</div>
+      <div class="concept-title">System Insights Forecasts on the Server Itself, and Reports to the Event Log</div>
+      <div class="concept-desc">
+        System Insights is predictive analytics built into Windows Server 2019 and later, preinstalled, and it runs
+        entirely on the machine: the data it learns from stays local and nothing needs a cloud connection. Four
+        capabilities are on by default, CPU <span class="acro-exp">(Central Processing Unit)</span> capacity forecasting, networking capacity forecasting for each adapter, total
+        storage consumption forecasting across the local drives, and volume consumption forecasting, and each runs every
+        day at 3 a.m. unless given its own schedule, or on demand from Windows Admin Center or PowerShell. Every
+        prediction is written to the event log, so the forecasts reach whatever already collects the server's events.
+        <!-- fact: System Insights brings predictive analytics to Windows Server 2019 and later, is preinstalled, and runs completely locally, with data collected, persisted and analyzed on the machine and no cloud connectivity required; four capabilities are enabled by default: CPU capacity forecasting, networking capacity forecasting for each network adapter, total storage consumption forecasting across all local drives, and volume consumption forecasting; it is managed through Windows Admin Center or PowerShell, and all prediction results are published to the event log for Azure Monitor or System Center Operations Manager to aggregate | source: Microsoft Learn, "What is System Insights?", updated 2025-06-02, fetched and read | checked: 2026-11 -->
+        <!-- fact: System Insights logs an event each time a capability finishes a prediction, in the Microsoft-Windows-System-Insights/Admin channel: 151 for Ok, 148 for Warning, 150 for Critical, 149 for Error and 132 for None; each default capability is scheduled to run every day at 3am; Get-InsightsCapabilityResult with -History shows the last 30 prediction results; Enable-, Disable- and Invoke-InsightsCapability enable, disable and run a capability | source: Microsoft Learn, "Manage System Insights capabilities in Windows Admin Center", updated 2025-06-04, fetched and read | checked: 2026-11 -->
+      </div>
+      <pre class="code-block"><span class="com"># What it forecasts, and the latest verdict for each</span>
+Get-InsightsCapability
+
+<span class="com"># Forecast now, then read the last 30 results</span>
+Invoke-InsightsCapability <span class="kw">-Name</span> "CPU capacity forecasting"
+Get-InsightsCapabilityResult <span class="kw">-Name</span> "CPU capacity forecasting" <span class="kw">-History</span></pre>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Event ID in Microsoft-Windows-System-Insights/Admin</th><th>The prediction's status</th></tr></thead>
+          <tbody>
+            <tr><td>151</td><td>Ok</td></tr>
+            <tr><td>148</td><td>Warning</td></tr>
+            <tr><td>150</td><td>Critical</td></tr>
+            <tr><td>149</td><td>Error</td></tr>
+            <tr><td>132</td><td>None</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Collect the channel and alert on 148 and 150.</strong> A forecast nobody reads is a
+          volume that still fills, and the events are what carry it to the people on call, through the same collection
+          as every other log in <span class="xref">Windows Event Logs — The IDs That Matter</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Azure Monitor for servers</div>
+      <div class="concept-title">A Data Collection Rule Is a Policy, Not a Pipe</div>
+      <div class="concept-desc">
+        Azure Monitor collects an Azure VM <span class="acro-exp">(Virtual Machine)</span>'s host metrics, CPU, network traffic and disk I/O <span class="acro-exp">(Input/Output)</span>, and its activity log
+        automatically and at no cost. What happens inside the guest is opt-in: enabling enhanced monitoring installs the
+        Azure Monitor agent, starts a default set of guest metrics, as OpenTelemetry metrics for new deployments or the
+        classic logs-based kind, and creates a baseline of recommended alert rules. Microsoft's VM monitoring page calls
+        this enhanced monitoring where AZ-802 says VM Insights, a name that survives in its Performance view. Servers
+        outside Azure join through Azure Arc and are then monitored the same way. Guest logs, the Windows event logs
+        among them, need a data collection rule, and their ingestion and storage are charged.
+      </div>
+      <div class="concept-desc">
+        A data collection rule says what to collect, how to filter or reshape it, and where to send it. It is
+        configuration, not a pipe: no telemetry flows through it. The agent fetches the rules associated with its
+        machine, and each association joins one resource to one rule, so a rule reaches many servers through one
+        association each and a server can take several rules. Microsoft's pattern is a baseline rule for every machine
+        and a workload rule layered onto only the machines that run that workload.
+        <!-- fact: Data collection rules provide a centralized Azure control plane for collection, data shape, processing and routing; a DCR is control-plane configuration, not a data-plane destination, and telemetry doesn't flow through it; a data collection rule association connects one resource to one DCR, so one DCR applies to many resources with one association each and the relationship is many-to-many; Microsoft's example is one DCR as a central IT baseline for every applicable machine with a workload-specific DCR layered onto only the machines that run that workload; identify the resources that use a shared DCR before changing it; the Azure Monitor agent retrieves its associated DCRs after installation | source: Microsoft Learn, "Data collection rules (DCRs) in Azure Monitor", updated 2026-10-20, fetched and read | checked: 2026-11 -->
+        <!-- fact: Azure Monitor collects host metrics (CPU usage, network traffic, disk I/O) and activity logs for Azure VMs automatically at no cost; enabling enhanced monitoring installs the Azure Monitor agent, collects a default set of guest metrics as OpenTelemetry metrics (recommended for new deployments) or logs-based metrics (classic), and creates a baseline set of recommended alert rules; guest logs such as Windows Event Logs need data collection rules, and ingestion and storage charges apply; machines in other clouds and on premises connect through Azure Arc-enabled servers and are monitored by the same methods; the page's related content points to the VM insights Performance view | source: Microsoft Learn, "Monitor virtual machines in Azure", updated 2026-05-26, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>You want</th><th>So</th></tr></thead>
+          <tbody>
+            <tr><td>Guest metrics and logs for one VM</td><td>Enable enhanced monitoring; it creates the rule and the association</td></tr>
+            <tr><td>The same events from every server</td><td>One rule, with an association for each server</td></tr>
+            <tr><td>Extra logs from one kind of server</td><td>A second rule, associated with those servers only</td></tr>
+            <tr><td>To change a shared rule</td><td>List its associations first: every associated server changes with it</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Write rules for policies, not for servers.</strong> A new rule is for a new collection
+          need, not a new machine; a rule per server is a hundred rules to edit the day the baseline changes. Querying
+          what the rules collect is <span class="xref">Azure Monitor, Log Analytics &amp; KQL</span>, and bringing servers
+          outside Azure under the same rules is
+          <span class="xref">Azure Arc — Governing What Isn't in Azure From Inside Azure</span>.
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 

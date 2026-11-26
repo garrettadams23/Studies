@@ -447,6 +447,13 @@ const READERS = [
     ["osconfig security baseline", "", "infra/hardening-windows-server-credential-guard-protected-users-th"],
     ["defender for servers plan 2", "", "infra/hardening-windows-server-credential-guard-protected-users-th"],
     ["credential guard lsa isolation", "", "infra/hardening-windows-server-credential-guard-protected-users-th"],
+    // ── sixty-seventh wave: AZ-802's monitoring tools and SmartScreen, added before the topic and the card ──
+    ["data collector set", "", "infra/monitoring-windows-server-performance-monitor-data-collector"],
+    ["logman create counter", "", "infra/monitoring-windows-server-performance-monitor-data-collector"],
+    ["system insights forecasting", "", "infra/monitoring-windows-server-performance-monitor-data-collector"],
+    ["data collection rule association", "", "infra/monitoring-windows-server-performance-monitor-data-collector"],
+    ["vm insights", "", "infra/monitoring-windows-server-performance-monitor-data-collector"],
+    ["smartscreen warn and prevent bypass", "", "infra/hardening-windows-server-credential-guard-protected-users-th"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],
