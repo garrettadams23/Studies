@@ -414,6 +414,12 @@ const READERS = [
     ["deferred release", "", "m365/running-copilot-copilot-credits-spending-policies-the-usage-"],
     ["targeted release retired", "", "m365/running-copilot-copilot-credits-spending-policies-the-usage-"],
     ["what is in microsoft 365 e7", "", "m365/licensing-without-tears-e3-e5-business-group-based-assignmen"],
+    // ── fifty-ninth wave: AB-650's data readiness and Purview for AI, as cards, added before them ──
+    ["restricted content discovery", "", "ai/data-governance-for-ai-oversharing-at-the-speed-of-search"],
+    ["restricted sharepoint search retired", "", "ai/data-governance-for-ai-oversharing-at-the-speed-of-search"],
+    ["sharepoint advanced management", "", "ai/data-governance-for-ai-oversharing-at-the-speed-of-search"],
+    ["dlp for copilot prompts", "", "m365/sensitivity-labels-dlp-classification-that-survives-contact-"],
+    ["dspm for ai", "", "m365/sensitivity-labels-dlp-classification-that-survives-contact-"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],

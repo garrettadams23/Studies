@@ -1407,7 +1407,7 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
 </div>
 
 <!-- ── TOPIC: SENSITIVITY LABELS & DLP ───────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🔐</span>
     <span class="topic-name">Sensitivity Labels &amp; DLP <span class="acro-exp">(Data Loss Prevention)</span> — Classification That Survives Contact With Users</span>
@@ -1469,6 +1469,39 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
           Roll DLP out in stages: audit silently, then tip the user, then warn with an override, and
           only then block. A policy that blocks on day one is a policy the business will demand
           exemptions from by day three, and exemptions are permanent.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DLP for Copilot</div>
+      <div class="concept-title">DLP Can Stop Copilot From Reading a Prompt, a Labeled File or the Web, and DSPM Shows Where to Start</div>
+      <div class="concept-desc">
+        Purview DLP has a location for Microsoft 365 Copilot, Copilot Chat and Cowork, and four things it can do there.
+        It can keep web search out of answers when a prompt holds a sensitive information type; refuse to answer a
+        prompt that holds one; keep files and emails with chosen sensitivity labels out of what Copilot reads; and, in
+        preview, keep email from outside the organization out of Copilot's grounding, against prompt injection. A rule
+        matches sensitive information types or sensitivity labels, never both. Data Security Posture Management, the
+        newer form of what Purview called DSPM for AI <span class="acro-exp">(Artificial Intelligence)</span>, shows AI activity across apps and agents and offers one-click
+        policies; it also runs a weekly oversharing assessment of the hundred most-used SharePoint sites.
+        <!-- fact: Purview DLP can restrict Microsoft 365 Copilot, Copilot Chat and Cowork from using external web search when prompts contain sensitive information types, from processing prompts that contain them, and from processing files and emails with sensitivity labels, and in preview can prevent Microsoft 365 Copilot and Copilot Chat from using email from external domains as grounding, to reduce prompt injection risk; content contains sensitive info types and content contains sensitivity labels cannot be used in the same rule | source: Microsoft Learn, "Microsoft Purview DLP for Microsoft 365 Copilot and Cowork", updated 2026-11-09, fetched and read | checked: 2026-11 -->
+        <!-- fact: Data Security Posture Management for AI, now replaced by a new Data Security Posture Management covering AI apps and agents, gives insights into AI activity, preconfigured one-click policies that take at least 24 hours to collect data, and a weekly data risk assessment of the top 100 SharePoint sites by usage to find oversharing | source: Microsoft Learn, "Learn how Microsoft Purview Data Security Posture Management for AI provides data security and compliance protections", the classic version's page, updated 2025-12-15, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>DLP for Copilot can</th><th>Matching on</th></tr></thead>
+          <tbody>
+            <tr><td>Keep web search out of the answer</td><td>Sensitive information types in the prompt</td></tr>
+            <tr><td>Refuse the prompt</td><td>Sensitive information types in the prompt</td></tr>
+            <tr><td>Keep a file or email out of the answer</td><td>Its sensitivity label</td></tr>
+            <tr><td>Ignore external email as a source, in preview</td><td>The sender's domain</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Labels do the heavy lifting here, so label before switching Copilot on.</strong>
+          A rule that keeps labeled content out of Copilot protects only what is labeled, which is why the labeling
+          above comes first, and why DSPM's oversharing assessment is the cheapest way to find the sites that need it.
+          The broader readiness work is in
+          <span class="xref">Data Governance for AI — Oversharing at the Speed of Search</span>.
         </div>
       </div>
     </div>

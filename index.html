@@ -50694,12 +50694,12 @@ teaches individuals, written into policy.
 </div>
 </div>
 </div>
-<div class="topic" id="data-governance-for-ai-oversharing-at-the-speed-of-search" data-reviewed="2026-08" data-read="2" data-level="core">
+<div class="topic" id="data-governance-for-ai-oversharing-at-the-speed-of-search" data-reviewed="2026-11" data-read="4" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🗂️</span>
 <span class="topic-name">Data Governance for AI <span class="acro-exp">(Artificial Intelligence)</span> — Oversharing at the Speed of Search</span>
 <span class="topic-badge">AI at Work • Governance</span>
-<span class="topic-read" title="Rough reading time, estimated from length">2 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -50732,6 +50732,39 @@ This is
 with a deadline: the governance work that was always advisable becomes urgent
 the day the assistant is switched on. Do the access cleanup first, or the rollout
 <em>is</em> the incident.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Microsoft 365's tools for it</div>
+<div class="concept-title">Hide a Site From Copilot While You Fix It, and Stop Relying on the Allow List Being Retired</div>
+<div class="concept-desc">
+In Microsoft 365 the readiness work has named tools. SharePoint Advanced Management, run from the
+<span class="volatile" data-checked="2026-11">SharePoint admin center</span>, finds content sprawl and oversharing: site ownership policies with a
+minimum number of owners, inactive sites, attestations that make owners confirm a site's members
+and sharing, and 180 days of change history. Restricted Content Discovery is the stopgap while
+that runs: it keeps chosen SharePoint sites, including recently used files from them, out of
+organization-wide search and Copilot's answers, and removes the Copilot button and AI actions from
+those sites. It changes no permission, so anyone with access can still open a file directly; it
+does not apply to OneDrive; and it needs a Microsoft Copilot license.
+<!-- fact: SharePoint Advanced Management provides governance controls for SharePoint and OneDrive to manage content sprawl, the content lifecycle and oversharing, administered from the SharePoint admin center, including site ownership policies with minimum owner counts, inactive site detection, site attestations of necessity, owners, members, permissions and sharing, and change history reports covering the last 180 days | source: Microsoft Learn, "SharePoint Advanced Management overview", updated 2026-10-28, fetched and read | checked: 2026-11 -->
+<!-- fact: Restricted Content Discovery limits discovery of content from specific SharePoint sites, including recently interacted files, in organization-wide search and Microsoft Copilot responses, and removes AI entry points such as the Copilot button and AI actions from those sites; it is a temporary governance control, does not change permissions, applies only to SharePoint sites and not OneDrive, does not affect searches from site context, is set with Set-SPOSite and the RestrictContentOrgWideSearch parameter, and requires a Microsoft Copilot license | source: Microsoft Learn, "Restrict discovery of SharePoint sites and content", updated 2026-10-11, fetched and read | checked: 2026-11 -->
+<!-- fact: Restricted SharePoint Search, an allow list of sites usable in organization-wide search and Copilot, is retiring; new enablement has been blocked since 31 July 2026, and Microsoft points to Restricted Content Discovery instead | source: Microsoft Learn, "Restricted SharePoint Search", updated 2026-07-06, fetched and read | checked: 2026-11 -->
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Control</th><th>What it does</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>SharePoint Advanced Management</td><td>Finds and fixes the oversharing: ownership policies, inactive sites, attestations, change history</td><td>The lasting fix</td></tr>
+<tr><td>Restricted Content Discovery</td><td>Hides chosen sites from organization-wide search and Copilot while they are reviewed</td><td>Temporary by design</td></tr>
+<tr><td>Restricted SharePoint Search</td><td>An allow list of sites search and Copilot may use</td><td>Being retired; no new enablement since 31 July 2026</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-amber">Hiding a site is not fixing it.</strong> Restricted Content Discovery buys
+time and changes no permission, so a user who could open the payroll site yesterday still can; only
+the review it makes room for removes the access. Use it on the few sites that cannot wait, and plan
+the attestations that end its use.
 </div>
 </div>
 </div>
@@ -131987,12 +132020,12 @@ in the Governance domain.
 </div>
 </div>
 <!-- ── TOPIC: SENSITIVITY LABELS & DLP ───────────────────────── -->
-<div class="topic" id="sensitivity-labels-dlp-classification-that-survives-contact-" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="sensitivity-labels-dlp-classification-that-survives-contact-" data-reviewed="2026-11" data-read="5" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🔐</span>
 <span class="topic-name">Sensitivity Labels &amp; DLP <span class="acro-exp">(Data Loss Prevention)</span> — Classification That Survives Contact With Users</span>
 <span class="topic-badge">Purview • Compliance</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -132050,6 +132083,39 @@ marginal label adds hesitation without adding protection.
 Roll DLP out in stages: audit silently, then tip the user, then warn with an override, and
 only then block. A policy that blocks on day one is a policy the business will demand
 exemptions from by day three, and exemptions are permanent.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">DLP for Copilot</div>
+<div class="concept-title">DLP Can Stop Copilot From Reading a Prompt, a Labeled File or the Web, and DSPM Shows Where to Start</div>
+<div class="concept-desc">
+Purview DLP has a location for Microsoft 365 Copilot, Copilot Chat and Cowork, and four things it can do there.
+It can keep web search out of answers when a prompt holds a sensitive information type; refuse to answer a
+prompt that holds one; keep files and emails with chosen sensitivity labels out of what Copilot reads; and, in
+preview, keep email from outside the organization out of Copilot's grounding, against prompt injection. A rule
+matches sensitive information types or sensitivity labels, never both. Data Security Posture Management, the
+newer form of what Purview called DSPM for AI <span class="acro-exp">(Artificial Intelligence)</span>, shows AI activity across apps and agents and offers one-click
+policies; it also runs a weekly oversharing assessment of the hundred most-used SharePoint sites.
+<!-- fact: Purview DLP can restrict Microsoft 365 Copilot, Copilot Chat and Cowork from using external web search when prompts contain sensitive information types, from processing prompts that contain them, and from processing files and emails with sensitivity labels, and in preview can prevent Microsoft 365 Copilot and Copilot Chat from using email from external domains as grounding, to reduce prompt injection risk; content contains sensitive info types and content contains sensitivity labels cannot be used in the same rule | source: Microsoft Learn, "Microsoft Purview DLP for Microsoft 365 Copilot and Cowork", updated 2026-11-09, fetched and read | checked: 2026-11 -->
+<!-- fact: Data Security Posture Management for AI, now replaced by a new Data Security Posture Management covering AI apps and agents, gives insights into AI activity, preconfigured one-click policies that take at least 24 hours to collect data, and a weekly data risk assessment of the top 100 SharePoint sites by usage to find oversharing | source: Microsoft Learn, "Learn how Microsoft Purview Data Security Posture Management for AI provides data security and compliance protections", the classic version's page, updated 2025-12-15, fetched and read | checked: 2026-11 -->
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>DLP for Copilot can</th><th>Matching on</th></tr></thead>
+<tbody>
+<tr><td>Keep web search out of the answer</td><td>Sensitive information types in the prompt</td></tr>
+<tr><td>Refuse the prompt</td><td>Sensitive information types in the prompt</td></tr>
+<tr><td>Keep a file or email out of the answer</td><td>Its sensitivity label</td></tr>
+<tr><td>Ignore external email as a source, in preview</td><td>The sender's domain</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-amber">Labels do the heavy lifting here, so label before switching Copilot on.</strong>
+A rule that keeps labeled content out of Copilot protects only what is labeled, which is why the labeling
+above comes first, and why DSPM's oversharing assessment is the cheapest way to find the sites that need it.
+The broader readiness work is in
+<span class="xref" data-xref="data-governance-for-ai-oversharing-at-the-speed-of-search" role="link" tabindex="0">Data Governance for AI — Oversharing at the Speed of Search</span>.
 </div>
 </div>
 </div>
