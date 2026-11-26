@@ -392,6 +392,9 @@ const READERS = [
     // ── forty-sixth wave: the endpoint and infra claims from September, re-checked ──
     ["tombstone lifetime 60 days", "", "infra/ad-replication-how-changes-travel-and-triage-when-they-stop"],
     ["intune suite included in e3", "", "endpoint/the-intune-suite-what-it-adds-and-what-changed-in-2026"],
+    // ── forty-ninth wave: Phase 11's tier-gating pass, redone against Microsoft's pages ──
+    ["what does business premium include", "", "m365/licensing-without-tears-e3-e5-business-group-based-assignmen"],
+    ["remediations license requirement", "", "endpoint/endpoint-analytics-proactive-remediations-measuring-and-self"],
   ]],
   ["a SOC analyst or defender", [
     ["phishing email reported", "", "blueteam/a-user-reported-a-phishing-email-the-first-ten-minutes"],

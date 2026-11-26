@@ -888,7 +888,7 @@ Get-WindowsAutopilotInfo <span class="var">-Online</span> <span class="var">-Gro
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-08">
+          <div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🛂</span>
               <span class="topic-name">Conditional Access &amp; Device Compliance</span>
@@ -929,7 +929,7 @@ Conditional Access reads it  ──▶  Grant (compliant OR Entra-joined) / Bloc
                     <tr><th>Part</th><th>Examples</th></tr>
                     <tr><td>Users/groups</td><td>All users, exclude break-glass admins</td></tr>
                     <tr><td>Target resources</td><td>The Office 365 app group, a specific app, all cloud apps</td></tr>
-                    <tr><td>Conditions</td><td>Device platform, location, client app, <strong>sign-in risk</strong> (P2)</td></tr>
+                    <tr><td>Conditions</td><td>Device platform, location, client app, <strong>sign-in risk</strong> (Entra ID P2)<!-- fact: sign-in risk in a Conditional Access policy comes from ID Protection, and using ID Protection requires Microsoft Entra ID P2 licenses | source: Microsoft Learn, "Conditional Access: Conditions" (updated 2 June 2026) and "What is Microsoft Entra ID Protection?", fetched and read | checked: 2026-11 --></td></tr>
                     <tr><td>Grant controls</td><td>Require MFA <span class="acro-exp">(Multi-Factor Authentication)</span>, <strong>require compliant device</strong>, require Entra hybrid join, require app protection policy</td></tr>
                     <tr><td>Session controls</td><td>App-enforced restrictions, sign-in frequency</td></tr>
                   </table>
@@ -5177,7 +5177,7 @@ Remove-PSSession $s
             </div>
           </div>
           <!-- ── TOPIC: ENDPOINT ANALYTICS & REMEDIATIONS ──────────────────────────────── -->
-          <div class="topic" data-reviewed="2026-09">
+          <div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🩺</span>
               <span class="topic-name">Endpoint Analytics &amp; Proactive Remediations — Measuring and Self-Healing the Fleet</span>
@@ -5234,7 +5234,9 @@ Remove-PSSession $s
                     <tr><td>Reporting</td><td>Found vs fixed counts across the group — the proof it worked</td></tr>
                   </table>
                   <div class="concept-desc verdict">
-                    It needs the right entitlement (Windows Enterprise with an E3-or-above style license) and the
+                    Its license requirement is a Windows Enterprise E3 or E5 license for the device's users, which
+                    Microsoft 365 F3, E3 and E5 include, or Education A3 or A5, or Windows VDA; Business Premium alone
+                    is not on the list<!-- fact: Remediations require users of the devices to have Windows Enterprise E3 or E5 (included in Microsoft 365 F3, E3 or E5), Windows Education A3 or A5 (included in Microsoft 365 A3 or A5), or Windows VDA per user | source: Microsoft Learn, "Use Remediations to detect and fix support issues" (updated 4 November 2026), fetched and read | checked: 2026-11 -->. It needs the
                     right run context, and above all a pilot ring — a bad remediation is a fleet-scale change event,
                     not a small script.
                   </div>
