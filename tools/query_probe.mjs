@@ -420,6 +420,10 @@ const READERS = [
     ["sharepoint advanced management", "", "ai/data-governance-for-ai-oversharing-at-the-speed-of-search"],
     ["dlp for copilot prompts", "", "m365/sensitivity-labels-dlp-classification-that-survives-contact-"],
     ["dspm for ai", "", "m365/sensitivity-labels-dlp-classification-that-survives-contact-"],
+    // ── sixtieth wave: AB-650's last gaps, as cards, added before them ──
+    ["microsoft 365 backup restore points", "", "m365/backup-for-m365-why-native-retention-is-not-a-backup"],
+    ["copilot only during the meeting", "", "m365/teams-policies-meeting-messaging-app-the-assignment-preceden"],
+    ["network connectivity insights", "", "m365/teams-call-quality-cqd-the-network-requirements-the-real-cul"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],

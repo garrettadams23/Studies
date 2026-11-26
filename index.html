@@ -130605,8 +130605,8 @@ goes back together cleanly.
 <span class="ctag ctag-general">AB-650</span>
 </div>
 <span class="domain-sub">Tenant · Exchange Online · SharePoint · OneDrive · Teams · Purview · Troubleshooting</span>
-<span class="domain-meta" aria-label="55 topics, about 3h 35m to read"
->55 topics · ~3h 35m</span>
+<span class="domain-meta" aria-label="55 topics, about 3h 40m to read"
+>55 topics · ~3h 40m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -132299,12 +132299,12 @@ before you need it; retention cannot be applied retroactively.
 </div>
 </div>
 <!-- ── TOPIC: BACKUP FOR M365 ────────────────────────────────── -->
-<div class="topic" id="backup-for-m365-why-native-retention-is-not-a-backup" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="backup-for-m365-why-native-retention-is-not-a-backup" data-reviewed="2026-11" data-read="5" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">💾</span>
 <span class="topic-name">Backup for M365 — Why Native Retention Is Not a Backup</span>
 <span class="topic-badge">M365 • Resilience</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -132364,6 +132364,35 @@ domain is lost, is in
 in the Windows Server domain. And whichever route is chosen, it is not a capability until
 it has been restored from — see
 <span class="xref" data-xref="restore-testing-dr-design-turning-backups-into-a-recovery-ca" role="link" tabindex="0">Restore Testing &amp; DR Design — Turning Backups Into a Recovery Capability</span>.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Microsoft's own backup</div>
+<div class="concept-title">Microsoft 365 Backup Rolls a Whole Site Back to a Ten-Minute Point, and Charges for What It Holds</div>
+<div class="concept-desc">
+Microsoft 365 Backup is Microsoft's own backup for SharePoint sites, OneDrive accounts and Exchange mailboxes,
+with Entra objects in preview, run from the <span class="volatile" data-checked="2026-11">Microsoft 365 admin center</span> or through partner applications built
+on the same storage. A backup policy keeps restore points for a recovery window of three or six months or one
+to ten years, two at most for Exchange, and one year by default. The backups are immutable unless an admin
+removes them by offboarding the product. It is billed pay-as-you-go, $0.15 per GB per month for the data it
+protects, and restores cost nothing.
+<!-- fact: Microsoft 365 Backup backs up SharePoint sites, OneDrive accounts, Exchange mailboxes and Entra directory objects (Entra Backup and Recovery Premium in preview), through the Microsoft 365 admin center or partner applications on the Microsoft 365 Backup Storage platform; recovery windows are 3 months, 6 months or 1 to 10 years for OneDrive and SharePoint and 3 months, 6 months, 1 or 2 years for Exchange, defaulting to 1 year, and fixed at 30 days for Entra Premium; restore points are every 10 minutes for two weeks then weekly for full OneDrive and SharePoint restores, every 10 minutes for the prior 52 weeks for Exchange, and daily for Entra Premium; OneDrive and SharePoint restores roll back the whole account or site to the same or a new URL, overwriting content and metadata since, while Exchange restores only modified or deleted items to the same or a new folder; backups are immutable unless deleted through offboarding; billing is pay-as-you-go at $0.15 per GB per month for protected data, $0.025 per protected Entra object per month, with restores free | source: Microsoft Learn, "Overview of Microsoft 365 Backup", updated 2026-11-20, fetched and read | checked: 2026-11 -->
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Workload</th><th>Restore points</th><th>A restore</th></tr></thead>
+<tbody>
+<tr><td>SharePoint site, OneDrive account</td><td>Every 10 minutes for two weeks, then weekly</td><td>Rolls the whole site or account back, overwriting everything since, to the same URL <span class="acro-exp">(Uniform Resource Locator)</span> or a new one</td></tr>
+<tr><td>Exchange mailbox</td><td>Every 10 minutes for 52 weeks</td><td>Brings back only changed or deleted items, to the same folder or a new one</td></tr>
+<tr><td>Entra objects, in preview</td><td>Daily, for a fixed 30 days</td><td>Recovers objects and their links</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-amber">A site restore is the whole site, so restore to a new URL when only part of it
+was hit.</strong> Rolling a site back to its old URL also undoes every good change made since the restore
+point; restoring beside it lets you copy back only what was lost. That is the reason this product exists
+beside retention: retention keeps items for compliance, and a backup puts a site back as it was.
 </div>
 </div>
 </div>
@@ -132560,12 +132589,12 @@ is the one feature where "we will find out in production" is not an acceptable p
 </div>
 </div>
 <!-- ── TOPIC: TEAMS CALL QUALITY ─────────────────────────────── -->
-<div class="topic" id="teams-call-quality-cqd-the-network-requirements-the-real-cul" data-reviewed="2026-11" data-read="4" data-level="core">
+<div class="topic" id="teams-call-quality-cqd-the-network-requirements-the-real-cul" data-reviewed="2026-11" data-read="6" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">📉</span>
 <span class="topic-name">Teams Call Quality — CQD, the Network Requirements &amp; the Real Culprits</span>
 <span class="topic-badge">Teams • Troubleshooting</span>
-<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -132652,15 +132681,36 @@ control, which does not include the internet.
 </div>
 </div>
 </div>
+<div class="concept-card">
+<div class="concept-label">Network connectivity insights</div>
+<div class="concept-title">The Admin Center Grades Each Office's Connection to Microsoft 365, Once It Knows Where the Offices Are</div>
+<div class="concept-desc">
+Under <span class="volatile" data-checked="2026-11">Health ▸ Network connectivity</span> the Microsoft 365 admin
+center collects network performance from the tenant and shows it by office: a map, an assessment of the whole
+tenant, the share of users working remotely and on site, and the issues worth acting on. It has nothing useful to
+say until it knows the offices, from Windows location data the admin opts in to, from a list of locations
+added or uploaded, or from the network connectivity test run in each office. Report Reader can look; setting up
+locations needs Service Support Administrator. It is not offered in GCC Moderate, GCC High or DoD <span class="acro-exp">(Department of Defense)</span>.
+<!-- fact: Network connectivity in the Microsoft 365 admin center, under Health, Network connectivity, shows aggregated network metrics from the tenant, with a global performance map, a tenant-wide network assessment, the percentage of remote and onsite users, and current issues, by office location; locations must be configured by opting in to collection from Windows Location Services, adding or uploading locations, or running the Microsoft 365 network connectivity test from office locations; Report Reader has read access and configuring requires Service Support Administrator; it supports worldwide commercial and China (21Vianet) tenants, not GCC Moderate, GCC High or DoD; network design improvements are made for specific office locations | source: Microsoft Learn, "Network connectivity in the Microsoft 365 Admin Center", updated 2026-06-26, fetched and read | checked: 2026-11 -->
+</div>
+<div class="dw">
+<div class="concept-desc verdict">
+<strong class="c-amber">Set up the locations before reading the score.</strong> The assessment is made per
+office because network fixes are, an egress point or a proxy in one building, so a tenant whose offices were
+never added has a map with nothing on it. Call quality in particular is the subject of this topic's cards
+above, and the report here is where a slow office shows first.
+</div>
+</div>
+</div>
 </div>
 </div>
 <!-- ── TOPIC: TEAMS POLICIES ─────────────────────────────────── -->
-<div class="topic" id="teams-policies-meeting-messaging-app-the-assignment-preceden" data-reviewed="2026-08" data-read="4" data-level="core">
+<div class="topic" id="teams-policies-meeting-messaging-app-the-assignment-preceden" data-reviewed="2026-11" data-read="5" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🎛️</span>
 <span class="topic-name">Teams Policies — Meeting, Messaging, App &amp; the Assignment Precedence</span>
 <span class="topic-badge">Teams • Policy</span>
-<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -132743,6 +132793,33 @@ gets the safe setting rather than the permissive one, so a mistake in group
 membership is a support ticket instead of an exposure. And the last row is
 what keeps the estate from ossifying: a custom policy with no recorded
 reason is one nobody will ever dare remove.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Copilot in meetings</div>
+<div class="concept-title">Copilot in a Meeting Runs With the Transcript, Without It, or Not at All, and Off Also Stops the Recording</div>
+<div class="concept-desc">
+In a Teams meeting, or an event of up to 1,000 attendees, each participant with a Copilot license can ask it
+questions that only they see; in events built for large audiences only organizers, co-organizers and presenters
+can. The organizer picks one of three settings in the meeting options, and an admin's policy sets which one new
+meetings start with, which organizers can still change meeting by meeting.
+<!-- fact: Each participant with a Microsoft Copilot license in a meeting or an event with up to 1,000 attendees can ask prompts visible only to them; in events optimized for large audiences only organizers, co-organizers and presenters can use Copilot; organizers choose During and after the meeting, which works once transcription starts, Only during the meeting, which uses speech-to-text data not saved after the meeting, or Off, which prevents anyone using Copilot and turns off recording and transcription; Purview retention policies may keep Copilot prompts and responses even when recording and transcription are off; admins have a policy to set the default, and organizers can change it per meeting | source: Microsoft Learn, "Manage Microsoft Copilot in Teams meetings and events", updated 2026-08-11, fetched and read | checked: 2026-11 -->
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Setting</th><th>Copilot</th><th>What is kept</th></tr></thead>
+<tbody>
+<tr><td>During and after the meeting</td><td>Once someone starts transcription, during the meeting and after it</td><td>The transcript</td></tr>
+<tr><td>Only during the meeting</td><td>During the meeting, for every licensed participant once one starts it</td><td>No transcript; speech-to-text data is not saved, though Purview may retain prompts and answers</td></tr>
+<tr><td>Off</td><td>Nobody</td><td>Nothing: recording and transcription are off too</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-amber">Only during the meeting is not the same as nothing kept.</strong> No transcript is
+saved, but Copilot prompts and responses can still fall under the organization's Purview retention, which is
+the answer for anyone asking whether a sensitive meeting leaves a record. Choosing Off for such meetings by
+default also removes recording, so check that nobody relies on it.
 </div>
 </div>
 </div>
