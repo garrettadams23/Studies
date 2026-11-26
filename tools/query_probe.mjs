@@ -442,6 +442,11 @@ const READERS = [
     ["smb over quic", "", "infra/smb-nfs-at-scale-protocol-behavior-versions-why-file-workloa"],
     ["storage spaces direct", "", "infra/san-fabric-luns-zoning-multipathing-iscsi-vs-fibre-channel"],
     ["storage replica synchronous", "", "infra/san-fabric-luns-zoning-multipathing-iscsi-vs-fibre-channel"],
+    // ── sixty-sixth wave: AZ-802's server security, added before the topic ──
+    ["protected users group", "", "infra/hardening-windows-server-credential-guard-protected-users-th"],
+    ["osconfig security baseline", "", "infra/hardening-windows-server-credential-guard-protected-users-th"],
+    ["defender for servers plan 2", "", "infra/hardening-windows-server-credential-guard-protected-users-th"],
+    ["credential guard lsa isolation", "", "infra/hardening-windows-server-credential-guard-protected-users-th"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],

@@ -4907,4 +4907,94 @@ Get-ADObject <span class="kw">-Filter</span> <span class="str">'objectClass -eq 
   </div>
 </div>
 
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: HARDENING WINDOWS SERVER ──────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🛡️</span>
+    <span class="topic-name">Hardening Windows Server — Credential Guard, Protected Users, the OSConfig Baseline &amp; Defender for Servers</span>
+    <span class="topic-badge">Server • Security</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">Keeping credentials out of reach</div>
+      <div class="concept-title">Credential Guard Isolates the Secrets, and Protected Users Stops Them Being Made in the First Place</div>
+      <div class="concept-desc">
+        Credential Guard moves the secrets the LSA <span class="acro-exp">(Local Security Authority)</span> holds, NTLM <span class="acro-exp">(NT LAN Manager)</span> hashes, Kerberos TGTs <span class="acro-exp">(Ticket Granting Ticket)</span> and stored
+        domain credentials, into isolation: an environment that virtualization-based security walls off from the rest
+        of the system, so malware running as an administrator still cannot read them. It can extend to the machine
+        account's password, and runs in audit or enforced mode. Protected Users works from the other side, as a group in Active Directory: its members' sign-ins
+        leave fewer secrets behind and their accounts refuse the weak paths. A member cannot authenticate with NTLM, use
+        DES <span class="acro-exp">(Data Encryption Standard)</span> or RC4 <span class="acro-exp">(Rivest Cipher 4)</span> in Kerberos pre-authentication, or be delegated, and its TGTs last four hours and are not renewed
+        beyond that.
+        <!-- fact: Credential Guard uses virtualization-based security so the LSA stores AD secrets in an isolated environment, protecting NTLM password hashes, Kerberos TGTs and application-stored domain credentials against pass-the-hash and pass-the-ticket, even from malware running with admin privileges; protection can extend to machine account passwords, in audit or enforcement mode | source: Microsoft Learn, "Credential Guard", updated 2026-04-27, fetched and read | checked: 2026-11 -->
+        <!-- fact: Protected Users is a global security group that prevents members' credentials from being cached; it needs hosts on Windows 10 or 11 or Windows Server 2012 R2 or later and a domain functional level of 2012 R2 or later; members must be able to use AES for Kerberos; members authenticating to the domain cannot use NTLM, cannot use DES or RC4 in Kerberos preauthentication, cannot be delegated with unconstrained or constrained delegation, and cannot renew TGTs beyond an initial four-hour lifetime, set to 240 minutes; the built-in domain Administrator is always exempt from authentication policies | source: Microsoft Learn, "Protected Users Security Group in Windows Server", updated 2025-06-27, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>A Protected Users member cannot</th><th>So what breaks</th></tr></thead>
+          <tbody>
+            <tr><td>Authenticate with NTLM</td><td>Anything that reaches the account by IP <span class="acro-exp">(Internet Protocol)</span> address or through an NTLM-only app</td></tr>
+            <tr><td>Use DES or RC4 in Kerberos</td><td>Old systems that cannot do AES <span class="acro-exp">(Advanced Encryption Standard)</span></td></tr>
+            <tr><td>Be delegated</td><td>A service that acts on the account's behalf, constrained or not</td></tr>
+            <tr><td>Keep a TGT past four hours</td><td>Long sessions, which must sign in again</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Put admins in Protected Users after testing what they log on to.</strong> Every
+          restriction is the point for an administrator account and a breakage for an app that depends on NTLM or
+          delegation, so add one account first and watch. The built-in Administrator is always exempt, which is one
+          more reason it should be a break-glass account. Kerberos's own failure modes are in
+          <span class="xref">Kerberos in Operations — SPNs, Delegation &amp; Clock Skew</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The security baseline</div>
+      <div class="concept-title">Windows Server 2025's Baseline Comes in Three Roles, Through OSConfig, and Holds Itself in Place</div>
+      <div class="concept-desc">
+        The Windows Server 2025 security baseline is Microsoft's recommended set of hardening settings, applied with the
+        OSConfig PowerShell module from an elevated session, and it comes in three versions for three roles: domain
+        controller, domain-joined member server, and workgroup server. OSConfig works only on Windows Server 2025. It
+        also corrects drift, putting settings back when something changes them, so a setting managed both by the
+        baseline and by Group Policy with different values flips between the two until one source is removed. After
+        applying the member or workgroup baseline, the local administrator password has to be changed.
+        <!-- fact: The Windows Server 2025 security baseline is a role-aware collection of security settings delivered by OSConfig, installed as a PowerShell module and applied from an elevated session; baselines exist for domain controller, member server (domain-joined) and workgroup member server (non-domain-joined); OSConfig does not support versions earlier than Windows Server 2025; with drift control, one source must be removed if parameters differ, to stop settings changing between sources; the local administrator password must be changed after applying the member server and workgroup member baselines | source: Microsoft Learn, "Configure Security Baselines for Windows Server 2025", updated 2026-06-15, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Pick one owner for each setting before applying the baseline.</strong> OSConfig and
+          Group Policy both enforce, so the same setting from both with different values is a tug of war that never
+          ends; decide which one manages what, and remove the other. Which of a server's settings Group Policy actually
+          applied is in <span class="xref">GPO Troubleshooting — Proving What a Machine Actually Received</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Defender for Servers, and exploit protection</div>
+      <div class="concept-title">Defender for Servers Covers Machines Anywhere, and Exploit Protection Hardens the Processes on Each</div>
+      <div class="concept-desc">
+        Defender for Servers is a plan in Microsoft Defender for Cloud for Windows and Linux machines in Azure, AWS <span class="acro-exp">(Amazon Web Services)</span>,
+        Google Cloud and on premises: posture recommendations against compliance standards, threat protection through
+        its integration with Defender for Endpoint, and vulnerability management. Plan 2 adds agentless machine
+        scanning, and most features no longer need the Log Analytics or Azure Monitor agents. On each machine, exploit
+        protection applies mitigations to the operating system's processes and apps, from Windows Server version 1803
+        on, configured on one device and spread to others as an XML <span class="acro-exp">(eXtensible Markup Language)</span> file through Group Policy, with an audit mode to
+        test first.
+        <!-- fact: Defender for Servers in Microsoft Defender for Cloud protects Windows and Linux machines in Azure, AWS, GCP and on premises, with posture recommendations against compliance standards, integration with Defender for Endpoint and Defender Vulnerability Management; it no longer uses the Log Analytics agent or Azure Monitor Agent for most features, using agentless scanning and Defender for Endpoint instead; Plan 2 provides agentless machine scanning | source: Microsoft Learn, "Overview of Defender for Servers in Defender for Cloud", updated 2026-11-13, fetched and read | checked: 2026-11 -->
+        <!-- fact: Exploit protection applies exploit mitigation techniques to operating system processes and apps, supported from Windows 10 version 1709, Windows 11 and Windows Server version 1803; it can be enabled on one device and distributed as an XML file through Group Policy, has an audit mode, and works best with Defender for Endpoint | source: Microsoft Learn, "Apply mitigations to help prevent attacks through vulnerabilities", updated 2025-03-25, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Run exploit protection's new mitigations in audit mode first.</strong> A mitigation
+          that blocks an old line-of-business app is an outage, and the audit events show which apps would have been
+          stopped. Defender for Servers is where those events and the endpoint alerts meet for servers outside Azure as
+          well as inside it, which is why it pairs with
+          <span class="xref">Azure Arc — Governing What Isn't in Azure From Inside Azure</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- /domain-body infra -->
