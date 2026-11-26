@@ -4981,3 +4981,125 @@ Get-MgContext | Select-Object Account, Scopes</pre>
     </div>
   </div>
 </div>
+<div class="topic" data-reviewed="2026-11">
+  <!-- ── TOPIC: AGENTS IN MICROSOFT 365 ───────────────────────────────────── -->
+  <div class="topic-header">
+    <span class="topic-icon">🧭</span>
+    <span class="topic-name">Agents in Microsoft 365 — The Agent Registry, Entra Agent ID &amp; Who Answers for an Agent</span>
+    <span class="topic-badge">M365 • Copilot</span>
+    <span class="topic-chev">▶</span>
+  </div>
+  <div class="topic-body">
+    <div class="concept-card">
+      <div class="concept-label">The control plane</div>
+      <div class="concept-title">Agent 365 Is One View of Every Agent, Arranged Around Management, Governance, Security and Cost</div>
+      <div class="concept-desc">
+        Microsoft Agent 365 is where an organization sees and runs its AI <span class="acro-exp">(Artificial Intelligence)</span> agents, Microsoft's, partners' and its own,
+        with IT, security and business teams each reading the same inventory in their own tools. Microsoft arranges it
+        in four parts: management, the inventory itself; governance, so that every agent has an owner, only the access
+        it needs and a record of what it does; security, risk signals from Defender, Entra and Purview in one place,
+        with a block for any agent that looks wrong; and business value, usage and the Copilot Credits agents spend.
+        It is generally available for commercial tenants, licensed per user, and at least one user must hold an
+        Agent 365 license before it can be turned on.
+        <!-- fact: Microsoft Agent 365 gives one view of an organization's agents, including Microsoft's and other companies', for IT, security and business teams; it is built on four pillars, management, governance, security and business value; the agent registry in the Microsoft 365 admin center lists agents with owner, usage and risk; risk signals come from Microsoft Defender, Microsoft Entra and Microsoft Purview, and a risky agent can be blocked; cost management shows Copilot Credits by user, group, agent and service; Agent 365 is generally available for the Commercial segment on a per-user basis, works best with Microsoft E5 as a prerequisite, and needs at least one user licensed to enable it | source: Microsoft Learn, "Microsoft Agent 365 overview", updated 2026-11-11, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Start from the inventory, because the agents already exist.</strong> Users share
+          agents they build, Microsoft and partners publish theirs, and teams build on other platforms; the registry
+          is the first place all of them appear together, which makes it the starting point for every decision below.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">The agent registry</div>
+      <div class="concept-title">Four Kinds of Agent, Some of Them Listed Twice on Purpose, and Two Counts to Watch</div>
+      <div class="concept-desc">
+        The registry is under <span class="volatile" data-checked="2026-11">Agents ▸ All agents ▸ Registry</span> in the
+        Microsoft 365 admin center, and plugins, skills and MCP <span class="acro-exp">(Model Context Protocol)</span> servers are under Agents ▸ Tools. One Copilot Studio
+        agent can appear twice: once as shared by its creator, when they test it, and again as published by the
+        organization, once an admin approves it. That is by design, and the two rows are separate records, so removing
+        one leaves the other. Which actions an entry offers, delete, remove or only block, depends on its type and state.
+        <!-- fact: The agent registry is the inventory under Agents, All agents, Registry in the Microsoft 365 admin center; plugins, skills and MCP servers are managed under Agents, Tools; agent types are Microsoft agents, external partner-built agents, published by your org (line-of-business), and shared by creator; the same Copilot Studio agent can appear with different publisher types by design, and removing one entry does not remove the other; available actions differ by type and state, some offering Delete, others Remove, some only Block; the summary shows total agents, agents without owners, and unmanaged agents created or managed outside Agent 365 without its risk protection and observability; shared agents become ownerless when the user who created them is deleted, and admins can block or delete them | source: Microsoft Learn, "Agent Registry in Microsoft 365 admin center", updated 2026-11-06, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Type</th><th>Who made it</th></tr></thead>
+          <tbody>
+            <tr><td>Microsoft agents</td><td>Built and maintained by Microsoft</td></tr>
+            <tr><td>External partner-built</td><td>Non-Microsoft developers, published broadly or publicly</td></tr>
+            <tr><td>Published by your org</td><td>Your own, approved and published by an admin for wider use: line-of-business agents</td></tr>
+            <tr><td>Shared by creator</td><td>Individual users who built an agent and shared it</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Agents without owners and unmanaged agents are the two numbers to read
+          first.</strong> A shared agent becomes ownerless when its creator's account is deleted, so every leaver can
+          leave one behind, and the registry counts and filters them for blocking or deletion. Unmanaged agents run
+          outside Agent 365's risk protection and observability. Both belong in the leaver process:
+          <span class="xref">Joiner, Mover, Leaver in M365 Terms — The Process That Prevents Most Cleanup</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Entra Agent ID</div>
+      <div class="concept-title">An Agent Gets Its Own Identity in Entra, and a Human Sponsor Who Answers for It</div>
+      <div class="concept-desc">
+        Entra Agent ID gives agents identities of their own, so they can be governed the way people are. It adds four
+        objects: an agent identity blueprint, its principal in each tenant, the agent identity, and optionally an agent
+        user account, each with its own access. A sponsor, a human assigned after the identity is created, is
+        accountable for the agent's lifecycle and access, and lifecycle workflows warn co-sponsors and managers when
+        that sponsorship is about to change. Access can be granted through access packages, and when an assignment has
+        an expiry date, the sponsor is the one notified as it approaches.
+        <!-- fact: Agent identities are Entra ID accounts for AI agents, governed with Entra features like human identities; the agent identity platform adds an agent identity blueprint, an agent identity blueprint principal, an agent identity, and an agent user, each able to hold distinct access; sponsors, human users accountable for lifecycle and access decisions, can be assigned after creation; lifecycle workflows include tasks notifying cosponsors and managers of sponsors of impending sponsorship changes; agent identities can be assigned resource access directly through access packages, and when an assignment has an expiry date and a sponsor is set, the sponsor is notified as expiry approaches; governance for agent identities requires Microsoft 365 E7, which includes Agent 365 and Microsoft Entra Suite, or an Agent 365 license with at least Entra P1 or Microsoft 365 E3 | source: Microsoft Learn, "Governing Agent identities and access", updated 2026-11-16, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Object</th><th>What it is</th></tr></thead>
+          <tbody>
+            <tr><td>Agent identity blueprint</td><td>The template an agent creates its identities from</td></tr>
+            <tr><td>Blueprint principal</td><td>The blueprint's presence in a tenant, including another tenant whose resources a multitenant agent needs</td></tr>
+            <tr><td>Agent identity</td><td>The agent's own account, the subject when it acts for itself</td></tr>
+            <tr><td>Agent user</td><td>An optional user account for an agent identity, for systems that only understand users</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Give every agent a sponsor before it gets access.</strong> The sponsor is who gets
+          the expiry notice, who is asked to renew, and who is notified when ownership moves, so an agent without one
+          has access nobody is asked about. Access packages work for agents as they do for people, and the mechanism is
+          <span class="xref">Entra ID Governance — Entitlement Management &amp; Access Reviews</span>. Governance for
+          agents is licensed through Microsoft 365 E7, or Agent 365 with Entra P1 or Microsoft 365 E3.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Conditional Access for agents</div>
+      <div class="concept-title">Target the Identity That Asks for the Token: the User, the Agent, or the Agent's User</div>
+      <div class="concept-desc">
+        Conditional Access for agents is the same policy engine applied when an agent asks Entra for an access token.
+        An agent gets access in one of three ways, and each puts a different identity in the token's subject. Acting for
+        a signed-in user, the token represents the user and names the agent calling. Acting as itself, the agent
+        identity is the subject. Acting through its agent user, that account is. Policy is evaluated when a token is
+        issued or refreshed, against both the subject and the resource being reached, and the licensing is the same as
+        for agent governance.
+        <!-- fact: Conditional Access for agents extends the Conditional Access engine to agents' access to resources protected by Entra ID; an agent can act on behalf of a signed-in user, use its own agent identity, or use its own agent user account; in delegated access the token represents the user while identifying the calling agent, in application-only access the agent identity is the subject, and in agent-user access the agent's user account is the subject; policies are evaluated when Entra ID issues or refreshes an access token, against the subject and the audience; it requires Microsoft 365 E7 or an Agent 365 license with at least Entra P1 or Microsoft 365 E3 | source: Microsoft Learn, "Conditional Access for Agents in Microsoft Entra", updated 2026-07-31, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>The agent acts</th><th>Token subject</th><th>The policy to look at</th></tr></thead>
+          <tbody>
+            <tr><td>For a signed-in user</td><td>The user, with the agent named as the caller</td><td>The user's policies, as for any delegated app</td></tr>
+            <tr><td>As itself</td><td>The agent identity</td><td>Policies that target agent identities</td></tr>
+            <tr><td>Through its agent user</td><td>The agent's user account</td><td>Policies that target agent users</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A policy aimed at the wrong subject protects nothing.</strong> Find out how each
+          agent authenticates before writing its policy, because an agent that acts for users is governed by the users'
+          policies, and one that acts as itself by policies that name agent identities. The rest of the engine is
+          unchanged: <span class="xref">Entra ID Protection — Conditional Access That Reacts to Risk, Not Just Rules</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

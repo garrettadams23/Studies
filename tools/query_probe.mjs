@@ -401,6 +401,12 @@ const READERS = [
     ["block copilot self-service purchase", "", "m365/microsoft-365-copilot-settings-where-each-control-lives-web-"],
     ["who can use copilot cowork", "", "m365/microsoft-365-copilot-settings-where-each-control-lives-web-"],
     ["copilot connectors synced vs federated", "", "m365/microsoft-365-copilot-settings-where-each-control-lives-web-"],
+    // ── fifty-seventh wave: AB-650's agents, read on Microsoft's pages, added before the topic ──
+    ["agent registry", "", "m365/agents-in-microsoft-365-the-agent-registry-entra-agent-id-wh"],
+    ["ownerless agents", "", "m365/agents-in-microsoft-365-the-agent-registry-entra-agent-id-wh"],
+    ["entra agent id sponsor", "", "m365/agents-in-microsoft-365-the-agent-registry-entra-agent-id-wh"],
+    ["conditional access for agents", "", "m365/agents-in-microsoft-365-the-agent-registry-entra-agent-id-wh"],
+    ["agent 365 license", "", "m365/agents-in-microsoft-365-the-agent-registry-entra-agent-id-wh"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],
