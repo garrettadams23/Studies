@@ -2068,7 +2068,7 @@ Get-DhcpServerInDC                                       <span class="com"># aut
 </div>
 
 <!-- ── TOPIC: FILE SERVICES ───────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">📁</span>
     <span class="topic-name">File Services — Share vs NTFS <span class="acro-exp">(New Technology File System)</span> Permissions, DFS <span class="acro-exp">(Distributed File System)</span> &amp; Quotas</span>
@@ -2166,6 +2166,38 @@ New-FsrmQuota <span class="kw">-Path</span> "E:\Shares\Finance" <span class="kw"
         path, per the DFS card above,
         removes the commonest reason the stored intention was pointing at the wrong place to
         begin with.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Azure File Sync</div>
+      <div class="concept-title">Azure File Sync Keeps the File Server, Moves the Files to Azure, and Leaves the Cold Ones as Placeholders</div>
+      <div class="concept-desc">
+        Azure Files offers file shares in Azure over SMB <span class="acro-exp">(Server Message Block)</span> and NFS <span class="acro-exp">(Network File System)</span>, which clients on Windows, Linux and macOS can mount
+        directly, with access controlled by on-premises Active Directory identities. Azure File Sync keeps the Windows
+        file server in the picture instead: each registered server syncs a folder with one Azure file share, any number
+        of servers can do so, and a change on one reaches the others through the share. With cloud tiering on, a server
+        keeps only the files people use and leaves the rest as placeholders that recall on first open. A server that
+        fails is replaced by installing the agent on a new one and letting the namespace download from Azure.
+        <!-- fact: Azure Files provides fully managed file shares accessible over SMB and NFS, mountable from Windows, Linux and macOS without extra software, with identity-based authentication using on-premises Active Directory, ZRS and GRS redundancy, and a REST API | source: Microsoft Learn, "What is Azure Files?", updated 2026-08-17, fetched and read | checked: 2026-11 -->
+        <!-- fact: Azure File Sync syncs each registered Windows Server with a central Azure file share; deployment is a Storage Sync Service, the agent on each server, server registration, and a sync group linking an Azure file share (cloud endpoint) with a server folder (server endpoint); any number of server caches can sync through the share; disaster recovery is a new server with the agent, downloading the namespace; cloud backup uses Azure Backup snapshots | source: Microsoft Learn, "What is Azure File Sync?", updated 2026-08-17, fetched and read | checked: 2026-11 -->
+        <!-- fact: Cloud tiering keeps frequently accessed files locally and splits cool files into a local namespace and file content stored in the Azure file share, recalled when opened; the volume free space policy tiers cool files to keep a percentage of the volume free, applied per volume, and the date policy tiers files not accessed for a set number of days | source: Microsoft Learn, "Understand Azure File Sync Cloud Tiering", updated 2026-04-09, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Piece</th><th>What it is</th></tr></thead>
+          <tbody>
+            <tr><td>Storage Sync Service</td><td>The Azure resource the servers register with</td></tr>
+            <tr><td>Sync group</td><td>One Azure file share, the cloud endpoint, linked to folders on servers, the server endpoints</td></tr>
+            <tr><td>Volume free space policy</td><td>Tier cool files whenever the volume falls below a set share of free space</td></tr>
+            <tr><td>Date policy</td><td>Tier files nobody has read or written for a set number of days</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Tiering frees disk by leaving placeholders, so anything that reads every file
+          recalls them all.</strong> A full antivirus scan or a backup agent that opens each file can pull a whole share
+          back from Azure, which is why backup moves to Azure Backup's snapshots of the share. The DFS namespace above
+          still decides which server a user reaches; File Sync decides what that server holds.
+        </div>
       </div>
     </div>
   </div>

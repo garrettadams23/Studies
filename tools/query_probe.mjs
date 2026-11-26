@@ -429,6 +429,10 @@ const READERS = [
     ["denied rodc password replication group", "", "infra/read-only-domain-controllers-domain-controllers-in-azure-the"],
     ["domain controller in azure", "", "infra/read-only-domain-controllers-domain-controllers-in-azure-the"],
     ["rodc administrator role separation", "", "infra/read-only-domain-controllers-domain-controllers-in-azure-the"],
+    // ── sixty-third wave: AZ-802's Azure Files and Azure File Sync, as a card, added before it ──
+    ["azure file sync cloud tiering", "", "infra/file-services-share-vs-ntfs-permissions-dfs-quotas"],
+    ["sync group cloud endpoint server endpoint", "", "infra/file-services-share-vs-ntfs-permissions-dfs-quotas"],
+    ["replace a file server with azure files", "", "infra/file-services-share-vs-ntfs-permissions-dfs-quotas"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],
