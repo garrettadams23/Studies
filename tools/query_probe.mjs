@@ -458,6 +458,11 @@ const READERS = [
     ["jit vm access", "", "cloud/azure-networking-vnet-nsg-the-load-balancer-family"],
     ["azure bastion sku", "", "cloud/azure-networking-vnet-nsg-the-load-balancer-family"],
     ["azurebastionsubnet", "", "cloud/azure-networking-vnet-nsg-the-load-balancer-family"],
+    // ── sixty-ninth wave: the Hyper-V items the sixty-fourth left, as a card, added before it ──
+    ["enhanced session mode", "", "infra/hyper-v-vsphere-the-open-source-stack-the-vocabulary-that-tr"],
+    ["discrete device assignment", "", "infra/hyper-v-vsphere-the-open-source-stack-the-vocabulary-that-tr"],
+    ["gpu partitioning hyper-v", "", "infra/hyper-v-vsphere-the-open-source-stack-the-vocabulary-that-tr"],
+    ["switch embedded teaming", "", "infra/hyper-v-vsphere-the-open-source-stack-the-vocabulary-that-tr"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],

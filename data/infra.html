@@ -2691,6 +2691,44 @@ Get-ADObject <span class="kw">-Filter</span> <span class="str">'objectClass -eq 
         </div>
       </div>
     </div>
+    <div class="concept-card">
+      <div class="concept-label">The host's hardware, in a VM</div>
+      <div class="concept-title">Lending a VM the Host's Hardware: a Session's Devices, a Whole GPU <span class="acro-exp">(Graphics Processing Unit)</span>, a Slice of One, and a Team of NICs <span class="acro-exp">(Network Interface Card)</span></div>
+      <div class="concept-desc">
+        Enhanced session mode lets VMConnect pass the local machine's resources into a VM, drives, the clipboard,
+        printers, audio, smart cards and USB <span class="acro-exp">(Universal Serial Bus)</span> devices, in a window that resizes, with no network connection to the VM
+        needed. The host's enhanced session mode policy and setting must both be on, and the VM must run Windows 10 or
+        Windows Server 2016 or later with Remote Desktop Services enabled. Discrete Device Assignment passes a whole PCIe <span class="acro-exp">(Peripheral Component Interconnect Express)</span>
+        device into a VM, and Microsoft supports two kinds, graphics adapters and NVMe <span class="acro-exp">(Non-Volatile Memory Express)</span> storage. While one is attached the
+        VM loses save and restore, live migration, dynamic memory and a place in a high-availability cluster, and the
+        guest gets everything the device can do, firmware updates included, so it is for trusted tenants. GPU
+        partitioning, on Windows Server 2025, gives each VM a dedicated fraction of a supported GPU through SR-IOV, and
+        the VMs keep live migration where the processors support it. Switch Embedded Teaming builds the team into the
+        Hyper-V virtual switch: up to eight identical adapters, made by listing more than one adapter to
+        <code>New-VMSwitch</code>. On Azure Local it is the only teaming supported, and the older LBFO teaming is not.
+        <!-- fact: VMConnect lets a VM use the local computer's resources, such as display configuration, audio, printers, clipboards, smart cards, USB devices, drives and supported plug and play devices, and enhanced session mode lets the VMConnect window resize; the Hyper-V host must have the Enhanced session mode policy and settings turned on, the computer running VMConnect must run at least Windows 10 or Windows Server 2016, and the VM must have Remote Desktop Services enabled and run at least Windows 10 or Windows Server 2016; one use is troubleshooting a VM without a network connection to it | source: Microsoft Learn, "Use local resources on Hyper-V virtual machine with VMConnect", updated 2025-02-18, fetched and read | checked: 2026-11 -->
+        <!-- fact: Discrete Device Assignment makes physical PCIe hardware directly accessible from within a VM; Microsoft supports two device classes, graphics adapters and NVMe storage devices, for Generation 1 or 2 VMs with Windows 10 or Windows Server 2016 or later guests; devices that use legacy INTx interrupts aren't supported; while a device is attached, VM save and restore, live migration, dynamic memory and adding the VM to an HA cluster aren't available; the whole device passes to the guest with all its capabilities, such as firmware updating, so it should only be used where the tenants of the VMs are trusted | source: Microsoft Learn, "Deploy devices by using Discrete Device Assignment", updated 2025-02-19, fetched and read | checked: 2026-11 -->
+        <!-- fact: GPU partitioning, applying to Windows Server 2025, shares a physical GPU among VMs, each getting a dedicated fraction through the SR-IOV interface with a hardware-backed security boundary; from Windows Server 2025 live migration is supported with GPU partitioning on processors with IOMMU DMA bit tracking, such as AMD EPYC 7003 and 4th Gen Intel Xeon SP, and AMD EPYC 7002 supports partitioning without live migration; supported GPUs include NVIDIA A2, A10, A16, A40, L2, L4, L40, L40S and RTX Pro 6000 Blackwell Server Edition and AMD Radeon PRO V710; the configuration must be homogeneous, the same make, model and partition count; a GPU is assigned as DDA or partitioned, not both; clustering for unplanned downtime needs Windows Server 2025 Datacenter | source: Microsoft Learn, "Partition and share GPUs with virtual machines on Hyper-V", updated 2025-07-18, fetched and read | checked: 2026-11 -->
+        <!-- fact: Switch Embedded Teaming is software teaming included in Windows Server since Windows Server 2016, with up to eight adapters in a team, which must be symmetric, the same make, model, speed and configuration; New-VMSwitch enables embedded teaming by default when multiple adapters are listed; on Azure Local, SET is the only supported teaming technology and other methods such as LBFO aren't supported; Microsoft's Windows Server page on creating a Hyper-V virtual switch links its Switch Embedded Teaming reference to this page | source: Microsoft Learn, "Host network requirements for Azure Local", updated 2026-01-15, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>The VM needs</th><th>Use</th><th>What it costs</th></tr></thead>
+          <tbody>
+            <tr><td>The local machine's drives, clipboard or USB devices, with no network to the VM</td><td>Enhanced session mode, through VMConnect</td><td>Windows 10 or Windows Server 2016 or later in the VM, with Remote Desktop Services on</td></tr>
+            <tr><td>A whole GPU or NVMe device</td><td>Discrete Device Assignment</td><td>No live migration, save and restore, dynamic memory or HA cluster while it is attached, and a guest you trust</td></tr>
+            <tr><td>A share of a GPU</td><td>GPU partitioning, on Windows Server 2025</td><td>A supported GPU, with the same make, model and partition count on every host</td></tr>
+            <tr><td>Teamed adapters under the virtual switch</td><td>Switch Embedded Teaming</td><td>Up to eight identical adapters</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A device passed through pins the VM to its host.</strong> Discrete Device Assignment
+          gives up live migration and the cluster, which is the price of the whole device; when the VM has to move for
+          patching, a GPU partition on Windows Server 2025 keeps that ability, on processors that support it. A GPU is
+          one or the other, never both.
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
