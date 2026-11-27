@@ -494,6 +494,12 @@ const READERS = [
     ["teams rooms conditional access", "", "endpoint/shared-kiosk-frontline-devices"],
     ["hololens 2 intune", "", "endpoint/shared-kiosk-frontline-devices"],
     ["zebra lifeguard ota firmware", "", "endpoint/shared-kiosk-frontline-devices"],
+    // ── eightieth wave: SC-500's Defender for Cloud plans, added before the topic ──
+    ["foundational cspm vs defender cspm", "", "cloud/microsoft-defender-for-cloud-foundational-vs-defender-cspm-t"],
+    ["attack path analysis defender", "", "cloud/microsoft-defender-for-cloud-foundational-vs-defender-cspm-t"],
+    ["defender for storage malware scanning", "", "cloud/microsoft-defender-for-cloud-foundational-vs-defender-cspm-t"],
+    ["defender for ai services", "", "cloud/microsoft-defender-for-cloud-foundational-vs-defender-cspm-t"],
+    ["regulatory compliance dashboard", "", "cloud/microsoft-defender-for-cloud-foundational-vs-defender-cspm-t"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],

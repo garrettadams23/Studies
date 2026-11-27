@@ -5496,6 +5496,111 @@ az account set <span class="var">--subscription</span> <span class="str">"Prod"<
             </div>
           </div>
 
+          <!-- ── TOPIC: MICROSOFT DEFENDER FOR CLOUD ───────────────────────────── -->
+          <div class="topic" data-reviewed="2026-11">
+            <div class="topic-header">
+              <span class="topic-icon">🛡️</span>
+              <span class="topic-name">Microsoft Defender for Cloud — Foundational vs Defender CSPM <span class="acro-exp">(Cloud Security Posture Management)</span>, the Workload Plans &amp; Regulatory Compliance</span>
+              <span class="topic-badge">Azure • Security</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The two CSPM plans</div>
+                <div class="concept-title">The Free Plan Scores Your Posture; the Paid One Finds the Attack Paths</div>
+                <div class="concept-desc">
+                  Defender for Cloud is Microsoft's cloud-native application protection platform, in three parts: posture
+                  management (CSPM), DevOps security, and workload protection (CWPP), and Microsoft is moving it into the
+                  <span class="volatile" data-checked="2026-11">Defender portal</span>, where some of its features already
+                  live. Its posture management comes in two plans. Foundational CSPM is free: recommendations from the Microsoft cloud security benchmark, with a secure
+                  score built on some of them, where higher means less identified risk. Defender CSPM is paid and adds attack
+                  path analysis, the cloud security graph, agentless vulnerability scanning, data-aware and AI <span class="acro-exp">(Artificial Intelligence)</span> security
+                  posture, and risk prioritization. Both reach past Azure, to AWS <span class="acro-exp">(Amazon Web Services)</span> accounts and GCP <span class="acro-exp">(Google Cloud Platform)</span> projects through
+                  connectors, to on-premises machines through Azure Arc, and to GitHub, Azure DevOps and GitLab. The paid
+                  plan bills only for listed resource types, and two of its components began billing in 2026: serverless
+                  protection for Function Apps and Web Apps on 1 April, and serverless containers on 1 July.
+                  <!-- fact: Microsoft Defender for Cloud is a CNAPP with three core components, CSPM, DevSecOps and CWPP; it is expanding into the Defender portal, with some features already there; its plans include Defender CSPM or Foundational CSPM, Defender for Servers, Containers, Resource Manager, Storage, App Service, Databases, Key Vault and APIs, and it adds AI security and AI threat protection | source: Microsoft Learn, "What is Microsoft Defender for Cloud?", updated 2026-08-10, fetched and read | checked: 2026-11 -->
+                  <!-- fact: Defender for Cloud offers two CSPM plans: Foundational CSPM, free, whose Microsoft Cloud Security Benchmark standard provides recommendations and a secure score where a higher score means lower identified risk; and Defender CSPM, paid, adding AI security posture, attack path analysis and risk prioritization, with the cloud security graph and agentless scanning; it covers Azure, AWS and GCP, hybrid resources through Azure Arc, and GitHub, Azure DevOps and GitLab; billing applies to listed resource types, with Serverless protection for Function Apps and Web Apps billed from April 1, 2026 and Serverless containers for Container Apps and Container Instances from July 1, 2026 | source: Microsoft Learn, "What is Cloud Security Posture Management (CSPM)", updated 2026-09-11, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th></th><th>Foundational CSPM</th><th>Defender CSPM</th></tr></thead>
+                    <tbody>
+                      <tr><td>Price</td><td>Free</td><td>Billed per covered resource</td></tr>
+                      <tr><td>What it gives</td><td>Recommendations from the Microsoft cloud security benchmark, and the secure score</td><td>All of that, plus attack path analysis, the cloud security graph, agentless vulnerability scanning, and data and AI posture</td></tr>
+                      <tr><td>The question it answers</td><td>What is misconfigured?</td><td>Which misconfiguration leads somewhere that matters?</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Fix by attack path, not by score.</strong> A secure score counts recommendations;
+                    an attack path shows which of them chain from an exposed resource to a sensitive one, which is the order
+                    a small team can afford to fix them in.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">The workload plans</div>
+                <div class="concept-title">One Workload Plan per Resource Type, and What Each One Watches</div>
+                <div class="concept-desc">
+                  Threat detection is the workload plans, each enabled for its own resource type. Defender for Storage scans
+                  blobs for malware on upload and on demand, watches for unusual access, sensitive data exfiltration and
+                  SAS <span class="acro-exp">(Shared Access Signature)</span> token misuse across Blob Storage, Azure Files and Data Lake Storage, and can trigger automated
+                  remediation through Event Grid. Defender for Key Vault alerts on unusual attempts to reach or exploit a
+                  vault, on the vault's own Security page as well as in Defender for Cloud. Defender for AI Services uses
+                  Azure AI Content Safety's Prompt Shields and Microsoft's threat intelligence to alert on jailbreaks, data
+                  leakage, data poisoning and credential theft in generative AI applications, sends those alerts to Defender
+                  XDR <span class="acro-exp">(Extended Detection and Response)</span>, scans text tokens only, and comes with a 30-day free trial capped at 75 billion tokens.
+                  <!-- fact: Defender for Storage scans objects on upload and on demand for malware, detects sensitive data exfiltration, data corruption and unusual activity, analyzing data plane and control plane telemetry from Azure Blob Storage, Azure Files and Azure Data Lake Storage, and can trigger automated remediation through Azure Event Grid with Functions or Logic Apps; the overview lists SAS token misuse among its protections | source: Microsoft Learn, "What is Microsoft Defender for Storage", updated 2026-06-28, fetched and read | checked: 2026-11 -->
+                  <!-- fact: Defender for Key Vault detects unusual and potentially harmful attempts to access or exploit Key Vault accounts, with alerts in Key Vault's Security page, the workload protections and Defender for Cloud's security alerts | source: Microsoft Learn, "Overview of Microsoft Defender for Key Vault", updated 2025-08-20, fetched and read | checked: 2026-11 -->
+                  <!-- fact: Defender for Cloud's AI threat protection works with Azure AI Content Safety Prompt Shields and Microsoft threat intelligence to alert on threats such as data leakage, data poisoning, jailbreak and credential theft, integrates with Defender XDR, supports text tokens only, and Defender for AI Services includes a 30-day free trial capped at 75 billion tokens scanned | source: Microsoft Learn, "AI threat protection in Microsoft Defender for Cloud", updated 2026-05-19, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Plan</th><th>What it watches</th></tr></thead>
+                    <tbody>
+                      <tr><td>Defender for Servers</td><td>Windows and Linux machines in Azure, AWS, GCP and on premises</td></tr>
+                      <tr><td>Defender for Containers</td><td>Kubernetes clusters and nodes: hardening, vulnerability assessment and runtime protection</td></tr>
+                      <tr><td>Defender for Storage</td><td>Malware in uploads, unusual access, sensitive data exfiltration, SAS token misuse</td></tr>
+                      <tr><td>Defender for Databases</td><td>Azure SQL <span class="acro-exp">(Structured Query Language)</span>, open-source relational databases and Cosmos DB</td></tr>
+                      <tr><td>Defender for Key Vault</td><td>Unusual attempts to reach or exploit a vault</td></tr>
+                      <tr><td>Defender for App Service, Resource Manager and APIs <span class="acro-exp">(Application Programming Interface)</span></td><td>Attacks on web apps, unusual management operations, and API traffic</td></tr>
+                      <tr><td>Defender for AI Services</td><td>Jailbreaks, data leakage and poisoning in generative AI applications</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">List the plans you left off, beside the ones you turned on.</strong> Each plan
+                    is its own decision and its own bill, so coverage is a table, not a switch, and the gaps in it should be
+                    written down rather than discovered.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Regulatory compliance</div>
+                <div class="concept-title">A Compliance Standard Is a Set of Controls, and Each Control Is a Group of Recommendations</div>
+                <div class="concept-desc">
+                  Defender for Cloud represents industry and regulatory standards and benchmarks as security standards on its
+                  regulatory compliance dashboard. Each standard is a set of compliance controls, each control a group of
+                  related security recommendations, assessed continuously against the resources in scope: compliant,
+                  not compliant, or unavailable when the control cannot be assessed automatically, and shown grayed out. A
+                  standard assigned to a subscription with no relevant resources does not appear at all. The dashboard also
+                  downloads audit reports, builds a compliance-over-time workbook, and lists the compliance offerings for
+                  Microsoft's own audits.
+                  <!-- fact: Defender for Cloud represents industry standards, regulatory standards and benchmarks as security standards in the Regulatory compliance dashboard; each standard consists of compliance controls, logical groups of related security recommendations, continually assessed where they can be automatically assessed; controls that can't be assessed automatically show grayed out, and a standard isn't shown if the subscription has no relevant resources even if assigned; the dashboard offers summaries, custom compliance report queries, a compliance over time workbook, audit report downloads and compliance offerings for Microsoft and third-party audits | source: Microsoft Learn, "Regulatory compliance standards in Microsoft Defender for Cloud", updated 2024-09-09, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">A green dashboard is a claim about the controls it can test.</strong> The grayed
+                    controls are the ones an auditor will still ask about, with evidence from people and process, so the
+                    dashboard is where the audit starts rather than where it ends. The broader mapping of controls to
+                    frameworks is in <span class="xref">The Controls Universe — Types, Functions &amp; Mapping Once to Many</span>.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 
           <!-- ══════════════════════════════════════════════════════════════
                SECTION: MICROSOFT AZURE — DEPTH & TROUBLESHOOTING
