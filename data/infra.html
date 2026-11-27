@@ -515,7 +515,7 @@ Get-LapsADPassword <span class="kw">-Identity</span> SRV01 <span class="kw">-AsP
      ══════════════════════════════════════════════════════════════ -->
 
 <!-- ── TOPIC: BOUNDARIES ──────────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🧱</span>
     <span class="topic-name">AD DS <span class="acro-exp">(Active Directory Domain Services)</span> Boundaries — When to Add an OU, a Domain, or a Forest</span>
@@ -583,6 +583,38 @@ Get-LapsADPassword <span class="kw">-Identity</span> SRV01 <span class="kw">-AsP
         different policy — region, build standard, or regulatory scope. Keep it shallow. Deep
         nesting makes precedence hard to reason about and gains nothing that a well-named
         security group could not do.
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <div class="concept-label">Delegation</div>
+      <div class="concept-title">Delegate a Task to a Group on an OU: the Password Reset, Not Full Control</div>
+      <div class="concept-desc">
+        Delegating through an OU takes three placements: the people into a group, the objects into an OU, and the
+        delegated task onto that OU for that group. AD DS lets the grant be as narrow as the task: full control of every
+        object in the OU for one group, creating, deleting and managing user accounts for another, and nothing but
+        resetting passwords for a third, inherited down the OU's subtree if wanted. The default OUs and containers stay
+        with the service administrators who own them, and what is delegated goes into new OUs, so data administrators get
+        control without the defaults changing. One grant reaches further than it looks: the right to create objects in an
+        OU carries control of every attribute of each object that person creates, and of anything placed in a container
+        they create.
+        <!-- fact: OUs delegate administration of the objects in them: place the individuals in a group, the objects in an OU, and delegate administrative tasks for the OU to that group; AD DS can delegate at a detailed level, for example full control of all objects in an OU to one group, the right to create, delete and manage user accounts to another, and only the right to reset user passwords to a third, optionally inheritable by OUs in the subtree; default OUs and containers created during installation are best left to service administrators, with additional OUs created for delegated objects; granting the ability to create an object in an OU implicitly grants the ability to manipulate any attribute of any object the user creates, and of objects placed in a container the user creates | source: Microsoft Learn, "Delegating Administration by Using OU Objects", updated 2025-05-12, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>The grant on the OU</th><th>Who it suits</th></tr></thead>
+          <tbody>
+            <tr><td>Full control of every object</td><td>The group that owns the OU outright</td></tr>
+            <tr><td>Create, delete and manage user accounts</td><td>An account administration team</td></tr>
+            <tr><td>Reset user passwords, and nothing else</td><td>The service desk</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Delegate the task, not the OU.</strong> The service desk needs password resets on the
+          user OUs and nothing more, and the right to create objects is the one to grant last, because it hands over
+          every attribute of whatever gets created. The groups that receive the grants are
+          <span class="xref">Group Nesting Strategy — AGDLP, and Why Nested Groups Become a Mess</span>'s subject.
+        </div>
       </div>
     </div>
 
@@ -1913,7 +1945,7 @@ Search-ADAccount <span class="kw">-AccountInactive</span> <span class="kw">-Time
      ══════════════════════════════════════════════════════════════ -->
 
 <!-- ── TOPIC: WINDOWS DNS ─────────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🧭</span>
     <span class="topic-name">Windows DNS <span class="acro-exp">(Domain Name System)</span> Administration — Zones, Scavenging &amp; Forwarders</span>
@@ -1998,6 +2030,34 @@ Get-DnsServerResourceRecord <span class="kw">-ZoneName</span> corp.example.com <
         resolver.</strong> It must resolve the directory's records first — pointing it at
         8.8.8.8 as a "backup" produces intermittent, extremely confusing replication failures,
         because sometimes the public server answers first and knows nothing about your domain.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">DNS policies</div>
+      <div class="concept-title">DNS Policies Let One Server Answer by Who Asks, From Where, and When</div>
+      <div class="concept-desc">
+        DNS policies, from Windows Server 2016, let a DNS server choose its answer by criteria such as the client's
+        subnet, the time of day or the query itself, which is how one server does split-brain DNS, geo-location answers
+        and time-of-day redirection. They rest on three objects. A client subnet names the IPv4 <span class="acro-exp">(Internet Protocol version 4)</span> or IPv6 <span class="acro-exp">(Internet Protocol version 6)</span> ranges queries
+        come from. A zone scope is another set of records inside a zone, so one name can hold different addresses in
+        different scopes, and zone transfers carry each scope to the same scope on the secondary. A recursion scope is a
+        set of forwarders and a recursion setting. Query resolution policies decide how queries are answered and zone
+        transfer policies how transfers happen, at the server level or the zone level; the first policy whose criteria
+        match, in processing order, is the one applied, and a server-level policy can only deny or ignore.
+        <!-- fact: DNS Policy is new in Windows Server 2016, for geo-location based traffic management, time-of-day based responses and redirection, split-brain DNS on a single server, query filters, forensics redirection and application load balancing; a client subnet object is an IPv4 or IPv6 subnet queries come from; a zone can have multiple zone scopes, each with its own records, the same record in several scopes with different addresses, and zone transfers happen at the zone scope level; a recursion scope holds a list of forwarders and whether recursion is enabled; query resolution policies and zone transfer policies apply at the server or zone level; the first policy whose criteria the query matches, by processing order, is applied; actions are Allow, the default at zone level, Deny, the default at server level, and Ignore, and server-level policies can only Deny or Ignore; zone scopes carry weights, 3 and 5 meaning answers from the first scope three times in eight | source: Microsoft Learn, "DNS Policies Overview", updated 2022-06-23, fetched and read | checked: 2026-11 -->
+      </div>
+      <pre class="code-block"><span class="com"># Split by where the client is: a subnet, a scope with its own record, a policy joining them</span>
+Add-DnsServerClientSubnet <span class="kw">-Name</span> "EuropeSubnet" <span class="kw">-IPv4Subnet</span> "172.17.44.0/24"
+Add-DnsServerZoneScope <span class="kw">-ZoneName</span> "corp.example.com" <span class="kw">-Name</span> "EuropeZoneScope"
+Add-DnsServerResourceRecord <span class="kw">-ZoneName</span> "corp.example.com" <span class="kw">-A</span> <span class="kw">-Name</span> "www" <span class="kw">-IPv4Address</span> "172.17.97.97" <span class="kw">-ZoneScope</span> "EuropeZoneScope"
+Add-DnsServerQueryResolutionPolicy <span class="kw">-Name</span> "EuropePolicy" <span class="kw">-Action</span> ALLOW <span class="kw">-ClientSubnet</span> "eq,EuropeSubnet" <span class="kw">-ZoneScope</span> "EuropeZoneScope,1" <span class="kw">-ZoneName</span> "corp.example.com"</pre>
+      <div class="dw">
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Order the policies on purpose.</strong> The server applies the first policy that
+          matches and stops, so a broad policy placed early swallows the specific ones after it, and at the server level
+          the only answers are deny and ignore. Weights on zone scopes split answers between sites: scopes weighted 3 and
+          5 send three answers in eight to the first.
+        </div>
       </div>
     </div>
   </div>

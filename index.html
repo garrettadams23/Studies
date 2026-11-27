@@ -122879,8 +122879,8 @@ does. Scripts that call Graph this way are
 <span class="ctag ctag-general">Server</span>
 </div>
 <span class="domain-sub">Server foundations · AD DS · Group Policy · Domain controllers · FSMO · SYSVOL</span>
-<span class="domain-meta" aria-label="57 topics, about 3h 20m to read"
->57 topics · ~3h 20m</span>
+<span class="domain-meta" aria-label="57 topics, about 3h 25m to read"
+>57 topics · ~3h 25m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -123377,12 +123377,12 @@ configuration in force are different claims, and only the second one protects an
 WAVE V2 — ACTIVE DIRECTORY DOMAIN SERVICES
 ══════════════════════════════════════════════════════════════ -->
 <!-- ── TOPIC: BOUNDARIES ──────────────────────────────────────── -->
-<div class="topic" id="ad-ds-boundaries-when-to-add-an-ou-a-domain-or-a-forest" data-reviewed="2026-08" data-read="4" data-level="core">
+<div class="topic" id="ad-ds-boundaries-when-to-add-an-ou-a-domain-or-a-forest" data-reviewed="2026-11" data-read="5" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🧱</span>
 <span class="topic-name">AD DS <span class="acro-exp">(Active Directory Domain Services)</span> Boundaries — When to Add an OU, a Domain, or a Forest</span>
 <span class="topic-badge">AD DS • Design</span>
-<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">5 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -123444,6 +123444,37 @@ A structure that survives reorganization usually separates by object type first
 different policy — region, build standard, or regulatory scope. Keep it shallow. Deep
 nesting makes precedence hard to reason about and gains nothing that a well-named
 security group could not do.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">Delegation</div>
+<div class="concept-title">Delegate a Task to a Group on an OU: the Password Reset, Not Full Control</div>
+<div class="concept-desc">
+Delegating through an OU takes three placements: the people into a group, the objects into an OU, and the
+delegated task onto that OU for that group. AD DS lets the grant be as narrow as the task: full control of every
+object in the OU for one group, creating, deleting and managing user accounts for another, and nothing but
+resetting passwords for a third, inherited down the OU's subtree if wanted. The default OUs and containers stay
+with the service administrators who own them, and what is delegated goes into new OUs, so data administrators get
+control without the defaults changing. One grant reaches further than it looks: the right to create objects in an
+OU carries control of every attribute of each object that person creates, and of anything placed in a container
+they create.
+<!-- fact: OUs delegate administration of the objects in them: place the individuals in a group, the objects in an OU, and delegate administrative tasks for the OU to that group; AD DS can delegate at a detailed level, for example full control of all objects in an OU to one group, the right to create, delete and manage user accounts to another, and only the right to reset user passwords to a third, optionally inheritable by OUs in the subtree; default OUs and containers created during installation are best left to service administrators, with additional OUs created for delegated objects; granting the ability to create an object in an OU implicitly grants the ability to manipulate any attribute of any object the user creates, and of objects placed in a container the user creates | source: Microsoft Learn, "Delegating Administration by Using OU Objects", updated 2025-05-12, fetched and read | checked: 2026-11 -->
+</div>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>The grant on the OU</th><th>Who it suits</th></tr></thead>
+<tbody>
+<tr><td>Full control of every object</td><td>The group that owns the OU outright</td></tr>
+<tr><td>Create, delete and manage user accounts</td><td>An account administration team</td></tr>
+<tr><td>Reset user passwords, and nothing else</td><td>The service desk</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-amber">Delegate the task, not the OU.</strong> The service desk needs password resets on the
+user OUs and nothing more, and the right to create objects is the one to grant last, because it hands over
+every attribute of whatever gets created. The groups that receive the grants are
+<span class="xref" data-xref="group-nesting-strategy-agdlp-and-why-nested-groups-become-a-" role="link" tabindex="0">Group Nesting Strategy — AGDLP, and Why Nested Groups Become a Mess</span>'s subject.
+</div>
 </div>
 </div>
 <div class="concept-card">
@@ -124731,12 +124762,12 @@ directory before someone else does is ordinary defensive work.
 WAVE V5 — CORE NETWORK SERVICES (ON-PREM)
 ══════════════════════════════════════════════════════════════ -->
 <!-- ── TOPIC: WINDOWS DNS ─────────────────────────────────────── -->
-<div class="topic" id="windows-dns-administration-zones-scavenging-forwarders" data-reviewed="2026-08" data-read="4" data-level="core">
+<div class="topic" id="windows-dns-administration-zones-scavenging-forwarders" data-reviewed="2026-11" data-read="6" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🧭</span>
 <span class="topic-name">Windows DNS <span class="acro-exp">(Domain Name System)</span> Administration — Zones, Scavenging &amp; Forwarders</span>
 <span class="topic-badge">Infra • Name Resolution</span>
-<span class="topic-read" title="Rough reading time, estimated from length">4 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -124817,6 +124848,34 @@ are the fallback when no forwarder answers.
 resolver.</strong> It must resolve the directory's records first — pointing it at
 8.8.8.8 as a "backup" produces intermittent, extremely confusing replication failures,
 because sometimes the public server answers first and knows nothing about your domain.
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">DNS policies</div>
+<div class="concept-title">DNS Policies Let One Server Answer by Who Asks, From Where, and When</div>
+<div class="concept-desc">
+DNS policies, from Windows Server 2016, let a DNS server choose its answer by criteria such as the client's
+subnet, the time of day or the query itself, which is how one server does split-brain DNS, geo-location answers
+and time-of-day redirection. They rest on three objects. A client subnet names the IPv4 <span class="acro-exp">(Internet Protocol version 4)</span> or IPv6 <span class="acro-exp">(Internet Protocol version 6)</span> ranges queries
+come from. A zone scope is another set of records inside a zone, so one name can hold different addresses in
+different scopes, and zone transfers carry each scope to the same scope on the secondary. A recursion scope is a
+set of forwarders and a recursion setting. Query resolution policies decide how queries are answered and zone
+transfer policies how transfers happen, at the server level or the zone level; the first policy whose criteria
+match, in processing order, is the one applied, and a server-level policy can only deny or ignore.
+<!-- fact: DNS Policy is new in Windows Server 2016, for geo-location based traffic management, time-of-day based responses and redirection, split-brain DNS on a single server, query filters, forensics redirection and application load balancing; a client subnet object is an IPv4 or IPv6 subnet queries come from; a zone can have multiple zone scopes, each with its own records, the same record in several scopes with different addresses, and zone transfers happen at the zone scope level; a recursion scope holds a list of forwarders and whether recursion is enabled; query resolution policies and zone transfer policies apply at the server or zone level; the first policy whose criteria the query matches, by processing order, is applied; actions are Allow, the default at zone level, Deny, the default at server level, and Ignore, and server-level policies can only Deny or Ignore; zone scopes carry weights, 3 and 5 meaning answers from the first scope three times in eight | source: Microsoft Learn, "DNS Policies Overview", updated 2022-06-23, fetched and read | checked: 2026-11 -->
+</div>
+<pre class="code-block"><span class="com"># Split by where the client is: a subnet, a scope with its own record, a policy joining them</span>
+Add-DnsServerClientSubnet <span class="kw">-Name</span> "EuropeSubnet" <span class="kw">-IPv4Subnet</span> "172.17.44.0/24"
+Add-DnsServerZoneScope <span class="kw">-ZoneName</span> "corp.example.com" <span class="kw">-Name</span> "EuropeZoneScope"
+Add-DnsServerResourceRecord <span class="kw">-ZoneName</span> "corp.example.com" <span class="kw">-A</span> <span class="kw">-Name</span> "www" <span class="kw">-IPv4Address</span> "172.17.97.97" <span class="kw">-ZoneScope</span> "EuropeZoneScope"
+Add-DnsServerQueryResolutionPolicy <span class="kw">-Name</span> "EuropePolicy" <span class="kw">-Action</span> ALLOW <span class="kw">-ClientSubnet</span> "eq,EuropeSubnet" <span class="kw">-ZoneScope</span> "EuropeZoneScope,1" <span class="kw">-ZoneName</span> "corp.example.com"</pre>
+<div class="dw">
+<div class="concept-desc verdict">
+<strong class="c-amber">Order the policies on purpose.</strong> The server applies the first policy that
+matches and stops, so a broad policy placed early swallows the specific ones after it, and at the server level
+the only answers are deny and ignore. Weights on zone scopes split answers between sites: scopes weighted 3 and
+5 send three answers in eight to the first.
+</div>
 </div>
 </div>
 </div>
@@ -142673,7 +142732,7 @@ progress in localStorage — no content of its own, just an order. -->
 taken from the data-reviewed stamps at build time. Shown on the domain's
 landing card, because "is anyone still maintaining this?" is a question a
 reference site should answer without being asked. -->
-<script type="application/json" id="changelog">{"net":{"month":"2026-11","topics":["tcp-vs-udp-transport-layer","cabling-connectors-ethernet-standards","routing-protocols-how-routers-find-the-best-path"]},"sec":{"month":"2026-11","topics":["access-control-models","pki-certificate-lifecycle","cryptography-algorithm-reference"]},"threat":{"month":"2026-11","topics":["mitre-attck-framework","process-injection-hollowing-dll-side-loading-hiding-inside-a","diamond-model-of-intrusion-analysis"]},"grc":{"month":"2026-11","topics":["nist-cybersecurity-framework-20","frameworks-without-the-jargon","third-party-risk-your-security-is-only-as-strong-as-your-ven"]},"ops":{"month":"2026-11","topics":["incident-response-lifecycle-picerl","dair-sanss-dynamic-approach-to-incident-response-and-the-loo","bcp-dr-key-metrics-recovery-strategies"]},"devops":{"month":"2026-11","topics":["terraform-infrastructure-as-code-in-practice","cicd-pipeline-design-stages-gates-artifacts","software-supply-chain-security-sbom-slsa-sigstore"]},"pentest":{"month":"2026-11","topics":["owasp-top-10-2025","methodology-phases","cleanup-restoration-leaving-a-clients-network-as-you-found-i"]},"linux":{"month":"2026-11","topics":["package-management","linux-device-management-kernel-modules-udev-the-hardware-the","virtualization-on-linux-kvm-qemu-libvirt-virsh-and-what-each"]},"ai":{"month":"2026-11","topics":["ai-ethics-responsible-ai-nist-ai-rmf","adversarial-ai-ai-threats-red-team","ai-governance-frameworks"]},"script":{"month":"2026-11","topics":["choosing-the-right-data-structure","testing-strategy-why-and-how-to-test","microsoft-graph-from-powershell-the-modern-admin-api"]},"shortcut":{"month":"2026-11","topics":["windows-built-in-tools-the-run-box-names-and-the-commands-wo","microsoft-office-excelword","vs-code-editing-superpowers"]},"philosophy":{"month":"2026-11","topics":["epicureanism-pleasure-meant-the-absence-of-pain","psychology-mind-behavior-biases","confucianism-roles-ritual-and-the-exemplary-person-and-where"]},"productivity":{"month":"2026-11","topics":["sleep-where-the-studying-actually-sticks","exam-technique-the-marks-you-lose-without-knowing-less","asl-fingerspelling-the-alphabet-numbers-how-to-learn-them"]},"mind":{"month":"2026-11","topics":["communication-relationships","low-mood-a-bad-patch-or-something-to-take-to-a-doctor","imposter-syndrome-you-belong-here"]},"career":{"month":"2026-11","topics":["home-lab-practicing-it-skills-without-breaking-production","diagrams-that-explain-the-small-number-of-shapes-worth-using","mentorship-the-fastest-way-to-grow"]},"military":{"month":"2026-11","topics":["staff-functions-19","common-codes-decoded","military-communication-standards-clear-concise-correct"]},"redteam":{"month":"2026-11","topics":["mimikatz-credential-extraction","cobalt-strike-the-commercial-standard","living-off-the-land-lolbas-gtfobins"]},"blueteam":{"month":"2026-11","topics":["detection-tuning-the-pyramid-of-pain","windows-forensic-artifacts","cis-benchmarks-cis-cat-hardening-baselines"]},"cloud":{"month":"2026-11","topics":["cloud-rosetta-stone-aws-gcp-azure","amazon-cognito-user-pools-identity-pools-the-two-questions-t","google-cloud-organization-setup-organization-policies-cloud-"]},"cs":{"month":"2026-11","topics":["amortized-analysis-why-a-dynamic-array-is-o1-on-average","p-np-knowing-when-to-stop-looking-for-an-exact-answer","memory-layout-cache-locality-why-arrays-beat-linked-lists"]},"eng":{"month":"2026-11","topics":["uml-class-object-sequence-diagrams-and-the-diamond-everybody","cert-roadmaps-choosing-a-path","sdlc-models-waterfall-v-model-spiral-iterative-and-what-each"]},"data":{"month":"2026-11","topics":["mongodb-documents-the-aggregation-pipeline","the-data-interview","how-a-database-actually-works"]},"web":{"month":"2026-11","topics":["flexbox-one-dimensional-layout","the-full-stack-picture-how-it-all-connects","devtools-mastery"]},"endpoint":{"month":"2026-11","topics":["microsoft-configuration-manager-mecm","microsoft-intune-cloud-mdm-mam","windows-backup-for-organizations-settings-restore-on-a-new-p"]},"infra":{"month":"2026-11","topics":["windows-server-editions-licensing-what-you-are-actually-buyi","server-manager-rsat-windows-admin-center","ad-replication-how-changes-travel-and-triage-when-they-stop"]},"hw":{"month":"2026-11","topics":["motherboard-anatomy-chipsets-pcie-lanes-the-block-diagram","file-systems-ntfs-exfat-fat32-refs-apfs-ext4-and-what-each-c","a-failing-drive-clicking-smart-warnings-missing-disks-and-wh"]},"m365":{"month":"2026-11","topics":["m365-tenant-anatomy-the-tenant-its-domains-the-admin-centers","licensing-without-tears-e3-e5-business-group-based-assignmen","self-service-password-reset-password-protection-who-can-rese"]},"math":{"month":"2026-08","topics":["calculus-cheat-sheet-everything-on-one-page","unit-1-foundations-functions-continuity-vectors-trig","unit-2-derivatives-limits-rules-graphing-applications"]},"quotes":{"month":"2026-11","topics":["computing-quotes-the-lines-engineers-repeat-and-where-each-w","the-named-laws-conway-goodhart-hyrum-postel-brooks-hofstadte","strategy-quotes-sun-tzu-clausewitz-moltke-and-eisenhower"]}}</script>
+<script type="application/json" id="changelog">{"net":{"month":"2026-11","topics":["tcp-vs-udp-transport-layer","cabling-connectors-ethernet-standards","routing-protocols-how-routers-find-the-best-path"]},"sec":{"month":"2026-11","topics":["access-control-models","pki-certificate-lifecycle","cryptography-algorithm-reference"]},"threat":{"month":"2026-11","topics":["mitre-attck-framework","process-injection-hollowing-dll-side-loading-hiding-inside-a","diamond-model-of-intrusion-analysis"]},"grc":{"month":"2026-11","topics":["nist-cybersecurity-framework-20","frameworks-without-the-jargon","third-party-risk-your-security-is-only-as-strong-as-your-ven"]},"ops":{"month":"2026-11","topics":["incident-response-lifecycle-picerl","dair-sanss-dynamic-approach-to-incident-response-and-the-loo","bcp-dr-key-metrics-recovery-strategies"]},"devops":{"month":"2026-11","topics":["terraform-infrastructure-as-code-in-practice","cicd-pipeline-design-stages-gates-artifacts","software-supply-chain-security-sbom-slsa-sigstore"]},"pentest":{"month":"2026-11","topics":["owasp-top-10-2025","methodology-phases","cleanup-restoration-leaving-a-clients-network-as-you-found-i"]},"linux":{"month":"2026-11","topics":["package-management","linux-device-management-kernel-modules-udev-the-hardware-the","virtualization-on-linux-kvm-qemu-libvirt-virsh-and-what-each"]},"ai":{"month":"2026-11","topics":["ai-ethics-responsible-ai-nist-ai-rmf","adversarial-ai-ai-threats-red-team","ai-governance-frameworks"]},"script":{"month":"2026-11","topics":["choosing-the-right-data-structure","testing-strategy-why-and-how-to-test","microsoft-graph-from-powershell-the-modern-admin-api"]},"shortcut":{"month":"2026-11","topics":["windows-built-in-tools-the-run-box-names-and-the-commands-wo","microsoft-office-excelword","vs-code-editing-superpowers"]},"philosophy":{"month":"2026-11","topics":["epicureanism-pleasure-meant-the-absence-of-pain","psychology-mind-behavior-biases","confucianism-roles-ritual-and-the-exemplary-person-and-where"]},"productivity":{"month":"2026-11","topics":["sleep-where-the-studying-actually-sticks","exam-technique-the-marks-you-lose-without-knowing-less","asl-fingerspelling-the-alphabet-numbers-how-to-learn-them"]},"mind":{"month":"2026-11","topics":["communication-relationships","low-mood-a-bad-patch-or-something-to-take-to-a-doctor","imposter-syndrome-you-belong-here"]},"career":{"month":"2026-11","topics":["home-lab-practicing-it-skills-without-breaking-production","diagrams-that-explain-the-small-number-of-shapes-worth-using","mentorship-the-fastest-way-to-grow"]},"military":{"month":"2026-11","topics":["staff-functions-19","common-codes-decoded","military-communication-standards-clear-concise-correct"]},"redteam":{"month":"2026-11","topics":["mimikatz-credential-extraction","cobalt-strike-the-commercial-standard","living-off-the-land-lolbas-gtfobins"]},"blueteam":{"month":"2026-11","topics":["detection-tuning-the-pyramid-of-pain","windows-forensic-artifacts","cis-benchmarks-cis-cat-hardening-baselines"]},"cloud":{"month":"2026-11","topics":["cloud-rosetta-stone-aws-gcp-azure","amazon-cognito-user-pools-identity-pools-the-two-questions-t","google-cloud-organization-setup-organization-policies-cloud-"]},"cs":{"month":"2026-11","topics":["amortized-analysis-why-a-dynamic-array-is-o1-on-average","p-np-knowing-when-to-stop-looking-for-an-exact-answer","memory-layout-cache-locality-why-arrays-beat-linked-lists"]},"eng":{"month":"2026-11","topics":["uml-class-object-sequence-diagrams-and-the-diamond-everybody","cert-roadmaps-choosing-a-path","sdlc-models-waterfall-v-model-spiral-iterative-and-what-each"]},"data":{"month":"2026-11","topics":["mongodb-documents-the-aggregation-pipeline","the-data-interview","how-a-database-actually-works"]},"web":{"month":"2026-11","topics":["flexbox-one-dimensional-layout","the-full-stack-picture-how-it-all-connects","devtools-mastery"]},"endpoint":{"month":"2026-11","topics":["microsoft-configuration-manager-mecm","microsoft-intune-cloud-mdm-mam","windows-backup-for-organizations-settings-restore-on-a-new-p"]},"infra":{"month":"2026-11","topics":["windows-server-editions-licensing-what-you-are-actually-buyi","server-manager-rsat-windows-admin-center","ad-ds-boundaries-when-to-add-an-ou-a-domain-or-a-forest"]},"hw":{"month":"2026-11","topics":["motherboard-anatomy-chipsets-pcie-lanes-the-block-diagram","file-systems-ntfs-exfat-fat32-refs-apfs-ext4-and-what-each-c","a-failing-drive-clicking-smart-warnings-missing-disks-and-wh"]},"m365":{"month":"2026-11","topics":["m365-tenant-anatomy-the-tenant-its-domains-the-admin-centers","licensing-without-tears-e3-e5-business-group-based-assignmen","self-service-password-reset-password-protection-who-can-rese"]},"math":{"month":"2026-08","topics":["calculus-cheat-sheet-everything-on-one-page","unit-1-foundations-functions-continuity-vectors-trig","unit-2-derivatives-limits-rules-graphing-applications"]},"quotes":{"month":"2026-11","topics":["computing-quotes-the-lines-engineers-repeat-and-where-each-w","the-named-laws-conway-goodhart-hyrum-postel-brooks-hofstadte","strategy-quotes-sun-tzu-clausewitz-moltke-and-eisenhower"]}}</script>
 <!-- Error codes for the lookup behind the header's ERRORS button, inlined from
 data/error-codes.json. Every row was copied from a Microsoft page that was
 read, and names it; the lookup decodes 0x8007xxxx and the negative decimal

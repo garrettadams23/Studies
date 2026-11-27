@@ -477,6 +477,11 @@ const READERS = [
     ["differencing disk vhdx", "", "infra/hyper-v-vsphere-the-open-source-stack-the-vocabulary-that-tr"],
     ["integration services guest service interface", "", "infra/hyper-v-vsphere-the-open-source-stack-the-vocabulary-that-tr"],
     ["dynamic memory buffer", "", "infra/hyper-v-vsphere-the-open-source-stack-the-vocabulary-that-tr"],
+    // ── seventy-third wave: AD delegation and DNS policies, as cards, added before them ──
+    ["delegate control ou password reset", "", "infra/ad-ds-boundaries-when-to-add-an-ou-a-domain-or-a-forest"],
+    ["ad delegation service administrators", "", "infra/ad-ds-boundaries-when-to-add-an-ou-a-domain-or-a-forest"],
+    ["dns policy split-brain", "", "infra/windows-dns-administration-zones-scavenging-forwarders"],
+    ["dns zone scope client subnet", "", "infra/windows-dns-administration-zones-scavenging-forwarders"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],
