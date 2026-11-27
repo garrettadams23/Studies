@@ -468,6 +468,10 @@ const READERS = [
     ["storage qos normalized iops", "", "infra/storage-performance-iops-throughput-latency-which-one-is-you"],
     ["connection security rule", "", "endpoint/firewall-removable-media-policy-the-two-controls-auditors-as"],
     ["ipsec domain isolation", "", "endpoint/firewall-removable-media-policy-the-two-controls-auditors-as"],
+    // ── seventy-first wave: PowerShell remoting's second hop, as a card in the JEA topic, added before it ──
+    ["powershell double hop", "", "script/jea-just-enough-administration-constrained-remoting"],
+    ["credssp second hop", "", "script/jea-just-enough-administration-constrained-remoting"],
+    ["resource-based constrained delegation", "", "script/jea-just-enough-administration-constrained-remoting"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],

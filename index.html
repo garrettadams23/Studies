@@ -51130,8 +51130,8 @@ separated by design rather than by filtering.
 <span class="ctag ctag-secx">SecX</span>
 </div>
 <span class="domain-sub">Regex · PowerShell · Bash · HTML · CSS · JavaScript · JSON · SQL</span>
-<span class="domain-meta" aria-label="149 topics, about 5h 00m to read"
->149 topics · ~5h 00m</span>
+<span class="domain-meta" aria-label="149 topics, about 5h 05m to read"
+>149 topics · ~5h 05m</span>
 <span class="chevron">▾</span>
 </div>
 <div class="domain-body"></div>
@@ -62942,12 +62942,12 @@ is a very different event when the next line is a bulk delete — see
 </div>
 </div>
 </div>
-<div class="topic" id="jea-just-enough-administration-constrained-remoting" data-reviewed="2026-08" data-read="3" data-level="core">
+<div class="topic" id="jea-just-enough-administration-constrained-remoting" data-reviewed="2026-11" data-read="6" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🛂</span>
 <span class="topic-name">JEA — Just Enough Administration &amp; Constrained Remoting</span>
 <span class="topic-badge">Automation • Security</span>
-<span class="topic-read" title="Rough reading time, estimated from length">3 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">6 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -62992,6 +62992,49 @@ task-specific access. It pairs naturally with removing local admin rights on end
 <span class="xref" data-xref="service-accounts-gmsa-and-retiring-the-shared-password" role="link" tabindex="0">Service Accounts — gMSA and Retiring the Shared Password</span>.
 Reach for it wherever "they only needed to do one thing" currently means "so we gave
 them admin."
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The second hop</div>
+<div class="concept-title">The Second Hop: Why a Command That Works on ServerB Is Denied on ServerC</div>
+<div class="concept-desc">
+Sign in to ServerA, open a PowerShell remoting session to ServerB, and run a command there that reaches
+a share on ServerC: it is denied, because the credentials that opened the session are not passed on
+from ServerB. This is the second hop, often called the double hop, and Microsoft's page lists the ways
+round it in its order of preference. CredSSP caches the user's credentials on ServerB, so a compromised
+ServerB hands them over; it is off by default at both ends and does not work for members of Protected
+Users. Resource-based Kerberos constrained delegation, from Windows Server 2012, is set on ServerC,
+naming the accounts it accepts delegated credentials from: it stores no credentials, needs no Domain
+Admin, and works across domains and forests. Classic constrained delegation is set on ServerB, needs a
+Domain Admin and stays inside one domain; unconstrained delegation is not recommended. JEA, a session
+configuration with RunAs, or passing credentials inside the <code>Invoke-Command</code> script block
+are the others. An account marked sensitive and unable to be delegated is never delegated, whichever
+method is used.
+<!-- fact: The second hop problem: from ServerA, a PowerShell Remoting session to ServerB runs a command that accesses a resource on ServerC and is denied, because the session's credentials aren't passed from ServerB to ServerC; Microsoft lists the fixes in order of preference as CredSSP, resource-based Kerberos constrained delegation, Kerberos constrained delegation, unconstrained Kerberos delegation (not recommended), JEA, PSSessionConfiguration using RunAs, and passing credentials inside an Invoke-Command script block; CredSSP caches credentials on ServerB, opening credential theft, is disabled by default on client and server, and doesn't work with the Protected Users group; resource-based constrained delegation, introduced in Windows Server 2012, is configured on ServerC with PrincipalsAllowedToDelegateToAccount, stores no credentials, doesn't need Domain Administrator access, works across domains and forests, and doesn't support the second hop for WinRM; classic constrained delegation needs Domain Administrator access, is configured on ServerB and is limited to one domain; accounts marked sensitive and cannot be delegated can't be delegated; the KDC caches denied attempts for 15 minutes, cleared on ServerB with klist purge -li 0x3e7 | source: Microsoft Learn, "Making the second hop in PowerShell Remoting", updated 2025-12-09, fetched and read | checked: 2026-11 -->
+</div>
+<pre class="code-block"><span class="com"># On the resource's side: let ServerC accept credentials delegated by ServerB</span>
+$ServerB = Get-ADComputer <span class="kw">-Identity</span> ServerB
+Set-ADComputer <span class="kw">-Identity</span> ServerC <span class="kw">-PrincipalsAllowedToDelegateToAccount</span> $ServerB
+
+<span class="com"># ServerB tried before the change? The KDC remembers the refusal for 15 minutes</span>
+Invoke-Command <span class="kw">-ComputerName</span> ServerB <span class="kw">-ScriptBlock</span> { klist purge -li 0x3e7 }</pre>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Method</th><th>Set on</th><th>The catch</th></tr></thead>
+<tbody>
+<tr><td>CredSSP</td><td>Client and ServerB</td><td>Credentials cached on ServerB; not for Protected Users</td></tr>
+<tr><td>Resource-based constrained delegation</td><td>ServerC</td><td>Windows Server 2012 or later; Microsoft notes it does not support the second hop for WinRM itself</td></tr>
+<tr><td>Constrained delegation</td><td>ServerB's AD <span class="acro-exp">(Active Directory)</span> object</td><td>A Domain Admin to set it, and one domain only</td></tr>
+<tr><td>JEA or a RunAs session configuration</td><td>Every intermediate server</td><td>Configuration on each of them</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-amber">Prefer the method that stores nothing on ServerB.</strong> CredSSP tops
+Microsoft's list for convenience, but it leaves a reusable credential on a server that may not deserve
+it, which is the very theft <span class="xref" data-xref="kerberos-in-operations-spns-delegation-clock-skew" role="link" tabindex="0">Kerberos in Operations — SPNs, Delegation &amp; Clock Skew</span>
+and the Protected Users group exist to prevent. Resource-based delegation keeps the decision with the
+server that owns the data.
+</div>
 </div>
 </div>
 </div>
@@ -127784,7 +127827,7 @@ DC never was: the restore that works is in
 Credential Guard moves the secrets the LSA <span class="acro-exp">(Local Security Authority)</span> holds, NTLM <span class="acro-exp">(NT LAN Manager)</span> hashes, Kerberos TGTs <span class="acro-exp">(Ticket Granting Ticket)</span> and stored
 domain credentials, into isolation: an environment that virtualization-based security walls off from the rest
 of the system, so malware running as an administrator still cannot read them. It can extend to the machine
-account's password, and runs in audit or enforced mode. Protected Users works from the other side, as a group in Active Directory: its members' sign-ins
+account's password, and runs in audit or enforced mode. The Protected Users group works from the other side, in Active Directory: its members' sign-ins
 leave fewer secrets behind and their accounts refuse the weak paths. A member cannot authenticate with NTLM, use
 DES <span class="acro-exp">(Data Encryption Standard)</span> or RC4 <span class="acro-exp">(Rivest Cipher 4)</span> in Kerberos pre-authentication, or be delegated, and its TGTs last four hours and are not renewed
 beyond that.
