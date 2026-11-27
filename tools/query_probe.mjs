@@ -518,6 +518,12 @@ const READERS = [
     ["virtual wan routing intent", "", "cloud/azure-networking-vnet-nsg-the-load-balancer-family"],
     ["secured virtual hub firewall manager", "", "cloud/azure-networking-vnet-nsg-the-load-balancer-family"],
     ["entra private access quick access", "", "sec/ztna-replacing-the-vpn-and-what-breaks-when-you-do"],
+    // ── eighty-fourth wave: SC-500's VM security, as cards, added before them ──
+    ["trusted launch vtpm", "", "cloud/azure-compute-storage-picking-the-right-sku"],
+    ["boot integrity monitoring", "", "cloud/azure-compute-storage-picking-the-right-sku"],
+    ["guest attestation extension", "", "cloud/azure-compute-storage-picking-the-right-sku"],
+    ["guest configuration", "", "cloud/azure-arc-governing-what-isnt-in-azure-from-inside-azure"],
+    ["apply and autocorrect", "", "cloud/azure-arc-governing-what-isnt-in-azure-from-inside-azure"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],

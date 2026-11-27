@@ -6268,7 +6268,7 @@ az role definition list --custom-role-only <span class="kw">false</span> --query
           </div>
 
           <!-- ── TOPIC: AZURE COMPUTE & STORAGE ───────────────────────────── -->
-          <div class="topic" data-reviewed="2026-08">
+          <div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">💽</span>
               <span class="topic-name">Azure Compute &amp; Storage — Picking the Right SKU <span class="acro-exp">(Stock Keeping Unit)</span></span>
@@ -6301,6 +6301,44 @@ az role definition list --custom-role-only <span class="kw">false</span> --query
                     The three PaaS <span class="acro-exp">(Platform as a Service)</span> rows in the table above each carry decisions a one-line
                     summary cannot hold; those are in
                     <span class="xref">Azure PaaS Compute — App Service, Functions &amp; Container Apps</span>.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Trusted launch</div>
+                <div class="concept-title">Trusted Launch: Secure Boot, a vTPM and Boot Integrity Monitoring, by Default on New Gen2 VMs</div>
+                <div class="concept-desc">
+                  Trusted launch is the security type that hardens a Generation 2 VM's boot, and it is the default for new
+                  Gen2 VMs and scale sets. Secure Boot, in the platform firmware, lets only boot loaders, kernels and kernel
+                  drivers signed by trusted publishers start, and a VM whose image fails that check does not boot. The
+                  vTPM, a virtual TPM <span class="acro-exp">(Trusted Platform Module)</span> 2.0 the VM itself cannot reach, keeps keys and measures the whole boot chain, which is
+                  what lets Azure attest that the VM booted cleanly. Boot integrity monitoring turns that attestation into
+                  alerts: with Secure Boot, the vTPM and the Guest Attestation extension all in place, Defender for Cloud
+                  raises a medium-severity alert when attestation fails, and it recommends each missing piece at low
+                  severity. On Windows, trusted launch also makes room for virtualization-based security, hypervisor code
+                  integrity and Credential Guard. It costs nothing extra, existing Gen1 VMs can be upgraded to it, and
+                  managed images and Linux hibernation are among the features it does not support. In a template it is the
+                  <code>securityProfile</code>: a <code>securityType</code> of <code>TrustedLaunch</code>, with
+                  <code>secureBootEnabled</code> and <code>vTpmEnabled</code>.
+                  <!-- fact: Trusted Launch improves the security of Generation 2 VMs against bootkits, rootkits and low-level malware and is the default state for newly created Azure Gen2 VMs and scale sets; existing Gen1 VMs can be upgraded to Gen2 Trusted Launch; Secure Boot, implemented in platform firmware, requires boot loader, kernel and kernel drivers signed by trusted publishers, and the VM fails to boot if the image can't be authenticated; the vTPM is TPM 2.0 compliant, runs in a secure environment outside the reach of any VM, and measures the boot chain for remote attestation; Trusted Launch enables virtualization-based security, HVCI and Credential Guard on Windows; it doesn't increase VM pricing; unsupported features include Managed Image and Linux VM hibernation; Defender for Cloud issues low-severity recommendations to enable Secure Boot, vTPM and the Guest Attestation extension, and a medium-severity alert when attestation fails; a deployment sets securityProfile with securityType TrustedLaunch and uefiSettings secureBootEnabled and vTpmEnabled, and without a securityProfile older deployments create VMs without Trusted Launch, while API version 2025-11-01 or higher enables it by default for new VMs and scale sets whose image supports it, and registering the subscription for Trusted Launch as Default does so for new Gen2 VMs created through any client tool; the portal, CLI and PowerShell create Trusted Launch VMs by default | source: Microsoft Learn, "Trusted Launch for Azure virtual machines", updated 2026-09-25, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Piece</th><th>What it does</th><th>Defender for Cloud, if it is missing</th></tr></thead>
+                    <tbody>
+                      <tr><td>Secure Boot</td><td>Only signed boot components start</td><td>A low-severity recommendation</td></tr>
+                      <tr><td>vTPM</td><td>Keeps keys and measures the boot chain</td><td>A low-severity recommendation</td></tr>
+                      <tr><td>Guest Attestation extension</td><td>Lets Defender for Cloud attest the boot remotely</td><td>A low-severity recommendation</td></tr>
+                      <tr><td>All three</td><td>Boot integrity monitoring</td><td>A medium-severity alert when attestation fails</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Check the templates, not the portal.</strong> The portal, the CLI <span class="acro-exp">(Command Line Interface)</span> and
+                    PowerShell create trusted launch VMs by default, but a template on an API version older than
+                    2025-11-01 with no <code>securityProfile</code> still deploys a VM without it, unless the subscription
+                    has registered Trusted Launch as default. The VMs that came from pipelines are where the ones without
+                    it hide.
                   </div>
                 </div>
               </div>
@@ -8744,7 +8782,7 @@ dsregcmd /status
           </div>
 
           <!-- ── TOPIC: AZURE ARC ──────────────────────────────── -->
-          <div class="topic" data-reviewed="2026-09">
+          <div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🌉</span>
               <span class="topic-name">Azure Arc — Governing What Isn't in Azure From Inside Azure</span>
@@ -8827,6 +8865,42 @@ dsregcmd /status
                   the same governance <span class="xref">Azure Hierarchy, RBAC Scopes &amp; Policy</span> defines for
                   native resources, now reaching the machines that never left. If the machine is moving anyway, skip
                   Arc and migrate.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Machine Configuration</div>
+                <div class="concept-title">Machine Configuration Audits or Enforces the OS Inside, in Azure and on Arc Alike</div>
+                <div class="concept-desc">
+                  Azure Policy governs the resource; its machine configuration feature reaches inside the operating system.
+                  It audits or sets OS settings, application settings and environment settings as code, on Azure VMs and on
+                  Arc-enabled servers alike. Each configuration is an extension resource on the machine, a guest
+                  assignment, assigned at scale by an Azure Policy definition
+                  or directly to one machine, with up to 50 on a machine. A custom configuration runs in one of three modes:
+                  Audit only reports, Apply and Monitor sets the configuration and then reports any drift, and Apply and
+                  Autocorrect sets it and puts it back whenever it drifts. Its built-in definitions are filed under Guest
+                  Configuration, and its PowerShell module is <code>GuestConfiguration</code>, which are the names to
+                  search for. It supports flexible scale sets but not uniform
+                  ones, and <span class="volatile" data-checked="2026-11">from November 2026, machines on older versions of
+                  some Linux distributions need an OS upgrade to keep using PowerShell-based configurations with new agent
+                  versions</span>.
+                  <!-- fact: Azure Policy's machine configuration feature audits or configures operating system settings as code for machines in Azure and hybrid Arc-enabled machines, used per machine or orchestrated at scale by Azure Policy; configurations are extension resources, can include operating system settings, application configuration or presence and environment settings, are distinct from policy definitions, and can be assigned by Azure Policy or manually; up to 50 guest assignments per machine; custom policies have three enforcement modes, Audit, Apply and Monitor, and Apply and Autocorrect; built-in policy definitions and initiatives are listed under Guest Configuration and the GuestConfiguration module creates policy definitions; VMSS Flex is supported and VMSS uniform isn't; starting in November 2026, machines running older versions of certain Linux distributions need an operating system upgrade to use PowerShell-based configurations with new agent versions | source: Microsoft Learn, "What is Azure Machine Configuration?", updated 2025-11-07, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Mode</th><th>Changes the machine?</th><th>After drift</th></tr></thead>
+                    <tbody>
+                      <tr><td>Audit</td><td>No</td><td>Reports it</td></tr>
+                      <tr><td>Apply and Monitor</td><td>Once</td><td>Reports it</td></tr>
+                      <tr><td>Apply and Autocorrect</td><td>Yes, and again</td><td>Corrects it</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Audit the estate first, and enforce on new machines.</strong> That is
+                    Microsoft's own example: every machine should use TLS <span class="acro-exp">(Transport Layer Security)</span> 1.2, so audit the existing ones and change them
+                    in a controlled way, and set it on new ones as they are deployed. Autocorrect on an estate nobody has
+                    audited changes servers nobody has looked at.
+                  </div>
                 </div>
               </div>
             </div>
