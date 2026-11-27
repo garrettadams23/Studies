@@ -9078,6 +9078,113 @@ dsregcmd /status
             </div>
           </div>
 
+          <!-- ── TOPIC: AZURE BACKUP & SITE RECOVERY ─────────────────────── -->
+          <div class="topic" data-reviewed="2026-11">
+            <div class="topic-header">
+              <span class="topic-icon">🛟</span>
+              <span class="topic-name">Azure Backup &amp; Site Recovery — Two Vaults, Deletion That Waits, and a Failover You Have Rehearsed</span>
+              <span class="topic-badge">Azure • BCDR</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The two vaults</div>
+                <div class="concept-title">A Recovery Services Vault and a Backup Vault, and Which Workload Goes Where</div>
+                <div class="concept-desc">
+                  Azure Backup keeps its copies in a vault, which holds both the recovery points and the backup policies
+                  that make them, and there are two kinds. A Recovery Services vault holds backups of Azure VMs <span class="acro-exp">(Virtual Machine)</span>, SQL <span class="acro-exp">(Structured Query Language)</span> Server
+                  in Azure VMs, and Windows servers on premises, through Azure Backup Server or System Center DPM among
+                  others, and it can offer Cross Region Restore: an Azure VM restored in the paired region whenever you
+                  choose, without waiting for Microsoft to declare a disaster. A Backup vault holds the newer workloads,
+                  such as Azure Blobs, Azure Disks and Azure Database for PostgreSQL, and reaches them through its own
+                  managed identity, which needs roles on each source. Either way the vaulted copy sits in storage accounts
+                  in a Microsoft-managed subscription and tenant, reached only through Azure Backup's own operations, such
+                  as restore, so nobody with access to production can reach it by browsing storage. A backup policy sets
+                  the schedule, frequency and retention. And Microsoft's overview draws the line plainly: Azure Backup is
+                  data protection, backup and restore, while failover belongs to Site Recovery.
+                  <!-- fact: Azure Backup is a centralized, policy-based service protecting workloads in Azure and on premises: Azure VMs and disks, SQL Server, SAP HANA, PostgreSQL, MySQL and Cosmos DB, Azure Files, Blobs and Data Lake Storage, AKS, and on-premises files, folders, system state, Hyper-V and VMware through the MARS agent and MABS; a backup policy defines the schedule, frequency and retention; a Recovery Services vault or Backup vault stores backup data and recovery points and acts as a security boundary; Azure Backup focuses on data protection, and Azure Site Recovery handles disaster recovery and failover orchestration | source: Microsoft Learn, "What is the Azure Backup service?", updated 2026-09-16, fetched and read | checked: 2026-11 -->
+                  <!-- fact: A Recovery Services vault holds backup data for Azure services such as IaaS VMs and SQL Server in Azure VMs, supports System Center DPM, Windows Server and Azure Backup Server, and contains the backup policies associated with protected VMs; Cross Region Restore lets Azure VMs be restored in the paired secondary region at any time, without waiting for Azure to declare a disaster; soft delete retains deleted backup data for 14 additional days at no cost, and enhanced soft delete makes the retention customizable and soft delete always-on; vaulted backup data is stored in a Microsoft-managed subscription and tenant | source: Microsoft Learn, "Recovery Services vaults overview", updated 2026-10-09, fetched and read | checked: 2026-11 -->
+                  <!-- fact: A Backup vault holds backup data for newer workloads such as Azure Blob and Azure Database for PostgreSQL servers; its RBAC is enforced through the managed identities associated with the Backup vault, with roles on resources such as Azure Disks or PostgreSQL servers, and the identity creating a backup instance needs read permission on the source resources | source: Microsoft Learn, "Backup vaults overview", updated 2026-10-09, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Vault</th><th>Holds</th><th>Worth knowing</th></tr></thead>
+                    <tbody>
+                      <tr><td>Recovery Services vault</td><td>Azure VMs, SQL Server in Azure VMs, on-premises Windows servers</td><td>Cross Region Restore into the paired region, on your schedule</td></tr>
+                      <tr><td>Backup vault</td><td>Blobs, disks, PostgreSQL and the newer workloads</td><td>Its managed identity needs a role on every source it protects</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Backup and disaster recovery are two services, so ask which question is
+                    being answered.</strong> Getting yesterday's file back is Azure Backup; keeping the application running
+                    when the region is gone is Site Recovery, below.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Protecting the copy</div>
+                <div class="concept-title">Soft Delete, Immutability and a Second Person: Backups Built to Survive a Bad Admin</div>
+                <div class="concept-desc">
+                  Whoever goes after backups usually arrives with an administrator's credentials, so Azure Backup's
+                  protections are designed to survive one. Soft delete keeps deleted backup data for 14 more days, at no
+                  cost, and enhanced soft delete makes that period configurable and can make soft delete always on, so it
+                  cannot be switched off first. Immutability blocks any operation that would delete a recovery point before
+                  its retention ends, and locking immutability makes that irreversible. Multi-user authorization puts
+                  critical vault operations behind a Resource Guard that a separate person controls, so one compromised
+                  backup administrator cannot change them alone. Three built-in roles split the work: Backup Contributor
+                  manages backups but cannot delete the vault or grant access, Backup Operator runs them but cannot remove
+                  backups or manage policies, and Backup Reader only looks. Data is encrypted at rest with Microsoft-managed
+                  keys by default, or customer-managed keys in Key Vault where the workload supports them, and threat
+                  detection uses Defender for Servers' signals to flag recovery points that may be
+                  compromised.
+                  <!-- fact: Azure Backup's security: vaulted data in a Microsoft-managed subscription and tenant, accessed through Azure Backup management operations such as restore rather than the underlying storage accounts; built-in roles Backup Contributor (create and manage backups, except deleting the Recovery Services vault or granting access), Backup Operator (backup operations except removing backups and managing backup policies) and Backup Reader (view); soft delete retains deleted backup data for a recovery window, immutability blocks operations that could delete recovery points before their retention ends, and locking immutability makes the protection irreversible; multi-user authorization uses Resource Guard so a separate authorized user approves protected operations on Recovery Services vaults and Backup vaults; encryption at rest with Microsoft-managed keys by default and customer-managed keys in Azure Key Vault for supported Recovery Services vault workloads, and HTTPS with TLS 1.2 or later in transit; threat detection uses security signals from Microsoft Defender for Servers to identify potentially compromised recovery points | source: Microsoft Learn, "Overview of security and cyber recovery in Azure Backup", updated 2026-11-16, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Switch the protections on before they are needed, and lock immutability only
+                    once retention is right.</strong> A lock that cannot be undone also cannot be corrected, so it is the last
+                    step, after the policy has been checked. The wider argument is in
+                    <span class="xref">Ransomware-Resilient Backup — Immutability, Isolation &amp; Assuming the Domain Is Lost</span>.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Site Recovery</div>
+                <div class="concept-title">Site Recovery Replicates and Fails Over, and a Drill Leaves Replication Running</div>
+                <div class="concept-desc">
+                  Azure Site Recovery is the other half of business continuity. It replicates Azure VMs between regions,
+                  and on-premises Hyper-V and VMware VMs and physical servers to Azure, fails them over when the primary
+                  site is lost, and fails back when it returns. Replication is continuous for Azure and VMware VMs and as
+                  often as every 30 seconds for Hyper-V, and recovery points can be application-consistent, capturing data
+                  in memory and transactions in process. A planned failover loses no data; an unplanned one loses whatever
+                  replication had not yet copied. Recovery plans group machines, order their failover and add scripts and
+                  manual steps, so a multi-tier application comes up in the right order. And disaster recovery drills run
+                  without affecting the replication they test.
+                  <!-- fact: Azure Site Recovery replicates workloads on physical and virtual machines from a primary site to a secondary location, fails over during an outage and fails back afterwards; it manages replication for Azure VMs between Azure regions, from Azure Extended Zones to the region (preview), and for on-premises VMs, Azure Stack VMs and physical servers; it provides continuous replication for Azure VMs and VMware VMs and replication frequency as low as 30 seconds for Hyper-V; application-consistent snapshots capture disk data, data in memory and transactions in process; disaster recovery drills run without affecting ongoing replication; planned failovers have zero data loss and unplanned failovers minimal data loss depending on replication frequency; recovery plans group machines and sequence the failover of multi-tier applications, with optional scripts and manual actions | source: Microsoft Learn, "About Site Recovery", updated 2026-09-23, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>The need</th><th>The tool</th></tr></thead>
+                    <tbody>
+                      <tr><td>Get data back after deletion, corruption or ransomware</td><td>Azure Backup, from a vault</td></tr>
+                      <tr><td>Keep the application running when a site or region is lost</td><td>Site Recovery: replication, failover, failback</td></tr>
+                      <tr><td>Restore a VM into the paired region on your own schedule</td><td>Cross Region Restore on a Recovery Services vault</td></tr>
+                      <tr><td>Prove the failover works</td><td>A Site Recovery drill, which leaves replication running</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Put the drill on the calendar.</strong> A failover nobody has rehearsed is a
+                    plan on paper, and Site Recovery's drills leave replication running, so rehearsing costs only the time.
+                    How to make restores a capability rather than a hope is in
+                    <span class="xref">Restore Testing &amp; DR Design — Turning Backups Into a Recovery Capability</span>.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- ── TOPIC: ENTRA ID PROTECTION ──────────────────────────────── -->
           <div class="topic" data-reviewed="2026-09">
             <div class="topic-header">

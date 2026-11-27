@@ -534,6 +534,12 @@ const READERS = [
     ["intune device query", "", "endpoint/microsoft-intune-cloud-mdm-mam"],
     ["kql query on one device", "", "endpoint/microsoft-intune-cloud-mdm-mam"],
     ["check a registry value without remote control", "", "endpoint/microsoft-intune-cloud-mdm-mam"],
+    // ── eighty-eighth wave: AZ-104's backup and recovery, added before the topic ──
+    ["recovery services vault", "", "cloud/azure-backup-site-recovery-two-vaults-deletion-that-waits-an"],
+    ["cross region restore", "", "cloud/azure-backup-site-recovery-two-vaults-deletion-that-waits-an"],
+    ["azure site recovery failover", "", "cloud/azure-backup-site-recovery-two-vaults-deletion-that-waits-an"],
+    ["multi-user authorization resource guard", "", "cloud/azure-backup-site-recovery-two-vaults-deletion-that-waits-an"],
+    ["backup operator role", "", "cloud/azure-backup-site-recovery-two-vaults-deletion-that-waits-an"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],
