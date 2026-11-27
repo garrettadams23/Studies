@@ -6375,6 +6375,39 @@ az storage blob generate-sas --account-name stprod01 --container-name backups \
   --name report.csv --permissions r --expiry <span class="str">2026-01-01T00:00Z</span> --auth-mode login --as-user</pre>
                 </div>
               </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Access policies</div>
+                <div class="concept-title">A Stored Access Policy Makes a Service SAS Revocable Without Rotating the Key</div>
+                <div class="concept-desc">
+                  A shared access signature, the SAS token on the end of a URL <span class="acro-exp">(Uniform Resource Locator)</span>, carries its own start, expiry and
+                  permissions, and once issued it works until it expires. A stored access policy moves those terms to the
+                  server: it is defined on a blob container, file share, queue or table, and a service SAS that names it is
+                  bound by it, so changing the policy changes every signature tied to it, and deleting it, renaming its
+                  identifier or setting its expiry in the past revokes them all at once, without regenerating the storage
+                  account keys. Each term lives in one place, the token or the policy, never both. A resource holds at most
+                  five policies, and a new or changed policy can take up to 30 seconds to apply, with requests failing 403
+                  meanwhile. Only a service SAS can use one: an account SAS and a user delegation SAS cannot.
+                  <!-- fact: A stored access policy provides server-side control over service-level shared access signatures, grouping signatures and letting the start time, expiry time or permissions be changed or the signature revoked after issue; it is supported on blob containers, file shares, queues and tables; stored access policies aren't supported for the user delegation SAS or the account SAS; a parameter can be on the SAS token or on the policy but not both; at most five access policies on a container, table, queue or share at a time; a new or updated policy might take up to 30 seconds to take effect, with requests failing with 403 meanwhile; a policy is revoked by deleting it, renaming its signed identifier, or changing its expiry to the past, which immediately affects all associated signatures | source: Microsoft Learn, "Define a stored access policy", updated 2023-01-31, fetched and read | checked: 2026-11 -->
+                  <!-- fact: Stored access policies let permissions for a service SAS be revoked without regenerating the storage account keys, with a limit of five per container; a SAS is signed with a storage account key (Shared Key) or with a user delegation key created from Microsoft Entra credentials; disallowing Shared Key access on the storage account prevents SAS tokens signed with the account key for blob and queue workloads | source: Microsoft Learn, "Grant limited access to data with shared access signatures (SAS)", updated 2026-02-27, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>SAS kind</th><th>Signed with</th><th>A stored access policy can bind it</th></tr></thead>
+                    <tbody>
+                      <tr><td>Service SAS</td><td>The storage account key</td><td>Yes</td></tr>
+                      <tr><td>Account SAS</td><td>The storage account key</td><td>No</td></tr>
+                      <tr><td>User delegation SAS</td><td>A user delegation key, from Entra credentials</td><td>No</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Never hand out a key-signed service SAS without a policy behind it.</strong>
+                    Otherwise a token that leaks can be revoked before it expires only by regenerating the account key, and
+                    every other token signed with that key goes with it. Where blobs and queues need no key-signed tokens at
+                    all, disallowing Shared Key access on the account stops anyone from making one.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <!-- ── TOPIC: AZURE PAAS COMPUTE ───────────────────────────────── -->
@@ -6645,7 +6678,7 @@ az vm run-command invoke --name web01 -g rg-prod --command-id RunPowerShellScrip
           </div>
 
           <!-- ── TOPIC: AZURE DATABASES ──────────────────────────────────── -->
-          <div class="topic" data-reviewed="2026-09">
+          <div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🗄️</span>
               <span class="topic-name">Azure Databases — SQL <span class="acro-exp">(Structured Query Language)</span> Database, Managed Instance &amp; Cosmos DB</span>
@@ -6763,6 +6796,48 @@ az vm run-command invoke --name web01 -g rg-prod --command-id RunPowerShellScrip
                     dropped at some point that correlates with nothing in your change log. An
                     application without transient-fault handling will report that as an outage, and the
                     investigation will look for a cause that does not exist.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Auditing</div>
+                <div class="concept-title">A Server Audit Covers Every Database, and a Database Audit Beside It Audits Twice</div>
+                <div class="concept-desc">
+                  Azure SQL Database auditing writes database events to a storage account, a Log Analytics workspace or
+                  Event Hubs, and can be set at two levels. A server policy applies to every database on the server, existing
+                  and new, and a database under it is audited whatever its own settings say. A database policy added on top
+                  changes nothing about the server's: the database is then audited twice, in parallel, and Microsoft
+                  recommends server-level auditing alone unless one database needs a different destination, retention or
+                  set of events. Since server auditing was rebuilt in July 2025, one extended event session at the server
+                  captures every database and writes to a single <code>master</code> folder in storage, so for many busy
+                  databases Microsoft points the other way, to database-level auditing, where each database writes its
+                  own folder.
+                  Three limits are worth knowing before an audit is relied on: under very heavy load, auditing may let
+                  transactions through without recording every event; <code>tempdb</code> and temporary tables are not
+                  audited; and a statement longer than 4,000 characters is truncated in the log. A storage destination
+                  must match how the account authenticates, by access keys or by a managed identity through Entra ID. SQL
+                  Managed Instance is audited differently, with SQL Server Audit itself: a <code>CREATE SERVER AUDIT ... TO
+                  URL</code> over a credential holding a SAS <span class="acro-exp">(Shared Access Signature)</span> for the container, whose retention defaults to 0, meaning
+                  unlimited, and a server or database audit specification for what to capture.
+                  <!-- fact: Auditing for Azure SQL Database tracks database events and writes them to an audit log in an Azure storage account, Log Analytics workspace or Event Hubs; auditing for SQL Database and SQL Managed Instance is optimized for availability and performance and, during very high activity or network load, might allow transactions to proceed without recording all audited events; the July 2025 GA re-architecture of server auditing creates one extended event session at the server level for all databases and writes all server audit logs to a single folder named master; for many databases with heavy OLTP workloads Microsoft recommends switching to database-level auditing; tempdb and temporary tables aren't audited; statement and data_sensitivity_information fields are truncated after 4,000 characters; with a storage destination the authentication mode must match the storage account, storage access keys or managed identities with Microsoft Entra ID | source: Microsoft Learn, "Auditing for Azure SQL Database", updated 2026-10-05, fetched and read | checked: 2026-11 -->
+                  <!-- fact: A server auditing policy applies to all existing and newly created databases on the server, and if server auditing is enabled the database is audited regardless of the database auditing settings; enabling database auditing as well doesn't change the server auditing, and the database is audited twice in parallel; Microsoft recommends enabling only server-level auditing unless a database needs a different storage account, retention period or Log Analytics workspace, or different event types or categories | source: Microsoft Learn, "Auditing policy at the server and database level", updated 2026-10-05, fetched and read | checked: 2026-11 -->
+                  <!-- fact: Azure SQL Managed Instance auditing uses SQL Server Audit: a credential created from the container URL and a SAS token, CREATE SERVER AUDIT ... TO URL with RETENTION_DAYS defaulting to 0, unlimited retention, then a server audit specification or database audit specification; an immutable log store needs Allow additional appends on the immutable blob storage | source: Microsoft Learn, "Get started with Azure SQL Managed Instance auditing", updated 2026-04-15, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Set on</th><th>What gets audited</th><th>Use it when</th></tr></thead>
+                    <tbody>
+                      <tr><td>The server</td><td>Every database, existing and new, whatever their own settings</td><td>Almost always: Microsoft's default recommendation</td></tr>
+                      <tr><td>A database, under a server audit</td><td>That database a second time, in parallel</td><td>It needs its own destination, retention or events</td></tr>
+                      <tr><td>Databases only</td><td>Each into its own folder</td><td>Many busy databases make one server-wide log expensive to query</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">An audit log is evidence only if nobody can edit it.</strong> Send it somewhere
+                    the database's own administrators cannot change, and for storage, an immutable container: Microsoft's
+                    Managed Instance page says to select Allow additional appends when the container is made immutable,
+                    which is what lets the audit go on writing to it.
                   </div>
                 </div>
               </div>

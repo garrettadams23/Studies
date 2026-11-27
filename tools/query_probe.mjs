@@ -524,6 +524,12 @@ const READERS = [
     ["guest attestation extension", "", "cloud/azure-compute-storage-picking-the-right-sku"],
     ["guest configuration", "", "cloud/azure-arc-governing-what-isnt-in-azure-from-inside-azure"],
     ["apply and autocorrect", "", "cloud/azure-arc-governing-what-isnt-in-azure-from-inside-azure"],
+    // ── eighty-fifth wave: SC-500's data controls, as cards, added before them ──
+    ["azure sql auditing", "", "cloud/azure-databases-sql-database-managed-instance-cosmos-db"],
+    ["server level vs database level auditing", "", "cloud/azure-databases-sql-database-managed-instance-cosmos-db"],
+    ["create server audit to url", "", "cloud/azure-databases-sql-database-managed-instance-cosmos-db"],
+    ["stored access policy", "", "cloud/azure-compute-storage-picking-the-right-sku"],
+    ["revoke a sas token", "", "cloud/azure-compute-storage-picking-the-right-sku"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],
@@ -1288,7 +1294,9 @@ const READERS = [
     ["my tests pass locally but fail in ci", "",
      "devops/flaky-tests-a-reliability-problem-in-the-test-suite"],
     // ── batch ten ──
-    ["the database is slow", "", "data/query-optimization-sargability-n1"],
+    ["the database is slow",
+     "wide by one, and inherent — only `database` and `slow` survive the stop list, and both are ordinary words in a troubleshooting site, so the set is every topic that names a database and happens to say slow somewhere. It crossed 60 in the eighty-second wave, when the AI workloads topic listed databases in its dashboard card and said a threat-detection endpoint that is `slow or down` in its Copilot Studio card, each word doing its ordinary job. The wanted topic is in the set. Ranking would pick between them; this matcher is a filter",
+     "data/query-optimization-sargability-n1"],
     // ── batch twelve ──
     ["floating point rounding is wrong",
      "kind 3 — the card says 'it is not a bug in your code'; 'wrong' is the one word too many, and the relaxation stage deliberately never runs on a zero"],
@@ -1807,6 +1815,25 @@ function carries(cell, value) {
   return forms.some(f => new RegExp(`(?<![\\d,])${f.replace(/,/g, ",")}(?![\\d,])`).test(cell));
 }
 
+// Containment is right for a row written as prose, and blind in one place: a
+// headline whose own digit appears elsewhere in the cell. The row said
+// **0 unexplained** for three waves while the live count was 1, because a 1 is
+// always somewhere in a cell this long, and `carries` was satisfied by it. The
+// headline is the sentence a reader trusts, so its two claims are read where
+// they stand: the first bold *answered of queries*, and the first bold
+// *N unexplained*. A row with neither has no headline to drift.
+function headlineDrift(cell, answered, total, unexplainedCount) {
+  const out = [];
+  const n = s => Number(s.replace(/,/g, ""));
+  const pair = cell.match(/\*\*([\d,]+) of ([\d,]+)\*\*/);
+  if (pair && (n(pair[1]) !== answered || n(pair[2]) !== total))
+    out.push(`the headline says ${pair[1]} of ${pair[2]}; this run counts ${answered} of ${total}`);
+  const unx = cell.match(/\*\*([\d,]+) unexplained\*\*/);
+  if (unx && n(unx[1]) !== unexplainedCount)
+    out.push(`the headline says ${unx[1]} unexplained; this run counts ${unexplainedCount}`);
+  return out;
+}
+
 const stale = [];
 
 // ── self-test ───────────────────────────────────────────────────────────────
@@ -1859,6 +1886,11 @@ if (args.includes("--self-test")) {
     ["17 must not be satisfied by 173", () => !carries("173 things", 17)],
     ["nor by 2,173", () => !carries("2,173 things", 173)],
     ["0 is a value like any other", () => carries("**0 unexplained**", 0)],
+    ["a headline that says 0 unexplained against a live 1 drifts, whatever else the cell holds",
+     () => headlineDrift("**5 of 5**, **0 unexplained** — 1 wide", 5, 5, 1).length === 1],
+    ["…and passes when it says what the run counts", () => headlineDrift("**5 of 5**, **1 unexplained**", 5, 5, 1).length === 0],
+    ["the headline's pair is the first bold one, not a later batch's", () => headlineDrift("**5 of 6**, opened at **0 of 5**", 5, 6, 0).length === 0],
+    ["a row without a headline has nothing to drift", () => headlineDrift("plain prose, 3 of 4", 9, 9, 0).length === 0],
   ];
   for (const [name, fn] of G) {
     let got;
@@ -2088,7 +2120,13 @@ if (CHECK_PLAN) {
                 "This is where it is derived.");
     process.exit(1);
   }
-  console.log(`\nplan.md's ${JSON.stringify(PLAN_ROW)} row carries all six of this run's numbers.`);
+  const drift = headlineDrift(cell, total - zeros - wrong, total, unexplained.length);
+  if (drift.length) {
+    console.log(`\n${JSON.stringify(PLAN_ROW)}: ${drift.join("; ")}.`);
+    process.exit(1);
+  }
+  console.log(`\nplan.md's ${JSON.stringify(PLAN_ROW)} row carries all six of this run's numbers, ` +
+              "and its headline states them.");
   process.exit(0);
 }
 console.log("\nA census, not a gate — see this file's docstring.");
