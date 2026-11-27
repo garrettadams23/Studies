@@ -494,7 +494,7 @@ Notice the pattern: cone and pyramid both carry a ⅓ against the prism or cylin
 
 | Question type | What the shape formula is doing |
 |---|---|
-| Optimization | One formula is the **constraint** (fixed volume), the other is the **objective** (minimize material). "A can holds 355 cm³ — least aluminium" is V = πr²h fixed, SA minimized |
+| Optimization | One formula is the **constraint** (fixed volume), the other is the **objective** (minimize material). "A can holds 355 cm³ — least aluminum" is V = πr²h fixed, SA minimized |
 | Related rates | Differentiate the formula with respect to time. A cone draining gives dV/dt in terms of dh/dt — and usually needs similar triangles first to write r in terms of h |
 | Volumes of revolution | Disk, washer and shell are just πr² and the cylinder's side, integrated. That is why the formulas look familiar |
 
@@ -649,7 +649,7 @@ Every one of these is an **existence** statement. It says some c is there; it do
 | Drop this | And it breaks |
 |---|---|
 | Differentiability, from Rolle / MVT | f(x) = \|x\| on [−1, 1]: continuous, endpoints equal, but the corner at 0 means no c with f′(c) = 0 exists |
-| Continuity, from IVT | A step function jumps straight past every value in between without ever equalling one |
+| Continuity, from IVT | A step function jumps straight past every value in between without ever equaling one |
 | Closed interval, from EVT | f(x) = x on the open (0,1) gets arbitrarily close to 1 and never reaches a maximum |
 | Bounded interval, from EVT | f(x) = x on [0, ∞) has no maximum at all |
 

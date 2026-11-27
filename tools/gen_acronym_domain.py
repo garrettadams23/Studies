@@ -89,7 +89,7 @@ ANATOMY_SVG = """\
   <text class="acs-step" x="490" y="60">2 · Where you meet it in a topic</text>
 
   <rect class="acs-mockbox" x="490" y="80" width="582" height="52" rx="6" />
-  <text class="acs-mock" x="510" y="112">Enrol the device in</text>
+  <text class="acs-mock" x="510" y="112">Enroll the device in</text>
   <text class="acs-term" x="692" y="112">UEM</text>
   <text class="acs-exp" x="742" y="112">(Unified Endpoint Management)</text>
 
