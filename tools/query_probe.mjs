@@ -472,6 +472,11 @@ const READERS = [
     ["powershell double hop", "", "script/jea-just-enough-administration-constrained-remoting"],
     ["credssp second hop", "", "script/jea-just-enough-administration-constrained-remoting"],
     ["resource-based constrained delegation", "", "script/jea-just-enough-administration-constrained-remoting"],
+    // ── seventy-second wave: the Hyper-V VM's own configuration, as a card, added before it ──
+    ["hyper-v private virtual switch", "", "infra/hyper-v-vsphere-the-open-source-stack-the-vocabulary-that-tr"],
+    ["differencing disk vhdx", "", "infra/hyper-v-vsphere-the-open-source-stack-the-vocabulary-that-tr"],
+    ["integration services guest service interface", "", "infra/hyper-v-vsphere-the-open-source-stack-the-vocabulary-that-tr"],
+    ["dynamic memory buffer", "", "infra/hyper-v-vsphere-the-open-source-stack-the-vocabulary-that-tr"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],

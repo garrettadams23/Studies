@@ -125410,12 +125410,12 @@ the box. Size RAM close to real need; be generous only with vCPU.
 </div>
 </div>
 <!-- ── TOPIC: HYPER-V & VSPHERE ───────────────────────── -->
-<div class="topic" id="hyper-v-vsphere-the-open-source-stack-the-vocabulary-that-tr" data-reviewed="2026-11" data-read="7" data-level="core">
+<div class="topic" id="hyper-v-vsphere-the-open-source-stack-the-vocabulary-that-tr" data-reviewed="2026-11" data-read="10" data-level="core">
 <div class="topic-header">
 <span class="topic-icon">🖥️</span>
 <span class="topic-name">Hyper-V, vSphere &amp; the Open-Source Stack — The Vocabulary That Transfers</span>
 <span class="topic-badge">Infra • Virtualization</span>
-<span class="topic-read" title="Rough reading time, estimated from length">7 min</span>
+<span class="topic-read" title="Rough reading time, estimated from length">10 min</span>
 <span class="topic-chev">▶</span>
 </div>
 <div class="topic-body">
@@ -125540,6 +125540,50 @@ Hyper-V virtual switch: up to eight identical adapters, made by listing more tha
 gives up live migration and the cluster, which is the price of the whole device; when the VM has to move for
 patching, a GPU partition on Windows Server 2025 keeps that ability, on processors that support it. A GPU is
 one or the other, never both.
+</div>
+</div>
+</div>
+<div class="concept-card">
+<div class="concept-label">The VM's own settings</div>
+<div class="concept-title">Four Settings Every Hyper-V VM Has: Its Switch, Its Disks, Its Integration Services and Its Memory</div>
+<div class="concept-desc">
+A virtual switch is one of three types. An external switch connects VMs to the physical network through a host
+adapter, which the management operating system can share; internal and private switches are made with
+<code>New-VMSwitch -SwitchType</code>, NAT <span class="acro-exp">(Network Address Translation)</span> runs on an internal switch, and private virtual switches are one of
+Hyper-V's tools for isolating a network. A virtual hard disk is VHD or the newer VHDX, chosen by the file
+extension, and dynamic, fixed or differencing: dynamic is the default, and a differencing disk sits on a parent
+disk named with <code>-ParentPath</code>. Integration services are the VM's two-way channel to its host, from
+conveniences such as guest file copy to the synthetic device drivers it needs. A service works only when it is
+enabled on both host and guest, every one except Guest Service Interface is on by default for Windows guests, and
+they are managed from the host. Dynamic memory gives a VM startup, minimum and maximum memory, a buffer of 5 to
+2,000 percent kept in reserve inside it, and a priority from 0 to 100 against the host's other VMs.
+<!-- fact: Hyper-V virtual switch types are external, internal and private; New-VMSwitch with -NetAdapterName or -NetAdapterInterfaceDescription creates an external switch, which connects VMs to an external network and can let the management operating system share the selected adapter, and -SwitchType Internal or Private creates the others; NAT uses an internal switch | source: Microsoft Learn, "Create and configure a virtual switch with Hyper-V", updated 2025-01-29, fetched and read | checked: 2026-11 -->
+<!-- fact: Hyper-V isolates networks through VLANs, private virtual switches and software-defined networking, and Dynamic Memory adjusts memory allocation to workload demand | source: Microsoft Learn, "Hyper-V virtualization in Windows Server and Windows", updated 2025-07-28, fetched and read | checked: 2026-11 -->
+<!-- fact: New-VHD creates virtual hard disks in VHD format or the newer VHDX format, the file name extension determining the format; dynamic is the default type when none is specified, and -Fixed, or -Differencing with -ParentPath, create the other types | source: Microsoft Learn, "New-VHD", updated 2016-12-20, fetched and read | checked: 2026-11 -->
+<!-- fact: Hyper-V Integration Services use two-way communication with the host, from conveniences such as guest file copy to functional components such as synthetic device drivers; each service must be enabled in both host and guest; all except Guest Service Interface are on by default on Windows guests; Microsoft advises controlling them only from Hyper-V, since a guest service stopped while enabled in Hyper-V is started again, and stopping one may severely affect the host's ability to manage the VM | source: Microsoft Learn, "Manage Hyper-V Integration Services", updated 2025-02-18, fetched and read | checked: 2026-11 -->
+<!-- fact: Set-VMMemory configures a VM's memory: -DynamicMemoryEnabled, -StartupBytes, -MinimumBytes and -MaximumBytes, -Buffer as the percentage of memory to reserve as a buffer, from 5 to 2000, and -Priority for memory availability relative to other VMs on the host, from 0 to 100 | source: Microsoft Learn, "Set-VMMemory", updated 2016-12-20, fetched and read | checked: 2026-11 -->
+</div>
+<pre class="code-block"><span class="com"># A private switch, a differencing disk on a parent, and dynamic memory</span>
+New-VMSwitch <span class="kw">-Name</span> LabNet <span class="kw">-SwitchType</span> Private
+New-VHD <span class="kw">-ParentPath</span> C:\VMs\Base.vhdx <span class="kw">-Path</span> C:\VMs\Lab01.vhdx <span class="kw">-Differencing</span>
+Set-VMMemory Lab01 <span class="kw">-DynamicMemoryEnabled</span> $true <span class="kw">-MinimumBytes</span> 512MB <span class="kw">-StartupBytes</span> 1GB <span class="kw">-MaximumBytes</span> 4GB <span class="kw">-Buffer</span> 20 <span class="kw">-Priority</span> 50
+
+<span class="com"># Guest file copy, the one integration service that starts off</span>
+Enable-VMIntegrationService <span class="kw">-VMName</span> Lab01 <span class="kw">-Name</span> "Guest Service Interface"</pre>
+<div class="dw">
+<table class="ref-table">
+<thead><tr><th>Setting</th><th>The choices</th><th>Worth remembering</th></tr></thead>
+<tbody>
+<tr><td>Virtual switch</td><td>External, internal or private</td><td>An external switch can share the host's adapter; NAT uses an internal one</td></tr>
+<tr><td>Virtual hard disk</td><td>VHD or VHDX; dynamic, fixed or differencing</td><td>The extension picks the format, and dynamic is the default type</td></tr>
+<tr><td>Integration services</td><td>Each on or off, per VM</td><td>Needed on both host and guest; Guest Service Interface starts off</td></tr>
+<tr><td>Memory</td><td>Static, or dynamic with startup, minimum and maximum</td><td>Buffer 5 to 2,000 percent; priority 0 to 100</td></tr>
+</tbody>
+</table>
+<div class="concept-desc verdict">
+<strong class="c-amber">Manage integration services from Hyper-V, not from inside the guest.</strong> A service
+stopped in the guest while Hyper-V has it enabled is simply started again, and Microsoft warns that stopping one
+can badly affect the host's ability to manage the VM, so the switch that matters is the host's.
 </div>
 </div>
 </div>
