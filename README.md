@@ -117,7 +117,7 @@ tools/
 patches/              Historical one-time content-injection scripts (already applied)
 CONTRIBUTING.md       Canonical topic markup conventions for new content
 plan.md               The live plan: operating manual, rubric, what is measured
-plan-archive.md       The closed programmes and 332 session records
+plan-archive.md       The closed programmes and 377 session records
 .github/workflows/    CI: rebuilds index.html and fails if it is stale
 ```
 
