@@ -5470,17 +5470,18 @@ az account set <span class="var">--subscription</span> <span class="str">"Prod"<
                 </div>
                 <div class="concept-desc">
                   Sentinel inverts the usual relationship between cost and coverage. Ingestion is
-                  billed per gigabyte, so the retention and table decisions <em>are</em> the
-                  detection strategy: a table in the cheap Basic tier cannot be used in scheduled
-                  analytics rules the same way, and an archived table has to be restored before it
-                  can be searched. Teams discover this during an investigation, when the month they
-                  need is in archive and the restore takes hours they do not have.
+                  billed per gigabyte, so the retention and tier decisions <em>are</em> the
+                  detection strategy: only the analytics tier feeds analytics rules and real-time
+                  hunting, and data kept only in the cheaper Data Lake tier is read through KQL and
+                  Spark jobs instead. Teams discover this during an investigation, when the table
+                  they need was sent to the lake to save money and no detection ever ran on it.
+                  <!-- fact: Microsoft Sentinel retains data in an analytics tier, available for alerting, hunting, workbooks and all Sentinel features, and a Data Lake tier, low-cost, unavailable for real-time analytics and threat hunting and read through KQL jobs and scheduled KQL or Spark jobs; the page describes no archive tier | source: Microsoft Learn, "Manage tables, tiers, and retention in Sentinel", updated 2026-07-02, fetched and read | checked: 2026-11 -->
                 </div>
                 <div class="dw">
                   <table class="ref-table">
                     <tr><th>Assumption</th><th>Reality</th><th>Decide instead</th></tr>
                     <tr><td>"Defender is on"</td><td>CSPM only — workload plans are individually priced</td><td>Enable per plan deliberately; record which are off and why</td></tr>
-                    <tr><td>"We keep 90 days"</td><td>Analytics vs Basic vs Archive behave differently for rules and search</td><td>Tier by table: identity and control-plane logs in analytics, verbose telemetry cheaper</td></tr>
+                    <tr><td>"We keep 90 days"</td><td>The analytics tier serves rules and hunting; the Data Lake tier only KQL and Spark jobs</td><td>Tier by table: identity and control-plane logs in analytics, verbose telemetry in the lake</td></tr>
                     <tr><td>"Key Vault protects the secret"</td><td class="c-red">Without purge protection, a deleted vault and its keys can be purged permanently</td><td>Soft-delete and purge protection on, at creation, by policy</td></tr>
                     <tr><td>"Secure score is our posture"</td><td>It scores what it can see, weighted by Microsoft's model, not your risk</td><td>Read the recommendations; the score is a trend line, not a target</td></tr>
                   </table>
@@ -5595,6 +5596,118 @@ az account set <span class="var">--subscription</span> <span class="str">"Prod"<
                     controls are the ones an auditor will still ask about, with evidence from people and process, so the
                     dashboard is where the audit starts rather than where it ends. The broader mapping of controls to
                     frameworks is in <span class="xref">The Controls Universe — Types, Functions &amp; Mapping Once to Many</span>.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TOPIC: MICROSOFT SENTINEL ─────────────────────────────── -->
+          <div class="topic" data-reviewed="2026-11">
+            <div class="topic-header">
+              <span class="topic-icon">📡</span>
+              <span class="topic-name">Microsoft Sentinel — Roles, the Content Hub, Connectors, Automation Rules &amp; Two Data Tiers</span>
+              <span class="topic-badge">Azure • SIEM</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">Roles, and where Sentinel lives</div>
+                <div class="concept-title">Five Built-In Roles on the Resource Group, and a Portal Deadline in 2027</div>
+                <div class="concept-desc">
+                  Sentinel's built-in Azure roles build on each other. Reader views data, incidents, workbooks and
+                  recommendations; Responder adds managing incidents; Contributor adds installing solutions and creating and
+                  editing resources such as analytics rules. Playbook Operator lists, views and runs playbooks by hand, and
+                  Automation Contributor exists so Sentinel itself can attach playbooks to automation rules, never for a
+                  person. Microsoft recommends assigning them on the resource group that holds the workspace, so the Logic
+                  Apps behind the playbooks fall under the same assignments. And Sentinel is changing address:
+                  <span class="volatile" data-checked="2026-11">after 31 March 2027 it will be supported only in the
+                  Microsoft Defender portal, with Azure portal users redirected there</span>.
+                  <!-- fact: Microsoft Sentinel's built-in Azure roles: Reader views data, incidents, workbooks, recommendations and other resources; Responder adds managing incidents; Contributor adds installing and updating solutions and creating and editing resources; Playbook Operator lists, views and manually runs playbooks; Automation Contributor allows Microsoft Sentinel to add playbooks to automation rules and isn't used for user accounts; Microsoft recommends assigning roles to the resource group that contains the Sentinel workspace so related resources such as Logic Apps and playbooks are covered | source: Microsoft Learn, "Roles and permissions in the Microsoft Sentinel platform", updated 2026-01-07, fetched and read | checked: 2026-11 -->
+                  <!-- fact: After March 31, 2027, Microsoft Sentinel will no longer be supported in the Azure portal and will be available only in the Microsoft Defender portal, and customers using it in the Azure portal will be redirected | source: Microsoft Learn, "Microsoft Sentinel Content and Solutions Overview", updated 2025-05-27, and "Automate threat response in Microsoft Sentinel with automation rules", updated 2024-10-16, both carrying the notice, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Role</th><th>Can do</th></tr></thead>
+                    <tbody>
+                      <tr><td>Microsoft Sentinel Reader</td><td>View data, incidents, workbooks and recommendations</td></tr>
+                      <tr><td>Microsoft Sentinel Responder</td><td>Everything Reader can, plus manage incidents</td></tr>
+                      <tr><td>Microsoft Sentinel Contributor</td><td>Everything Responder can, plus install solutions and create or edit analytics rules, workbooks and the rest</td></tr>
+                      <tr><td>Microsoft Sentinel Playbook Operator</td><td>List, view and manually run playbooks</td></tr>
+                      <tr><td>Microsoft Sentinel Automation Contributor</td><td>Lets Sentinel add playbooks to automation rules; not for user accounts</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Give analysts Responder, not Contributor.</strong> Triage needs incidents, not
+                    the right to change the analytics rules that create them, and the difference is exactly one role.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Content and connectors</div>
+                <div class="concept-title">The Content Hub Installs Solutions, and the Syslog and CEF Connectors Come Inside Them</div>
+                <div class="concept-desc">
+                  Sentinel's content, analytics rules, data connectors, hunting queries, ASIM parsers, playbooks,
+                  watchlists, workbooks and summary rule templates, comes from the content hub, as solutions packaged for a
+                  product or scenario, or as standalone items. Appliances that speak syslog or CEF arrive through the Azure
+                  Monitor agent: install the Syslog or Common Event Format solution from the content hub to get its Syslog
+                  via AMA or CEF via AMA connector, send the messages to a Linux VM acting as the log forwarder, and let a
+                  data collection rule decide what is collected. Deploying the agent takes Virtual Machine Contributor, or
+                  Azure Connected Machine Resource Administrator for Arc servers, and the rule takes Monitoring Contributor.
+                  <!-- fact: Microsoft Sentinel content types are analytics rules, data connectors, hunting queries, parsers into ASIM formats, playbooks and Logic Apps custom connectors, watchlists, workbooks and summary rule templates, delivered by the Content hub as solutions, packages for an end-to-end product, domain or industry scenario, and standalone items | source: Microsoft Learn, "Microsoft Sentinel Content and Solutions Overview", updated 2025-05-27, fetched and read | checked: 2026-11 -->
+                  <!-- fact: The Syslog via AMA and CEF via AMA connectors ingest syslog and CEF messages from Linux machines, network devices and security appliances; the Syslog or Common Event Format solution is installed from the Content hub to get the connector; a designated Linux VM serves as the log forwarder; deploying the agent needs Virtual Machine Contributor or Azure Connected Machine Resource Administrator, and creating or editing data collection rules needs Monitoring Contributor | source: Microsoft Learn, "Ingest syslog and CEF messages to Microsoft Sentinel - AMA", updated 2026-07-02, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Install the solution before hunting for the connector.</strong> The syslog and
+                    CEF connectors live inside their content hub solutions, so a connector that seems missing is usually a
+                    solution not yet installed. How the rule that selects the data works is in
+                    <span class="xref">Monitoring Windows Server — Performance Monitor, Data Collector Sets, System Insights &amp; Azure Monitor</span>.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Automation rules</div>
+                <div class="concept-title">Automation Rules Triage Incidents Without a Playbook, and Call One When They Must</div>
+                <div class="concept-desc">
+                  An automation rule runs when an incident is created or updated, or when an alert is created, checks its
+                  conditions, and acts: it adds tasks for analysts, suppresses a noisy incident, moves a new incident to
+                  active and assigns an owner, tags or escalates it, closes it with a reason and a comment, or calls a
+                  playbook for anything that needs another service. One rule can cover many analytics rules and control the
+                  order its actions run in, which keeps a SOC <span class="acro-exp">(Security Operations Center)</span>'s automation in a few rules rather than spread across
+                  playbooks.
+                  <!-- fact: Microsoft Sentinel automation rules are triggered when an incident is created or updated or when an alert is created, and are made of triggers, conditions and actions; they can add incident tasks, suppress noisy incidents, change status from New to Active and assign an owner, tag, escalate, close incidents with a reason and comments, automate responses for multiple analytics rules at once, control the order of actions, and call playbooks | source: Microsoft Learn, "Automate threat response in Microsoft Sentinel with automation rules", updated 2024-10-16, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Reach for a playbook only when the action leaves Sentinel.</strong> Status,
+                    owner, tags, tasks and closing are all automation rule actions; a playbook earns its Logic App when the
+                    response has to touch another system.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Data tiers and retention</div>
+                <div class="concept-title">Two Tiers: Analytics for Detection, the Data Lake for Years</div>
+                <div class="concept-desc">
+                  Sentinel keeps each table in one of two tiers. The analytics tier is the hot one, behind analytics rules,
+                  hunting and workbooks: thirty days by default, extendable to two years at a monthly charge, and to ninety
+                  days free for Sentinel's solution tables. Everything in it is mirrored to the data lake for the same
+                  period, and total retention in the lake can run to twelve years at low cost. The Data Lake tier keeps a
+                  table in the lake only: cheap, out of reach of real-time analytics and hunting, and read through KQL <span class="acro-exp">(Kusto Query Language)</span> jobs
+                  and scheduled KQL or Spark jobs. Older Basic Logs tables still appear in the Defender portal, but are
+                  managed only from the Log Analytics workspace.
+                  <!-- fact: Microsoft Sentinel retains data in two tiers: the analytics tier, available for alerting, hunting, workbooks and all Sentinel features, retained 30 days by default and extendable to up to two years at a prorated monthly charge, with Sentinel solution tables extendable to 90 days free, and mirrored to the data lake for the same period with total retention extendable to up to 12 years; and the Data Lake tier, low-cost, in the lake only, unavailable for real-time analytics and threat hunting, accessed through KQL jobs and scheduled KQL or Spark jobs; Basic Logs tables can be viewed from the Defender portal but managed only from the Log Analytics workspace | source: Microsoft Learn, "Manage tables, tiers, and retention in Sentinel", updated 2026-07-02, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Decide the tier per table by whether a detection reads it.</strong> A table an
+                    analytics rule queries belongs in the analytics tier; a table kept for investigations a year later
+                    belongs in the lake, where it is cheap and still searchable by job. The querying itself is in
+                    <span class="xref">Azure Monitor, Log Analytics &amp; KQL</span>.
                   </div>
                 </div>
               </div>

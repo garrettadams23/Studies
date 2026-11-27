@@ -500,6 +500,12 @@ const READERS = [
     ["defender for storage malware scanning", "", "cloud/microsoft-defender-for-cloud-foundational-vs-defender-cspm-t"],
     ["defender for ai services", "", "cloud/microsoft-defender-for-cloud-foundational-vs-defender-cspm-t"],
     ["regulatory compliance dashboard", "", "cloud/microsoft-defender-for-cloud-foundational-vs-defender-cspm-t"],
+    // ── eighty-first wave: SC-500's Microsoft Sentinel items, added before the topic ──
+    ["sentinel content hub solutions", "", "cloud/microsoft-sentinel-roles-the-content-hub-connectors-automati"],
+    ["sentinel data lake tier retention", "", "cloud/microsoft-sentinel-roles-the-content-hub-connectors-automati"],
+    ["sentinel automation rules", "", "cloud/microsoft-sentinel-roles-the-content-hub-connectors-automati"],
+    ["cef via ama log forwarder", "", "cloud/microsoft-sentinel-roles-the-content-hub-connectors-automati"],
+    ["sentinel responder role", "", "cloud/microsoft-sentinel-roles-the-content-hub-connectors-automati"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],
