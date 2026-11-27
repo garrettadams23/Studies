@@ -506,6 +506,12 @@ const READERS = [
     ["sentinel automation rules", "", "cloud/microsoft-sentinel-roles-the-content-hub-connectors-automati"],
     ["cef via ama log forwarder", "", "cloud/microsoft-sentinel-roles-the-content-hub-connectors-automati"],
     ["sentinel responder role", "", "cloud/microsoft-sentinel-roles-the-content-hub-connectors-automati"],
+    // ── eighty-second wave: SC-500's AI workloads in Azure, added before the topic ──
+    ["ai gateway api management", "", "cloud/securing-ai-workloads-in-azure-the-ai-gateway-foundry-guardr"],
+    ["foundry guardrails intervention points", "", "cloud/securing-ai-workloads-in-azure-the-ai-gateway-foundry-guardr"],
+    ["copilot studio real-time protection", "", "cloud/securing-ai-workloads-in-azure-the-ai-gateway-foundry-guardr"],
+    ["llm token limit policy", "", "cloud/securing-ai-workloads-in-azure-the-ai-gateway-foundry-guardr"],
+    ["data and ai security dashboard", "", "cloud/securing-ai-workloads-in-azure-the-ai-gateway-foundry-guardr"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],

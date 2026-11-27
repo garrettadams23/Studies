@@ -5714,6 +5714,173 @@ az account set <span class="var">--subscription</span> <span class="str">"Prod"<
             </div>
           </div>
 
+          <!-- ── TOPIC: SECURING AI WORKLOADS IN AZURE ───────────────────── -->
+          <div class="topic" data-reviewed="2026-11">
+            <div class="topic-header">
+              <span class="topic-icon">🤖</span>
+              <span class="topic-name">Securing AI <span class="acro-exp">(Artificial Intelligence)</span> Workloads in Azure — the AI Gateway, Foundry Guardrails &amp; Copilot Studio's Real-Time Protection</span>
+              <span class="topic-badge">Azure • AI security</span>
+              <span class="topic-chev">▶</span>
+            </div>
+            <div class="topic-body">
+              <div class="concept-card">
+                <div class="concept-label">The AI gateway</div>
+                <div class="concept-title">One Choke Point for Models, Agents and Tools: the AI Gateway in API <span class="acro-exp">(Application Programming Interface)</span> Management</div>
+                <div class="concept-desc">
+                  The AI gateway is not a separate product. It is a set of capabilities in Azure API Management for
+                  securing, scaling, monitoring and governing what sits behind an AI app: language model APIs in the OpenAI,
+                  Anthropic or Google Vertex AI shapes, wherever the model runs, remote MCP <span class="acro-exp">(Model Context Protocol)</span> servers, and A2A agent APIs,
+                  with what is available depending on the API Management tier. For security, the gateway signs in to
+                  Azure's AI services with a managed identity, so no API key has to live in an app; it gives apps and agents
+                  OAuth <span class="acro-exp">(Open Authorization)</span> access to APIs and MCP servers through its credential manager; and a policy can send each prompt to
+                  Azure AI Content Safety before a model sees it. For cost, the <code>llm-token-limit</code> policy caps
+                  tokens per minute, or sets a token quota per hour, day, week, month or year, on any counter key, such as a
+                  subscription key or the caller's IP <span class="acro-exp">(Internet Protocol)</span> address, so one app cannot spend the quota every other app shares.
+                  Backends behind it are load balanced, round-robin, weighted, by priority or by session, with a circuit
+                  breaker that stops sending to one that has stopped answering, and prompts, completions and token counts
+                  can be logged to Azure Monitor and Application Insights.
+                  <!-- fact: The AI gateway in Azure API Management is a set of capabilities that extends API Management's existing API gateway, not a separate offering, to secure, scale, monitor and govern AI models, agents and tools: language model APIs conforming to the OpenAI Chat Completions or Responses, Anthropic Messages (API Management v2 tiers) or Google Vertex AI schemas, remote MCP servers, A2A agent APIs, and self-hosted models; capability availability varies by service tier; it uses managed identities to authenticate to AI services in Azure without API keys, OAuth authorization through API Management's credential manager, and policies that moderate prompts with Azure AI Content Safety; the llm-token-limit policy sets a tokens-per-minute limit or a token quota over an hourly, daily, weekly, monthly or yearly period on any counter key, such as subscription key, originating IP address or a policy expression, and can precalculate prompt tokens; backends support round-robin, weighted, priority-based and session-aware load balancing and a circuit breaker; prompts and completions can be logged to Azure Monitor and token metrics emitted with llm-emit-token-metric | source: Microsoft Learn, "AI gateway capabilities in Azure API Management", updated 2026-05-29, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>The need</th><th>What the gateway uses</th></tr></thead>
+                    <tbody>
+                      <tr><td>Stop one app spending the shared token quota</td><td><code>llm-token-limit</code>, keyed on the subscription or the caller</td></tr>
+                      <tr><td>Keep API keys out of apps</td><td>A managed identity from the gateway to the AI service</td></tr>
+                      <tr><td>Screen prompts before the model reads them</td><td>A content safety policy calling Azure AI Content Safety</td></tr>
+                      <tr><td>Ride out a throttled or failing backend</td><td>A load balancer with priorities, and a circuit breaker</td></tr>
+                      <tr><td>Know which app spent what</td><td>Prompt and completion logging, and <code>llm-emit-token-metric</code></td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Every policy here applies only to calls that pass through the gateway.</strong>
+                    An app still holding the model's own endpoint and key skips all of it, so taking those away is part of
+                    deploying the gateway, not a later tidy-up. How a managed identity signs in is in
+                    <span class="xref">Azure Workload Identity — Managed Identities, Service Principals &amp; Federated Credentials</span>.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Foundry and the gateway</div>
+                <div class="concept-title">Foundry Projects Consume Gateway Models as Connected Models, Behind Stable Aliases</div>
+                <div class="concept-desc">
+                  Microsoft Foundry reaches models through a gateway in a hub-and-spoke pattern: administrators curate the
+                  approved models and tools at the hub, set their backends, authentication, networking and policies there,
+                  and Foundry projects, the spokes, consume them as connected models behind stable aliases, without ever
+                  holding the backends' credentials. Having management access to a gateway grants no runtime access to it.
+                  <span class="volatile" data-checked="2026-11">Foundry now names two kinds of hub: Azure AI Gateway, a
+                  resource type of its own with its own portal and <code>az aigateway</code> commands, and API Management,
+                  which is not deprecated. Foundry no longer creates new links to API Management from its own pages, though,
+                  and an API Management gateway's token limits are now set in its policy XML <span class="acro-exp">(eXtensible Markup Language)</span> rather than in Foundry</span>.
+                  Microsoft's page is plain about the hole in all of it: applications must call the gateway's runtime
+                  endpoint, because a call made straight to the backend model or tool bypasses the gateway's policies.
+                  <!-- fact: Microsoft Foundry can consume models through either Azure AI Gateway or Azure API Management, distinct resource types with separate management experiences; in a hub-and-spoke pattern the hub publishes approved models through stable aliases and gateway-routed tool endpoints to Foundry project spokes, which consume them as connected models, so teams share governance without sharing backend credentials; management access to a gateway doesn't by itself grant runtime access; applications must use a gateway runtime endpoint for the gateway to enforce its policies, and a direct tool endpoint bypasses gateway policy enforcement; API Management isn't deprecated, but new API Management links can no longer be created from Foundry, policy and token-limit changes are made in API Management's policy XML, and automatic registration of custom MCP endpoints is removed | source: Microsoft Learn, "Configure Azure AI Gateway in your Foundry resources", updated 2026-11-09, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Prove the gateway is in the path, not just configured.</strong> Send one
+                    request through a connected model and find it in the gateway's logs; a request that is not there went
+                    around the gateway, and none of its policies saw it.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Foundry guardrails</div>
+                <div class="concept-title">A Guardrail Is a Set of Controls, and an Agent's Guardrail Replaces Its Model's</div>
+                <div class="concept-desc">
+                  In Microsoft Foundry a guardrail is a named collection of controls, and each control names a risk to
+                  detect, the intervention points where it looks, and the action it takes. There are four intervention
+                  points: the user's input, the final output, and, for agents only, the tool call the agent proposes and
+                  the response the tool sends back. The risks run from the four content harms, hate, sexual, self-harm and
+                  violence, through user prompt attacks and indirect attacks to protected material, personal data and task
+                  adherence. Each content harm takes a blocking level: Low blocks only high-severity content, Medium blocks
+                  medium and high, and High blocks all three, while switching the filter off for outputs needs Microsoft's
+                  approval. The rule that matters most is about agents: an agent is judged by the guardrail assigned to it,
+                  which fully overrides its model's, and an agent with none of its own inherits its model deployment's.
+                  Models start on <code>Microsoft.DefaultV2</code>.
+                  <span class="volatile" data-checked="2026-11">Agent guardrails, and the tool call and tool response
+                  points, are in preview, apply only to agents built in Foundry Agent Service, and groundedness detection
+                  in Azure OpenAI retires on 30 April 2027</span>.
+                  <!-- fact: In Microsoft Foundry a guardrail is a named collection of controls, each defining a risk to detect, intervention points to scan for it, and the action to take; the four intervention points are user input, tool call (preview, agents only), tool response (preview, agents only) and output; risks include hate, sexual, self-harm, violence, user prompt attacks, indirect attacks, spotlighting, protected material for code and for text, groundedness, personally identifiable information and task adherence, with spotlighting and groundedness not applicable to agents; for content risks the Low blocking level blocks high-severity content only, Medium blocks medium- and high-severity content, and High blocks low-, medium- and high-severity content, and turning off content harms for outputs is available only to approved customers; the actions are annotate (models only) and annotate and block; an agent's guardrail fully overrides its model's, an agent with no custom guardrail inherits its model deployment's, and models are assigned Microsoft.DefaultV2 by default; agent guardrails for content safety in Foundry Agent Service are in preview and apply only to agents developed in Foundry Agent Service; groundedness detection (preview) in Azure OpenAI retires on April 30, 2027 | source: Microsoft Learn, "Guardrails and controls overview in Microsoft Foundry", updated 2026-11-02, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Intervention point</th><th>Scans</th><th>Models</th><th>Agents</th></tr></thead>
+                    <tbody>
+                      <tr><td>User input</td><td>The prompt sent to the model or agent</td><td>Yes</td><td>Yes</td></tr>
+                      <tr><td>Tool call</td><td>What the agent proposes to send to a tool</td><td>No</td><td>Yes, in preview</td></tr>
+                      <tr><td>Tool response</td><td>What the tool returns to the agent</td><td>No</td><td>Yes, in preview</td></tr>
+                      <tr><td>Output</td><td>The final answer returned to the user</td><td>Yes</td><td>Yes</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Give each agent its own guardrail, with tool controls in it.</strong> Microsoft's
+                    own example is an agent on a model that blocks violence at High: given a guardrail of its own set to Low
+                    for input and output and nothing for tools, the agent's tool calls and tool responses are not scanned at
+                    all. Why the tool response is where an indirect attack arrives is in
+                    <span class="xref">Prompt Injection – The "SQL Injection" of the AI World</span>.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Copilot Studio agents</div>
+                <div class="concept-title">Real-Time Protection: an Outside Service Asked Before Every Tool Call</div>
+                <div class="concept-desc">
+                  Custom agents built in Copilot Studio block user prompt injection attacks and cross-domain prompt
+                  injection attacks by default. Real-time protection adds an outside check: before the orchestrator invokes
+                  any tool, it sends the proposed call to a threat detection endpoint, with the user's recent prompt and
+                  chat history, the outputs of earlier tools, which agent, user and tenant are involved, and the agent's
+                  reasoning and inputs for the tool, and the endpoint answers allow or block. A block stops the agent and
+                  tells the user their message was blocked. The endpoint can be Microsoft Defender, another security
+                  vendor's, or one built in-house, and it is called only for agents that use generative orchestration,
+                  never for classic ones. The setup has two halves: an Entra app registration with a federated identity
+                  credential, which gives the agent a secret-free way to authenticate, and then a Power Platform
+                  Administrator connecting the endpoint to an environment, or an environment group,
+                  <span class="volatile" data-checked="2026-11">in the Power Platform admin center under Security, Threat
+                  detection, while the feature is in preview</span>. If no decision arrives within one second, the tool runs
+                  anyway, unless the error behavior is set to block.
+                  <!-- fact: Copilot Studio custom agents include built-in protection against user prompt-injection attacks (UPIA) and cross-domain prompt injection attacks (XPIA); external threat detection (preview) is called only on generative agents that use generative orchestration and is skipped for classic agents; every time the orchestrator considers invoking a tool it sends the user's recent prompt and chat history, outputs of previous tools, conversation metadata (agent, user, tenant, trigger) and the tool with the agent's reasoning and proposed inputs to the threat detection endpoint, which returns allow or block, and a block stops processing and tells the user their message is blocked; the provider can be custom-built, Microsoft Defender, or another security provider; setup is a Microsoft Entra application with a federated identity credential, then a Power Platform Administrator configures threat detection for an environment or environment group under Security, Threat detection in the Power Platform admin center; if no decision arrives within one second the tool executes by default, and the error behavior can be set to block the query; the provider's data handling may differ from Microsoft's, including outside the region | source: Microsoft Learn, "Enable external threat detection and protection for Copilot Studio custom agents (preview)", updated 2026-06-01, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">The default fails open, so decide that on purpose.</strong> An endpoint that is
+                    slow or down lets every tool call through; for an agent whose tools write, send or pay, set the error
+                    behavior to block. And read the provider's terms first: the conversation goes to them, possibly outside
+                    your region. Who answers for an agent once it exists is in
+                    <span class="xref">Agents in Microsoft 365 — The Agent Registry, Entra Agent ID &amp; Who Answers for an Agent</span>.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Watching AI posture</div>
+                <div class="concept-title">The Data and AI Security Dashboard Shows Everything Only When Five Protections Are On</div>
+                <div class="concept-desc">
+                  Defender for Cloud's Data and AI security dashboard puts a subscription's data and AI resources, storage,
+                  managed databases, databases hosted on IaaS <span class="acro-exp">(Infrastructure as a Service)</span> VMs <span class="acro-exp">(Virtual Machine)</span>, and AI services, on one page, with how fully each is
+                  protected, the most severe alerts, recommendations and attack paths, and what the internet can reach. Its
+                  AI section counts the AI resources found, the prompts scanned and the alerts raised, and lists the
+                  grounding data an AI app reads, in storage and search services, that is exposed to the internet. It shows
+                  everything only when Defender CSPM <span class="acro-exp">(Cloud Security Posture Management)</span>, its sensitive data discovery extension, Defender for Storage, Defender
+                  for Databases and threat protection for AI workloads are all on, and each subscription is registered to
+                  the <code>Microsoft.Security</code> resource provider.
+                  <!-- fact: Defender for Cloud's Data and AI security dashboard shows data and AI resources for each cloud, categorized into storage assets, managed databases, hosted databases (IaaS) and AI services, with which are fully, partially or not protected by Defender CSPM, Defender for Storage, Defender for Databases and AI threat protection; top issues from the highest-severity alerts and critical and high recommendations and attack paths; and an AI closer look with AI discovery, the number of prompts scanned and alerts by severity, AI queries in security explorer, and internet-exposed resources used for grounding, by storage and search assets; full access requires the Defender CSPM plan with its sensitive data discovery extension, Defender for Storage, Defender for Databases and threat protection for AI workloads, the feature is enabled at the subscription level, and each subscription must be registered to the Microsoft.Security resource provider | source: Microsoft Learn, "Data and AI Security Dashboard", updated 2025-05-01, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Read its coverage before its alerts.</strong> A quiet AI section means either
+                    nothing happened or AI threat protection is off for that subscription, and the dashboard's own coverage
+                    view says which. What each plan does on its own is in
+                    <span class="xref">Microsoft Defender for Cloud — Foundational vs Defender CSPM, the Workload Plans &amp; Regulatory Compliance</span>.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
 
           <!-- ══════════════════════════════════════════════════════════════
                SECTION: MICROSOFT AZURE — DEPTH & TROUBLESHOOTING
