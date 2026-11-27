@@ -4656,7 +4656,7 @@ Get-NetIPsecMainModeSA</pre>
 
 
           <!-- ── TOPIC: SHARED, KIOSK & FRONTLINE DEVICES ──────────────────────────────── -->
-          <div class="topic" data-reviewed="2026-08">
+          <div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🖥️</span>
               <span class="topic-name">Shared, Kiosk &amp; Frontline Devices</span>
@@ -4707,6 +4707,46 @@ Get-NetIPsecMainModeSA</pre>
                   <span class="xref">Device Trust End to End — Enrollment → Compliance → CA → Access</span> —
                   but it has to hold for a device with no single human behind it, which is the part the standard
                   flow was never built for.
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Specialty devices</div>
+                <div class="concept-title">Teams Rooms, HoloLens 2 and Zebra: Three Devices Intune Manages on Their Own Terms</div>
+                <div class="concept-desc">
+                  Teams Rooms accept compliance and Conditional Access, but only part of it: requiring a compliant device
+                  is supported on Windows and Android, while requiring MFA <span class="acro-exp">(Multi-Factor Authentication)</span> is not supported for Teams Rooms on Windows,
+                  sign-in frequency and authentication strength are supported on neither, and blocking device code flow
+                  stops the remote sign-in Teams Android devices use. Intune manages HoloLens as a Windows Holographic for
+                  Business device: one still on plain Windows Holographic needs an Edition Upgrade profile first, with the
+                  license from HoloLens's Commercial Suite, and the device can then join Microsoft Entra ID, enroll in bulk
+                  with provisioning packages and run as a kiosk. Zebra's Android devices take Zebra's own settings through OEMConfig on
+                  Android Enterprise, since the older MX profiles belong to device administrator management, deprecated on
+                  devices with Google Mobile Services. Zebra's firmware comes through Intune too: LifeGuard Over-the-Air
+                  updates, LifeGuard OTA for short, for dedicated and fully managed devices, need Intune Plan 2 or the Suite, Managed Google Play,
+                  each device enrolled separately with Zebra's service, and a connector set up in
+                  <span class="volatile" data-checked="2026-11">Tenant administration, Connectors and tokens, Firmware
+                  over-the-air update</span>.
+                  <!-- fact: For Teams Rooms on Windows and on Android, Conditional Access supports Require device to be marked as compliant; Require multifactor authentication is not supported on Teams Rooms on Windows and is supported on Android, phones and panels; sign-in frequency, authentication strength and Require Microsoft Entra hybrid joined device are not supported on either; blocking Device Code Flow prevents the remote sign-in of a Teams Android device; on Windows, Require BitLocker is supported only if BitLocker is enabled first, and Secure Boot is a requirement for Teams Rooms | source: Microsoft Learn, "Supported Conditional Access and Intune device compliance policies for Microsoft Teams Rooms and Teams Android Devices", updated 2026-07-06, fetched and read | checked: 2026-11 -->
+                  <!-- fact: Intune manages devices running Windows Holographic for Business, such as HoloLens, after an Edition Upgrade profile upgrades Windows Holographic to Windows Holographic for Business, with the required license from the HoloLens Commercial Suite; devices can join Microsoft Entra ID, enroll in bulk with provisioning packages, and run as a kiosk with one app or a set of apps | source: Microsoft Learn, "Use Windows Holographic devices with Microsoft Intune", updated 2025-03-17, fetched and read | checked: 2026-11 -->
+                  <!-- fact: Zebra Mobility Extensions profiles in Intune apply to Android device administrator management, and Android Enterprise devices use OEMConfig instead; device administrator management is deprecated and no longer available for devices with Google Mobile Services; Zebra's MX APIs aren't locked down by default, and Zebra's Access Manager can restrict which apps may call them | source: Microsoft Learn, "Use and manage Zebra devices with Zebra Mobility Extensions in Microsoft Intune", updated 2024-06-27, fetched and read | checked: 2026-11 -->
+                  <!-- fact: Intune integrates Zebra LifeGuard Over-the-Air firmware updates for Android Enterprise corporate-owned dedicated and fully managed Zebra devices; it requires Intune Plan 2 or an additional subscription and Zebra's licenses, Managed Google Play, the Mobile apps and Android FOTA permissions, devices enrolled separately with the LG OTA service, and a connector under Tenant administration, Connectors and tokens, Firmware over-the-air update, whose authorization link expires in 10 minutes | source: Microsoft Learn, "Zebra LifeGuard Over-the-Air Integration with Microsoft Intune", updated 2026-07-23, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Device</th><th>Managed as</th><th>The catch</th></tr></thead>
+                    <tbody>
+                      <tr><td>Teams Rooms</td><td>A compliant device under Conditional Access</td><td>No MFA grant on Windows, no sign-in frequency anywhere, and device code flow left open for Android</td></tr>
+                      <tr><td>HoloLens</td><td>Windows Holographic for Business</td><td>A device on plain Windows Holographic needs an Edition Upgrade profile and the Commercial Suite license first</td></tr>
+                      <tr><td>Zebra settings</td><td>OEMConfig on Android Enterprise</td><td>MX profiles are for device administrator, which is deprecated on Google Mobile Services devices</td></tr>
+                      <tr><td>Zebra firmware</td><td>LifeGuard Over-the-Air through Intune</td><td>Plan 2 or the Suite, and each device enrolled with Zebra's service as well</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Write these devices' Conditional Access policies separately.</strong> A
+                    policy written for people, with MFA and sign-in frequency, signs a meeting room out or locks it out,
+                    so the room accounts need their own policy built from the supported list.
+                  </div>
                 </div>
               </div>
             </div>

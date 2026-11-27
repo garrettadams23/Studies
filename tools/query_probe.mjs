@@ -490,6 +490,10 @@ const READERS = [
     ["enrollment time grouping", "", "endpoint/microsoft-intune-cloud-mdm-mam"],
     ["intune provisioning client group owner", "", "endpoint/microsoft-intune-cloud-mdm-mam"],
     ["samsung knox mobile enrollment", "", "endpoint/ios-android-enterprise-supervision-work-profiles-mam"],
+    // ── seventy-seventh wave: MD-102's specialty devices, as a card, added before it ──
+    ["teams rooms conditional access", "", "endpoint/shared-kiosk-frontline-devices"],
+    ["hololens 2 intune", "", "endpoint/shared-kiosk-frontline-devices"],
+    ["zebra lifeguard ota firmware", "", "endpoint/shared-kiosk-frontline-devices"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],
