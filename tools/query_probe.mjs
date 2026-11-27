@@ -486,6 +486,10 @@ const READERS = [
     ["custom compliance discovery script", "", "endpoint/compliance-policies-deep-settings-grace-periods-what-non-com"],
     ["bitlocker key rotation intune", "", "endpoint/bitlocker-at-scale-silent-enablement-key-escrow-recovery"],
     ["intune troubleshooting pane help desk", "", "endpoint/microsoft-intune-cloud-mdm-mam"],
+    // ── seventy-sixth wave: MD-102's enrollment gaps, as cards, added before them ──
+    ["enrollment time grouping", "", "endpoint/microsoft-intune-cloud-mdm-mam"],
+    ["intune provisioning client group owner", "", "endpoint/microsoft-intune-cloud-mdm-mam"],
+    ["samsung knox mobile enrollment", "", "endpoint/ios-android-enterprise-supervision-work-profiles-mam"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],

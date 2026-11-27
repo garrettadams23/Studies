@@ -436,6 +436,32 @@ IntuneWinAppUtil.exe <span class="var">-c</span> <span class="str">"C:\Source"</
                   </div>
                 </div>
               </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Enrollment time grouping</div>
+                <div class="concept-title">Enrollment Time Grouping Puts the Device in Its Group Before It Arrives</div>
+                <div class="concept-desc">
+                  Without it, a new device joins its groups after enrollment, by inventory properties and group tags, and
+                  only then does Intune know which apps and policies it needs, which can take up to eight hours. Enrollment
+                  time grouping names a Microsoft Entra security group in the enrollment policy itself, so the device is
+                  added during enrollment and the required apps and configuration assigned to that group arrive at once.
+                  It covers Android Enterprise's fully managed, corporate-owned work profile and dedicated devices, Apple's
+                  automated device enrollment for iPhone, iPad, Apple TV, Vision Pro and the Mac, and Windows 11 through
+                  Autopilot device preparation. The group is static, with assigned membership, and owned by the Intune
+                  Provisioning Client service principal, AppId <code>f1346770-5b25-470b-88bd-d5744ab7952c</code>, which some
+                  tenants list as Intune Autopilot ConfidentialClient.
+                  <!-- fact: Enrollment time grouping adds a Microsoft Entra security group to the enrollment policy so devices are added to it during enrollment, letting Intune deliver the group's required apps and policies on enrollment; without it, devices are grouped after enrollment by inventory properties and group tag IDs, and it can take up to 8 hours to receive all apps and policies; it supports Android Enterprise fully managed, corporate-owned work profile and dedicated devices, Apple automated device enrollment for iOS/iPadOS, tvOS, visionOS and macOS, and Windows 11 through Windows Autopilot device preparation; the group is a static security group with assigned membership and the Intune Provisioning Client service principal, AppId f1346770-5b25-470b-88bd-d5744ab7952c, as an owner, named Intune Autopilot ConfidentialClient in some tenants; Apple ADE support isn't available in some sovereign clouds | source: Microsoft Learn, "Set up enrollment time grouping", updated 2026-06-24, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Give the enrollment group only what the first hour needs.</strong> Required
+                    apps and the policies a user cannot start without belong on the static group the device lands in;
+                    everything that can wait stays on the dynamic groups, which catch up as before. Device preparation's
+                    own use of the same group is in
+                    <span class="xref">Autopilot Device Preparation — The Newer Flow That Deletes the Hardware Hash</span>.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -4519,7 +4545,7 @@ Get-NetIPsecMainModeSA</pre>
 </div>
 
 <!-- ── TOPIC: IOS & ANDROID ENTERPRISE ───────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">📱</span>
     <span class="topic-name">iOS &amp; Android Enterprise — Supervision, Work Profiles &amp; MAM <span class="acro-exp">(Mobile Application Management)</span></span>
@@ -4600,6 +4626,29 @@ Get-NetIPsecMainModeSA</pre>
         <span class="xref">App Protection Policies — MAM Without Enrollment</span>, viewed from the
         cross-platform side: on mobile it is often the <em>only</em> acceptable option for a device
         the company does not own.
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Samsung Knox Mobile Enrollment</div>
+      <div class="concept-title">Knox Mobile Enrollment Enrolls Samsung Devices Straight Out of the Box</div>
+      <div class="concept-desc">
+        Samsung's Knox Mobile Enrollment bulk-enrolls company devices into Intune as they are first switched on, as
+        Android Enterprise dedicated, fully managed or corporate-owned work profile devices. It starts with a Samsung
+        Knox account, which Samsung approves in one to two business days, and a profile in the Knox Admin Portal naming
+        Intune as the EMM <span class="acro-exp">(Enterprise Mobility Management)</span>. The profile's custom JSON <span class="acro-exp">(JavaScript Object Notation)</span> looks optional in the portal and is not: Intune needs it, carrying
+        the Intune enrollment token. Devices reach the portal from a Samsung-approved reseller, or through the Knox
+        Deployment App over Bluetooth or NFC <span class="acro-exp">(Near Field Communication)</span>, which suits devices already in use. Android device administrator
+        management, the older route, is deprecated and no longer available for devices with Google Mobile Services.
+        <!-- fact: Samsung Knox Mobile Enrollment bulk enrolls enterprise devices in Intune out of the box, for Android Enterprise dedicated, fully managed and corporate-owned work profile devices; it needs a Samsung Knox account, whose approval can take one to two business days, and a profile in the Knox Admin Portal with Microsoft Intune as the EMM; the custom JSON appears optional but Intune requires it, with {"com.google.android.apps.work.clouddpc.EXTRA_ENROLLMENT_TOKEN": "..."} carrying the enrollment token; devices are uploaded by a Samsung-approved reseller or with the Knox Deployment App over Bluetooth or NFC; Android device administrator management is deprecated and no longer available for devices with access to Google Mobile Services | source: Microsoft Learn, "Enroll devices in Microsoft Intune with Samsung Knox Mobile Enrollment", updated 2023-12-01, fetched and read | checked: 2026-11 -->
+      </div>
+      <pre class="code-block"><span class="com"># The custom JSON the Knox profile needs, with Intune's enrollment token in it</span>
+{"com.google.android.apps.work.clouddpc.EXTRA_ENROLLMENT_TOKEN": "&lt;Intune enrollment token&gt;"}</pre>
+      <div class="dw">
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Fill in the JSON the portal calls optional.</strong> A Knox profile without the
+          enrollment token looks complete and enrolls nothing into Intune, and the account approval's one to two days
+          belong in the rollout plan, not the go-live morning.
+        </div>
       </div>
     </div>
   </div>
