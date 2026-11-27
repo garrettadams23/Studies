@@ -31,7 +31,9 @@ The distinction is the whole design, and it is the one `script.js` already makes
 about plurals: *a real stemmer needs a tokenised index, and the irregulars are a
 dictionary, not a rule.*
 
-  * **`-ise` → `-ize`**, with `-isation`, `-ised`, `-ising`, `-iser`. A rule. It
+  * **`-ise` → `-ize`**, with `-isation`, `-ised`, `-ising`, `-iser`, and the
+    adjectives `-isational` and `-isable`, which the rule missed until the
+    seventy-third wave found *organisational* in twenty-eight places. A rule. It
     over-matches the words where `ise` is not a suffix — *compromise*,
     *enterprise*, *otherwise* — so those are excluded by name in `ISE_KEEP`,
     which is a closed list of about thirty words that English is not going to
@@ -89,7 +91,8 @@ ACRO_EXP_RE = re.compile(r'<span class="acro-exp">\([^<]*?\)</span\s*>')
 # A three-character stem floor on each, which is load-bearing rather than
 # cautious: it is what excludes `our`, `four`, `hour`, `tour`, `pour`, `sour`,
 # `your`, `flour`, `raise`, `noise` and `wise` without naming one of them.
-ISE_RE = re.compile(r"(?<![A-Za-z])([A-Za-z]{3,}?)is(e|es|ed|ing|er|ers|ation|ations)(?![A-Za-z])", re.I)
+ISE_RE = re.compile(r"(?<![A-Za-z])([A-Za-z]{3,}?)is(e|es|ed|ing|er|ers|ation|ations|ational|ationally"
+                    r"|able|ably|ability|abilities)(?![A-Za-z])", re.I)
 YSE_RE = re.compile(r"(?<![A-Za-z])([A-Za-z]{3,}?)ys(e|ed|ing|er|ers)(?![A-Za-z])", re.I)
 OUR_RE = re.compile(r"(?<![A-Za-z])([A-Za-z]{3,}?)our"
                     r"(s|ed|ing|al|ally|ite|ites|able|ably|less|ful|fully|ist|ists)?"
@@ -124,7 +127,7 @@ IRREGULAR = {
     "offence": "offense", "offences": "offenses",
     "pretence": "pretense",
     "practise": "practice", "practises": "practices", "practised": "practiced",
-    "practising": "practicing",
+    "practising": "practicing", "practisable": "practicable",
     "judgement": "judgment", "judgements": "judgments",
     "artefact": "artifact", "artefacts": "artifacts",
     "catalogue": "catalog", "catalogues": "catalogs", "catalogued": "cataloged",
@@ -445,6 +448,10 @@ def self_test():
         ("malvertising", None), ("denoise", None), ("expertise", None),
         ("unsupervised", None), ("wise", None), ("raise", None), ("noise", None),
         ("bitwise", None), ("Piecewise", None), ("elementwise", None),
+        # the adjectives the suffix list once stopped short of
+        ("organisational", "organizational"), ("Organisationally", "Organizationally"),
+        ("recognisable", "recognizable"), ("generalisable", "generalizable"),
+        ("advisable", None), ("improvisational", None), ("revisable", None), ("disable", None),
         # -yse, and the plural that is not a verb
         ("analyse", "analyze"), ("analyser", "analyzer"), ("analyses", None),
         ("analysis", None), ("analyst", None),
