@@ -8002,7 +8002,7 @@ POST /token   grant_type=authorization_code
 </div>
 
 <!-- ── TOPIC: ZTNA ───────────────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🚧</span>
     <span class="topic-name">ZTNA <span class="acro-exp">(Zero Trust Network Access)</span> — Replacing the VPN <span class="acro-exp">(Virtual Private Network)</span>, and What Breaks When You Do</span>
@@ -8096,6 +8096,40 @@ POST /token   grant_type=authorization_code
           <span class="xref">Broken Object-Level Authorization — The Bug in Almost Every API</span>.
           The principle behind the whole architecture is in
           <span class="xref">Zero Trust — Never Trust, Always Verify</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Microsoft's version</div>
+      <div class="concept-title">Entra Private Access: Quick Access to Replace the VPN, Then an App per Segment</div>
+      <div class="concept-desc">
+        Microsoft Entra Private Access is Microsoft's ZTNA. An administrator names the FQDNs <span class="acro-exp">(Fully Qualified Domain Name)</span>, IP addresses and
+        ranges that count as private, and users running the Global Secure Access client reach them without a VPN,
+        through a Microsoft Entra private network connector inside the network that brokers each connection. Each
+        set of private resources is an enterprise application, so it takes user and group assignments and
+        Conditional Access policies like any other app. Quick Access is the one broad app, holding the resources
+        always tunneled through the service, and Microsoft's own guidance calls it a transition state: once Quick
+        Access has replaced the VPN, move resources into per-app Global Secure Access apps, each with its own
+        segment and its own Conditional Access. Setting up Quick Access takes a connector group with at least one
+        active connector, the Global Secure Access Administrator and Application Administrator roles, users and
+        groups assigned to the app, and the Private Access traffic forwarding profile turned on.
+        <!-- fact: Microsoft Entra Private Access lets administrators specify the FQDNs and IP addresses they consider private, and remote users with the Global Secure Access Client installed reach them without a VPN; Quick Access is the primary group of FQDNs, IP addresses and IP ranges always tunneled through the service, and Global Secure Access apps give per-app access to subsets of private resources, for different Conditional Access policies, subsets of users or time frames; each is an enterprise application with a Microsoft Entra private network connector brokering the connection, to which users and groups are assigned and Conditional Access policies applied | source: Microsoft Learn, "Learn about Microsoft Entra Private Access", updated 2026-03-12, fetched and read | checked: 2026-11 -->
+        <!-- fact: Microsoft advises using Quick Access as a transition state and, after it has replaced the VPN, configuring per-app access for application segmentation and per-app controls; configuring Quick Access needs the Global Secure Access Administrator and Application Administrator roles and a connector group with at least one active Microsoft Entra private network connector, minimum version 1.5.3417.0, then assigning users and groups, configuring Conditional Access policies and enabling the Private access traffic forwarding profile | source: Microsoft Learn, "How to configure Quick Access for Global Secure Access", updated 2026-03-25, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th></th><th>Quick Access</th><th>A Global Secure Access app</th></tr></thead>
+          <tbody>
+            <tr><td>Holds</td><td>The primary group of private FQDNs, IP addresses and ranges</td><td>A subset of the private resources</td></tr>
+            <tr><td>How many</td><td>One</td><td>As many as there are segments</td></tr>
+            <tr><td>Conditional Access</td><td>One set of policies for everything in it</td><td>Its own policies, users or time frame</td></tr>
+            <tr><td>Microsoft calls it</td><td>A transition state</td><td>Application segmentation</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          Quick Access holding every subnet is a VPN with a better sign-in: the same flat reach, behind Conditional
+          Access. The segmentation this topic's first card describes arrives only with the per-app apps, so the
+          migration's last step is to empty Quick Access, not to fill it.
         </div>
       </div>
     </div>

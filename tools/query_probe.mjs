@@ -512,6 +512,12 @@ const READERS = [
     ["copilot studio real-time protection", "", "cloud/securing-ai-workloads-in-azure-the-ai-gateway-foundry-guardr"],
     ["llm token limit policy", "", "cloud/securing-ai-workloads-in-azure-the-ai-gateway-foundry-guardr"],
     ["data and ai security dashboard", "", "cloud/securing-ai-workloads-in-azure-the-ai-gateway-foundry-guardr"],
+    // ── eighty-third wave: SC-500's network services, as cards, added before them ──
+    ["security admin configuration", "", "cloud/azure-networking-vnet-nsg-the-load-balancer-family"],
+    ["always allow security admin rule", "", "cloud/azure-networking-vnet-nsg-the-load-balancer-family"],
+    ["virtual wan routing intent", "", "cloud/azure-networking-vnet-nsg-the-load-balancer-family"],
+    ["secured virtual hub firewall manager", "", "cloud/azure-networking-vnet-nsg-the-load-balancer-family"],
+    ["entra private access quick access", "", "sec/ztna-replacing-the-vpn-and-what-breaks-when-you-do"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],

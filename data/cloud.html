@@ -6223,6 +6223,47 @@ az role definition list --custom-role-only <span class="kw">false</span> --query
                   </div>
                 </div>
               </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Governing many networks</div>
+                <div class="concept-title">Virtual Network Manager Sets Rules Above Every NSG, and Virtual WAN <span class="acro-exp">(Wide Area Network)</span> Routes Through a Secured Hub</div>
+                <div class="concept-desc">
+                  Once one team runs dozens of virtual networks, two services take the rules out of each network's hands.
+                  Azure Virtual Network Manager is scoped to subscriptions or management groups, gathers virtual networks
+                  into network groups, picked by hand or by Azure Policy conditions, and applies connectivity, security
+                  admin and routing configurations to them, none of which takes effect until it is deployed to a region.
+                  Its security admin rules are evaluated before any network security group: Allow hands the traffic on
+                  to the NSGs, Deny drops it, and Always Allow delivers it whatever the NSGs say. Only one security admin
+                  configuration can be deployed per region, so more rules go in as more rule collections, and new
+                  resources pick the rules up after a short delay. Virtual WAN's answer is the secured virtual hub: a
+                  Virtual WAN hub with Azure Firewall, a third-party security provider, or both, and its security and
+                  routing policies set through Azure Firewall Manager. Routing intent sends a hub's internet traffic, its
+                  private traffic, or both through that firewall, with at most one policy of each kind per hub, and
+                  Microsoft's page is explicit that branch-to-branch and inter-hub traffic is secured only once routing
+                  intent is configured, even inside a single hub.
+                  <!-- fact: Azure Virtual Network Manager is scoped to a list of subscriptions or to management groups; network groups are logical containers of virtual networks, added manually or by Azure Policy conditions; connectivity, security admin and routing configurations are applied to network groups and don't take effect until deployed to regions containing the target resources; its security rules are evaluated before network security group rules | source: Microsoft Learn, "What is Azure Virtual Network Manager?", updated 2026-07-29, fetched and read | checked: 2026-11 -->
+                  <!-- fact: Security admin rules are global rules with the actions Allow, Always Allow and Deny, applied at the virtual network level and evaluated before NSGs; after an Allow rule NSG rules are evaluated, while Always Allow and Deny terminate evaluation, Always Allow delivering the traffic and Deny stopping it; only one security admin configuration can be deployed to a region, with multiple rule collections inside it; deployment uses an eventual consistency model, so new resources receive the rules after a short delay; by default security admin rules aren't applied to virtual networks containing Azure SQL Managed Instance or Azure Databricks | source: Microsoft Learn, "Security admin rules in Azure Virtual Network Manager", updated 2026-01-09, fetched and read | checked: 2026-11 -->
+                  <!-- fact: A secured virtual hub is an Azure Virtual WAN hub with security and routing policies configured by Azure Firewall Manager, using Azure Firewall, third-party security as a service providers, or both, with automated routing and no user-defined routes needed; Virtual WAN routing intent must be configured to secure inter-hub and branch-to-branch communications, even within a single Virtual WAN hub | source: Microsoft Learn, "What is a secured virtual hub?", updated 2026-01-28, fetched and read | checked: 2026-11 -->
+                  <!-- fact: Virtual WAN routing intent has two routing policies, Internet Traffic and Private Traffic, at most one of each per hub, each with a single next hop such as Azure Firewall, an NVA or a SaaS security solution; an Internet Traffic policy advertises a default 0.0.0.0/0 route to spokes, gateways and NVAs, and the default route doesn't propagate across hubs; a Private Traffic policy sends branch-to-branch, branch-to-virtual network and inter-hub traffic through the next hop | source: Microsoft Learn, "How to configure Virtual WAN Hub routing intent and routing policies", updated 2026-08-27, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Security admin action</th><th>The traffic</th><th>The NSGs after it</th></tr></thead>
+                    <tbody>
+                      <tr><td>Allow</td><td>Passed on</td><td>Still decide</td></tr>
+                      <tr><td>Deny</td><td>Dropped</td><td>Never consulted</td></tr>
+                      <tr><td>Always Allow</td><td>Delivered</td><td>Never consulted, so cannot block it</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Deny the high-risk ports centrally, and check what the rules skip.</strong>
+                    Microsoft's list of high-risk ports to close to outside traffic includes FTP <span class="acro-exp">(File Transfer Protocol)</span>'s 20 and 21, SSH's 22,
+                    SMB <span class="acro-exp">(Server Message Block)</span>'s 445 and RDP's 3389, and a Deny there is one an application team's NSG cannot undo. But a virtual
+                    network holding SQL <span class="acro-exp">(Structured Query Language)</span> Managed Instance or Databricks skips security admin rules by default, so those are
+                    the networks to look at twice.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
