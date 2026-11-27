@@ -3925,7 +3925,7 @@ Remove-PSSession $s
 </div>
 
 <!-- ── TOPIC: FIREWALL & REMOVABLE MEDIA ───────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🚫</span>
     <span class="topic-name">Firewall &amp; Removable Media Policy — The Two Controls Auditors Ask About</span>
@@ -3982,6 +3982,36 @@ Remove-PSSession $s
           Scope by <strong>storage</strong>, not all USB — a policy that blocks "USB devices"
           rather than "USB mass storage" also kills keyboards, mice and the webcam, and that
           ticket arrives within the hour.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Connection security rules</div>
+      <div class="concept-title">Connection Security Rules Make the Other Machine Prove Who It Is First</div>
+      <div class="concept-desc">
+        Beside the rules that allow and block, Windows Firewall has connection security rules, which use IPsec <span class="acro-exp">(Internet Protocol Security)</span> to
+        authenticate the peer and, as configured, check the traffic's integrity, encrypt it and refuse replays. The
+        simplest needs only a name: <code>New-NetIPsecRule</code> with its defaults authenticates and integrity-checks
+        inbound traffic with the default main mode and quick mode settings, and like a firewall rule it can be written
+        straight into a GPO <span class="acro-exp">(Group Policy Object)</span>. Domain isolation builds on it. Domain members get rules that require Kerberos authentication
+        of the computer for inbound traffic and request it outbound, so unsolicited traffic from a machine that cannot
+        prove it is a domain member is refused. These rules are one of the things Microsoft says are lost when the
+        firewall is turned off, which is why it advises never disabling it, even behind another firewall product.
+        <!-- fact: Microsoft recommends not disabling Windows Firewall, because that loses benefits such as IPsec connection security rules; an IPsec policy supports network-level peer authentication, data origin authentication, data integrity, data confidentiality (encryption) and replay protection; New-NetIPsecRule with only a display name creates a basic transport mode rule, which can be created in a GPO, with inbound traffic authenticated and integrity checked using the default quick mode and main mode settings; domain isolation gives domain devices IPsec rules that block unsolicited inbound traffic not protected by IPsec, the page's example requiring Kerberos computer authentication for inbound traffic and requesting it for outbound; Get-NetIPsecMainModeSA shows main mode security associations and which peers are connected | source: Microsoft Learn, "Manage Windows Firewall With the Command Line", updated 2026-05-14, fetched and read | checked: 2026-11 -->
+      </div>
+      <pre class="code-block"><span class="com"># Domain isolation: the computer's Kerberos identity, required inbound, requested outbound</span>
+$kerb = New-NetIPsecAuthProposal <span class="kw">-Machine</span> <span class="kw">-Kerberos</span>
+$p1 = New-NetIPsecPhase1AuthSet <span class="kw">-DisplayName</span> "Kerberos Auth Phase1" <span class="kw">-Proposal</span> $kerb <span class="kw">-PolicyStore</span> corp.example.com\domain_isolation
+New-NetIPsecRule <span class="kw">-DisplayName</span> "Basic Domain Isolation Policy" <span class="kw">-Profile</span> Domain <span class="kw">-Phase1AuthSet</span> $p1.Name <span class="kw">-InboundSecurity</span> Require <span class="kw">-OutboundSecurity</span> Request <span class="kw">-PolicyStore</span> corp.example.com\domain_isolation
+
+<span class="com"># Which peers are authenticated right now, and how</span>
+Get-NetIPsecMainModeSA</pre>
+      <div class="dw">
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Know what is not a domain member before requiring authentication.</strong> A rule that
+          requires it inbound refuses unsolicited traffic from every machine that cannot prove membership, and printers,
+          appliances and workgroup servers are on that list too. Kerberos also brings its own failure modes, clock skew
+          first, in <span class="xref">Kerberos in Operations — SPNs, Delegation &amp; Clock Skew</span>.
         </div>
       </div>
     </div>

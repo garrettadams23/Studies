@@ -3465,11 +3465,44 @@ Get-ADObject <span class="kw">-Filter</span> <span class="str">'objectClass -eq 
         </div>
       </div>
     </div>
+    <div class="concept-card">
+      <div class="concept-label">SMB Direct</div>
+      <div class="concept-title">SMB Direct Puts SMB on RDMA, and SMB Multichannel Is What Switches It On</div>
+      <div class="concept-desc">
+        SMB Direct carries SMB over network adapters with RDMA, so a remote file server performs like local storage for
+        workloads such as Hyper-V and SQL <span class="acro-exp">(Structured Query Language)</span> Server: full throughput, low latency and few CPU cycles spent on the transfer.
+        It has been on by default since Windows Server 2012 and needs two things, RDMA-capable adapters and SMB
+        Multichannel, which is what notices that an adapter can do RDMA and opens two RDMA connections per interface for
+        the session. Turn Multichannel off and SMB Direct goes with it. Windows 10 and 11 can be SMB Direct clients, never
+        the server. RDMA stops at the Hyper-V virtual switch: the virtual adapters a switch creates cannot use it, so SMB
+        Direct carries the host's storage traffic, Hyper-V over SMB among it, not a VM <span class="acro-exp">(Virtual Machine)</span>'s own. From Windows Server 2022 and
+        Windows 11 it also works with SMB encryption, encrypting before the data is placed at a small cost, where
+        encryption used to cost RDMA its direct placement and leave it no faster than TCP.
+        <!-- fact: SMB Direct supports network adapters with RDMA capability, letting a remote file server resemble local storage for workloads such as Hyper-V or SQL Server, with higher throughput, lower latency and lower CPU use; it is automatically configured and enabled by default from Windows Server 2012; it needs RDMA-capable adapters and at least two computers running Windows Server 2012 or later or qualifying Windows 10 editions, and Windows 10 and 11 are client-only; SMB Multichannel detects RDMA capability and creates two RDMA connections per interface, and disabling SMB Multichannel also disables SMB Direct; RDMA-capable adapters aren't directly exposed to a Hyper-V client, and virtual network adapters created by a virtual switch can't support RDMA; RDMA adapters can be teamed with SET from Windows Server 2016; from Windows Server 2022 and Windows 11 SMB Direct supports encryption, with data encrypted before placement at relatively minor cost, where enabling SMB encryption previously disabled direct data placement and made RDMA as slow as TCP | source: Microsoft Learn, "SMB Direct", updated 2025-01-16, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Symptom</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>SMB runs over TCP although both ends have RDMA adapters</td><td>SMB Multichannel is off, and it is what turns SMB Direct on</td></tr>
+            <tr><td>A VM's own SMB traffic never uses RDMA</td><td>Virtual adapters from a virtual switch cannot use RDMA</td></tr>
+            <tr><td>An encrypted share ran no faster than TCP</td><td>Before Windows Server 2022, encryption turned off RDMA's direct placement</td></tr>
+            <tr><td>A Windows 11 machine will not serve SMB Direct</td><td>Windows 10 and 11 are clients only</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">When RDMA adapters move data at TCP speed, check Multichannel first.</strong> SMB
+          Direct is on by default, so the usual way to lose it is switching off the feature it depends on. Teaming RDMA
+          adapters is Switch Embedded Teaming's job, in
+          <span class="xref">Hyper-V, vSphere &amp; the Open-Source Stack — The Vocabulary That Transfers</span>.
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- ── TOPIC: STORAGE PERFORMANCE ────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">⚡</span>
     <span class="topic-name">Storage Performance — IOPS <span class="acro-exp">(Input/Output Operations Per Second)</span>, Throughput, Latency &amp; Which One Is Your Limit</span>
@@ -3571,6 +3604,34 @@ Get-ADObject <span class="kw">-Filter</span> <span class="str">'objectClass -eq 
           application can see, and both are the answer more often than anyone expects. The
           hypervisor row connects to
           <span class="xref">Virtualization Fundamentals — Hypervisors, Overcommit &amp; the Noisy Neighbor</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Storage QoS</div>
+      <div class="concept-title">Storage QoS Gives Each VM's Disks a Floor and a Ceiling, Counted in Normalized IOPS</div>
+      <div class="concept-desc">
+        Storage Quality of Service, from Windows Server 2016, manages storage performance for Hyper-V VMs whose disks
+        live on a Scale-Out File Server or on Cluster Shared Volumes, with a failover cluster on the storage side. With no
+        policy at all it stops one VM taking all the storage and starving the rest, and a Policy Manager on the file
+        server cluster watches every running VM's storage from one place. A policy sets a minimum, the reservation, and a
+        maximum, the limit, in normalized IOPS: any IO of 8 KB or less counts as one, and a larger one as several, so a
+        256 KB request is 32. An aggregated policy shares one minimum and maximum among every disk it is assigned to; a
+        dedicated policy gives each disk the same minimum and maximum of its own.
+        <!-- fact: Storage QoS in Windows Server 2016 centrally monitors and manages storage performance for VMs using Hyper-V with a Scale-Out File Server or Cluster Shared Volumes, with a failover cluster required on the storage servers; by default it ensures a single VM cannot consume all storage resources and starve others; a Policy Manager on the file server cluster provides central monitoring; policies set MinimumIOPS, the reservation, and MaximumIOPS, the limit, in normalized IOPS, where any IO of 8KB or smaller is one normalized IO and larger IOs count as multiple, a 256KB request being 32; Aggregated policies, previously SingleInstance, share the minimum and maximum among all flows assigned to them, and Dedicated policies, previously MultiInstance, apply them to each VHD or VHDX separately | source: Microsoft Learn, "Storage Quality of Service", updated 2016-10-10, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Storage QoS policy type</th><th>What the minimum and maximum apply to</th></tr></thead>
+          <tbody>
+            <tr><td>Aggregated, once SingleInstance</td><td>Every disk the policy is assigned to, together: one budget they share</td></tr>
+            <tr><td>Dedicated, once MultiInstance</td><td>Each disk on its own: one rule for many disks alike</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Count in normalized IOPS, or the limit will surprise you.</strong> A VM doing 64 KB
+          reads at 1,000 a second is spending 8,000 normalized IOPS against its limit, not 1,000, which is why a
+          large-block workload hits a ceiling that looked generous on paper.
         </div>
       </div>
     </div>

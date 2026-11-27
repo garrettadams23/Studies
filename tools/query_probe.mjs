@@ -463,6 +463,11 @@ const READERS = [
     ["discrete device assignment", "", "infra/hyper-v-vsphere-the-open-source-stack-the-vocabulary-that-tr"],
     ["gpu partitioning hyper-v", "", "infra/hyper-v-vsphere-the-open-source-stack-the-vocabulary-that-tr"],
     ["switch embedded teaming", "", "infra/hyper-v-vsphere-the-open-source-stack-the-vocabulary-that-tr"],
+    // ── seventieth wave: AZ-802's SMB Direct, Storage QoS and connection security rules, as cards, added before them ──
+    ["smb direct rdma", "", "infra/smb-nfs-at-scale-protocol-behavior-versions-why-file-workloa"],
+    ["storage qos normalized iops", "", "infra/storage-performance-iops-throughput-latency-which-one-is-you"],
+    ["connection security rule", "", "endpoint/firewall-removable-media-policy-the-two-controls-auditors-as"],
+    ["ipsec domain isolation", "", "endpoint/firewall-removable-media-policy-the-two-controls-auditors-as"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],
