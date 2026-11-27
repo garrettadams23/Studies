@@ -438,6 +438,36 @@ IntuneWinAppUtil.exe <span class="var">-c</span> <span class="str">"C:\Source"</
               </div>
 
               <div class="concept-card">
+                <div class="concept-label">Device query</div>
+                <div class="concept-title">Device Query Asks One Windows Device a KQL Question, and Answers Live</div>
+                <div class="concept-desc">
+                  Device query sends a Kusto Query Language question to one Windows device and returns the answer in real
+                  time, from the device itself rather than from the last inventory report. The device must be managed by
+                  Intune, marked corporate-owned, and Entra joined or hybrid joined, and the request travels over Windows
+                  Push Notification Services, so a device that cannot reach WNS cannot answer. It reads tables such as
+                  Process, WindowsService, WindowsRegistry, WindowsEvent, FileInfo, LocalUserAccount, Tpm and WindowsQfe,
+                  through a subset of KQL: <code>where</code>, <code>project</code>, <code>join</code>,
+                  <code>order by</code>, <code>take</code>, <code>top</code>, <code>count</code> and
+                  <code>distinct</code>, with summarize's aggregations. A result stops at 128 KB of text, and sending stops
+                  at 15 queries a minute. From the results, remote actions such as a restart or a remediation script run
+                  without leaving the page. It takes a role holding the Managed Devices Query permission, and
+                  <span class="volatile" data-checked="2026-11">in the Intune admin center it sits under Devices, Windows,
+                  the device, then Device query in the Monitor section</span>.
+                  <!-- fact: Device query runs a KQL query on a selected Windows device in real time; supported devices are managed by Intune, marked corporate owned, and Microsoft Entra joined or hybrid joined; Windows Push Notification Services is the mandatory transport and the query fails if WNS is blocked; it needs a custom role with the Managed Devices/Query permission; it is under Devices, Windows, a device, then Device Query in the Monitor section of the Intune admin center; supported table operators are count, distinct, join, order by, project, take, top and where, with aggregation functions for summarize; entities include BiosInfo, Certificate, Cpu, DiskDrive, EncryptableVolume, FileInfo, LocalGroup, LocalUserAccount, LogicalDrive, MemoryInfo, OsVersion, Process, SystemEnclosure, SystemInfo, Tpm, WindowsAppCrashEvent, WindowsDriver, WindowsEvent, WindowsQfe, WindowsRegistry and WindowsService; results are limited to 128 KB of characters and queries to 15 a minute; remote device actions can be run from the query results; Microsoft suggests using it for checks that would otherwise need a remote control session, such as a running service, a registry value, an application version or top processes by CPU, and saving recurring queries in the ITSM knowledge base | source: Microsoft Learn, "Device query", updated 2026-09-01, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Ask the device before taking over its screen.</strong> Microsoft's guidance
+                    is to go through the support tasks that normally need a remote control session and check which a
+                    query can answer without one: whether a service is running, a registry key's value, an application's
+                    version, the top processes by CPU <span class="acro-exp">(Central Processing Unit)</span>. The user never notices a query, where a remote session interrupts
+                    them, and the queries that keep coming back belong in the knowledge base, saved. The remediation scripts it can launch are in
+                    <span class="xref">Endpoint Analytics &amp; Proactive Remediations — Measuring and Self-Healing the Fleet</span>.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
                 <div class="concept-label">Enrollment time grouping</div>
                 <div class="concept-title">Enrollment Time Grouping Puts the Device in Its Group Before It Arrives</div>
                 <div class="concept-desc">

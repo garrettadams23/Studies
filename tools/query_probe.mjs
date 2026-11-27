@@ -530,6 +530,10 @@ const READERS = [
     ["create server audit to url", "", "cloud/azure-databases-sql-database-managed-instance-cosmos-db"],
     ["stored access policy", "", "cloud/azure-compute-storage-picking-the-right-sku"],
     ["revoke a sas token", "", "cloud/azure-compute-storage-picking-the-right-sku"],
+    // ── eighty-sixth wave: MD-102's device query, as a card, added before it ──
+    ["intune device query", "", "endpoint/microsoft-intune-cloud-mdm-mam"],
+    ["kql query on one device", "", "endpoint/microsoft-intune-cloud-mdm-mam"],
+    ["check a registry value without remote control", "", "endpoint/microsoft-intune-cloud-mdm-mam"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],
