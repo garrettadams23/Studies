@@ -414,6 +414,28 @@ IntuneWinAppUtil.exe <span class="var">-c</span> <span class="str">"C:\Source"</
                   </div>
                 </div>
               </div>
+
+              <div class="concept-card">
+                <div class="concept-label">The help desk's view</div>
+                <div class="concept-title">Troubleshooting + Support Shows One User's Whole Intune Picture</div>
+                <div class="concept-desc">
+                  Intune's troubleshooting pane is built for the help desk: give a group the Help desk operator role, and an
+                  operator opens <span class="volatile" data-checked="2026-11">Troubleshooting + support, then
+                  Troubleshoot</span>, finds a user by name or email, narrows to one device if there are several, and reads
+                  tabs for the summary, devices, groups, policy, applications, app protection, updates, enrollment
+                  restrictions, diagnostics and any linked ServiceNow incidents. Its troubleshooting covers assignments,
+                  app protection status and enrollment failures, with a suggested fix where Microsoft has one; some
+                  enrollment issues are not captured, and some errors come with no suggestion.
+                  <!-- fact: The Troubleshooting + support pane lets help desk operators and Intune administrators view user information to address help requests, and the Help desk operator role can use it; troubleshooting covers Assignments, App protection status and Enrollment failures, with details and suggested remediation, though certain enrollment issues aren't captured and some errors have no remediation suggestions; an operator selects Troubleshooting + support then Troubleshoot, finds a user by display name or email, and can filter by device; the tabs are Summary, Devices, Groups, Policy, Applications, App protection policy, Updates, Enrollment restrictions, Diagnostics and ServiceNow incidents | source: Microsoft Learn, "Use the Troubleshooting Dashboard to Help Users at Your Company", updated 2024-06-14, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Start from the user, not the device list.</strong> A call is about a person,
+                    and the pane puts that person's devices, policies, apps and enrollment restrictions on one screen, which
+                    is why the help desk gets this role rather than a broader one.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -3291,7 +3313,7 @@ Remove-PSSession $s
 
 
 <!-- ── TOPIC: BITLOCKER AT SCALE ───────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🔐</span>
     <span class="topic-name">BitLocker at Scale — Silent Enablement, Key Escrow &amp; Recovery</span>
@@ -3381,6 +3403,29 @@ Remove-PSSession $s
           the update, tell the service desk what to say. Repeated recovery on one
           hardware model is a fleet defect and needs a driver or firmware
           investigation, not another key lookup.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Key rotation</div>
+      <div class="concept-title">Rotate a Recovery Key Once It Has Been Read Out Loud</div>
+      <div class="concept-desc">
+        A recovery key the service desk read over the phone is no longer a secret, and Intune can replace it remotely
+        with the BitLocker key rotation device action, on Windows 10 version 1909 or later and Windows 11. It works only
+        where the BitLocker policy already allows it: client-driven recovery password rotation enabled for Microsoft
+        Entra joined, or joined and hybrid joined, devices; recovery information saved to Microsoft Entra ID; and that
+        storage required before BitLocker is turned on. The action is on the device's page, from
+        <span class="volatile" data-checked="2026-11">the Intune admin center's Devices, All devices</span>. Every read
+        of a recovery key is audited, and deleting the Intune object of an Entra joined device suspends BitLocker on its
+        system volume, because the sync that follows removes the volume's key protectors.
+        <!-- fact: An Intune device action remotely rotates the BitLocker recovery key of devices running Windows 10 version 1909 or later or Windows 11; Microsoft Entra joined and hybrid joined devices need the BitLocker policy settings Client-driven recovery password rotation set to enable rotation on Entra joined, or Entra joined and hybrid joined, devices, Save BitLocker recovery information to Microsoft Entra ID enabled, and Store recovery information in Microsoft Entra ID before enabling BitLocker required; the action is under Devices, All devices, on the selected device; all BitLocker recovery key accesses are audited; deleting the Intune object for a BitLocker-protected Microsoft Entra joined device triggers a sync that removes the OS volume's key protectors and leaves BitLocker suspended | source: Microsoft Learn, "Encrypt Windows devices with BitLocker using Intune", updated 2025-11-26, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Make rotation part of every key read-out, not a separate decision.</strong> The policy
+          settings that permit it have to be in place before the day a key is read out, so set them with the rest of the
+          BitLocker policy, and treat a deleted Intune object as a change to the device's encryption, not just to its
+          inventory.
         </div>
       </div>
     </div>
@@ -4020,7 +4065,7 @@ Get-NetIPsecMainModeSA</pre>
 
 
 <!-- ── TOPIC: COMPLIANCE POLICIES DEEP ───────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">✅</span>
     <span class="topic-name">Compliance Policies Deep — Settings, Grace Periods &amp; What Non-Compliant Costs</span>
@@ -4084,6 +4129,37 @@ Get-NetIPsecMainModeSA</pre>
           One day is cruel if the fix is a feature update that takes a maintenance window; a week is
           negligent for a disabled-antivirus flag. Match the clock to how fast the specific issue
           can honestly be resolved.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Custom compliance</div>
+      <div class="concept-title">When the Built-In Settings Run Out, a Discovery Script and a JSON <span class="acro-exp">(JavaScript Object Notation)</span> File Define Compliant</div>
+      <div class="concept-desc">
+        Custom compliance adds settings Intune has no built-in check for. Two parts go into the compliance policy: a
+        discovery script, PowerShell on Windows or a POSIX shell script on macOS and Linux, uploaded to Intune first,
+        which reads the settings on the device and reports them; and a JSON file naming each setting, the value that
+        counts as compliant, and the message that tells the user how to fix it. One script per policy, as many settings
+        per script as it needs. The results sit beside the built-in settings and count the same, Conditional Access
+        included. On Windows the Intune Management Extension runs the script, installing itself first if it is missing;
+        it looks for new scripts and runs discovery every eight hours, and Check Compliance on the device runs it at
+        once, which a push notification cannot.
+        <!-- fact: Custom compliance settings extend Intune's built-in compliance options with a JSON file and a discovery script per platform, both part of the compliance policy; each policy supports one script, and each script can discover multiple settings; the JSON defines the settings, the compliant values and optional messages telling users how to restore compliance; Windows uses a PowerShell script and Linux and macOS a POSIX-compliant shell script, uploaded before the policy is created; custom settings count for Conditional Access like built-in ones; supported platforms are Windows excluding Home, macOS, Ubuntu Desktop 24.04 LTS or 26.04 LTS, and RHEL 9 and 10; on Windows the Intune Management Extension, installed by MSI if missing, checks for new scripts and runs discovery every eight hours and runs scripts when the user selects Check Compliance, and push notifications can't trigger it; errors 65007 script returned failure, 65008 setting missing in the script result, 65009 invalid json for the discovered setting, 65010 invalid datatype for the discovered setting | source: Microsoft Learn, "Use custom compliance settings in Microsoft Intune", updated 2026-11-02, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Error in the compliance report</th><th>What went wrong</th></tr></thead>
+          <tbody>
+            <tr><td>65007</td><td>The script returned a failure</td></tr>
+            <tr><td>65008</td><td>A setting the JSON names is missing from the script's result</td></tr>
+            <tr><td>65009</td><td>The JSON for the discovered setting is invalid</td></tr>
+            <tr><td>65010</td><td>The discovered setting has the wrong data type</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Return every setting the JSON names, as the type the JSON expects.</strong> Two of the
+          four errors are the script and the JSON disagreeing, which a test run on one device catches before the policy
+          reaches a fleet whose access now depends on it.
         </div>
       </div>
     </div>

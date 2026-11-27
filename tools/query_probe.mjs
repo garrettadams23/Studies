@@ -482,6 +482,10 @@ const READERS = [
     ["ad delegation service administrators", "", "infra/ad-ds-boundaries-when-to-add-an-ou-a-domain-or-a-forest"],
     ["dns policy split-brain", "", "infra/windows-dns-administration-zones-scavenging-forwarders"],
     ["dns zone scope client subnet", "", "infra/windows-dns-administration-zones-scavenging-forwarders"],
+    // ── seventy-fifth wave: MD-102's second reading, device operations, as cards, added before them ──
+    ["custom compliance discovery script", "", "endpoint/compliance-policies-deep-settings-grace-periods-what-non-com"],
+    ["bitlocker key rotation intune", "", "endpoint/bitlocker-at-scale-silent-enablement-key-escrow-recovery"],
+    ["intune troubleshooting pane help desk", "", "endpoint/microsoft-intune-cloud-mdm-mam"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],
