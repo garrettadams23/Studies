@@ -1716,6 +1716,28 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
         </div>
       </div>
     </div>
+    <div class="concept-card">
+      <div class="concept-label">Graph activity logs</div>
+      <div class="concept-title">Microsoft Graph Activity Logs Record Every API <span class="acro-exp">(Application Programming Interface)</span> Request, Including the Ones No Person Made</div>
+      <div class="concept-desc">
+        The audit log says what changed; Microsoft Graph activity logs say which requests reached Microsoft Graph for the
+        tenant, every HTTP <span class="acro-exp">(HyperText Transfer Protocol)</span> request it received and processed, from line-of-business apps, scripts and SDKs <span class="acro-exp">(Software Development Kit)</span>, AI <span class="acro-exp">(Artificial Intelligence)</span> clients
+        using Microsoft's MCP <span class="acro-exp">(Model Context Protocol)</span> Server for IT Admins, and Microsoft's own apps such as Outlook, Teams and the admin portals.
+        That makes them the place to see which app called the Graph API, and what an app with consented permissions
+        actually did with them. Collection is
+        turned on through diagnostic settings in Azure Monitor, sending the logs to a Log Analytics workspace for
+        queries, a storage account for long retention, or Event Hubs for another SIEM <span class="acro-exp">(Security Information and Event Management)</span>. It needs Entra ID P1 or P2, and
+        Security Administrator is the least-privileged role that can set it up.
+        <!-- fact: Microsoft Graph activity logs are an audit trail of all HTTP requests the Microsoft Graph service receives and processes for a tenant, including requests from line-of-business apps, API clients, SDKs, AI clients querying Microsoft MCP Server for IT Admins, and Microsoft apps such as Outlook, Microsoft Teams and the Microsoft admin portals; tenant admins turn on collection with diagnostic settings in Azure Monitor, to Log Analytics, Azure Storage or Azure Event Hubs for external SIEM tools; prerequisites are a Microsoft Entra ID P1 or P2 license and a supported administrator role, Security Administrator being the only least privileged role supported for setting up diagnostic settings; the logs capture request URIs, so secrets must not be stored in directory object attributes or other auditable resources | source: Microsoft Learn, "Access Microsoft Graph activity logs for tenant monitoring", updated 2025-11-25, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Never put a secret in a directory attribute.</strong> Microsoft's own warning: these
+          logs capture request URIs <span class="acro-exp">(Uniform Resource Identifier)</span>, so a password or token passed in a request, or stored on an auditable object, is
+          readable by every administrator and every workspace, storage account or SIEM the logs are sent to.
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 

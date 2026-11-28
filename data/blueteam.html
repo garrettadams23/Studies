@@ -1815,7 +1815,7 @@ index=auth <span class="str">"Failed password"</span>
               </div>
             </div>
           </div>
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🧭</span>
               <span class="topic-name">Threat Hunting — Assume Breach, Go Looking</span>
@@ -1873,6 +1873,35 @@ index=auth <span class="str">"Failed password"</span>
                   <em>detection</em> written so the hunt never has to be run manually again, and a
                   <strong>visibility gap</strong> discovered because the data you needed was not being collected.
                   Both should be logged as results, not as reasons the hunt failed.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">On Microsoft's stack</div>
+                <div class="concept-title">Hunting in Defender and Sentinel: Graphs for Paths, Notebooks for the Rest, MCP <span class="acro-exp">(Model Context Protocol)</span> for Questions in Plain Words</div>
+                <div class="concept-desc">
+                  Microsoft's tools add three ways to hunt beyond a KQL <span class="acro-exp">(Kusto Query Language)</span> query. Advanced hunting's hunting graph draws
+                  entities as nodes and their relationships as edges, with predefined scenarios such as the attack paths
+                  to a critical asset, an entity's direct connections, or the paths between two entities, so a lateral
+                  route a table hides becomes visible; it needs the Sentinel data lake and at least read access to Security
+                  Exposure Management. The Sentinel graph beneath it also powers the blast radius view in Defender's
+                  incident graph, from a compromised entity to the critical assets it could reach. Jupyter notebooks take
+                  over where the portal stops, for Python machine learning, custom timelines and process trees, or data
+                  from outside Sentinel; the Kqlmagic library runs Sentinel's KQL inside a notebook, the kernel runs on an
+                  Azure virtual machine, and Microsoft's analysts ship notebooks to start from. And Sentinel's MCP server,
+                  hosted by Microsoft behind Entra sign-in, lets an AI <span class="acro-exp">(Artificial Intelligence)</span> client or agent query the data
+                  lake and Defender in natural language through scenario-focused collections of tools.
+                  <!-- fact: The hunting graph in Defender advanced hunting renders entities as nodes and relationships as edges in interactive graphs, with predefined scenarios including Attack paths to critical asset, Entity relationship map and Paths between two entities; access requires an appropriate role, the Microsoft Sentinel data lake and at least read-only access in Microsoft Security Exposure Management | source: Microsoft Learn, "Hunting graph in Microsoft Defender advanced hunting", updated 2026-05-04, fetched and read | checked: 2026-11 -->
+                  <!-- fact: Microsoft Sentinel graph is a unified graph analytics capability that powers graph-based experiences including blast radius analysis in the Defender incident graph, from a compromised entity to critical assets, graph-based hunting in Defender, Attack Path in Security Exposure Management and Defender for Cloud, and Purview Insider Risk Management and Data Security Investigations graphs | source: Microsoft Learn, "What is Microsoft Sentinel graph?", updated 2026-08-07, fetched and read | checked: 2026-11 -->
+                  <!-- fact: Jupyter notebooks extend Microsoft Sentinel for analytics not provided out of the box such as Python machine learning, custom visualizations such as timelines and process trees, and data sources outside Sentinel; the Kqlmagic library runs KQL queries from Sentinel inside a notebook; the kernel runs on an Azure virtual machine; notebooks developed by Microsoft's security analysts are packaged with Sentinel | source: Microsoft Learn, "Jupyter notebooks with Microsoft Sentinel hunting capabilities", updated 2024-03-07, fetched and read | checked: 2026-11 -->
+                  <!-- fact: Microsoft Sentinel's MCP server interface is fully hosted, needs no infrastructure deployment and uses Microsoft Entra for identity; scenario-focused collections of security tools let clients and agents reason over data in the Sentinel data lake and Microsoft Defender in natural language without writing queries; MCP is an open protocol with hosts, clients and servers | source: Microsoft Learn, "What is Microsoft Sentinel's support for MCP?", updated 2026-05-07, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Write down what a natural-language answer was built from.</strong> An
+                    answer from an agent or a generated query is a hunt with its steps hidden; keep the query or the tool
+                    calls behind it with the hunt's record, as this topic asks of any hunt, so the result can be repeated
+                    and turned into a detection.
                   </div>
                 </div>
               </div>

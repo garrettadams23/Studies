@@ -613,6 +613,13 @@ const READERS = [
     ["taxii feed", "", "cloud/microsoft-sentinel-roles-the-content-hub-connectors-automati"],
     ["custom log table", "", "cloud/microsoft-sentinel-roles-the-content-hub-connectors-automati"],
     ["soc optimization", "", "cloud/microsoft-sentinel-roles-the-content-hub-connectors-automati"],
+    // ── hundred-and-third wave: SC-200's last gaps, as cards, added before them ──
+    ["hunting graph", "", "blueteam/threat-hunting-assume-breach-go-looking"],
+    ["blast radius incident graph", "", "blueteam/threat-hunting-assume-breach-go-looking"],
+    ["jupyter notebook hunting", "", "blueteam/threat-hunting-assume-breach-go-looking"],
+    ["sentinel mcp server", "", "blueteam/threat-hunting-assume-breach-go-looking"],
+    ["graph activity logs", "", "m365/ediscovery-content-search-the-audit-log-answering-legal-with"],
+    ["which app called the graph api", "", "m365/ediscovery-content-search-the-audit-log-answering-legal-with"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],
