@@ -582,6 +582,12 @@ const READERS = [
     ["terms of use conditional access", "", "m365/entra-id-governance-entitlement-management-access-reviews"],
     ["connected organization", "", "m365/entra-id-governance-entitlement-management-access-reviews"],
     ["access package sponsor", "", "m365/entra-id-governance-entitlement-management-access-reviews"],
+    // ── ninety-seventh wave: SC-300's last gap, the identity score and the provisioning logs, as cards, added before them ──
+    ["identity secure score", "", "m365/secure-score-the-tenant-baseline-which-recommendations-are-w"],
+    ["risk accepted improvement action", "", "m365/secure-score-the-tenant-baseline-which-recommendations-are-w"],
+    ["provisioning logs", "", "cloud/entra-id-sign-in-conditional-access-troubleshooting"],
+    ["user was not provisioned", "", "cloud/entra-id-sign-in-conditional-access-troubleshooting"],
+    ["workday to active directory", "", "cloud/entra-id-sign-in-conditional-access-troubleshooting"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],

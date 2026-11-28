@@ -3322,7 +3322,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
 </div>
 
 <!-- ── TOPIC: SECURE SCORE & TENANT BASELINE ─────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">📈</span>
     <span class="topic-name">Secure Score &amp; the Tenant Baseline — Which Recommendations Are Worth Doing</span>
@@ -3415,6 +3415,31 @@ Get-MgContext | Select-Object Account, Scopes</pre>
           A Conditional Access policy that accidentally includes every account, applied to a tenant
           with no excluded emergency account, locks out the people who would fix it — including the
           ones who wrote it.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Identity's own score</div>
+      <div class="concept-title">Identity Secure Score Is Entra's Slice of the Same Idea, and a Status Can Earn the Points Without the Work</div>
+      <div class="concept-desc">
+        Microsoft Entra keeps its own score, the Identity Secure Score: a percentage of how closely the tenant's
+        identity settings match Microsoft's recommendations, recalculated every 24 hours, with each improvement
+        action listed among Entra's recommendations. It is free, though some recommendations need a paid license
+        to see and act on. The actions are identity ones, from requiring MFA for administrative roles and blocking
+        legacy authentication to removing dormant accounts from sensitive groups and replacing a Domain Admin
+        account that Entra Connect uses. Some score all or nothing; others score in proportion, so protecting 5 of
+        100 users with MFA earns about 0.53% of the 10.71% on offer. Each action takes a status: to address,
+        planned, risk accepted, which earns nothing and drops the action from the list, or resolved through a third
+        party or an alternate mitigation, which earns its full points though Microsoft cannot see whether the other
+        tool does the job. Microsoft's own page says the score does not measure the risk of a breach, and that the
+        high-importance recommendations matter more than the number.
+        <!-- fact: The Identity Secure Score is a percentage indicating alignment with Microsoft's security recommendations, with improvement actions shown in Microsoft Entra recommendations; it is available to free and paid customers, some recommendations requiring a paid license to view and act on; the configuration is evaluated every 24 hours, with partial credit possible; recommendations include requiring MFA for administrative roles, enabling a policy to block legacy authentication, removing dormant accounts from sensitive groups, and replacing an Enterprise or Domain Admin account for the Microsoft Entra Connect AD DS Connector; recommendations are scored binary or as a percentage of the configuration, the example being 5 of 100 users protected with MFA giving about 0.53% of a 10.71% maximum; statuses are To address, Planned, Risk accepted (no points, no longer visible in the list of improvement actions), and Resolved through third party or Resolved through alternate mitigation (awarded the points, with Microsoft having no visibility into the completeness of the implementation); the score doesn't express how likely a breach is, and high importance recommendations matter more than a specific score | source: Microsoft Learn, "What is the Identity Secure Score?", updated 2026-02-09, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Audit the actions marked resolved elsewhere.</strong> Those statuses award the
+          full points on someone's word, and Microsoft says it cannot see whether the alternative is complete, so
+          each is exactly the configured-but-not-operated claim this topic's first card warns about.
         </div>
       </div>
     </div>

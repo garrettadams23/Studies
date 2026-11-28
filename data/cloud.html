@@ -7217,6 +7217,32 @@ dsregcmd /status
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">The third log</div>
+                <div class="concept-title">When an Account Never Arrived in the App, the Provisioning Log Is Where to Look</div>
+                <div class="concept-desc">
+                  Entra keeps three activity logs. The sign-in log says how people got in, and the audit log what
+                  changed in the tenant, from user and group management to its resources. The provisioning log answers
+                  a different complaint, a user who was not provisioned where they should exist, because Entra creates,
+                  updates and removes users and groups in other systems, ServiceNow or Adobe, say, and carries them
+                  from an HR system such as Workday to Active Directory. Each row names the identity, the action,
+                  Create, Update, Delete, Disable, StagedDelete or Other, the source and target systems, and a status
+                  of Success, Failure, Skipped or Warning. Opening a row shows the steps the engine took, importing the
+                  object, matching it between the two systems, deciding whether it is in scope, evaluating it and
+                  provisioning it, with the error code and reason on a troubleshooting tab and the old and new value of
+                  anything it changed. The entries are system generated and cannot be changed or deleted, and streamed
+                  to a Log Analytics workspace they can be queried and alerted on, with two workbook templates,
+                  Provisioning Analysis and Provisioning Insights.
+                  <!-- fact: Microsoft Entra has sign-in, audit and provisioning activity logs; the audit log covers changes such as user and group management or updates to the tenant's resources; the provisioning log captures user provisioning through non-Microsoft services, answering questions such as which groups were created in ServiceNow, which users were removed from Adobe, and which users from Workday were created in Active Directory; entries are system generated and can't be changed or deleted; rows show the identity, the action (Create, Update, Delete, Disable, StagedDelete, Other), the source and target systems, and the status (Success, Failure, Skipped, Warning), several scenarios triggering Skipped; details sit in four tabs, Steps (import, match between source and target, determine if in scope, evaluate, provision), Troubleshooting &amp; Recommendations with the error code and reason, Modified Properties with old and new values, and Summary; logs can be streamed to a Log Analytics workspace, with the Provisioning Analysis and Provisioning Insights workbook templates | source: Microsoft Learn, "User provisioning logs in Microsoft Entra ID", updated 2025-03-17, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Search for the person, not only the failures.</strong> An account that
+                    never arrived can show as Skipped, which several scenarios trigger, and the Steps tab shows the
+                    step it stopped at, the scope check among them; a filter on Failure hides exactly that row.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
