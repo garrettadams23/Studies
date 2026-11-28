@@ -558,6 +558,12 @@ const READERS = [
     ["suppress alerts during maintenance", "", "cloud/azure-monitor-log-analytics-kql"],
     ["connection monitor network watcher", "", "cloud/azure-monitor-log-analytics-kql"],
     ["log search alert", "", "cloud/azure-monitor-log-analytics-kql"],
+    // ── ninety-second wave: AZ-104's Azure DNS and Advisor, as cards, added before them ──
+    ["dns private resolver", "", "cloud/azure-networking-vnet-nsg-the-load-balancer-family"],
+    ["dns autoregistration", "", "cloud/azure-networking-vnet-nsg-the-load-balancer-family"],
+    ["split-horizon dns azure", "", "cloud/azure-networking-vnet-nsg-the-load-balancer-family"],
+    ["azure advisor", "", "cloud/cloud-cost-control-budgets-tags-rightsizing"],
+    ["azure budget alert", "", "cloud/cloud-cost-control-budgets-tags-rightsizing"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],

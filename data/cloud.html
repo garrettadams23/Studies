@@ -4534,6 +4534,30 @@ gcloud compute instances list --project my-prod-project</pre>
                   </div>
                 </div>
               </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Azure's own tools</div>
+                <div class="concept-title">A Budget Warns and Never Stops Anything; Advisor Says What to Change</div>
+                <div class="concept-desc">
+                  Azure's cost controls are two tools that are easy to over-trust. A budget in Cost Management alerts on
+                  actual or forecast cost crossing its thresholds, and for a subscription or resource group it can call an
+                  action group, the same object Azure Monitor alerts use, to notify people or run automation. What it does
+                  not do is the thing people assume: Microsoft's page is explicit that resources aren't affected and
+                  consumption isn't stopped. Azure Advisor is the other half, an assistant that reads resource
+                  configuration and usage and recommends changes in five categories, cost, reliability, security,
+                  performance and operational excellence, each with the action inline. After a recommendation is acted on,
+                  Advisor can take up to a day to notice.
+                  <!-- fact: Cost Management budgets alert on actual or forecasted cost against thresholds; notifications are triggered when thresholds are exceeded, resources aren't affected and consumption isn't stopped; budgets at subscription or resource group scope can call an action group; budget evaluations are based on actual cost and don't include amortization | source: Microsoft Learn, "Tutorial: Create and manage budgets", updated 2025-06-26, fetched and read | checked: 2026-11 -->
+                  <!-- fact: Azure Advisor analyzes resource configuration and usage telemetry and recommends improvements in five categories, reliability, security, performance, cost and operational excellence, with recommended actions inline; it can take up to a day for Advisor to recognize an implemented recommendation | source: Microsoft Learn, "Introduction to Azure Advisor", updated 2024-12-02, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">If spending must actually stop, the budget has to call something that stops
+                    it.</strong> A budget only notifies; an action group behind it can run the runbook or function that
+                    shuts things down, and that automation is a decision someone has to own.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 <div class="topic" data-reviewed="2026-07">
@@ -6261,6 +6285,32 @@ az role definition list --custom-role-only <span class="kw">false</span> --query
                     SMB <span class="acro-exp">(Server Message Block)</span>'s 445 and RDP's 3389, and a Deny there is one an application team's NSG cannot undo. But a virtual
                     network holding SQL <span class="acro-exp">(Structured Query Language)</span> Managed Instance or Databricks skips security admin rules by default, so those are
                     the networks to look at twice.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Azure DNS</div>
+                <div class="concept-title">Public Zones for the Internet, Private Zones for VNets, Linked and Auto-Registered</div>
+                <div class="concept-desc">
+                  Azure DNS is several services under one name. Azure Public DNS hosts your internet domains, managed with
+                  the same credentials, tools and billing as the rest of Azure. Azure Private DNS resolves names inside
+                  virtual networks: a private zone answers only for the virtual networks linked to it, a link can turn on
+                  autoregistration, which keeps a
+                  record for every VM in that network up to date as VMs are created, change address or are deleted, and
+                  one zone can be linked to many networks in different regions, because the zone is stored as a global
+                  resource. A private and a public zone can share a name, a split-horizon view in which the same name
+                  answers differently inside the network. The DNS Private Resolver lets on-premises networks query the
+                  private zones, and Azure query the on-premises ones, without DNS servers on VMs.
+                  <!-- fact: Azure DNS includes Azure Public DNS, a hosting service for DNS domains managed with the same credentials, APIs, tools and billing as other Azure services; Azure Private DNS for name resolution in virtual networks without a custom DNS solution; the DNS Private Resolver, for querying private zones from on premises and vice versa without VM-based DNS servers; Traffic Manager, a DNS-based traffic load balancer; and DNS Resolver Policy | source: Microsoft Learn, "Azure DNS Overview: Hosting and Resolution", updated 2026-07-28, fetched and read | checked: 2026-11 -->
+                  <!-- fact: To resolve a private DNS zone's records a virtual network must be linked to the zone; a link can enable autoregistration, which registers VM records and updates them when a VM is created, changes IP address or is deleted; the zone is stored as a global resource, so one zone can be linked to VNets in different regions; a private and a public zone can share a name for a split-horizon view; Microsoft advises against .local for a private zone; supported record types are A, AAAA, CNAME, MX, PTR, SOA, SRV and TXT | source: Microsoft Learn, "Azure Private DNS: Secure DNS for Virtual Networks", updated 2025-12-16, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">A private zone nobody linked answers nobody.</strong> When a name resolves
+                    from one virtual network and not from its peer, check the zone's virtual network links before the
+                    records; and keep <code>.local</code> out of private zone names, which Microsoft advises against
+                    because not every operating system handles it.
                   </div>
                 </div>
               </div>
