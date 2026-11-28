@@ -2260,6 +2260,38 @@ New-FsrmQuota <span class="kw">-Path</span> "E:\Shares\Finance" <span class="kw"
         </div>
       </div>
     </div>
+    <div class="concept-card">
+      <div class="concept-label">Protecting Azure Files</div>
+      <div class="concept-title">Share Snapshots Restore Files; Soft Delete Restores the Share; Neither Does the Other's Job</div>
+      <div class="concept-desc">
+        Azure Files has two protections that sound alike and cover different losses. A share snapshot is a
+        read-only, point-in-time copy of the whole share, kept incrementally so each one stores only what changed,
+        and it is how the previous version of a file comes back after the file is deleted or overwritten: up to
+        200 snapshots a share, each kept for up to ten years. Soft delete works at the share level only. Set on the storage account, it keeps a deleted
+        share, snapshots and all, for a retention period of 7 days by default and anything from 1 to 365, and it
+        is on by default for new storage accounts. What neither does is the other's job: soft delete cannot bring
+        back one file from a share that still exists, and Microsoft's snapshot page warns that snapshots do not
+        stop the share or the account being deleted. Azure file share backup takes and manages the snapshots on a
+        schedule, and a lock on the account or resource group covers the account.
+        <!-- fact: A share snapshot is a point-in-time, read-only copy of an SMB or NFS file share, provided at the share level and usable to restore individual files; share snapshots are incremental, storing only data changed since the most recent snapshot; Azure Files supports up to 200 share snapshots per share, retained for up to 10 years; share snapshots don't prevent accidental deletion of a file share or storage account, for which soft delete or a lock on the storage account or resource group is recommended; Azure file share backup can take and manage snapshots | source: Microsoft Learn, "Use Azure Files Share Snapshots", updated 2026-10-26, fetched and read | checked: 2026-11 -->
+        <!-- fact: Soft delete for Azure file shares retains deleted file shares for the retention period and restores a share with all its contents, including snapshots; it works only at the file share level, so individual deleted files are restored from share snapshots or Azure file share backup; it is enabled at the storage account level, on by default for new storage accounts, with a default retention of 7 days and any period between 1 and 365 days | source: Microsoft Learn, "Azure File Share Soft Delete", updated 2026-07-20, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Loss</th><th>Recovered by</th></tr></thead>
+          <tbody>
+            <tr><td>One file deleted or overwritten</td><td>A share snapshot</td></tr>
+            <tr><td>The whole share deleted</td><td>Soft delete, within its retention</td></tr>
+            <tr><td>The storage account deleted</td><td>Neither: a lock on the account or resource group prevents it</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Schedule the snapshots, because nobody takes one by hand before the
+          mistake.</strong> Azure file share backup is the scheduler; the user who wants yesterday's version of a
+          spreadsheet needs a snapshot that already exists.
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 

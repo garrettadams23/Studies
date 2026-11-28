@@ -6408,6 +6408,45 @@ az storage blob generate-sas --account-name stprod01 --container-name backups \
                   </div>
                 </div>
               </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Protecting blob data</div>
+                <div class="concept-title">Soft Delete, Versioning and a Lock: What Each One Restores, and What It Does Not</div>
+                <div class="concept-desc">
+                  Microsoft's basic protection for a storage account is three switches. A Resource Manager lock stops the
+                  account itself being deleted or reconfigured, and protects nothing inside it. Container soft delete
+                  brings back a deleted container with its contents, but not a single blob deleted from a container that
+                  still exists. Blob soft delete brings back a deleted or overwritten blob or version, within a retention
+                  period Microsoft suggests setting to at least seven days. Versioning goes further: every write keeps the
+                  previous state as a version, a deleted blob's current version becomes a previous one, and versions stay
+                  until something deletes them, which is why a lifecycle rule should prune the old ones. A snapshot is the
+                  manual version, a point-in-time copy taken on purpose, and it dies with its blob. Immutability policies
+                  stop deletion for an interval you control, of one version or of a whole container, and on a container
+                  they stop overwrites as well. Object
+                  replication copies block blobs asynchronously to another account, needing the change feed on the source
+                  and versioning on both, and the two are never quite in sync. And for losing the whole account, or
+                  ransomware, Microsoft's advice is Azure Backup on top of all of it.
+                  <!-- fact: For basic data protection Microsoft recommends a Resource Manager lock on the storage account, which protects against account deletion or configuration changes but not containers or blobs, container soft delete, which restores a deleted container and its contents but not an individual blob, and blob soft delete, which restores a deleted or overwritten blob or version, each with a retention of at least seven days; blob versioning creates a new version on every write, a deleted blob's current version becomes a previous version, and previous versions persist until deleted, with lifecycle management recommended to delete old versions; versioning is not available with a hierarchical namespace; a blob snapshot is a manual point-in-time capture deleted with its blob; immutability policies on a blob version or a container prevent deletes and overwrites for an interval; Azure Backup is recommended for broader loss such as account deletion or ransomware | source: Microsoft Learn, "Data protection overview", updated 2026-10-02, fetched and read | checked: 2026-11 -->
+                  <!-- fact: Object replication asynchronously copies block blobs, their versions, metadata and properties between a source and destination account according to rules; it requires change feed on the source and blob versioning on both accounts, general-purpose v2 or premium block blob accounts, block blobs only, and no hierarchical namespace; source and destination aren't immediately in sync; priority replication replicates 99.0% of objects within 15 minutes within the same continent for supported workloads, backed by an SLA | source: Microsoft Learn, "Object replication for block blobs", updated 2026-09-10, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Protection</th><th>Brings back</th><th>Does not cover</th></tr></thead>
+                    <tbody>
+                      <tr><td>Resource Manager lock</td><td>Nothing; it prevents deleting the account</td><td>Containers and blobs inside it</td></tr>
+                      <tr><td>Container soft delete</td><td>A deleted container and its contents</td><td>One blob deleted from a live container</td></tr>
+                      <tr><td>Blob soft delete</td><td>A deleted or overwritten blob or version</td><td>Anything past the retention period</td></tr>
+                      <tr><td>Versioning</td><td>Every earlier state of every blob</td><td>Accounts with a hierarchical namespace</td></tr>
+                      <tr><td>Snapshot</td><td>The state you chose to capture</td><td>A deleted blob: its snapshots go with it</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Turn on all three of the basics, because each covers a different
+                    deletion.</strong> The lock guards the account, container soft delete the container, blob soft delete the
+                    blob, and none of them covers for the others.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <!-- ── TOPIC: AZURE PAAS COMPUTE ───────────────────────────────── -->

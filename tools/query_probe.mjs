@@ -540,6 +540,12 @@ const READERS = [
     ["azure site recovery failover", "", "cloud/azure-backup-site-recovery-two-vaults-deletion-that-waits-an"],
     ["multi-user authorization resource guard", "", "cloud/azure-backup-site-recovery-two-vaults-deletion-that-waits-an"],
     ["backup operator role", "", "cloud/azure-backup-site-recovery-two-vaults-deletion-that-waits-an"],
+    // ── eighty-ninth wave: AZ-104's blob and file data protection, as cards, added before them ──
+    ["blob soft delete", "", "cloud/azure-compute-storage-picking-the-right-sku"],
+    ["blob versioning", "", "cloud/azure-compute-storage-picking-the-right-sku"],
+    ["object replication", "", "cloud/azure-compute-storage-picking-the-right-sku"],
+    ["azure files previous version of a file", "", "infra/file-services-share-vs-ntfs-permissions-dfs-quotas"],
+    ["restore a deleted file share", "", "infra/file-services-share-vs-ntfs-permissions-dfs-quotas"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],
