@@ -546,6 +546,12 @@ const READERS = [
     ["object replication", "", "cloud/azure-compute-storage-picking-the-right-sku"],
     ["azure files previous version of a file", "", "infra/file-services-share-vs-ntfs-permissions-dfs-quotas"],
     ["restore a deleted file share", "", "infra/file-services-share-vs-ntfs-permissions-dfs-quotas"],
+    // ── ninetieth wave: AZ-104's storage access and tools, as cards, added before them ──
+    ["storage account firewall", "", "cloud/azure-compute-storage-picking-the-right-sku"],
+    ["trusted service exception", "", "cloud/azure-compute-storage-picking-the-right-sku"],
+    ["azcopy", "", "cloud/azure-compute-storage-picking-the-right-sku"],
+    ["storage explorer", "", "cloud/azure-compute-storage-picking-the-right-sku"],
+    ["azure files entra kerberos", "", "infra/file-services-share-vs-ntfs-permissions-dfs-quotas"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],

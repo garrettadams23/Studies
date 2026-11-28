@@ -6447,6 +6447,67 @@ az storage blob generate-sas --account-name stprod01 --container-name backups \
                   </div>
                 </div>
               </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Network rules</div>
+                <div class="concept-title">The Storage Firewall Allows Four Kinds of Source, and Denies Everything Else</div>
+                <div class="concept-desc">
+                  A storage account accepts connections from any network until you add a network rule, and from then on
+                  only the sources you allow reach its public endpoint. There are four kinds of allowance. A virtual
+                  network rule admits a subnet, from any subscription, tenant or region, up to 400 of them, but only once
+                  that subnet has a service endpoint for Microsoft.Storage, or Microsoft.Storage.Global for accounts in
+                  other regions. An IP <span class="acro-exp">(Internet Protocol)</span> network rule admits a public address range, up to 400, which is how an on-premises
+                  network gets in. A resource instance rule admits a specific Azure resource from the same tenant, acting
+                  through its role assignments, and a trusted service exception admits named Azure services that run
+                  outside your network. Two details catch people out. Once a subnet has a service endpoint its traffic
+                  arrives from private addresses, so an IP rule written for that subnet's public address stops matching.
+                  And a rule only lets a client knock: it still needs a key, a SAS or an Entra role, and a SAS restricted
+                  to one IP address cannot grant access the network rules deny.
+                  <!-- fact: Storage accounts allow connections from any network by default; network rules restrict the public endpoint to explicitly allowed sources and deny all other traffic; rule types are virtual network rules (subnets in any subscription, tenant or region, up to 400 per account, requiring a Microsoft.Storage or Microsoft.Storage.Global service endpoint on the subnet), IP network rules (public IP ranges, up to 400 per account), resource instance rules (resources from the same tenant, acting through their role assignments) and trusted service exceptions; traffic from a subnet with a service endpoint uses a private source IP, so IP rules for those subnets no longer apply; allowed clients must still meet the account's authorization requirements, and SAS tokens limited to an IP address don't grant access beyond the network rules; the page applies to Blob, Data Lake, Queue and Table storage, with Azure Files described separately | source: Microsoft Learn, "Firewall rules and network access control for Azure Blob, Data Lake, Queue, and Table Storage", updated 2026-10-23, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Rule</th><th>Admits</th><th>The catch</th></tr></thead>
+                    <tbody>
+                      <tr><td>Virtual network rule</td><td>A subnet, up to 400</td><td>The subnet needs a storage service endpoint</td></tr>
+                      <tr><td>IP network rule</td><td>A public address range, up to 400</td><td>Stops matching a subnet once it has a service endpoint</td></tr>
+                      <tr><td>Resource instance rule</td><td>One Azure resource from the same tenant</td><td>It acts with that resource's role assignments</td></tr>
+                      <tr><td>Trusted service exception</td><td>Named Azure services outside your network</td><td>Only the services on Microsoft's list</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">A 403 from storage after a network change is the firewall before it is the
+                    key.</strong> Check which rule the caller should match, and whether its subnet's new service endpoint
+                    moved it off the IP rule that used to let it in. Private endpoints, which bypass the public endpoint
+                    altogether, are in <span class="xref">Azure Networking — VNet, NSG &amp; the Load-Balancer Family</span>.
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card">
+                <div class="concept-label">Moving data</div>
+                <div class="concept-title">AzCopy for Scripts, Storage Explorer for People, Storage Mover for Migrations</div>
+                <div class="concept-desc">
+                  AzCopy is the command-line tool for copying data into, out of and between storage accounts, from on
+                  premises to Azure and back, and between Blob Storage and Azure Files in either direction, with a
+                  <code>sync</code> command for keeping a destination in step rather than copying once. Version 10 is the
+                  supported one, installed from a package manager on Linux or as a portable binary elsewhere. Storage
+                  Explorer is the same reach in a desktop app for Windows, macOS and Linux, for browsing containers and
+                  shares, moving a handful of files and checking what a SAS can see. For a migration, though, Microsoft's
+                  own AzCopy page points elsewhere: past a terabyte, Azure Storage Mover is the managed service built to
+                  plan, run and monitor the transfer.
+                  <!-- fact: AzCopy is a command-line utility for copying data to, from or between storage accounts, including on premises to Azure, Azure to on premises and between accounts, with native commands for copying and synchronizing, and copies between Blob Storage and Azure Files in either direction; AzCopy v10 is the currently supported version, installed through a package manager on Linux or as a portable binary on other systems; credentials come from Microsoft Entra ID, provided once, or a SAS token appended to each command; for migrations Microsoft recommends Azure Storage Mover, a managed service for high-scale transfers over 1 TB | source: Microsoft Learn, "Get started with AzCopy", updated 2026-11-05, fetched and read | checked: 2026-11 -->
+                  <!-- fact: Microsoft Azure Storage Explorer is a standalone app for working with Azure Storage data on Windows, macOS and Linux | source: Microsoft Learn, "Get started with Storage Explorer", updated 2019-11-08 per its ms.date though the page describes 2026 releases, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Prefer an Entra sign-in to a SAS on the end of every command.</strong>
+                    AzCopy takes credentials from Microsoft Entra ID, once, or from a SAS token appended to each command,
+                    and a token pasted into a script outlives the job it was pasted for. How a SAS should be scoped and
+                    revoked is in the access policies card above.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <!-- ── TOPIC: AZURE PAAS COMPUTE ───────────────────────────────── -->

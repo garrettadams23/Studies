@@ -2292,6 +2292,36 @@ New-FsrmQuota <span class="kw">-Path</span> "E:\Shares\Finance" <span class="kw"
         </div>
       </div>
     </div>
+    <div class="concept-card">
+      <div class="concept-label">Identity-based access</div>
+      <div class="concept-title">Azure Files Takes Kerberos From One Identity Source, Then Checks Two Layers of Permission</div>
+      <div class="concept-desc">
+        An SMB share in Azure Files can be opened with the storage account key, which is everything to everyone,
+        or with the user's own identity, which Microsoft recommends for security and which costs nothing extra.
+        Identity-based access uses Kerberos from one of three sources, one per storage account for all its shares:
+        on-premises AD DS <span class="acro-exp">(Active Directory Domain Services)</span>, for existing domains; Microsoft Entra Domain Services, a managed domain in Azure; or
+        Microsoft Entra Kerberos, for Entra-joined clients, FSLogix profiles and machines with no line of sight to
+        a domain controller. Access then needs two things, as on a Windows file server: a share-level permission,
+        and the file or directory permission set from a Windows client with File Explorer or <code>icacls</code>.
+        NFS shares get none of this; identity-based access is SMB only.
+        <!-- fact: Azure Files identity-based authentication over SMB uses Kerberos from one of three identity sources, on-premises AD DS, Microsoft Entra Domain Services or Microsoft Entra Kerberos, with only one source per storage account applying to all its file shares; Entra Kerberos suits Entra-joined clients, FSLogix profiles, macOS clients and clients without domain controller connectivity; access needs a share-level permission and the appropriate file or directory permission, managed from a Windows client with File Explorer or icacls; Microsoft recommends identity-based authentication over the storage account key for security, there's no extra charge, and NFS file shares don't support identity-based authentication | source: Microsoft Learn, "Overview of Azure Files identity-based authentication for SMB access", updated 2026-09-18, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Identity source</th><th>Fits</th></tr></thead>
+          <tbody>
+            <tr><td>On-premises AD DS</td><td>An organization with an existing domain, its clients able to reach a domain controller</td></tr>
+            <tr><td>Microsoft Entra Domain Services</td><td>An organization that uses or needs a managed domain in Azure</td></tr>
+            <tr><td>Microsoft Entra Kerberos</td><td>Entra-joined clients, FSLogix profiles, and clients with no domain controller in reach</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Two layers means two places to look when access is denied.</strong> The share-level
+          permission and the file permission are separate, exactly as share and NTFS permissions are on the file
+          servers this topic began with, and the effective right is what both allow.
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
