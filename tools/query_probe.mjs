@@ -552,6 +552,12 @@ const READERS = [
     ["azcopy", "", "cloud/azure-compute-storage-picking-the-right-sku"],
     ["storage explorer", "", "cloud/azure-compute-storage-picking-the-right-sku"],
     ["azure files entra kerberos", "", "infra/file-services-share-vs-ntfs-permissions-dfs-quotas"],
+    // ── ninety-first wave: AZ-104's Azure Monitor alerting, as a card, added before it ──
+    ["action group", "", "cloud/azure-monitor-log-analytics-kql"],
+    ["alert processing rule", "", "cloud/azure-monitor-log-analytics-kql"],
+    ["suppress alerts during maintenance", "", "cloud/azure-monitor-log-analytics-kql"],
+    ["connection monitor network watcher", "", "cloud/azure-monitor-log-analytics-kql"],
+    ["log search alert", "", "cloud/azure-monitor-log-analytics-kql"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],
