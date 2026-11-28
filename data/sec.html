@@ -1516,6 +1516,34 @@ entered = <span class="str">"my_secure_pass"</span>
         </div>
       </div>
     </div>
+    <div class="concept-card">
+      <div class="concept-label">Entra's own methods</div>
+      <div class="concept-title">Certificate-Based Authentication Without AD FS <span class="acro-exp">(Active Directory Federation Services)</span>, and a Campaign That Nudges People Off Weak MFA</div>
+      <div class="concept-desc">
+        Two Microsoft Entra features turn this topic's ranking into settings. Certificate-based authentication
+        lets users sign in with an X.509 certificate from your own PKI <span class="acro-exp">(Public Key Infrastructure)</span> directly against Entra ID, where it once
+        needed a federated AD FS farm. It is phishing resistant, and the feature itself is free, needing no paid
+        edition of Entra ID, though Microsoft notes that enforcing MFA through Conditional Access does. The
+        administrator decides which certificates count as single-factor and which as multifactor, by issuer or
+        policy OID, and maps certificate fields to user attributes to find the account. A registration campaign
+        moves people up the table: after an interactive sign-in with MFA, targeted users are prompted to set up
+        a passkey or the Microsoft Authenticator app, one of the two at a time across the whole tenant, with users
+        and groups included or excluded. Left Microsoft managed, Microsoft picks the method and the snooze rules,
+        and its Authenticator campaign targets people still using text messages or voice calls; enabled, the
+        administrator picks them, with up to fourteen days of snoozing. A passkey campaign needs the passkey
+        method enabled with self-service setup allowed, and an Authenticator campaign skips users whose
+        Authenticator mode is set to passwordless.
+        <!-- fact: Microsoft Entra certificate-based authentication lets users authenticate directly with X.509 certificates against Entra ID without federated AD FS, is phishing-resistant, is a free feature needing no paid edition of Entra ID, while MFA through Conditional Access requires a licensed edition; it maps certificate fields to user attributes through certificate username bindings, and lets administrators define by issuer or policy OID which certificates are single-factor or multifactor, working with Conditional Access and authentication strengths | source: Microsoft Learn, "Microsoft Entra CBA Overview", updated 2025-03-04, fetched and read | checked: 2026-11 -->
+        <!-- fact: A registration campaign prompts users during an interactive sign-in with MFA to set up a passkey (FIDO2) or Microsoft Authenticator push notifications, targeting one authentication method at a time, not both in the same tenant, with users or groups included or excluded; in the Microsoft managed state Microsoft selects the method and settings, and its Authenticator campaign targets users who perform MFA by voice call or SMS; in the Enabled state the administrator selects the method, 0 to 14 days allowed to snooze and limited snoozes; a passkey campaign needs the passkey (FIDO2) method enabled with Allow self-service setup; an Authenticator campaign needs Authenticator enabled with authentication mode Any or Push, and users whose mode is Passwordless aren't eligible | source: Microsoft Learn, "Run a Registration Campaign to Set Up a Passkey or Microsoft Authenticator", updated 2026-09-15, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <div class="concept-desc verdict">
+          <strong class="c-amber">A campaign only helps if the old method is retired after it.</strong> Nudging
+          people to a passkey leaves text-message codes working beside it until the authentication methods policy
+          turns them off, and an attacker uses whichever method is weakest.
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -8130,6 +8158,29 @@ POST /token   grant_type=authorization_code
           Quick Access holding every subnet is a VPN with a better sign-in: the same flat reach, behind Conditional
           Access. The segmentation this topic's first card describes arrives only with the per-app apps, so the
           migration's last step is to empty Quick Access, not to fill it.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">For one web app</div>
+      <div class="concept-title">Application Proxy Publishes an On-Premises Web App Through the Same Outbound Connector</div>
+      <div class="concept-desc">
+        Entra has a narrower answer for web apps. Application proxy publishes an on-premises web application at an
+        external URL <span class="acro-exp">(Uniform Resource Locator)</span>: the user signs in to Entra ID, Conditional Access and MFA <span class="acro-exp">(Multi-Factor Authentication)</span> apply as for any cloud app, and a
+        private network connector on an internal server, the same connector Private Access uses, carries the
+        request to the application over outbound connections only, on ports 80 and 443, so no inbound firewall
+        port opens and the back-end server never takes direct traffic from the internet. It publishes web apps
+        that use Integrated Windows Authentication, with the connector using Kerberos Constrained Delegation, and
+        form-based apps; header-based ones go through PingAccess, a partner service. It is built for remote users:
+        Microsoft says it is not designed for people on the corporate network, and that routing them through it
+        for no reason can cause unexpected performance problems.
+        <!-- fact: Microsoft Entra application proxy provides remote access and SSO to on-premises web applications through an external URL; it consists of the cloud application proxy service and the private network connector, a lightweight agent on an on-premises server, which Microsoft Entra Private Access also uses; the connector uses only outbound connections over ports 80 and 443, so no inbound firewall ports are opened and back-end servers aren't exposed to direct HTTP traffic; on-premises apps can use Conditional Access and MFA; supported apps include web apps using Integrated Windows Authentication, with the connectors using Kerberos Constrained Delegation, and form-based or header-based apps, header-based authentication using PingAccess, a non-Microsoft partner service; it isn't designed for internal users on the corporate network, and internal users using it unnecessarily can cause unexpected performance problems | source: Microsoft Learn, "Publish on-premises apps with Microsoft Entra application proxy", updated 2026-03-10, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Application proxy for one web app, Private Access for the network behind
+          it.</strong> They share the connector, so the choice is about scope: a published URL for a browser, or
+          tunneled FQDNs and addresses for everything else.
         </div>
       </div>
     </div>

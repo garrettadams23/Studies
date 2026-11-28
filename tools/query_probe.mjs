@@ -570,6 +570,12 @@ const READERS = [
     ["protected actions conditional access", "", "m365/admin-roles-least-privilege-the-roles-worth-knowing-and-pim-"],
     ["cross-tenant synchronization", "", "m365/external-collaboration-guests-b2b-the-lifecycle-nobody-owns"],
     ["sync users between tenants", "", "m365/external-collaboration-guests-b2b-the-lifecycle-nobody-owns"],
+    // ── ninety-fifth wave: SC-300's authentication gaps and Application Proxy, as cards, added before them ──
+    ["certificate-based authentication", "", "sec/multi-factor-authentication-layers-of-proof"],
+    ["registration campaign", "", "sec/multi-factor-authentication-layers-of-proof"],
+    ["nudge users to set up authenticator", "", "sec/multi-factor-authentication-layers-of-proof"],
+    ["application proxy", "", "sec/ztna-replacing-the-vpn-and-what-breaks-when-you-do"],
+    ["publish on-premises web app", "", "sec/ztna-replacing-the-vpn-and-what-breaks-when-you-do"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],
