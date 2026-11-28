@@ -4164,7 +4164,13 @@ Get-MgContext | Select-Object Account, Scopes</pre>
         actions, such as quarantining a file, stopping a process, isolating a device or blocking a URL <span class="acro-exp">(Uniform Resource Locator)</span>, and,
         depending on how automation is configured, it either takes them or leaves them pending until an analyst
         approves. Related alerts that arrive while it runs join the investigation, and an affected entity seen
-        elsewhere widens its scope. Not every alert starts one.
+        elsewhere widens its scope. Not every alert starts one. Microsoft's Defender for Endpoint pages add a
+        change the Defender XDR overview, last dated April 2025, does not yet mention: from 1 September 2026
+        automated investigation and response no longer runs as a separate investigation experience and cannot be
+        started by hand. Its detection and response
+        run inside Defender's antivirus protection, and a full antivirus scan is the on-demand route, while the
+        automation level still decides whether remediation waits for approval.
+        <!-- fact: As of September 1, 2026, Automated Investigation and Response (AIR) no longer runs as a separate investigation experience or is available for manual triggering in Microsoft Defender; AIR detection and response capabilities are included in Microsoft Defender's default antivirus protection stack and run automatically, and a full antivirus scan is the route for on-demand investigation; the automation level decides whether remediation actions are taken automatically or only upon approval; the Defender XDR overview page, ms.date 2025-04-28, does not mention the change | source: Microsoft Learn, "Use automated investigations to investigate and remediate threats", updated 2026-07-02, and "Automation levels in automated investigation and remediation", updated 2025-04-04 with the notice, both Defender for Endpoint, fetched and read | checked: 2026-11 -->
         <!-- fact: An automated investigation gives each piece of evidence a verdict of Malicious, Suspicious or No threats found; remediation actions include sending a file to quarantine, stopping a process, isolating a device and blocking a URL, taken automatically or only on approval depending on configuration; all pending and completed actions are listed in the Action center; not every alert triggers an investigation | source: Microsoft Learn, "Automated investigation and response in Microsoft Defender XDR" (updated 2025-04-28), fetched and read | checked: 2026-11 -->
       </div>
       <div class="dw">
@@ -4182,6 +4188,41 @@ Get-MgContext | Select-Object Account, Scopes</pre>
           something and named the fix, and nothing has been removed until somebody approves it. The portal's
           home page has an <em>Automated investigation &amp; response</em> card that counts the actions waiting
           and how long each has waited, and links to the Action center.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Attack disruption</div>
+      <div class="concept-title">Automatic Attack Disruption Contains the Attacker's Footholds Before Anyone Approves Anything</div>
+      <div class="concept-desc">
+        Automated remediation waits on the automation level you set; automatic attack disruption is built to act on
+        its own.
+        When Defender correlates an incident it is highly confident is an attack in progress, ransomware among
+        them, it works out which users, devices and apps the attacker controls and contains them, judging the whole
+        incident rather than one indicator of compromise. Defender for Endpoint contains or isolates devices and
+        blocks an IP <span class="acro-exp">(Internet Protocol)</span> address, the identity side disables or suspends the user and revokes sessions in Entra ID and
+        Active Directory, and Defender for Cloud Apps acts on a compromised OAuth app. Microsoft says its containment
+        detectors hold 99% confidence or higher on real production data, and each is tested in audit mode before it
+        is released. Every action can be undone, critical users, devices and IP addresses can be excluded, and the
+        incident shows what happened: an Attack Disruption tag in the queue, a yellow banner on the incident page,
+        the contained assets marked in the incident graph, and each action in the Action center.
+        <!-- fact: Automatic attack disruption correlates signals into a high-confidence incident, identifies assets controlled by the attacker and automatically contains them in real time at the incident level, unlike blocking based on a single indicator of compromise, to stop active ransomware campaigns and other sophisticated attacks; it supports actions in Microsoft Entra ID and Active Directory, with Okta and AWS in preview; for containment actions Defender maintains a confidence level of 99% or higher based on real production data and validates detectors in audit mode before broad release; all automatic actions can be undone and exclusions can be configured for supported users, devices and IP addresses; actions include Contain device, Contain IP and Isolate device in Defender for Endpoint, Disable user through Defender for Identity on domain controllers running its sensor and in Microsoft Entra ID, Revoke user session and Suspend user in Microsoft Entra ID, and OAuth app compromise measures in Defender for Cloud Apps; disrupted incidents carry an Attack Disruption tag in the incident queue, a yellow banner on the incident page, asset status in the incident graph and an action in the Action Center | source: Microsoft Learn, "Automatic attack disruption in Microsoft Defender", updated 2026-06-11, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Action</th><th>Taken through</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td>Contain device</td><td>Defender for Endpoint</td><td>Every onboarded device stops communicating with the suspicious one</td></tr>
+            <tr><td>Contain IP</td><td>Defender for Endpoint</td><td>The same, for an address with no onboarded device behind it</td></tr>
+            <tr><td>Isolate device</td><td>Defender for Endpoint</td><td>Cuts an active foothold off the network, keeping its link to security services</td></tr>
+            <tr><td>Disable user</td><td>Defender for Identity</td><td>Disables the account on domain controllers running the sensor, and in Entra ID</td></tr>
+            <tr><td>Revoke user session</td><td>Microsoft Entra ID</td><td>Ends the sessions an attacker may already hold</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Decide the exclusions before the first disruption.</strong> A contained server or
+          a disabled service account stops the business as surely as the attacker would, and excluding users,
+          devices and IP addresses is how Microsoft says to keep critical assets out of automatic containment.
         </div>
       </div>
     </div>
@@ -4260,6 +4301,51 @@ Get-MgContext | Select-Object Account, Scopes</pre>
           <span class="xref">Writing a Good Rule — Specificity, False-Positive Analysis &amp; the Tuning Fields</span>,
           and what a rule needs once it exists, from review to retirement, is
           <span class="xref">The Detection Lifecycle — Idea to Retirement, and the Gates Between</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Cases</div>
+      <div class="concept-title">A Case Holds the Work Around an Incident: Owners, Tasks, Evidence and an SLA <span class="acro-exp">(Service Level Agreement)</span></div>
+      <div class="concept-desc">
+        With case management, the Defender portal tracks security operations work as cases. An incident case is created from
+        correlated incident activity and carries the attack story, alerts, assets, evidence and response actions;
+        a generic case is opened by hand for work outside incident response. Either kind holds a status, priority,
+        assignee, tags and an SLA policy, tasks with owners and due dates, comments, attachments and an activity
+        history, and case templates add custom fields and SLA policies. Every change can be audited and reported in
+        Log Analytics, in the SecurityCaseEvent table. Microsoft recommends incident cases over the older incident
+        view, which remains available; cases exist only in the Defender portal, not in Microsoft Sentinel in the
+        Azure portal, and work that depends on Sentinel's data needs a connected workspace. Incident cases follow
+        the incident permissions, Security Data Read to view one and Security Data Manage to work it.
+        <!-- fact: Microsoft Defender case management manages SecOps work in the Defender portal; incident cases are created from correlated incident activity and include the attack story, alerts, assets, investigations, evidence and response actions, and generic cases are created manually to track work outside incident response; cases hold status, priority, assignee, tags, description and SLA policy, tasks with ownership, due dates, priority and status, comments, activity history and attachments; case templates configure custom fields and SLA policies; case activity can be audited, retained and reported in Log Analytics with the SecurityCaseEvent table; incident cases are the recommended experience and the legacy incident experience remains available; cases are available only in the Defender portal and not in the Microsoft Sentinel experience in the Azure portal, and scenarios that depend on Sentinel workspace data need a connected Sentinel workspace; incident cases need the Security Data Read permission to view and Security Data Manage to manage | source: Microsoft Learn, "Case management in the Microsoft Defender portal", updated 2026-08-19, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Open generic cases for the work that has no incident.</strong> A hunt, a
+          follow-up a lawyer asked for or a fix still owed by another team sits in the same queue as the incidents,
+          with an owner and an SLA, instead of in someone's inbox.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Copilot in Defender</div>
+      <div class="concept-title">Security Copilot Inside Defender Summarizes, Explains and Drafts the KQL, for Whoever Has Access</div>
+      <div class="concept-desc">
+        For people with access to Security Copilot, Copilot is embedded in the Defender portal. It writes a
+        summary when an incident page opens, covering what happened, the assets involved and the timeline, and
+        offers guided responses specific to that incident. It analyzes obfuscated scripts and command lines,
+        summarizes a file, a device or an identity, summarizes an email on its entity page, and drafts the incident
+        report from the summary, the response actions and who took them. In advanced hunting its query assistant
+        turns a question in natural language into KQL that can be run as it is or edited first. A Defender Chat panel,
+        in preview, answers questions about the page in view and, for a request with several steps, proposes a plan
+        to approve or reject before anything runs.
+        <!-- fact: Copilot in Defender is available to users who have provisioned access to Security Copilot and is embedded in the Microsoft Defender portal; it automatically creates an incident summary covering what happened, the assets involved and the timeline when an incident page opens, recommends guided responses specific to each incident, analyzes scripts and command lines, summarizes devices, files and identities, summarizes emails on the Email entity page, and generates incident reports from the incident summary, response actions and team involvement; in advanced hunting a query assistant converts natural-language questions into ready-to-run KQL queries; the Defender Chat experience, in preview, answers in the context of the current page and can present a proposed plan for multi-step requests that the user approves or rejects before actions are taken | source: Microsoft Learn, "Microsoft Security Copilot and Chat in Microsoft Defender", updated 2026-07-17, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Read a generated query before trusting its answer.</strong> Check the table and
+          the time range it chose: a query against the wrong one returns nothing, and nothing looks exactly like a
+          clean environment.
         </div>
       </div>
     </div>
