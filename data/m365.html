@@ -723,6 +723,31 @@
         </div>
       </div>
     </div>
+    <div class="concept-card">
+      <div class="concept-label">Encrypting mail</div>
+      <div class="concept-title">Purview Message Encryption Protects the Message Itself, and a Transport Rule Can Apply It for the Sender</div>
+      <div class="concept-desc">
+        Microsoft Purview Message Encryption, built on the Azure Rights Management service, encrypts an email so only
+        its intended recipients can read it, inside the organization or outside it, at Gmail, Yahoo or Outlook.com; the
+        earlier service, previously offered as Office 365 Message Encryption, is deprecated. A sender can choose Encrypt-Only, Do Not Forward or a rights
+        management template, and an administrator can make a transport rule apply encryption for them, for every message
+        to a given recipient, say, or with certain words in its subject, and stop recipients copying or printing it.
+        People reading in Outlook read protected mail natively, even in another organization. Advanced Message
+        Encryption adds control over what leaves: policies that find sensitive information types or keywords, several
+        branded templates, and an encrypted message portal through which external recipients read the mail, so the
+        content itself never leaves the organization. Only mail read through that portal can be given an expiry date or
+        revoked, and its portal access is logged.
+        <!-- fact: Microsoft Purview Message Encryption, built on the Azure Rights Management service in Microsoft Purview Information Protection, encrypts email so only intended recipients can view it, working with Outlook.com, Yahoo, Gmail and other services; Office 365 Message Encryption (OME) was deprecated; messages can be encrypted with rights management templates, the Do Not Forward option and the encrypt-only option; administrators can define Exchange mail flow rules to apply protection, for example to messages to a specific recipient or with specific words in the subject, and stop recipients copying or printing; Outlook clients read encrypted mail natively even across organizations | source: Microsoft Learn, "Microsoft Purview Message Encryption", updated 2025-01-10, fetched and read | checked: 2026-11 -->
+        <!-- fact: Advanced Message Encryption applies automatic policies that identify sensitive information types or keywords, pairs them with multiple custom branding templates, sends external recipients a notification linking to the encrypted message portal so secure content isn't sent outside the organization, lets administrators set an expiration date and revoke access only for mail received through the portal, and logs portal activity | source: Microsoft Learn, "Advanced Message Encryption", updated 2023-09-08, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Send external mail through the portal if you may need to take it back.</strong>
+          Expiry and revocation work only on messages read there, through a custom branding template, so a sensitive
+          rule that encrypts without one leaves a copy you can no longer reach.
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1563,6 +1588,31 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
           <strong class="c-amber">Run the scanner in discovery mode before letting it label.</strong> A share that
           has filled for years holds surprises; a report of what would be labeled costs nothing, while labels and
           encryption applied at scale to the wrong files cost a cleanup.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">How DLP decides</div>
+      <div class="concept-title">The Most Restrictive Matching Rule Wins, Risky Users Get Stricter Rules, and a Device Can Hold a File Until DLP Knows</div>
+      <div class="concept-desc">
+        Three Purview behaviors decide what a DLP policy actually does. When an item matches several rules, they are
+        evaluated in priority order and the first with the most restrictive action is enforced, so a rule that blocks
+        without override beats one that only notifies, while every match is still recorded in the audit log and DLP's
+        reports. Adaptive Protection makes rules depend on the person: Insider Risk Management's machine learning sets
+        each user's risk level, and DLP, Conditional Access and data lifecycle management policies follow it, so the
+        strictest controls land only on users at elevated risk, and the deleted data of a user at the Elevated level is
+        kept for 120 days by a retention label policy created for the purpose. On Windows and macOS, Endpoint DLP's
+        just-in-time protection blocks egress from a monitored file while the device is still evaluating policy for it, which
+        needs a recent antimalware client, and its fallback when classification fails can allow the action or block it.
+        <!-- fact: When content matches multiple DLP rules, rules are processed in priority order and the first rule evaluated with the most restrictive action is enforced, for example a rule that notifies, restricts access and doesn't allow user overrides over rules that only notify or allow overrides; matches for all rules are recorded in the audit logs and shown in DLP reports | source: Microsoft Learn, "Data Loss Prevention policy reference", updated 2026-11-03, fetched and read | checked: 2026-11 -->
+        <!-- fact: Adaptive Protection uses machine learning in Insider Risk Management to assign insider risk levels and dynamically apply data loss prevention, Conditional Access (preview) and data lifecycle management (preview) policies, so the strictest controls apply only to high-risk users; for users at the Elevated risk level, deleted data is preserved for 120 days by an automatically created data lifecycle management retention label policy | source: Microsoft Learn, "Help dynamically mitigate risks with Adaptive Protection", updated 2026-06-26, fetched and read | checked: 2026-11 -->
+        <!-- fact: Endpoint DLP just-in-time protection detects and blocks egress activities on monitored files while policy evaluation completes, on Windows 10, Windows 11 and the three most recent macOS versions; it needs antimalware client version 4.18.23080 or later; the fallback action when classification fails can allow users to complete actions or block them, and Microsoft cautions against blocking until the impact is understood | source: Microsoft Learn, "Get started with Endpoint DLP Just-in-time protection", updated 2026-06-26, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Leave just-in-time protection's fallback on allow until you have watched it.</strong>
+          Microsoft cautions against blocking until the impact is understood: a block on failure stops the action on
+          any file the device could not classify, so set it only once you have seen how often that happens.
         </div>
       </div>
     </div>

@@ -626,6 +626,12 @@ const READERS = [
     ["unified labeling client", "", "m365/sensitivity-labels-dlp-classification-that-survives-contact-"],
     ["information protection scanner", "", "m365/sensitivity-labels-dlp-classification-that-survives-contact-"],
     ["scanner discovery mode", "", "m365/sensitivity-labels-dlp-classification-that-survives-contact-"],
+    // ── hundred-and-sixth wave: SC-401's encryption and DLP gaps, as cards, added before them ──
+    ["encrypt email to external recipients", "", "m365/mail-flow-connectors-transport-rules-the-path-a-message-take"],
+    ["revoke encrypted email", "", "m365/mail-flow-connectors-transport-rules-the-path-a-message-take"],
+    ["dlp rule priority most restrictive", "", "m365/sensitivity-labels-dlp-classification-that-survives-contact-"],
+    ["adaptive protection insider risk level", "", "m365/sensitivity-labels-dlp-classification-that-survives-contact-"],
+    ["just-in-time protection endpoint dlp", "", "m365/sensitivity-labels-dlp-classification-that-survives-contact-"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],
