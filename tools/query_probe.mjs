@@ -601,6 +601,11 @@ const READERS = [
     ["restrict app execution", "", "endpoint/defender-for-endpoint-intune-onboarding-asr-rules-tamper-pro"],
     ["remediation level", "", "endpoint/defender-for-endpoint-intune-onboarding-asr-rules-tamper-pro"],
     ["isolated device cannot reconnect", "", "endpoint/defender-for-endpoint-intune-onboarding-asr-rules-tamper-pro"],
+    // ── hundred-and-first wave: SC-200's Windows Event Forwarding gap, as a card, added before it ──
+    ["wef subscription", "", "blueteam/windows-event-logs-the-ids-that-matter"],
+    ["read existing events", "", "blueteam/windows-event-logs-the-ids-that-matter"],
+    ["source initiated subscription", "", "blueteam/windows-event-logs-the-ids-that-matter"],
+    ["forwarded events sentinel", "", "blueteam/windows-event-logs-the-ids-that-matter"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],

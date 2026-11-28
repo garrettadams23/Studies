@@ -858,7 +858,7 @@ index=auth <span class="str">"Failed password"</span>
             </div>
           </div>
 
-          <div class="topic" data-reviewed="2026-08">
+          <div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🪟</span>
               <span class="topic-name">Windows Event Logs — The IDs That Matter</span>
@@ -921,6 +921,43 @@ index=auth <span class="str">"Failed password"</span>
                   neither is retroactive. Then ship the logs off the host: <strong>local retention is not
                   retention</strong>, because the intruder who cleared 1102 owned the only copy. Forwarding to a
                   collector is what turns these IDs from a list into evidence.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Getting them off the host</div>
+                <div class="concept-title">Windows Event Forwarding Ships Chosen Events to a Collector, and Sentinel Reads the Collector</div>
+                <div class="concept-desc">
+                  Windows Event Forwarding, WEF, is Windows' own way to do what the card above asks. It reads any
+                  operational or
+                  administrative event on a device and forwards the ones a subscription selects to a Windows Event
+                  Collector server. A subscription is either pushed, source initiated, with clients pointed at the
+                  collector by Group Policy, which Microsoft calls the simplest and most scalable, or pulled, collector
+                  initiated, and never both. Microsoft's own design uses two: a baseline subscription every device gets,
+                  and a suspect subscription, collecting more, for the devices someone has added to it. Forwarding is
+                  passive. It cannot turn on a disabled channel, enlarge a log or change an audit policy, so 4688's command
+                  line and 4104 still have to be enabled first, and by default a subscription forwards only events written
+                  after the device received it. Failures are logged on the device, in the Eventlog-forwardingPlugin
+                  Operational channel, where the user never sees them. In Microsoft Sentinel, Windows Security Events via
+                  AMA, the Azure Monitor Agent, fills the SecurityEvent table from each machine, with machines outside Azure
+                  connected through Azure
+                  Arc, and Windows Forwarded Events fills WindowsEvent from the collector's servers.
+                  <!-- fact: Windows Event Forwarding reads any operational or administrative event logged on a device and forwards the events chosen to a Windows Event Collector server; a subscription is pushed (source initiated, clients configured by GPO, the simplest and most scalable) or pulled (collector initiated), not both; Microsoft's design uses a Baseline subscription for all devices and a Suspect subscription for devices added to it, which collects more events; WEF is passive and can't change log size, enable disabled channels, change channel permissions or adjust audit policy; by default a subscription forwards only events generated after the client received it, and read existing events should be set to true for the targeted subscription; the Eventlog-forwardingPlugin/Operational channel logs WEF success, warning and error events without the user noticing; the approximate scaling guide is 0 to 5,000 events per second to SQL or a Security Event Manager, 5,000 to 50,000 to a SEM, and above 50,000 to Hadoop, HDInsight or a data lake | source: Microsoft Learn, "Use Windows Event Forwarding to help with intrusion detection", updated 2025-08-18, fetched and read | checked: 2026-11 -->
+                  <!-- fact: In Microsoft Sentinel, Windows Security Events via AMA streams security events from connected Windows machines into the SecurityEvent table, non-Azure VMs needing Azure Arc, and Windows Forwarded Events streams all Windows Event Forwarding logs from connected Windows Servers using the Azure Monitor Agent into the WindowsEvent table | source: Microsoft Learn, "Find your Microsoft Sentinel data connector", updated 2026-02-05, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Events per second</th><th>Where Microsoft's guide sends them</th></tr></thead>
+                    <tbody>
+                      <tr><td>0 to 5,000</td><td>SQL <span class="acro-exp">(Structured Query Language)</span>, or a security event manager</td></tr>
+                      <tr><td>5,000 to 50,000</td><td>A security event manager</td></tr>
+                      <tr><td>Above 50,000</td><td>Hadoop, HDInsight or a data lake</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Turn on read existing events for the suspect subscription.</strong> Microsoft's
+                    design sets it there, and the reason is the order of things: a device joins that subscription after
+                    something on it looked wrong, and the events that made it look wrong were written before it joined.
                   </div>
                 </div>
               </div>
