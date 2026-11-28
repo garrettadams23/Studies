@@ -5735,6 +5735,69 @@ az account set <span class="var">--subscription</span> <span class="str">"Prod"<
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Analytics rules</div>
+                <div class="concept-title">Sentinel's Rule Types: Scheduled Queries, a One-Minute NRT Subset, and Anomalies That Never Alert</div>
+                <div class="concept-desc">
+                  Sentinel finds threats with analytics rules, which query the collected data and raise alerts that are
+                  grouped into incidents, and Microsoft would rather you start from the templates in the content hub's
+                  solutions than write rules from nothing. Scheduled rules are the common kind: a KQL query run at an
+                  interval over a lookback period, alerting when its results pass a threshold. Near-real-time rules are a
+                  limited subset that runs every minute. Anomaly rules use machine learning to learn a baseline and flag
+                  what falls outside it, but raise no alerts: they write to the Anomalies table, as context for detections
+                  and hunts, and a built-in one cannot be tuned, only duplicated, run in Flighting mode beside the original
+                  and switched to Production when it behaves. Three template types each create a single rule that cannot be
+                  customized: Microsoft's threat intelligence matching, Fusion's advanced multistage attack detection, and
+                  machine learning behavior analytics. Once Sentinel is in the Defender portal, as it must be after 31 March
+                  2027, Defender XDR <span class="acro-exp">(Extended Detection and Response)</span> creates the incidents, so Microsoft security rules and Fusion are switched off, and for
+                  new rules across Sentinel and Defender XDR Microsoft now points to custom detections.
+                  <!-- fact: Microsoft Sentinel's analytics rules query collected data and generate alerts aggregated into incidents, and Microsoft encourages using analytics rule templates from content hub solutions; types are scheduled rules, KQL queries run at regular intervals over a lookback period that alert when results pass a threshold, near-real-time (NRT) rules, a limited subset of scheduled rules that run once every minute, anomaly rules, which use machine learning to set a baseline and don't generate alerts but record anomalies in the Anomalies table, out-of-the-box ones duplicable and run in Flighting mode beside the original in Production mode, and Microsoft security rules, which create incidents from alerts in other Microsoft security solutions; specialized templates create one rule each with limited configuration: threat intelligence (the Microsoft Threat Intelligence Analytics rule, not customizable), advanced multistage attack detection (Fusion) and machine learning behavior analytics; Microsoft security rules and Fusion aren't available with Defender XDR incident integration or once Sentinel is onboarded to the Defender portal, where Defender XDR creates the incidents; custom detections are now the best way to create new rules across Microsoft Sentinel and Defender XDR; after March 31, 2027 Sentinel is available only in the Defender portal | source: Microsoft Learn, "Threat detection in Microsoft Sentinel", updated 2024-10-16, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Rule type</th><th>Runs</th><th>Produces</th></tr></thead>
+                    <tbody>
+                      <tr><td>Scheduled</td><td>A KQL query at a set interval, over a lookback</td><td>Alerts, when results pass a threshold</td></tr>
+                      <tr><td>Near-real-time</td><td>Every minute, with limits</td><td>Alerts</td></tr>
+                      <tr><td>Anomaly</td><td>Against a baseline it learned</td><td>Rows in the Anomalies table, never alerts</td></tr>
+                      <tr><td>Microsoft security</td><td>On alerts from Microsoft's other products</td><td>Incidents, until Sentinel moves to the Defender portal</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Use an anomaly as context, not as a finding.</strong> Microsoft says an
+                    anomaly does not necessarily mean anything malicious or even suspicious, which is why anomaly rules
+                    never alert; join the Anomalies table into a hunt or a rule where a second signal agrees.
+                  </div>
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">Feeding and tuning it</div>
+                <div class="concept-title">Threat Indicators, Custom Tables and SOC Optimization: What Comes In, Where It Lands, What It Is Worth</div>
+                <div class="concept-desc">
+                  Sentinel holds threat intelligence as STIX <span class="acro-exp">(Structured Threat Information eXpression)</span> objects, indicators of compromise and the actors and techniques
+                  behind them, and takes it in four ways, all in the content hub's Threat Intelligence solution: the Defender
+                  Threat Intelligence data connector, standard or premium, for Microsoft's own indicators; a TAXII <span class="acro-exp">(Trusted Automated eXchange of Intelligence Information)</span> connector
+                  for STIX/TAXII feeds; an upload API <span class="acro-exp">(Application Programming Interface)</span>, a REST <span class="acro-exp">(Representational State Transfer)</span> API that needs no connector; and an older Threat Intelligence
+                  Platform connector that is on its way to deprecation. Ingestion rules trim a feed before it lands. Data no
+                  connector covers goes into a custom table, which a data collection rule fills and transforms; its name
+                  ends in _CL, which the Azure portal adds and any other method must add by hand, and it takes a table
+                  plan, Analytics by default, Basic, or Auxiliary in the data lake. SOC optimization then recommends where
+                  to add detections for the threats that matter to you and where to stop paying for data that adds no
+                  security value, grading threat coverage High when more than 75% of the recommended rules are on, Medium
+                  from 30 to 74%, and Low below that.
+                  <!-- fact: Microsoft Sentinel manages threat intelligence as STIX objects, including threat indicators (indicators of compromise) and threat actors and their TTPs; it is imported through the Microsoft Defender Threat Intelligence data connector (standard and premium), the Threat Intelligence - TAXII data connector for STIX/TAXII feeds, the Threat Intelligence upload API (a REST API that doesn't require a data connector), and the legacy Threat Intelligence Platform data connector on the path for deprecation, all in the content hub's Threat Intelligence solution; ingestion rules for data connectors reduce noise | source: Microsoft Learn, "Threat intelligence - Microsoft Sentinel", updated 2025-08-18, fetched and read | checked: 2026-11 -->
+                  <!-- fact: Data collection rules collect, transform and send data to a custom table; custom tables have the _CL suffix, added automatically by the Azure portal and added by hand with other methods, and take a table plan of Analytics (default), Basic, or Auxiliary / Lake | source: Microsoft Learn, "Add or Delete Tables and Columns in Azure Monitor Logs", updated 2026-08-27, fetched and read | checked: 2026-11 -->
+                  <!-- fact: SOC optimizations are recommendations tailored to the environment that help close coverage gaps against specific threats and reduce ingestion of data without security value; threat-based coverage is High when over 75% of recommended rules are activated, Medium at 30 to 74%, and Low at 0 to 29%; SOC optimization uses standard Microsoft Sentinel roles and, in the Defender portal, includes coverage from Microsoft security services | source: Microsoft Learn, "Optimize security operations", updated 2026-11-12, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Trim a feed with ingestion rules before alerting on it.</strong> Microsoft's
+                    page says to configure them to reduce noise, and every indicator that matches becomes an alert
+                    someone has to read. Why most indicators are worth little is in
+                    <span class="xref">Threat-Feed Reality — Why Most Indicators Are Worthless to You</span>.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 

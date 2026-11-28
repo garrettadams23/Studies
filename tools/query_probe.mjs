@@ -606,6 +606,13 @@ const READERS = [
     ["read existing events", "", "blueteam/windows-event-logs-the-ids-that-matter"],
     ["source initiated subscription", "", "blueteam/windows-event-logs-the-ids-that-matter"],
     ["forwarded events sentinel", "", "blueteam/windows-event-logs-the-ids-that-matter"],
+    // ── hundred-and-second wave: SC-200's Sentinel gaps, as cards, added before them ──
+    ["near real time rule", "", "cloud/microsoft-sentinel-roles-the-content-hub-connectors-automati"],
+    ["sentinel anomalies table", "", "cloud/microsoft-sentinel-roles-the-content-hub-connectors-automati"],
+    ["fusion multistage attack", "", "cloud/microsoft-sentinel-roles-the-content-hub-connectors-automati"],
+    ["taxii feed", "", "cloud/microsoft-sentinel-roles-the-content-hub-connectors-automati"],
+    ["custom log table", "", "cloud/microsoft-sentinel-roles-the-content-hub-connectors-automati"],
+    ["soc optimization", "", "cloud/microsoft-sentinel-roles-the-content-hub-connectors-automati"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],
