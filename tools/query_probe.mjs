@@ -595,6 +595,12 @@ const READERS = [
     ["incident sla", "", "m365/defender-xdr-incidents-advanced-hunting-one-queue-for-mail-d"],
     ["security copilot incident summary", "", "m365/defender-xdr-incidents-advanced-hunting-one-queue-for-mail-d"],
     ["natural language to kql", "", "m365/defender-xdr-incidents-advanced-hunting-one-queue-for-mail-d"],
+    // ── hundredth wave: SC-200's Defender for Endpoint gaps, as cards, added before them ──
+    ["live response session", "", "endpoint/defender-for-endpoint-intune-onboarding-asr-rules-tamper-pro"],
+    ["collect investigation package", "", "endpoint/defender-for-endpoint-intune-onboarding-asr-rules-tamper-pro"],
+    ["restrict app execution", "", "endpoint/defender-for-endpoint-intune-onboarding-asr-rules-tamper-pro"],
+    ["remediation level", "", "endpoint/defender-for-endpoint-intune-onboarding-asr-rules-tamper-pro"],
+    ["isolated device cannot reconnect", "", "endpoint/defender-for-endpoint-intune-onboarding-asr-rules-tamper-pro"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],

@@ -3560,6 +3560,69 @@ Remove-PSSession $s
         </div>
       </div>
     </div>
+    <div class="concept-card">
+      <div class="concept-label">Response actions</div>
+      <div class="concept-title">From a Device's Page: Isolate It, Restrict It, Collect Its State, or Open a Shell on It</div>
+      <div class="concept-desc">
+        A device's page carries Defender for Endpoint's response actions, and every one is tracked in the Action
+        center. Plan 1 has only an antivirus scan, isolation, stopping and quarantining a file, and file indicators;
+        the rest need Plan 2. Isolating a device cuts it off from the network so the attacker can no longer control
+        it or move from it, while it keeps its connection to Defender's service, and containing an unmanaged device
+        makes every onboarded device refuse to talk to it. Restricting app execution applies a code integrity policy
+        that lets only files signed with a Microsoft-issued certificate run. Collecting an investigation package
+        downloads a zip of the device's state, from the autostart registry entries attackers persist in to installed
+        programs, network connections and the ARP <span class="acro-exp">(Address Resolution Protocol)</span> and DNS <span class="acro-exp">(Domain Name System)</span> caches. A live response session opens a remote shell on the
+        device to
+        collect forensic data, run scripts from a library, download files and take or undo remediation actions; it
+        has to be turned on in the advanced features, for servers as a separate setting, and a person's role decides
+        whether they can run the basic commands or the advanced ones.
+        <!-- fact: Response actions on a device page include Manage tags, Initiate automated investigation, Initiate live response session, Collect investigation package, Run antivirus scan, Restrict app execution, Isolate device and Contain device, with activity shown in the Action center; Plan 1 includes only Run antivirus scan, Isolate device, Stop and quarantine a file, and Add an indicator to block or allow a file; isolation helps prevent the attacker from controlling the device and from exfiltration and lateral movement, devices behind web proxies might not recover from network isolation and selective isolation should be used instead, and devices behind a full VPN tunnel can't reach the Defender for Endpoint cloud service once isolated, so split tunneling is recommended; containing a device makes all onboarded devices block incoming and outgoing communication with it; Restrict app execution applies a code integrity policy that only allows files signed by a Microsoft-issued certificate; the Windows investigation package holds autoruns registry content, installed programs and network connection data including the ARP and DNS caches; the page still lists Initiate automated investigation, which Microsoft's automated investigations page says is no longer available for manual triggering from 1 September 2026 | source: Microsoft Learn, "Take response actions on a device in Microsoft Defender for Endpoint", updated 2026-07-23, fetched and read | checked: 2026-11 -->
+        <!-- fact: Live response, in Defender for Endpoint Plan 2, gives instantaneous access to a device through a remote shell connection to collect forensic data, run scripts, send suspicious entities for analysis, remediate threats and hunt; analysts can run basic and advanced commands, download files, upload a PowerShell script or executable to the library and run it, and take or undo remediation actions; live response must be enabled on the Advanced features settings page, live response for servers is a separate recommended setting, unsigned script execution is optional and increases exposure, and which commands a user can run depends on their role | source: Microsoft Learn, "Investigate entities on devices using live response in Microsoft Defender for Endpoint", updated 2026-07-28, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Check the proxy and the VPN <span class="acro-exp">(Virtual Private Network)</span> before isolating.</strong> Microsoft warns that a
+          device behind a web proxy may not recover from isolation, so an isolated device that cannot reconnect after
+          release is a known case, and says to use selective isolation there; and that
+          one behind a full VPN tunnel cannot reach Defender's service once isolated, which split tunneling for
+          Defender's traffic avoids.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Device groups</div>
+      <div class="concept-title">Device Groups Decide Who Sees Which Devices, and How Much Defender Fixes Without Asking</div>
+      <div class="concept-desc">
+        A device group does two jobs. It scopes access: assigned to Microsoft Entra user groups that hold RBAC <span class="acro-exp">(Role-Based Access Control)</span> roles,
+        it limits who sees its devices' alerts and data and who can act on them, and a group with no user groups
+        assigned is open to everyone. And it sets the remediation level, how much Defender remediates on its own.
+        Devices join by a matching rule on name, domain, tags and operating system; a device that matches several
+        groups lands only in the highest-ranked one, and a tenant can hold up to 2,000 groups. Full remediation is
+        Microsoft's recommendation and the default for tenants created on or after 16 August 2020 with no device
+        groups yet, and Microsoft reports that customers on full automation had 40% more high-confidence malware
+        samples removed than those on lower levels. Under the semi-automated levels, pending actions wait in the
+        Action center and time out after seven days, which counts as a rejection.
+        <!-- fact: Device groups, in Defender for Endpoint Plan 1 and Plan 2, limit access to related alerts and data to Microsoft Entra user groups with assigned RBAC roles and set the remediation level for automated investigations; matching rules use device name, domain, tags and OS platform, a device matched to several groups is added only to the highest ranked one, a device group with no Microsoft Entra groups assigned is accessible to all users, and a tenant can have up to 2,000 device groups; remediation levels are No automated response, Semi - Approval required for all folders, Semi - Approval required for non-temporary folders, Semi - Approval required for system folders, and Full remediation | source: Microsoft Learn, "Create and manage device groups in Microsoft Defender for Endpoint", updated 2026-07-02, fetched and read | checked: 2026-11 -->
+        <!-- fact: Full automation is recommended and is the default for tenants created on or after August 16, 2020 with no device groups defined; customers using full automation had 40% more high-confidence malware samples removed than customers using lower levels; semi-automation requires approval for all files, files in core folders such as \windows\*, or files outside temporary folders such as \users\*\downloads\* and \windows\temp\*, with pending actions in the Action Center timing out after seven days, which behaves as a rejection; with no automation, automated investigation doesn't run and no remediation actions are taken or pending, which is not recommended | source: Microsoft Learn, "Automation levels in automated investigation and remediation", updated 2025-04-04, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Remediation level</th><th>Waits for approval on</th></tr></thead>
+          <tbody>
+            <tr><td>Full remediation</td><td>Nothing: actions are taken, and can be undone</td></tr>
+            <tr><td>Semi, system folders</td><td>Files in operating system folders, such as those under Windows</td></tr>
+            <tr><td>Semi, non-temporary folders</td><td>Files outside temporary folders such as Downloads and the temp folders</td></tr>
+            <tr><td>Semi, all folders</td><td>Every file</td></tr>
+            <tr><td>No automated response</td><td>Nothing runs to wait: no remediation is taken or proposed</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Rank the groups on purpose.</strong> A device that matches two rules takes only the
+          higher-ranked group's settings, so a broad group ranked above a narrow one quietly overrides it, both for who
+          can see the device and for how much Defender fixes on it.
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
