@@ -6016,6 +6016,43 @@ az role definition list --custom-role-only <span class="kw">false</span> --query
                   </div>
                 </div>
               </div>
+              <div class="concept-card">
+                <div class="concept-label">Attributes for decisions</div>
+                <div class="concept-title">Custom Security Attributes Hold Business Data Even a Global Administrator Cannot Read</div>
+                <div class="concept-desc">
+                  Custom security attributes are key-value pairs defined for the whole Microsoft Entra tenant, grouped
+                  into attribute sets and assigned to users and enterprise applications: an hourly salary, say, or the
+                  project a person works on. Each is Boolean, integer or string, single or multiple values, free-form or
+                  chosen from predefined values. Microsoft names three jobs for them: extending a profile with business
+                  data only administrators should see, making hundreds or thousands of applications filterable for an
+                  audit, and deciding access, through Azure attribute-based access control, so a user can be granted the
+                  storage blobs belonging to their project and no others. What sets them apart from directory extensions
+                  is who can read them. Their own roles are the only way in: Attribute Definition Administrator to define
+                  them and Attribute Assignment Administrator to assign values, with reader and log roles beside them,
+                  assigned for the whole tenant or for one attribute set. By default Global Administrator and the other
+                  administrator roles cannot read, define or assign them. They do not appear in SAML <span class="acro-exp">(Security Assertion Markup Language)</span> or JWT <span class="acro-exp">(JSON Web Token)</span> claims, and Microsoft Entra Domain Services does not support them.
+                  <!-- fact: Custom security attributes are business-specific key-value pairs defined for the tenant, grouped in attribute sets and assigned to Microsoft Entra users and enterprise applications (service principals); data types Boolean, integer or string, single or multiple values, free-form or predefined; Microsoft's scenarios include adding Hourly Salary to employees' profiles visible only to administrators, categorizing hundreds or thousands of applications into a filterable inventory for auditing, and granting users access to the Azure Storage blobs belonging to a project with Azure attribute-based access control; Attribute Definition Administrator is the minimum role to manage them and Attribute Assignment Administrator the minimum to assign values, with reader and log roles, assignable at tenant scope or attribute set scope by at least a Privileged Role Administrator; by default Global Administrator and other administrator roles don't have permissions to read, define or assign them; compared with extensions, which anyone who can read the object can read and which suit non-sensitive data, their access is restricted through separate permissions and RBAC, and they suit sensitive data and authorization, both available in all editions of Microsoft Entra ID; not supported in Microsoft Entra Domain Services, SAML token claims or JSON Web Token claims | source: Microsoft Learn, "What are custom security attributes in Microsoft Entra ID?", updated 2024-10-28, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th></th><th>Directory extensions</th><th>Custom security attributes</th></tr></thead>
+                    <tbody>
+                      <tr><td>Who can read them</td><td>Anyone who can read the object</td><td>Only the attribute roles, granted separately</td></tr>
+                      <tr><td>Microsoft says use them for</td><td>Data an application uses, and nothing sensitive</td><td>Sensitive data, and authorization</td></tr>
+                      <tr><td>Objects</td><td>Depends on the extension type</td><td>Users and enterprise applications</td></tr>
+                      <tr><td>License</td><td>Every edition of Entra ID</td><td>Every edition of Entra ID</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Assign the attribute roles before anyone needs them.</strong> Because a
+                    Global Administrator cannot read these attributes by default, the first person to try is usually
+                    surprised; someone with Privileged Role Administrator has to grant the definition or assignment role
+                    first, scoped to an attribute set where one will do. Attribute-based access control as a model, beside
+                    role-based, is in
+                    <span class="xref">Identity &amp; Access Management — Who Can Do What</span>.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <!-- ── TOPIC: AZURE WORKLOAD IDENTITY ──────────────────────────── -->

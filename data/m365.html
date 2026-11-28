@@ -4896,7 +4896,7 @@ Get-MgContext | Select-Object Account, Scopes</pre>
             </div>
           </div>
           <!-- ── TOPIC: ENTRA ID GOVERNANCE ──────────────────────────────── -->
-          <div class="topic" data-reviewed="2026-09">
+          <div class="topic" data-reviewed="2026-11">
             <div class="topic-header">
               <span class="topic-icon">🎫</span>
               <span class="topic-name">Entra ID Governance — Entitlement Management &amp; Access Reviews</span>
@@ -4984,6 +4984,43 @@ Get-MgContext | Select-Object Account, Scopes</pre>
                   <em>access</em> — and it pairs with the risk-driven gate
                   <span class="xref">Entra ID Protection — Conditional Access That Reacts to Risk, Not Just Rules</span>
                   applies at sign-in. Together they move the estate off permanent grants entirely.
+                </div>
+              </div>
+              <div class="concept-card">
+                <div class="concept-label">At the edges</div>
+                <div class="concept-title">Terms of Use Are a Conditional Access Grant, and a Connected Organization Says Who Outside May Ask</div>
+                <div class="concept-desc">
+                  Two more Microsoft Entra features sit at the edges of this topic. Terms of use put a PDF <span class="acro-exp">(Portable Document Format)</span> in front of
+                  people before they reach an app. Each one appears as a grant control in Conditional Access, so a policy
+                  decides who must accept it and for which apps; it needs Entra ID P1, and a tenant can hold no more than
+                  40. A document can come in several languages, shown by browser preference, and can require people to
+                  expand it before accepting, or to accept on every device. Acceptance can expire on a fixed schedule or
+                  a set number of days after each person accepted, though people are asked again only once their session
+                  has expired, and the logs show who has and has not accepted. Like every Conditional Access control, it
+                  cannot be enforced on service accounts, which Microsoft says to exclude. Connected organizations are how
+                  entitlement management knows who outside may ask for an access package: another Entra tenant, in any
+                  Microsoft cloud, an identity provider federated over SAML <span class="acro-exp">(Security Assertion Markup Language)</span> or WS-Fed, an email domain whose people sign
+                  in with a one-time passcode, or Microsoft accounts. A policy for users not yet in the directory can
+                  allow specific connected organizations, or all of them and anyone new. Each organization can have
+                  sponsors, members of the tenant or guests already invited from that organization, who can act as
+                  approvers.
+                  <!-- fact: Microsoft Entra terms of use policies present information to users before granting access, enforced with Conditional Access, where a terms of use policy appears in the grant control list; they require Microsoft Entra ID P1 licenses, Security Reader to read and Conditional Access Administrator to create, and a PDF document; no more than 40 terms per tenant; multiple languages shown by browser preference; settings Require users to expand the terms of use and Require users to consent on every device; Expire consents on a schedule, or Duration before re-acceptance required (days), with users prompted to reaccept only if their session expired; administrators can see who has or hasn't accepted through logs or APIs; Conditional Access controls including terms of use don't support enforcement on service accounts, which should be excluded | source: Microsoft Learn, "Set Up Microsoft Entra Terms of Use with Conditional Access", updated 2026-03-24, fetched and read | checked: 2026-11 -->
+                  <!-- fact: A connected organization's users can be from another Microsoft Entra directory in any Microsoft cloud, a non-Microsoft directory configured for SAML/WS-Fed identity provider federation, a domain whose users authenticate with an email one-time passcode, or Microsoft accounts; a policy for users not in your directory can allow Specific connected organizations or All users (All connected organizations + any new external users), and an approved requestor from no connected organization gets one created automatically; connected organizations are configured, the default when an administrator creates one and in scope for policies allowing all configured connected organizations, or proposed, created automatically and only usable in policies targeting specific organizations; sponsors are internal member users or external guest users from that organization already in the directory and can be approvers; all connected organizations created before 09/09/20 were considered configured, and social identity providers should not be configured where assignment policies don't require approval for users from all configured connected organizations | source: Microsoft Learn, "Manage connected organizations in entitlement management", updated 2024-07-15, fetched and read | checked: 2026-11 -->
+                </div>
+                <div class="dw">
+                  <table class="ref-table">
+                    <thead><tr><th>Connected organization</th><th>Created by</th><th>Requests allowed under</th></tr></thead>
+                    <tbody>
+                      <tr><td>Configured</td><td>An administrator, by hand or through the API <span class="acro-exp">(Application Programming Interface)</span>, unless set otherwise</td><td>Policies for specific organizations, and policies for all configured ones</td></tr>
+                      <tr><td>Proposed</td><td>Entitlement management, when a request from an organization it did not know was approved</td><td>Policies for specific organizations only</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="concept-desc verdict">
+                    <strong class="c-amber">Check which organizations count as configured before trusting "all configured".</strong>
+                    Every connected organization created before 9 September 2020 was marked configured, and Microsoft warns
+                    that a social identity provider should not be, where a policy lets all configured organizations in
+                    without approval, since everyone who signs in with that provider would then count as one of them.
+                  </div>
                 </div>
               </div>
             </div>

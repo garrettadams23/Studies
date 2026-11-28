@@ -576,6 +576,12 @@ const READERS = [
     ["nudge users to set up authenticator", "", "sec/multi-factor-authentication-layers-of-proof"],
     ["application proxy", "", "sec/ztna-replacing-the-vpn-and-what-breaks-when-you-do"],
     ["publish on-premises web app", "", "sec/ztna-replacing-the-vpn-and-what-breaks-when-you-do"],
+    // ── ninety-sixth wave: SC-300's attribute and governance gaps, as cards, added before them ──
+    ["custom security attributes", "", "cloud/azure-hierarchy-rbac-scopes-policy"],
+    ["attribute assignment administrator", "", "cloud/azure-hierarchy-rbac-scopes-policy"],
+    ["terms of use conditional access", "", "m365/entra-id-governance-entitlement-management-access-reviews"],
+    ["connected organization", "", "m365/entra-id-governance-entitlement-management-access-reviews"],
+    ["access package sponsor", "", "m365/entra-id-governance-entitlement-management-access-reviews"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],
