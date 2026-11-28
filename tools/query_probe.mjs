@@ -564,6 +564,12 @@ const READERS = [
     ["split-horizon dns azure", "", "cloud/azure-networking-vnet-nsg-the-load-balancer-family"],
     ["azure advisor", "", "cloud/cloud-cost-control-budgets-tags-rightsizing"],
     ["azure budget alert", "", "cloud/cloud-cost-control-budgets-tags-rightsizing"],
+    // ── ninety-fourth wave: SC-300's role and tenant gaps, as cards, added before them ──
+    ["just-in-time group membership", "", "m365/admin-roles-least-privilege-the-roles-worth-knowing-and-pim-"],
+    ["pim for groups", "", "m365/admin-roles-least-privilege-the-roles-worth-knowing-and-pim-"],
+    ["protected actions conditional access", "", "m365/admin-roles-least-privilege-the-roles-worth-knowing-and-pim-"],
+    ["cross-tenant synchronization", "", "m365/external-collaboration-guests-b2b-the-lifecycle-nobody-owns"],
+    ["sync users between tenants", "", "m365/external-collaboration-guests-b2b-the-lifecycle-nobody-owns"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],

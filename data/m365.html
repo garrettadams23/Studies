@@ -206,7 +206,7 @@
 </div>
 
 <!-- ── TOPIC: ADMIN ROLES ────────────────────────────────────── -->
-<div class="topic" data-reviewed="2026-08">
+<div class="topic" data-reviewed="2026-11">
   <div class="topic-header">
     <span class="topic-icon">🔑</span>
     <span class="topic-name">Admin Roles &amp; Least Privilege — The Roles Worth Knowing, and PIM <span class="acro-exp">(Privileged Identity Management)</span> for the Rest</span>
@@ -271,6 +271,40 @@
           The general principle behind all of this is in
           <span class="xref">Identity &amp; Access Management — Who Can Do What</span> in the
           Security domain; this card is the M365-specific shape of it.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Narrowing a role</div>
+      <div class="concept-title">PIM for Groups Narrows When, and Protected Actions Ask Again at the Moment of Use</div>
+      <div class="concept-desc">
+        Three Entra features make a role smaller than its name. Where it applies is the administrative unit's job,
+        and that has its own topic. When it is held is PIM's: PIM for Groups applies just-in-time to group
+        membership and ownership, with the
+        same approval, MFA, justification and time limits as PIM for roles, two policies per group, one for each;
+        it was called Privileged Access Groups until January 2023. Because groups can grant Entra roles, Azure roles
+        and access to apps, Microsoft recommends approval for eligible members of a group that elevates into an Entra
+        role. Protected actions attach a Conditional Access policy to a permission itself, so updating Conditional
+        Access policies, for instance, can require phishing-resistant MFA at the moment of the change, whatever
+        role the person holds and however they got it, and they are asked only when they actually do it.
+        <!-- fact: PIM for Groups grants just-in-time membership and ownership of Microsoft Entra security groups and Microsoft 365 groups, with policies like PIM for roles: approval, MFA, justification and maximum activation time; each group has one policy for membership and one for ownership; it was called Privileged Access Groups until January 2023; Microsoft recommends requiring approval for eligible member assignments to groups used to elevate into Microsoft Entra roles | source: Microsoft Learn, "Privileged Identity Management (PIM) for Groups", updated 2026-04-23, fetched and read | checked: 2026-11 -->
+        <!-- fact: Protected actions are permissions with Conditional Access policies assigned, enforced when the user attempts the action rather than at sign-in or role activation, independent of the role used or how the permission was granted; Microsoft's example is requiring the phishing-resistant MFA policy before administrators update Conditional Access policies; common stronger policies are authentication strengths, privileged access workstations through device filters, and shorter sign-in frequency | source: Microsoft Learn, "What are protected actions in Microsoft Entra ID?", updated 2025-11-03, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <table class="ref-table">
+          <thead><tr><th>Feature</th><th>Narrows</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>Administrative unit</td><td>Where a role applies</td><td>Helpdesk Administrator for one region's users</td></tr>
+            <tr><td>PIM for Groups</td><td>When a group's access is held</td><td>Membership activated for an hour, with approval</td></tr>
+            <tr><td>Protected action</td><td>What a permission demands at the moment of use</td><td>Phishing-resistant MFA to edit Conditional Access</td></tr>
+          </tbody>
+        </table>
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Put approval on any group that leads to a role.</strong> Microsoft's own warning is
+          the reason: a group that can be activated without approval lets a less-privileged admin who can reset its
+          members' credentials activate the role through them. Units, and the restricted kind that fences accounts
+          off even from Global Administrators, are in
+          <span class="xref">Administrative Units — Delegating Part of the Tenant, and Fencing Off the Accounts That Matter</span>.
         </div>
       </div>
     </div>
@@ -3153,6 +3187,30 @@ Get-MgContext | Select-Object Account, Scopes</pre>
           project is over. The equivalent question for internal accounts is in
           <span class="xref">Offboarding as a Security Control — The Checklist and Its Failure Modes</span>;
           guests are the same problem with nobody to trigger it.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Across your own tenants</div>
+      <div class="concept-title">Cross-Tenant Synchronization Pushes B2B Users From a Source Tenant, If the Target Allows It</div>
+      <div class="concept-desc">
+        An organization with several Entra tenants, after a merger or by design, does not have to invite its own
+        staff into each one by hand: cross-tenant synchronization keeps users in sync between them. It creates,
+        updates and deletes B2B collaboration users and groups in a target tenant automatically, and removes them
+        when a person leaves. It is a push from
+        the source tenant, built on Entra's provisioning engine: the source decides who is in scope and how
+        attributes map, and only its internal members are pushed, never its own external users. The target has to
+        agree, through inbound cross-tenant access settings, Allow user synchronization into this tenant and its
+        group equivalent, and its administrators can stop the synchronization at any time. The users it creates are
+        ordinary B2B users in the target, under its Conditional Access, cross-tenant access settings and entitlement
+        management.
+        <!-- fact: Cross-tenant synchronization automates creating, updating and deleting Microsoft Entra B2B collaboration users and groups across tenants in an organization, including removing B2B accounts when a user leaves; it is based on the Entra provisioning engine and is a push process from the source tenant, not a pull from the target; it pushes only internal members, not external users; users in scope and attribute mapping are configured in the source tenant; the target enables inbound cross-tenant synchronization settings, Allow user synchronization into this tenant and Allow group synchronization into this tenant, and target administrators can stop a synchronization at any time; synchronized users remain subject to Conditional Access and cross-tenant access settings and can be governed with entitlement management; it can be used across organizations, but doing so might introduce additional compliance responsibilities | source: Microsoft Learn, "What is cross-tenant synchronization in Microsoft Entra ID?", updated 2026-11-02, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Use it inside one organization, not between two.</strong> Microsoft's page allows
+          it across organizations but warns of the compliance responsibilities that come with it; for a partner,
+          invitations and entitlement management keep the decision with the people who own the access.
         </div>
       </div>
     </div>
