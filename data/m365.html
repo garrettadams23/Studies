@@ -1539,6 +1539,33 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
         </div>
       </div>
     </div>
+    <div class="concept-card">
+      <div class="concept-label">Publishing, and past Office</div>
+      <div class="concept-title">A Label Does Nothing Until a Policy Publishes It, and the Client and Scanner Take Labels Past Office</div>
+      <div class="concept-desc">
+        Creating a sensitivity label makes it exist; publishing it in a label policy makes it appear. The policy names
+        the users and groups who see its labels in their apps and get its settings, groups recommended over
+        individuals, and it can be limited to administrative units; the settings it offers follow the scope of the
+        labels chosen, so applying a label by default to groups and sites, or requiring one, appears only when
+        labels for containers are included. Outside Office, the Microsoft Purview Information Protection client,
+        Windows only and the replacement for the unified labeling client previously shipped as Azure Information
+        Protection, adds a File
+        Explorer labeler for more file types, a viewer for encrypted files and a PowerShell module. Its scanner runs as
+        a service on Windows Server and crawls network shares and SharePoint Server libraries on a schedule rather than
+        in real time, using sensitive information types to decide what to label, and in discovery mode it only reports
+        what it would do.
+        <!-- fact: A label policy publishes sensitivity labels to chosen users and groups, groups being recommended, with Microsoft 365 groups, distribution groups and security groups supported, and can be restricted to administrative units; the policy settings shown match the scope of the labels selected, so Apply this label by default to groups and sites and Require users to apply a label to their groups and sites don't appear for labels scoped only to files and other data assets | source: Microsoft Learn, "Create and publish sensitivity labels", updated 2026-10-07, fetched and read | checked: 2026-11 -->
+        <!-- fact: The Microsoft Purview Information Protection client runs on Windows only, replaces the Azure Information Protection (AIP) unified labeling client, supports a wider range of file types, and includes the information protection scanner, a File Explorer file labeler, a viewer for encrypted files and a PowerShell module, with no Office add-in because labeling is built into Office | source: Microsoft Learn, "Extend sensitivity labeling on Windows", updated 2026-10-26, fetched and read | checked: 2026-11 -->
+        <!-- fact: The Microsoft Purview Information Protection scanner runs as a service on Windows Server to discover, classify and protect files on SMB and, in preview, NFS network shares and SharePoint Server libraries; it uses sensitive information types and patterns to decide what to label, can run in discovery mode only to report, and doesn't label in real time but crawls the data stores on a cycle that runs once or repeatedly | source: Microsoft Learn, "Learn about the Microsoft Purview Information Protection scanner", updated 2026-03-26, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Run the scanner in discovery mode before letting it label.</strong> A share that
+          has filled for years holds surprises; a report of what would be labeled costs nothing, while labels and
+          encryption applied at scale to the wrong files cost a cleanup.
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1642,6 +1669,33 @@ Get-Mailbox <span class="var">-Identity</span> <span class="str">"support@contos
           explorer shows what a block would have stopped before anyone is blocked. And DLP's USB rule is about
           sensitive content: blocking USB storage outright is device control in Defender for Endpoint, which is
           <span class="xref">Firewall &amp; Removable Media Policy — The Two Controls Auditors Ask About</span>.
+        </div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Trainable classifiers</div>
+      <div class="concept-title">A Trainable Classifier Recognizes a Kind of Document, and Data Explorer Shows Where the Matches Are</div>
+      <div class="concept-desc">
+        Some content has no pattern a sensitive information type could match: a contract, a merger plan, a price
+        quote. A trainable classifier learns that kind of document from examples instead. Microsoft ships pretrained
+        classifiers that are ready to use, and a custom one is trained on a set of documents that definitely are the
+        category and a set that definitely are not, then checked by sorting its predictions into true and false
+        positives and negatives before it is published; custom classifiers work in English only. Either kind can be a
+        condition for auto-labeling, for auto-applying a retention label and in DLP, and none of them can read an
+        encrypted item. To see what classification found, Data explorer lists the items with classification matches
+        and where they are, and content explorer, which showed items with a sensitivity label, a retention label or a
+        sensitive information type, is now marked classic. Opening the tab takes a role such as Compliance
+        Administrator; seeing the list takes the Data Explorer List viewer role group, and reading the items takes
+        Data Explorer Content viewer, separately.
+        <!-- fact: Trainable classifiers identify content that pattern matching can't, by learning from examples; Microsoft provides pretrained classifiers with the status Ready to use, and custom trainable classifiers, supported in English only, are seeded with examples that are and aren't in the category, reviewed for true and false positives and negatives, and published; classifiers can be conditions for auto-labeling with sensitivity labels, auto-applying retention label policies, sensitivity label conditions and data loss prevention, communication compliance supporting Microsoft-provided classifiers only; classifiers only work with items that aren't encrypted | source: Microsoft Learn, "Learn about trainable classifiers", updated 2026-06-01, fetched and read | checked: 2026-11 -->
+        <!-- fact: Data Explorer reviews items with classification matches and where they are located, on the Explorers page of Information Protection; access to the tab needs a role such as Compliance administrator, Security administrator, Compliance data administrator or Global administrator, which doesn't allow viewing items; the Data Explorer List viewer role group shows items and locations and Data Explorer Content viewer shows their contents, independent and not cumulative, and these permissions supersede permissions assigned locally to the items; encrypted documents can't be previewed or downloaded; Content Explorer, which showed items with a sensitivity label, a retention label or a sensitive information type, is labeled classic | source: Microsoft Learn, "Get started with data explorer", updated 2026-01-23, and "Microsoft Purview Classifiers Overview", updated 2026-09-29, and "Get started with content explorer", updated 2026-10-14, fetched and read | checked: 2026-11 -->
+      </div>
+      <div class="dw">
+        <div class="concept-desc verdict">
+          <strong class="c-amber">Treat Content viewer as a key to everything sensitive.</strong> Microsoft's page
+          says these roles supersede the items' own permissions, so whoever holds Data Explorer Content viewer can read
+          every classified document in the tenant; List viewer is enough for reporting, and Content viewer belongs to a
+          named few.
         </div>
       </div>
     </div>

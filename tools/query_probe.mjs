@@ -620,6 +620,12 @@ const READERS = [
     ["sentinel mcp server", "", "blueteam/threat-hunting-assume-breach-go-looking"],
     ["graph activity logs", "", "m365/ediscovery-content-search-the-audit-log-answering-legal-with"],
     ["which app called the graph api", "", "m365/ediscovery-content-search-the-audit-log-answering-legal-with"],
+    // ── hundred-and-fifth wave: SC-401's classification and labeling gaps, as cards, added before them ──
+    ["trainable classifier", "", "m365/sensitive-information-types-endpoint-dlp-the-pattern-that-fi"],
+    ["data explorer content viewer", "", "m365/sensitive-information-types-endpoint-dlp-the-pattern-that-fi"],
+    ["unified labeling client", "", "m365/sensitivity-labels-dlp-classification-that-survives-contact-"],
+    ["information protection scanner", "", "m365/sensitivity-labels-dlp-classification-that-survives-contact-"],
+    ["scanner discovery mode", "", "m365/sensitivity-labels-dlp-classification-that-survives-contact-"],
     // ── fiftieth wave: the product-names class, each name read on its owner's page, added before any edit ──
     ["microsoft configuration manager", "", "endpoint/microsoft-configuration-manager-mecm"],
     ["wdac", "", "endpoint/app-control-for-business-managed-installers-audit-mode-the-a"],
